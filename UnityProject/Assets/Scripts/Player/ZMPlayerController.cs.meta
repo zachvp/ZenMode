@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 127eae2410b544264aa7a0028d2bbd04
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - _deathSprite: {fileID: 21300000, guid: ee58f2f51553ec844b88fce6f9c89d5d, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

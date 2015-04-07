@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 862620fdd1b97514b912b40cc728ae18
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - scoreText: {instanceID: 0}
+  - scoreZone: {fileID: 173754, guid: 2c3c5291504e0564ba62544d40dd03d1, type: 2}
+  - pedestalController: {fileID: 11499920, guid: 2c3c5291504e0564ba62544d40dd03d1,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
