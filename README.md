@@ -1,2 +1,2 @@
 # ZenMode
-Sanctuary from Perforce for the last push on our Intermediate Games class
+Sanctuary from Perforce for the final stretch on our Intermediate Games class
