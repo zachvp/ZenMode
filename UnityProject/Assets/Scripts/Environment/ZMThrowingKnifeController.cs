@@ -19,7 +19,7 @@ public class ZMThrowingKnifeController : MonoBehaviour {
 		if (!isActive) {
 			rigidbody2D.velocity = new Vector2 (SPEED, 0.0f);
 		}
-		if (rigidbody2D.velocity.magnitude <= 250.0f) {
+		else {
 			tag = "Untagged";
 			gameObject.layer = LayerMask.NameToLayer("ThrowingKnives");
 		}
@@ -27,6 +27,6 @@ public class ZMThrowingKnifeController : MonoBehaviour {
 
 	void OnCollisionEnter2D (Collision2D coll) {
 		isActive = true;
-		rigidbody2D.AddTorque (Random.Range (-150, 150), ForceMode2D.Impulse);
+		rigidbody2D.AddTorque (Random.Range (-1500, 1500), ForceMode2D.Impulse);
 	}
 }

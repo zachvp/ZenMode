@@ -11,6 +11,7 @@ GameObject:
   - 20: {fileID: 2009556}
   - 92: {fileID: 9209556}
   - 124: {fileID: 12409556}
+  - 81: {fileID: 8129098}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -39,7 +40,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: .698529422, g: .698529422, b: .698529422, a: .0196078438}
+  m_BackGroundColor: {r: .41911763, g: .212640569, b: .41911763, a: .0196078438}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -49,8 +50,8 @@ Camera:
   near clip plane: .300000012
   far clip plane: 10000
   field of view: 132
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 432
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -62,6 +63,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: .0219999999
+--- !u!81 &8129098
+AudioListener:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 109556}
+  m_Enabled: 1
 --- !u!92 &9209556
 Behaviour:
   m_ObjectHideFlags: 1
