@@ -17,7 +17,7 @@ public class MetricManagerScript : MonoBehaviour {
 	
 	//When the game quits we'll actually write the file.
 	void OnApplicationQuit(){
-		string time = System.DateTime.UtcNow.ToString ();string dateTime = System.DateTime.Now.ToString (); //Get the time to tack on to the file name
+		string time = System.DateTime.UtcNow.ToString ();//string dateTime = System.DateTime.Now.ToString (); //Get the time to tack on to the file name
 		time = time.Replace ("/", "-"); //Replace slashes with dashes, because Unity thinks they are directories..
 		time = time.Replace (":", "-");
 		string reportFile = "Metrics/ZenMode_Metrics_" + time + ".txt"; 

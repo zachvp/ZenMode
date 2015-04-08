@@ -12,7 +12,7 @@ public class ZMPlayerController : MonoBehaviour
 	private float FRICTION = 25.0f;
 	private float JUMP_HEIGHT = 800.0f;
 	private float PLUNGE_SPEED = 2200.0f;
-	private float LUNGE_SPEED = 2500.0f;
+	private float LUNGE_SPEED = 2000.0f;
 	private float LUNGE_TIME = 0.05f;
 	private float WALL_SLIDE_SPEED = 50.0f;
 	private float WALL_JUMP_KICK_SPEED = 500.0f;
@@ -39,14 +39,14 @@ public class ZMPlayerController : MonoBehaviour
 	private enum MovementDirectionState { FACING_LEFT, FACING_RIGHT };
 	private enum ControlMoveState 		{ NEUTRAL, MOVING };
 	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACKING, WALL_JUMPING };
-	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING, WALL_SLIDE, RECOIL, DISABLE, DISABLED, RESPAWN };
+	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING, WALL_SLIDE, RECOIL, RECOILING, DISABLE, DISABLED, RESPAWN };
 	private enum AbilityState 			{ NEUTRAL, SHOOTING };
 
 	private ControlMoveState _controlMoveState;
 	private ControlModState _controlModState;
 	private MovementDirectionState _movementDirection;
 	private MoveModState _moveModState;
-	private AbilityState _abilityState;
+	//private AbilityState _abilityState;
 
 	// Tags and layers.
 	private const string kPlayerTag						    = "Player";
@@ -64,8 +64,8 @@ public class ZMPlayerController : MonoBehaviour
 	// Debug.
 	private Color _initialColor;
 	private Sprite _baseSprite;
-	public Sprite _deathSprite;
 	public GameObject _throwingKnifeObject;
+	private bool _playerInPath;
 
 	// Sound resources.
 	public AudioClip _audioJump;
@@ -88,7 +88,7 @@ public class ZMPlayerController : MonoBehaviour
 	void Awake()
 	{
 		_moveModState = MoveModState.NEUTRAL;
-		_abilityState = AbilityState.NEUTRAL;
+		//_abilityState = AbilityState.NEUTRAL;
 		_initialColor = this.renderer.material.color;
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_animator = GetComponent<Animator>();
@@ -121,8 +121,8 @@ public class ZMPlayerController : MonoBehaviour
 	void FixedUpdate()
 	{	
 		// Set raycasts.
-		_checkTouchingLeft = CheckLeftPlatform(TILE_SIZE);
-		_checkTouchingRight = CheckRightPlatform(TILE_SIZE);
+		_checkTouchingLeft = CheckLeft(TILE_SIZE, _controller.platformMask);
+		_checkTouchingRight = CheckRight(TILE_SIZE, _controller.platformMask);
 
 		// Update the velocity calculated from the controller.
 		_velocity = _controller.velocity;
@@ -134,11 +134,6 @@ public class ZMPlayerController : MonoBehaviour
 			Invoke(kMethodNameEnablePlayer, 0.1f);
 		} else if (ShouldEnable()) {
 			EnablePlayer();
-		}
-		
-		// Check raycasts.
-		if (_controller.isGrounded) {
-			_velocity.y = 0;
 		}
 
 		// Horizontal movement.
@@ -193,32 +188,43 @@ public class ZMPlayerController : MonoBehaviour
 
 		if (_moveModState == MoveModState.PLUNGE) {
 			_moveModState = MoveModState.PLUNGING;
-			//_weapon.transform.rotation = Quaternion.LookRotation(Vector3.forward);
-
-			Vector3 newPos = transform.position;
-			newPos.y -= 16;
-			//_weapon.transform.position = newPos;
 			Plunge();
 		} else if (_moveModState == MoveModState.PLUNGING) {
 			if (_controller.isGrounded) {
 				_moveModState = MoveModState.NEUTRAL;
-				//_weapon.transform.position = _baseWeaponTransform.position;
-				//_weapon.transform.rotation = _baseWeaponTransform.rotation;
 			}
 		} else if (_moveModState == MoveModState.LUNGE) {
 			_moveModState = MoveModState.LUNGING;
+
+			CancelInvoke(kMethodNameEndLunge);
 			Invoke (kMethodNameEndLunge, LUNGE_TIME);
+
+			RaycastHit2D checkPlayer;
 			if (_movementDirection == MovementDirectionState.FACING_RIGHT && !_checkTouchingRight) {
+				if (checkPlayer = CheckRight(145f, _controller.specialInteractibleMask)) {
+					_playerInPath = checkPlayer.collider.CompareTag(kPlayerTag);
+				}
+
 				LungeRight();
 			} else if (_movementDirection == MovementDirectionState.FACING_LEFT && !_checkTouchingLeft) {
+				if (checkPlayer = CheckLeft(145f, _controller.specialInteractibleMask)) {
+					_playerInPath = checkPlayer.collider.CompareTag(kPlayerTag);					
+				}
+
 				LungeLeft();
 			}
 		}
 
 		if (_moveModState == MoveModState.RECOIL) {
-			Recoil();
 			audio.PlayOneShot(_audioRecoil);
-			_moveModState = MoveModState.NEUTRAL;
+			_moveModState = MoveModState.RECOILING;
+			Recoil();
+			_moveModState = MoveModState.RECOILING;
+		} else if (_moveModState == MoveModState.RECOILING) {
+			if (Mathf.Abs(runSpeed) < 50) {
+				_moveModState = MoveModState.NEUTRAL;
+				_playerInPath = false;
+			}
 		} else if (_moveModState == MoveModState.WALL_SLIDE) {
 			// Wall slide.
 			if (_velocity.y < 1.0f &&  _controlMoveState == ControlMoveState.MOVING) {
@@ -383,13 +389,15 @@ public class ZMPlayerController : MonoBehaviour
 				// See if we hit a player.
 				if (hit.collider.CompareTag(kPlayerTag) && IsPerformingLunge()) {
 					ZMPlayerController otherPlayer = hit.collider.GetComponent<ZMPlayerController>();
-					if (otherPlayer.IsPerformingLunge()) {
+
+					if (_playerInPath && otherPlayer._playerInPath) {
 						if (_movementDirection != otherPlayer._movementDirection) {
+							CancelInvoke(kMethodNameEndLunge);
+
 							_moveModState = MoveModState.RECOIL;
-							otherPlayer._moveModState = MoveModState.RECOIL;
-							_collisionVelocities = new Vector2(_velocity.x, otherPlayer._velocity.x);
 						}
 					} else if (otherPlayer.IsAbleToDie()) {
+						_playerInPath = false;
 						KillOpponent (hit.collider.gameObject);
 					}
 				}
@@ -422,7 +430,7 @@ public class ZMPlayerController : MonoBehaviour
 	public void EnablePlayer()
 	{
 		_moveModState = MoveModState.NEUTRAL;
-		_abilityState  = AbilityState.NEUTRAL;
+		//_abilityState  = AbilityState.NEUTRAL;
 
 		_controller.enabled = true;
 		this.enabled = true;
@@ -453,11 +461,13 @@ public class ZMPlayerController : MonoBehaviour
 
 		// Handle death visuals here
 		this.renderer.material.color = Color.white;
-		GetComponent<SpriteRenderer>().sprite = _deathSprite;
 		light.enabled = false;
 
 		DisablePlayer();
 		Invoke(kRespawnMethodName, RESPAWN_TIME);
+		_playerInPath = false;
+		runSpeed = 0f;
+		_velocity.y = 100f;
 
 		// Notify event handlers of player's death
 		if (PlayerDeathEvent != null) {
@@ -494,13 +504,13 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void Recoil()
 	{
-		float collectiveSpeeds = Mathf.Abs(_collisionVelocities.x) + Mathf.Abs(_collisionVelocities.y);
+		float recoilSpeed = 700f;
 		_velocity.y = JUMP_HEIGHT / 2.0f;
 
 		if (_movementDirection == MovementDirectionState.FACING_LEFT) {
-			runSpeed = collectiveSpeeds / 2.0f;
+			runSpeed = recoilSpeed;
 		} else if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
-			runSpeed = -collectiveSpeeds / 2.0f;
+			runSpeed = -recoilSpeed;
 		}
 	}
 
@@ -519,24 +529,26 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void EndLunge() {
 		float direction = Mathf.Sign(runSpeed);
-		runSpeed = RUN_SPEED_MAX / 2 * direction;
+		if (runSpeed != 0) {
+			runSpeed = RUN_SPEED_MAX / 2 * direction;
+		}
 		_moveModState = MoveModState.NEUTRAL;
 	}
 
-	private RaycastHit2D CheckLeftPlatform(float distance) {
-		Vector2 rayOrigin = new Vector2(_controller.transform.position.x,
+	private RaycastHit2D CheckLeft(float distance, LayerMask mask) {
+		Vector2 rayOrigin = new Vector2(_controller.transform.position.x - 17f,
 		                                _controller.transform.position.y);
 		Vector2 rayDirection = new Vector2(-1.0f, 0.0f);
 
-		return Physics2D.Raycast(rayOrigin, rayDirection, distance, _controller.platformMask);
+		return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
 	}
 
-	private RaycastHit2D CheckRightPlatform(float distance) {
-		Vector2 rayOrigin = new Vector2( _controller.transform.position.x,
+	private RaycastHit2D CheckRight(float distance, LayerMask mask) {
+		Vector2 rayOrigin = new Vector2( _controller.transform.position.x + 17f,
 		                                 _controller.transform.position.y);
 		Vector2 rayDirection = new Vector2(1.0f, 0.0f);
 
-		return Physics2D.Raycast(rayOrigin, rayDirection, distance, _controller.platformMask);
+		return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
 	}
 
 	private RaycastHit2D CheckLeftTrigger(float distance) {
@@ -597,7 +609,7 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private bool IsRecoiling() {
-		return _moveModState == MoveModState.RECOIL;
+		return _moveModState == MoveModState.RECOIL || _moveModState == MoveModState.RECOILING;
 	}
 
 	private bool IsAbleToKill() {
@@ -605,7 +617,7 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private bool IsAbleToDie() {
-		return _moveModState != MoveModState.RESPAWN;
+		return _moveModState != MoveModState.RESPAWN && !IsRecoiling();
 	}
 
 	private bool ShouldDisableWhenGrounded() {

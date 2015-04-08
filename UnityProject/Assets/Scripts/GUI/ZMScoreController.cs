@@ -12,7 +12,7 @@ namespace ZMPlayer{
 
 		// members
 		private float _scoreMax;
-		Dictionary<ZMPlayerInfo.PlayerTag, string> playerNames;
+		//Dictionary<ZMPlayerInfo.PlayerTag, string> playerNames;
 
 		// Events
 		public delegate void MaxScoreAction(ZMScoreController scoreController);
@@ -31,7 +31,7 @@ namespace ZMPlayer{
 		public static event StopScoreAction StopScoreEvent;
 
 		// References
-		private ZMPlayerInfo _playerInfo;
+		//private ZMPlayerInfo _playerInfo;
 		List<ZMScoreController> _allScoreControllers;
 		
 		// Constants
@@ -39,7 +39,7 @@ namespace ZMPlayer{
 		private const string kUpdateScoreInvokeWrapperMethodName  = "UpdateScoreInvokeWrapper";
 		private const string kScoreFormat						  = "0.0";
 
-		private string _playerName;
+		//private string _playerName;
 		private float _totalScore;   public float TotalScore { get { return _totalScore; } set { _totalScore = value; } }
 
 		// States
@@ -58,7 +58,7 @@ namespace ZMPlayer{
 		void Awake() {
 			_scoreMax = ZMScorePool.MaxScore;
 
-			_playerInfo = GetComponent<ZMPlayerInfo>();
+			//_playerInfo = GetComponent<ZMPlayerInfo>();
 			_allScoreControllers = new List<ZMScoreController>();
 
 			_scoreState  = ScoreState.OUT_OF_ZONE;
@@ -76,14 +76,14 @@ namespace ZMPlayer{
 		}
 
 		void Start () {
-			playerNames = new Dictionary<ZMPlayerInfo.PlayerTag, string>()
+			/*playerNames = new Dictionary<ZMPlayerInfo.PlayerTag, string>()
 			{
 				{ ZMPlayerInfo.PlayerTag.PLAYER_1, "P1" },
 				{ ZMPlayerInfo.PlayerTag.PLAYER_2, "P2" },
 				{ ZMPlayerInfo.PlayerTag.PLAYER_3, "P3" },
 				{ ZMPlayerInfo.PlayerTag.PLAYER_4, "P4" }
-			};
-			playerNames.TryGetValue (_playerInfo.playerTag, out _playerName);
+			};*/
+			//playerNames.TryGetValue (_playerInfo.playerTag, out _playerName);
 
 			GameObject[] scoreObjects = GameObject.FindGameObjectsWithTag("Player");
 			foreach (GameObject scoreObject in scoreObjects) {
