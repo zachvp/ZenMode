@@ -46,6 +46,7 @@ public class ZMPlayerController : MonoBehaviour
 	private ControlModState _controlModState;
 	private MovementDirectionState _movementDirection;
 	private MoveModState _moveModState;
+	private bool _playerInPath;
 	//private AbilityState _abilityState;
 
 	// Tags and layers.
@@ -64,7 +65,6 @@ public class ZMPlayerController : MonoBehaviour
 	// Debug.
 	private Color _initialColor;
 	private Sprite _baseSprite;
-	private bool _playerInPath;
 
 	// Game Objects.
 	public GameObject _throwingKnifeObject;
@@ -72,6 +72,7 @@ public class ZMPlayerController : MonoBehaviour
 	public GameObject _effectLandObject;
 	public GameObject _effectLungeObject;
 	public GameObject _effectSkidObject;
+	public GameObject _clashEffect;
 
 	// Sound resources.
 	public AudioClip[] _audioJumps;
@@ -216,9 +217,6 @@ public class ZMPlayerController : MonoBehaviour
 		} else if (_moveModState == MoveModState.LUNGE) {
 			_moveModState = MoveModState.LUNGING;
 
-			CancelInvoke(kMethodNameEndLunge);
-			Invoke (kMethodNameEndLunge, LUNGE_TIME);
-
 			RaycastHit2D checkPlayer;
 			if (_movementDirection == MovementDirectionState.FACING_RIGHT && !_checkTouchingRight) {
 				if (checkPlayer = CheckRight(145f, _controller.specialInteractibleMask)) {
@@ -237,12 +235,21 @@ public class ZMPlayerController : MonoBehaviour
 
 				LungeLeft();
 			}
+
+			if (IsInvoking(kMethodNameEndLunge)) CancelInvoke(kMethodNameEndLunge);
+			Invoke (kMethodNameEndLunge, LUNGE_TIME);
 		}
 
 		if (_moveModState == MoveModState.RECOIL) {
 			audio.PlayOneShot(_audioRecoil);
 
 			_moveModState = MoveModState.RECOILING;
+
+			// create recoil effect
+			if (_clashEffect != null) {
+				_clashEffect.transform.position = transform.position;
+				_clashEffect.particleSystem.Play();
+			}
 
 			Recoil();
 		} else if (_moveModState == MoveModState.RECOILING) {
