@@ -64,16 +64,22 @@ public class ZMPlayerController : MonoBehaviour
 	// Debug.
 	private Color _initialColor;
 	private Sprite _baseSprite;
-	public GameObject _throwingKnifeObject;
 	private bool _playerInPath;
 
+	// Game Objects.
+	public GameObject _throwingKnifeObject;
+	public GameObject _effectJumpObject;
+	public GameObject _effectLandObject;
+	public GameObject _effectLungeObject;
+	public GameObject _effectSkidObject;
+
 	// Sound resources.
-	public AudioClip _audioJump;
-	public AudioClip _audioWallJump;
+	public AudioClip[] _audioJumps;
 	public AudioClip _audioLunge;
 	public AudioClip _audioPlunge;
 	public AudioClip _audioRecoil;
 	public AudioClip _audioDeath;
+
 
 	// Delegates
 	public delegate void PlayerDeathAction(ZMPlayerController playerController);
@@ -135,6 +141,15 @@ public class ZMPlayerController : MonoBehaviour
 		} else if (ShouldEnable()) {
 			EnablePlayer();
 		}
+		
+		// Check raycasts.
+		if (_controller.isGrounded) {
+			// Landing.
+			if (_velocity.y < -1) {
+				Instantiate(_effectLandObject, new Vector2(transform.position.x - 3, transform.position.y - 8), transform.rotation);
+			}
+			_velocity.y = 0;
+		}
 
 		// Horizontal movement.
 		if (_controlMoveState == ControlMoveState.MOVING && !IsPerformingPlunge()) {
@@ -163,7 +178,9 @@ public class ZMPlayerController : MonoBehaviour
 			_controlModState = ControlModState.NEUTRAL;
 
 			_velocity.y = JUMP_HEIGHT;
-			audio.PlayOneShot(_audioJump);
+
+			audio.PlayOneShot(_audioJumps[Random.Range (0, _audioJumps.Length)]);
+			Instantiate(_effectJumpObject, new Vector2(transform.position.x - 3, transform.position.y - 8), transform.rotation);
 		}
 
 		// Update movement and ability state.
@@ -178,6 +195,9 @@ public class ZMPlayerController : MonoBehaviour
 			} else if (!IsPerformingLunge()) {
 				audio.PlayOneShot(_audioLunge);
 				_moveModState = MoveModState.LUNGE;
+
+				Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
+				Instantiate(_effectLungeObject, new Vector2(transform.position.x - 3, transform.position.y - 10), rotation);
 			}
 		} 
 		else if (IsTouchingEitherSide()) {
@@ -239,7 +259,9 @@ public class ZMPlayerController : MonoBehaviour
 
 				if (IsMovingLeft() || IsMovingRight()) {
 					_velocity.y = JUMP_HEIGHT;
-					audio.PlayOneShot(_audioWallJump);
+					audio.PlayOneShot(_audioJumps[Random.Range (0, _audioJumps.Length)]);
+					Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
+					Instantiate (_effectSkidObject, new Vector2 (transform.position.x, transform.position.y - 20), rotation);
 				}
 
 				if (IsMovingLeft())
@@ -278,7 +300,7 @@ public class ZMPlayerController : MonoBehaviour
 		bool isSkidding = ((_movementDirection == MovementDirectionState.FACING_LEFT && _velocity.x > 0) ||
 		                   (_movementDirection == MovementDirectionState.FACING_RIGHT && _velocity.x < 0));
 		bool isSliding = (_velocity.x != 0 && _controlMoveState == ControlMoveState.NEUTRAL);
-		
+
 		_animator.SetBool ("isSkidding", isSkidding || isSliding);
 		_animator.SetBool ("isGrounded", _controller.isGrounded);
 		_animator.SetFloat ("velocityY", _velocity.y);
@@ -286,8 +308,6 @@ public class ZMPlayerController : MonoBehaviour
 		if (PlayerRunEvent != null) {
 			PlayerRunEvent(this, _controlMoveState == ControlMoveState.MOVING);
 		}
-//		ZMPlayerAnimationCopy copy = GetComponentInChildren<ZMPlayerAnimationCopy>();
-//		copy.Animate(GetComponent<SpriteRenderer>().sprite);
 	}
 
 	void ThrowingKnifeCooldown() {
@@ -299,11 +319,14 @@ public class ZMPlayerController : MonoBehaviour
 		PlayerRespawnEvent = null;
 		PlayerRunEvent 	   = null;
 	}
-
+	
 	// Event handling
 	private void MoveRightEvent (ZMPlayerInputController inputController) {
 		if (inputController.PlayerInfo.Equals(_playerInfo) && enabled) {
 			_controlMoveState = ControlMoveState.MOVING;
+			if (_movementDirection == MovementDirectionState.FACING_LEFT) {
+				CheckSkidding ();
+			}
 			SetMovementDirection(MovementDirectionState.FACING_RIGHT);
 		}
 	}
@@ -311,6 +334,9 @@ public class ZMPlayerController : MonoBehaviour
 	private void MoveLeftEvent(ZMPlayerInputController inputController) {
 		if (inputController.PlayerInfo.Equals(_playerInfo) && enabled) {
 			_controlMoveState = ControlMoveState.MOVING;
+			if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
+				CheckSkidding ();
+			}
 			SetMovementDirection(MovementDirectionState.FACING_LEFT);
 		}
 	}
@@ -453,6 +479,14 @@ public class ZMPlayerController : MonoBehaviour
 		// Modify x-scale and flip our sprite based on our direction.
 		float scaleFactor = (direction == MovementDirectionState.FACING_LEFT ? -1 : 1);
 		transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * scaleFactor, transform.localScale.y, transform.localScale.z);
+	}
+
+	void CheckSkidding() {
+		if (_controller.isGrounded) {
+			int direction = (_movementDirection == MovementDirectionState.FACING_RIGHT ? 1 : -1);
+			Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 0.0f : 180.0f), 0.0f));
+			Instantiate (_effectSkidObject, new Vector2 (transform.position.x + 30 * direction, transform.position.y - 20), rotation);
+		}
 	}
 
 	private void KillSelf ()
