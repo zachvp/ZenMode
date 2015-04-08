@@ -125,9 +125,9 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	void FixedUpdate()
-	{	
+	{
 		// Set raycasts.
-		_checkTouchingLeft = CheckLeft(TILE_SIZE, _controller.platformMask);
+		_checkTouchingLeft  = CheckLeft(TILE_SIZE, _controller.platformMask);
 		_checkTouchingRight = CheckRight(TILE_SIZE, _controller.platformMask);
 
 		// Update the velocity calculated from the controller.
@@ -152,7 +152,7 @@ public class ZMPlayerController : MonoBehaviour
 		}
 
 		// Horizontal movement.
-		if (_controlMoveState == ControlMoveState.MOVING && !IsPerformingPlunge()) {
+		if (_controlMoveState == ControlMoveState.MOVING && !IsPerformingPlunge() && !IsRecoiling()) {
 			if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
 				if (runSpeed < RUN_SPEED_MAX) {
 					runSpeed += ACCELERATION;
@@ -222,13 +222,17 @@ public class ZMPlayerController : MonoBehaviour
 			RaycastHit2D checkPlayer;
 			if (_movementDirection == MovementDirectionState.FACING_RIGHT && !_checkTouchingRight) {
 				if (checkPlayer = CheckRight(145f, _controller.specialInteractibleMask)) {
-					_playerInPath = checkPlayer.collider.CompareTag(kPlayerTag);
+					if (checkPlayer.collider.CompareTag(kPlayerTag) && !_playerInPath) {
+						_playerInPath = true;
+					}
 				}
 
 				LungeRight();
 			} else if (_movementDirection == MovementDirectionState.FACING_LEFT && !_checkTouchingLeft) {
 				if (checkPlayer = CheckLeft(145f, _controller.specialInteractibleMask)) {
-					_playerInPath = checkPlayer.collider.CompareTag(kPlayerTag);					
+					if (checkPlayer.collider.CompareTag(kPlayerTag) && !_playerInPath) {
+						_playerInPath = true;
+					}
 				}
 
 				LungeLeft();
@@ -237,14 +241,13 @@ public class ZMPlayerController : MonoBehaviour
 
 		if (_moveModState == MoveModState.RECOIL) {
 			audio.PlayOneShot(_audioRecoil);
+
 			_moveModState = MoveModState.RECOILING;
+
 			Recoil();
-			_moveModState = MoveModState.RECOILING;
 		} else if (_moveModState == MoveModState.RECOILING) {
-			if (Mathf.Abs(runSpeed) < 50) {
-				_moveModState = MoveModState.NEUTRAL;
-				_playerInPath = false;
-			}
+			_moveModState = MoveModState.NEUTRAL;
+			_playerInPath = false;
 		} else if (_moveModState == MoveModState.WALL_SLIDE) {
 			// Wall slide.
 			if (_velocity.y < 1.0f &&  _controlMoveState == ControlMoveState.MOVING) {
@@ -499,6 +502,8 @@ public class ZMPlayerController : MonoBehaviour
 
 		DisablePlayer();
 		Invoke(kRespawnMethodName, RESPAWN_TIME);
+
+		// Set player states
 		_playerInPath = false;
 		runSpeed = 0f;
 		_velocity.y = 100f;
@@ -566,7 +571,9 @@ public class ZMPlayerController : MonoBehaviour
 		if (runSpeed != 0) {
 			runSpeed = RUN_SPEED_MAX / 2 * direction;
 		}
+
 		_moveModState = MoveModState.NEUTRAL;
+		_playerInPath = false;
 	}
 
 	private RaycastHit2D CheckLeft(float distance, LayerMask mask) {

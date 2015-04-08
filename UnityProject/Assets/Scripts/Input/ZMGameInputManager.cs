@@ -25,7 +25,7 @@ public class ZMGameInputManager : MonoBehaviour {
 			}
 		}
 		
-		if (Input.GetButtonDown("Back")) {
+		if (Input.GetButtonDown("BACK")) {
 			if (BackInputEvent != null) {
 				BackInputEvent();
 			}
