@@ -73,7 +73,6 @@ NavMeshSettings:
     minRegionArea: 2
     widthInaccuracy: 16.666666
     heightInaccuracy: 10
-    tileSizeHint: 0
   m_NavMesh: {fileID: 0}
 --- !u!1 &1846941
 GameObject:
@@ -8207,8 +8206,8 @@ MonoBehaviour:
   m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
+  ignoreReversedGraphics: 1
+  blockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -56187,7 +56186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e950e28a513cd540881118fcdedf4f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTag: 1
+  playerTag: 0
 --- !u!114 &1597373749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61590,7 +61589,7 @@ GameObject:
   - 136: {fileID: 1747275517}
   - 23: {fileID: 1747275516}
   m_Layer: 0
-  m_Name: P2Indicator
+  m_Name: P1Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61621,7 +61620,7 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 2100000, guid: 3b655e93b54cea54aa32e5df44d83a00, type: 2}
+  - {fileID: 2100000, guid: c9d6e2fe8a758b542b0daa746cb7b96c, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -71800,6 +71799,18 @@ Prefab:
       propertyPath: playerTag
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 126252, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: m_Name
+      value: P1Indicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 11426254, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: playerTag
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2326252, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c9d6e2fe8a758b542b0daa746cb7b96c, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
   m_RootGameObject: {fileID: 2011538750}
@@ -73329,7 +73340,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 127eae2410b544264aa7a0028d2bbd04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _deathSprite: {fileID: 21300000, guid: ee58f2f51553ec844b88fce6f9c89d5d, type: 3}
   _throwingKnifeObject: {fileID: 135656, guid: 7adf14dc179994333ae2098e78540206, type: 2}
   _effectJumpObject: {fileID: 186170, guid: 15ee3afdf7f3945768e4b6e895d7b6e1, type: 2}
   _effectLandObject: {fileID: 186170, guid: 68c410150b463470881a7a961a80d1cd, type: 2}
@@ -77831,7 +77841,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 127eae2410b544264aa7a0028d2bbd04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _deathSprite: {fileID: 21300000, guid: ee58f2f51553ec844b88fce6f9c89d5d, type: 3}
   _throwingKnifeObject: {fileID: 135656, guid: 7adf14dc179994333ae2098e78540206, type: 2}
   _effectJumpObject: {fileID: 186170, guid: 15ee3afdf7f3945768e4b6e895d7b6e1, type: 2}
   _effectLandObject: {fileID: 186170, guid: 68c410150b463470881a7a961a80d1cd, type: 2}
