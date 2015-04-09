@@ -80,6 +80,7 @@ public class ZMPlayerController : MonoBehaviour
 	public AudioClip _audioPlunge;
 	public AudioClip _audioRecoil;
 	public AudioClip _audioDeath;
+	public AudioClip _audioLand;
 
 
 	// Delegates
@@ -149,6 +150,8 @@ public class ZMPlayerController : MonoBehaviour
 			_velocity.y = 0;
 
 			if (IsPerformingPlunge()) {
+				audio.PlayOneShot(_audioLand);
+
 				if (PlayerLandPlungeEvent != null) {
 					PlayerLandPlungeEvent();
 				}

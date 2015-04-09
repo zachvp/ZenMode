@@ -26204,6 +26204,10 @@ Prefab:
       propertyPath: _clashEffect
       value: 
       objectReference: {fileID: 715929691}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioLand
+      value: 
+      objectReference: {fileID: 8300000, guid: c5bc23f4d4efa964989f6bc2a1d302b5, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
   m_RootGameObject: {fileID: 2125206126}
@@ -38282,7 +38286,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cca65eb252482f5428e11916677d043f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waypoints: []
 --- !u!114 &984321587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78373,6 +78376,10 @@ Prefab:
       propertyPath: m_Color.b
       value: .41568628
       objectReference: {fileID: 0}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioLand
+      value: 
+      objectReference: {fileID: 8300000, guid: c5bc23f4d4efa964989f6bc2a1d302b5, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
   m_RootGameObject: {fileID: 2011538750}
@@ -81115,6 +81122,7 @@ MonoBehaviour:
   _audioPlunge: {fileID: 8300000, guid: 645c8ec021ec64acd89ce74eb22fa741, type: 3}
   _audioRecoil: {fileID: 8300000, guid: 76a65fde33e55446997bb3e273988ea0, type: 3}
   _audioDeath: {fileID: 8300000, guid: 50d21bffc1b5d9b449119d929da017cc, type: 3}
+  _audioLand: {fileID: 8300000, guid: c5bc23f4d4efa964989f6bc2a1d302b5, type: 3}
 --- !u!61 &2011538756
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -86218,6 +86226,7 @@ MonoBehaviour:
   _audioPlunge: {fileID: 8300000, guid: 645c8ec021ec64acd89ce74eb22fa741, type: 3}
   _audioRecoil: {fileID: 8300000, guid: 76a65fde33e55446997bb3e273988ea0, type: 3}
   _audioDeath: {fileID: 8300000, guid: 50d21bffc1b5d9b449119d929da017cc, type: 3}
+  _audioLand: {fileID: 8300000, guid: c5bc23f4d4efa964989f6bc2a1d302b5, type: 3}
 --- !u!61 &2125206134
 BoxCollider2D:
   m_ObjectHideFlags: 0
