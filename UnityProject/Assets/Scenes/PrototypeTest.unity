@@ -3796,7 +3796,7 @@ MonoBehaviour:
   start: 0
   counterUIText: {fileID: 87849927}
   minMessage: BEGIN
-  maxMessage: PRESS START
+  maxMessage: GET READY
 --- !u!1 &90668978
 GameObject:
   m_ObjectHideFlags: 0

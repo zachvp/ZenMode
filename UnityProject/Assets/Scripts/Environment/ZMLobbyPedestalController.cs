@@ -23,6 +23,13 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 		_moveState = MoveState.STOPPED;
 
 		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
+		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
+	}
+
+	void HandleStartGameEvent ()
+	{
+		ReturnToBase();
+		_waypointIndex = waypoints.Length;
 	}
 
 	void Start () {
@@ -66,17 +73,21 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 				if (AtPathEndEvent != null) {
 					AtPathEndEvent(this);
 				}
+
+				ReturnToBase();
 				//_moveState = MoveState.STOPPED;
-
-				_distanceTraveled = 0.0f;
-				_targetPosition = _basePosition;
-				_distanceToTarget = (_targetPosition - transform.position).magnitude;
-
-				_moveState = MoveState.MOVING;
 			}
 		}
 	}
 
+	void ReturnToBase() {
+		_distanceTraveled = 0.0f;
+		_targetPosition = _basePosition;
+		_distanceToTarget = (_targetPosition - transform.position).magnitude;
+		
+		_moveState = MoveState.MOVING;
+	}
+	
 	void Move() {
 		_moveState = MoveState.MOVE;
 		_waypointIndex = 0;

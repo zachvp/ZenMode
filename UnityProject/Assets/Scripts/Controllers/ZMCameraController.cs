@@ -9,6 +9,8 @@ public class ZMCameraController : MonoBehaviour {
 	private float 	_speed = 3f;
 	private int 	_moveIndex = 0;
 	private float _totalDistance;
+	private int _zoomStep;
+	private int _zoomFrames;
 
 	// Use this for initialization
 	void Awake () {
@@ -16,6 +18,13 @@ public class ZMCameraController : MonoBehaviour {
 		ZMPlayerController.PlayerRecoilEvent += HandlePlayerRecoilEvent;
 		ZMPlayerController.PlayerLandPlungeEvent += HandlePlayerLandPlungeEvent;
 		ZMLobbyPedestalController.AtPathEndEvent += HandleAtPathEndEvent;
+		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
+	}
+
+	void HandleStartGameEvent ()
+	{
+		Zoom(432);
+		_speed = 1.0f;
 	}
 
 	void HandleAtPathEndEvent (ZMLobbyPedestalController lobbyPedestalController)
@@ -26,7 +35,7 @@ public class ZMCameraController : MonoBehaviour {
 
 	void HandlePlayerLandPlungeEvent ()
 	{
-		Shake(.1f);
+		Shake(10);
 	}
 	
 	void Start() {
@@ -45,21 +54,29 @@ public class ZMCameraController : MonoBehaviour {
 				_isZooming = false;
 			}
 		}
-	}
 
-	void HandleStartGameEvent ()
-	{
-
+		if (_zoomStep < _zoomFrames) {
+			_zoomStep += 1;
+		} else {
+			StopShake();
+		}
 	}
 
 	void HandlePlayerRecoilEvent ()
 	{
-		Shake(0.175f);
+		Shake(25);
 	}
 
-	void Shake(float time) {
+	/*void Shake(float time) {
 		GetComponent<ZMMovementBobbing>().enabled = true;
-		Invoke("StopShake", time);
+		//Invoke("StopShake", time);
+	}*/
+
+	void Shake(int frames) {
+		GetComponent<ZMMovementBobbing>().enabled = true;
+		_zoomStep = 0;
+		_zoomFrames = frames;
+		//Invoke("StopShake", time);
 	}
 
 	void StopShake() {
