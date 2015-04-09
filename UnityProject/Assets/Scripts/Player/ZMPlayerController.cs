@@ -7,14 +7,14 @@ public class ZMPlayerController : MonoBehaviour
 {
 	// Movement constants.
 	private float GRAVITY = 2200.0f;
-	private float RUN_SPEED_MAX = 400.0f;
+	private float RUN_SPEED_MAX = 500.0f;
 	private float ACCELERATION = 30.0f;
 	private float FRICTION = 25.0f;
 	private float JUMP_HEIGHT = 800.0f;
 	private float PLUNGE_SPEED = 2200.0f;
-	private float LUNGE_SPEED = 2000.0f;
-	private float LUNGE_TIME = 0.05f;
-	private float WALL_SLIDE_SPEED = 50.0f;
+	private float LUNGE_SPEED = 1800.0f;
+	private float LUNGE_TIME = 0.1f;
+	private float WALL_SLIDE_SPEED = 80.0f;
 	private float WALL_JUMP_KICK_SPEED = 500.0f;
 	private float runSpeed = 0.0f;
 
@@ -149,7 +149,6 @@ public class ZMPlayerController : MonoBehaviour
 			_velocity.y = 0;
 
 			if (IsPerformingPlunge()) {
-				Debug.Log ("landed plunge");
 				if (PlayerLandPlungeEvent != null) {
 					PlayerLandPlungeEvent();
 				}

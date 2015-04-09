@@ -12,6 +12,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	private enum MoveState { STOPPED, MOVE, MOVING, AT_TARGET };
 
 	private MoveState _moveState;
+	private Vector3 _basePosition;
 	private int _waypointIndex;
 	private float _distanceToTarget;
 	private float _distanceTraveled;
@@ -26,6 +27,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 
 	void Start () {
 		Invoke("Move", 0.5f);
+		_basePosition = transform.position;
 	}
 
 	void OnDestroy() {
@@ -37,7 +39,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 		if (_moveState == MoveState.MOVE && _waypointIndex < waypoints.GetLength(0)) {
 			_distanceTraveled = 0.0f;
 			_targetPosition = waypoints[_waypointIndex].position;
-			_distanceToTarget = (_targetPosition - gameObject.transform.position).magnitude;
+			_distanceToTarget = (_targetPosition - transform.position).magnitude;
 			
 			_moveState = MoveState.MOVING;
 			
@@ -52,12 +54,9 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 			_distanceTraveled += moveSpeed * Time.deltaTime;
 			float distanceRatio = _distanceTraveled / _distanceToTarget;
 			
-			gameObject.transform.position = Vector3.Lerp(gameObject.transform.position,
-			                                             _targetPosition,
-			                                             distanceRatio);
-			
-			float clampDistance = 4.0f;
-			if ((_targetPosition - gameObject.transform.position).sqrMagnitude < clampDistance * clampDistance) {
+			gameObject.transform.position = Vector3.Lerp(transform.position, _targetPosition, distanceRatio);
+
+			if ((_targetPosition - gameObject.transform.position).sqrMagnitude < 4.0f * 4.0f) {
 				_moveState = MoveState.AT_TARGET;
 			}
 		} else if (_moveState == MoveState.AT_TARGET) {
@@ -67,7 +66,13 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 				if (AtPathEndEvent != null) {
 					AtPathEndEvent(this);
 				}
-				_moveState = MoveState.STOPPED;
+				//_moveState = MoveState.STOPPED;
+
+				_distanceTraveled = 0.0f;
+				_targetPosition = _basePosition;
+				_distanceToTarget = (_targetPosition - transform.position).magnitude;
+
+				_moveState = MoveState.MOVING;
 			}
 		}
 	}
