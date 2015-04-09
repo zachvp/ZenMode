@@ -10,8 +10,8 @@ GameObject:
   - 4: {fileID: 465380}
   - 33: {fileID: 3365380}
   - 23: {fileID: 2365380}
-  - 61: {fileID: 6165380}
   - 114: {fileID: 11466922}
+  - 61: {fileID: 6136096}
   m_Layer: 8
   m_Name: Block
   m_TagString: Untagged
@@ -58,7 +58,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 165380}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!61 &6165380
+--- !u!61 &6136096
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}

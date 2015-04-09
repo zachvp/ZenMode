@@ -83,14 +83,11 @@ public class ZMPlayerController : MonoBehaviour
 
 
 	// Delegates
-	public delegate void PlayerDeathAction(ZMPlayerController playerController);
-	public static event PlayerDeathAction PlayerDeathEvent;
-
-	public delegate void PlayerRespawnAction(ZMPlayerController playerController);
-	public static event PlayerRespawnAction PlayerRespawnEvent;
-
-	public delegate void PlayerRunBroadcast(ZMPlayerController playerController, bool isRunning);
-	public static event PlayerRunBroadcast PlayerRunEvent;
+	public delegate void PlayerDeathAction(ZMPlayerController playerController); public static event PlayerDeathAction PlayerDeathEvent;
+	public delegate void PlayerRespawnAction(ZMPlayerController playerController); public static event PlayerRespawnAction PlayerRespawnEvent;
+	public delegate void PlayerRunBroadcast(ZMPlayerController playerController, bool isRunning); public static event PlayerRunBroadcast PlayerRunEvent;
+	public delegate void PlayerRecoilAction(); public static event PlayerRecoilAction PlayerRecoilEvent;
+	public delegate void PlayerLandPlungeAction(); public static event PlayerLandPlungeAction PlayerLandPlungeEvent;
 
 	void Awake()
 	{
@@ -150,6 +147,13 @@ public class ZMPlayerController : MonoBehaviour
 				Instantiate(_effectLandObject, new Vector2(transform.position.x - 3, transform.position.y - 8), transform.rotation);
 			}
 			_velocity.y = 0;
+
+			if (IsPerformingPlunge()) {
+				Debug.Log ("landed plunge");
+				if (PlayerLandPlungeEvent != null) {
+					PlayerLandPlungeEvent();
+				}
+			}
 		}
 
 		// Horizontal movement.
@@ -251,6 +255,10 @@ public class ZMPlayerController : MonoBehaviour
 				_clashEffect.particleSystem.Play();
 			}
 
+			if (PlayerRecoilEvent != null) {
+				PlayerRecoilEvent();
+			}
+
 			Recoil();
 		} else if (_moveModState == MoveModState.RECOILING) {
 			_moveModState = MoveModState.NEUTRAL;
@@ -325,9 +333,11 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	void OnDestroy() {
-		PlayerDeathEvent   = null;
-		PlayerRespawnEvent = null;
-		PlayerRunEvent 	   = null;
+		PlayerDeathEvent   	  = null;
+		PlayerRespawnEvent 	  = null;
+		PlayerRunEvent 	   	  = null;
+		PlayerRecoilEvent  	  = null;
+		PlayerLandPlungeEvent = null;
 	}
 	
 	// Event handling
@@ -409,7 +419,7 @@ public class ZMPlayerController : MonoBehaviour
 
 			if (hit.normal.y == 1.0) {
 				//hit.collider.renderer.material.color = Color.red;
-				hit.collider.GetComponent<ZMColorResponse>().Awaken(light.color);
+//				hit.collider.GetComponent<ZMColorResponse>().Awaken(light.color);
 			}
 
 		} else if (hit.collider.gameObject.layer == LayerMask.NameToLayer(kSpecialInteractiblesLayerMaskName)) {

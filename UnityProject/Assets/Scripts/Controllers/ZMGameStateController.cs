@@ -25,6 +25,9 @@ public class ZMGameStateController : MonoBehaviour {
 	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, GameObject spawnObject);
 	public static event SpawnObjectAction SpawnObjectEvent;
 
+	public delegate void StartGameAction();
+	public static event StartGameAction StartGameEvent;
+
 	// Use this for initialization
 	void Awake () {
 		_matchState = MatchState.PRE_MATCH;
@@ -68,6 +71,8 @@ public class ZMGameStateController : MonoBehaviour {
 			}
 		} else {
 			_matchState = MatchState.BEGIN_COUNTDOWN;
+
+
 			Time.timeScale = 1.0f;
 		}
 	}
@@ -81,6 +86,7 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void OnDestroy() {
 		SpawnObjectEvent = null;
+		StartGameEvent   = null;
 	}
 
 	void Update() {
@@ -137,6 +143,10 @@ public class ZMGameStateController : MonoBehaviour {
 	public void CountdownEnded() {
 		_matchState = MatchState.MATCH;
 		EnableGameObjects();
+
+		if (StartGameEvent != null) {
+			StartGameEvent();
+		}
 	}
 
 	public void MatchWon(ZMScoreController scoreController) {
