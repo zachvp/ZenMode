@@ -435,18 +435,22 @@ public class ZMPlayerController : MonoBehaviour
 
 			if (hit.normal.x == -1.0f || hit.normal.x == 1.0f) {
 				// See if we hit a player.
-				if (hit.collider.CompareTag(kPlayerTag) && IsPerformingLunge()) {
-					ZMPlayerController otherPlayer = hit.collider.GetComponent<ZMPlayerController>();
+				if (IsPerformingLunge()) {
+					if (hit.collider.CompareTag(kPlayerTag)) {
+						ZMPlayerController otherPlayer = hit.collider.GetComponent<ZMPlayerController>();
 
-					if (_playerInPath && otherPlayer._playerInPath) {
-						if (_movementDirection != otherPlayer._movementDirection) {
-							CancelInvoke(kMethodNameEndLunge);
+						if (_playerInPath && otherPlayer._playerInPath) {
+							if (_movementDirection != otherPlayer._movementDirection) {
+								CancelInvoke(kMethodNameEndLunge);
 
-							_moveModState = MoveModState.RECOIL;
+								_moveModState = MoveModState.RECOIL;
+							}
+						} else if (otherPlayer.IsAbleToDie()) {
+							_playerInPath = false;
+							KillOpponent (hit.collider.gameObject);
 						}
-					} else if (otherPlayer.IsAbleToDie()) {
-						_playerInPath = false;
-						KillOpponent (hit.collider.gameObject);
+					} else if (hit.collider.CompareTag("Breakable")) {
+						hit.collider.GetComponent<ZMBreakable>().HandleCollision();
 					}
 				}
 			}
