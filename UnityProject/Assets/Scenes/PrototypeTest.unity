@@ -38302,6 +38302,7 @@ MonoBehaviour:
   - {fileID: 417274938}
   - {fileID: 2094209104}
   moveSpeed: 10
+  endPathAtStart: 1
 --- !u!1001 &984926647
 Prefab:
   m_ObjectHideFlags: 0
