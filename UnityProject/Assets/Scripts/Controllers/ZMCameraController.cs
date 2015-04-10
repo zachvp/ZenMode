@@ -2,12 +2,15 @@
 using System.Collections;
 
 public class ZMCameraController : MonoBehaviour {
+	public float endZoom = 432;
+
 	private float   _zoomTargetSize;
 	private Vector3 _zoomTargetPosition;
+
 	private bool    _isZooming;
 	private bool    _isMoving;
 	private float 	_speed = 3f;
-	private int 	_moveIndex = 0;
+
 	private float _totalDistance;
 	private int _zoomStep;
 	private int _zoomFrames;
@@ -29,7 +32,7 @@ public class ZMCameraController : MonoBehaviour {
 
 	void HandleAtPathEndEvent (ZMLobbyPedestalController lobbyPedestalController)
 	{
-		Zoom(432);
+		Zoom(endZoom);
 		_speed = 1.0f;
 	}
 
@@ -41,9 +44,7 @@ public class ZMCameraController : MonoBehaviour {
 	void Start() {
 		GetComponent<ZMMovementBobbing>().enabled = false;
 
-		camera.orthographicSize = 200;
 		_isMoving = true;
-		//Zoom(432);
 	}
 
 	void FixedUpdate() {

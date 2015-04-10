@@ -39,6 +39,8 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 
 	void OnDestroy() {
 		AtPathEndEvent = null;
+		ZMGameStateController.StartGameEvent -= HandleStartGameEvent;
+
 		ZMLobbyScoreController.MaxScoreReachedEvent -= HandleMaxScoreReachedEvent;
 	}
 	
