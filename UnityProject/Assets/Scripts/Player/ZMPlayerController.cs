@@ -38,7 +38,7 @@ public class ZMPlayerController : MonoBehaviour
 	// Player states.
 	private enum MovementDirectionState { FACING_LEFT, FACING_RIGHT };
 	private enum ControlMoveState 		{ NEUTRAL, MOVING };
-	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACKING, WALL_JUMPING };
+	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACK, ATTACKING, WALL_JUMPING };
 	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING, WALL_SLIDE, RECOIL, RECOILING, DISABLE, DISABLED, RESPAWN };
 	private enum AbilityState 			{ NEUTRAL, SHOOTING };
 
@@ -191,8 +191,8 @@ public class ZMPlayerController : MonoBehaviour
 		}
 
 		// Update movement and ability state.
-		if (_controlModState == ControlModState.ATTACKING) {
-			_controlModState = ControlModState.NEUTRAL;
+		if (_controlModState == ControlModState.ATTACK) {
+			_controlModState = ControlModState.ATTACKING;
 
 			if (!_controller.isGrounded) {
 				if (!IsPerformingPlunge()) {
@@ -219,6 +219,8 @@ public class ZMPlayerController : MonoBehaviour
 		} else if (_moveModState == MoveModState.PLUNGING) {
 			if (_controller.isGrounded) {
 				_moveModState = MoveModState.NEUTRAL;
+
+				Invoke("ResetControlModState", 0.1f);
 			}
 		} else if (_moveModState == MoveModState.LUNGE) {
 			_moveModState = MoveModState.LUNGING;
@@ -264,6 +266,8 @@ public class ZMPlayerController : MonoBehaviour
 			Recoil();
 		} else if (_moveModState == MoveModState.RECOILING) {
 			_moveModState = MoveModState.NEUTRAL;
+			_controlModState = ControlModState.NEUTRAL;
+
 			_playerInPath = false;
 		} else if (_moveModState == MoveModState.WALL_SLIDE) {
 			// Wall slide.
@@ -381,13 +385,13 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void NoJumpEvent(ZMPlayerInputController inputController) {
 		if (inputController.PlayerInfo.Equals(_playerInfo)) {
-			_controlModState = ControlModState.NEUTRAL;
+			//_controlModState = ControlModState.NEUTRAL;
 		}
 	}
 
 	private void AttackEvent(ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals(_playerInfo)) {
-			_controlModState = ControlModState.ATTACKING;
+		if (inputController.PlayerInfo.Equals(_playerInfo) && !IsAttacking() && _moveModState != MoveModState.RESPAWN) {
+			_controlModState = ControlModState.ATTACK;
 		}
 	}
 
@@ -408,8 +412,12 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void NoAttackEvent(ZMPlayerInputController inputController) {
 		if (inputController.PlayerInfo.Equals(_playerInfo)) {
-			_controlModState = ControlModState.NEUTRAL;
+			//_controlModState = ControlModState.NEUTRAL;
 		}
+	}
+
+	void ResetControlModState() {
+		_controlModState = ControlModState.NEUTRAL;
 	}
 
 	void onControllerCollider( RaycastHit2D hit )
@@ -427,7 +435,8 @@ public class ZMPlayerController : MonoBehaviour
 		} else if (hit.collider.gameObject.layer == LayerMask.NameToLayer(kSpecialInteractiblesLayerMaskName)) {
 			if (hit.normal.y == 1.0f) {
 				if (hit.collider.CompareTag(kPlayerTag)) {
-					if (IsPerformingPlunge()) {
+					ZMPlayerController otherPlayer = hit.collider.GetComponent<ZMPlayerController>();
+					if (IsPerformingPlunge() && otherPlayer.IsAbleToDie()) {
 						KillOpponent (hit.collider.gameObject);
 					}
 				}
@@ -515,9 +524,11 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
-	private void KillSelf ()
+	private void KillSelf()
 	{
 		_moveModState = MoveModState.RESPAWN;
+		_controlModState = ControlModState.NEUTRAL;
+		_controlMoveState = ControlMoveState.NEUTRAL;
 
 		// Handle death visuals here
 		this.renderer.material.color = Color.red;
@@ -529,7 +540,6 @@ public class ZMPlayerController : MonoBehaviour
 		// Set player states
 		_playerInPath = false;
 		runSpeed = 0f;
-		_velocity.y = 100f;
 
 		// Notify event handlers of player's death
 		if (PlayerDeathEvent != null) {
@@ -558,7 +568,8 @@ public class ZMPlayerController : MonoBehaviour
 	private void Respawn() {
 		GetComponent<SpriteRenderer>().sprite = _baseSprite;
 		light.enabled = true;
-
+		_velocity.y = 100f;
+		
 		EnablePlayer();
 
 		if (PlayerRespawnEvent != null) {
@@ -598,30 +609,22 @@ public class ZMPlayerController : MonoBehaviour
 		}
 
 		_moveModState = MoveModState.NEUTRAL;
+		_controlModState = ControlModState.NEUTRAL;
 		_playerInPath = false;
 	}
 
 	private RaycastHit2D CheckLeft(float distance, LayerMask mask) {
-		Vector2 rayOrigin = new Vector2(_controller.transform.position.x - 17f,
-		                                _controller.transform.position.y);
+		Vector2 rayOrigin = new Vector2(_controller.transform.position.x - 17f, _controller.transform.position.y);
 		Vector2 rayDirection = new Vector2(-1.0f, 0.0f);
 
 		return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
 	}
 
 	private RaycastHit2D CheckRight(float distance, LayerMask mask) {
-		Vector2 rayOrigin = new Vector2( _controller.transform.position.x + 17f,
-		                                 _controller.transform.position.y);
+		Vector2 rayOrigin = new Vector2( _controller.transform.position.x + 17f, _controller.transform.position.y);
 		Vector2 rayDirection = new Vector2(1.0f, 0.0f);
 
 		return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
-	}
-
-	private RaycastHit2D CheckLeftTrigger(float distance) {
-		Vector2 rayOrigin = new Vector2( _controller.transform.position.x, _controller.transform.position.y);
-		Vector2 rayDirection = new Vector2(-1.0f, 0.0f);
-		
-		return Physics2D.Raycast(rayOrigin, rayDirection, distance, _controller.triggerMask);
 	}
 
 	private RaycastHit2D CheckBelowPlatform(float distance) {
@@ -629,21 +632,6 @@ public class ZMPlayerController : MonoBehaviour
 		Vector2 rayDirection = new Vector2(0.0f, -1.0f);
 		
 		return Physics2D.Raycast(rayOrigin, rayDirection, distance, _controller.platformMask);
-	}
-	
-	private RaycastHit2D CheckRightTrigger(float distance) {
-		Vector2 rayOrigin = new Vector2( _controller.transform.position.x,
-		                                _controller.transform.position.y);
-		Vector2 rayDirection = new Vector2(1.0f, 0.0f);
-
-		return Physics2D.Raycast(rayOrigin, rayDirection, distance, _controller.triggerMask);
-	}
-
-	private RaycastHit2D CheckBelowTrigger(float distance) {
-		Vector2 rayOrigin = new Vector2( _controller.transform.position.x, _controller.transform.position.y);
-		Vector2 rayDirection = new Vector2(0.0f, -1.0f);
-
-		return Physics2D.Raycast(rayOrigin, rayDirection, distance, _controller.triggerMask);
 	}
 
 	private bool IsTouchingEitherSide() {
@@ -700,5 +688,9 @@ public class ZMPlayerController : MonoBehaviour
 
 	private bool ShouldRecoilWithPlayer(ZMPlayerController other) {
 		return IsPerformingLunge() && other.IsPerformingLunge();
+	}
+
+	private bool IsAttacking() {
+		return  _controlModState == ControlModState.ATTACKING || _controlModState == ControlModState.ATTACK;
 	}
 }

@@ -15,6 +15,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	private float _currentScore;
 	private bool _readyFired;
 	private bool _pedestalAtEnd;
+	private ZMPlayer.ZMPlayerInfo _playerInfo;
 
 	// consntants
 	private const string kScoreFormat = "0.0";
@@ -24,6 +25,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		_currentScore = 0;
 		_readyFired = false;
 		_pedestalAtEnd = false;
+		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 
 		ZMLobbyPedestalController.AtPathEndEvent += HandleAtPathEndEvent;
 
@@ -41,7 +43,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 
 	void OnTriggerStay2D(Collider2D collider) {
 		if (collider.CompareTag("Pedestal")) {
-			if (collider.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag)) {
+			if (collider.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(_playerInfo.playerTag)) {
 				if (_currentScore < maxScore) {
 					if (_pedestalAtEnd)
 						AddToScore(scoreAmount);
