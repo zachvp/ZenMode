@@ -4,12 +4,9 @@ using System.Collections;
 public class ZMCameraController : MonoBehaviour {
 	public float endZoom = 432;
 
-	private float   _zoomTargetSize;
-	private Vector3 _zoomTargetPosition;
-
-	private bool    _isZooming;
-	private bool    _isMoving;
-	private float 	_speed = 3f;
+	private float _zoomTargetSize;
+	private bool  _isZooming;
+	private float _speed = 3f;
 
 	private float _totalDistance;
 	private int _zoomStep;
@@ -43,8 +40,6 @@ public class ZMCameraController : MonoBehaviour {
 	
 	void Start() {
 		GetComponent<ZMMovementBobbing>().enabled = false;
-
-		_isMoving = true;
 	}
 
 	void FixedUpdate() {

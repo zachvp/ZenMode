@@ -10,7 +10,7 @@ public class ZMColorResponse : MonoBehaviour {
 	private State _state;
 
 	// Use this for initialization
-	void Awake () {
+	void Start () {
 		_baseColor = renderer.material.color;
 	}
 	
@@ -29,7 +29,6 @@ public class ZMColorResponse : MonoBehaviour {
 	public void Awaken(Color highlight) {
 		_state = State.AWAKE;
 		_paintedColor = highlight;
-
 
 		float offset = 0.3f;
 		_paintedColor.r += offset;

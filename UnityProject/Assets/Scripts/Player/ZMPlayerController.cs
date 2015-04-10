@@ -300,7 +300,7 @@ public class ZMPlayerController : MonoBehaviour
 
 		// Handle material color.
 		if (IsAbleToKill()) {
-			this.renderer.material.color = Color.red;
+			this.renderer.material.color = Color.yellow;
 		} else if (_moveModState == MoveModState.DISABLED) {
 			this.renderer.material.color = Color.grey;
 		} else if (_moveModState == MoveModState.RESPAWN) {
@@ -421,7 +421,7 @@ public class ZMPlayerController : MonoBehaviour
 
 			if (hit.normal.y == 1.0) {
 				//hit.collider.renderer.material.color = Color.red;
-//				hit.collider.GetComponent<ZMColorResponse>().Awaken(light.color);
+				hit.collider.GetComponent<ZMColorResponse>().Awaken(light.color);
 			}
 
 		} else if (hit.collider.gameObject.layer == LayerMask.NameToLayer(kSpecialInteractiblesLayerMaskName)) {
@@ -520,7 +520,7 @@ public class ZMPlayerController : MonoBehaviour
 		_moveModState = MoveModState.RESPAWN;
 
 		// Handle death visuals here
-		this.renderer.material.color = Color.white;
+		this.renderer.material.color = Color.red;
 		light.enabled = false;
 
 		DisablePlayer();
@@ -546,10 +546,12 @@ public class ZMPlayerController : MonoBehaviour
 		playerController.KillSelf();
 
 		ZMMetricsCollector collector = GetComponent<ZMMetricsCollector>();
-		if (IsPerformingLunge()) {
-			collector.AddDeathData(0);
-		} else {
-			collector.AddDeathData(1);
+		if (collector != null) {
+			if (IsPerformingLunge()) {
+				collector.AddDeathData(0);
+			} else {
+				collector.AddDeathData(1);
+			}
 		}
 	}
 
