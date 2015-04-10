@@ -41,16 +41,18 @@ public class ZMLobbyScoreController : MonoBehaviour {
 
 	void OnTriggerStay2D(Collider2D collider) {
 		if (collider.CompareTag("Pedestal")) {
-			if (_currentScore < maxScore) {
-				if (_pedestalAtEnd)
-					AddToScore(scoreAmount);
-			} else if(!_readyFired) {
-				if (MaxScoreReachedEvent != null) {
-					MaxScoreReachedEvent(this);
-				}
+			if (collider.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag)) {
+				if (_currentScore < maxScore) {
+					if (_pedestalAtEnd)
+						AddToScore(scoreAmount);
+				} else if(!_readyFired) {
+					if (MaxScoreReachedEvent != null) {
+						MaxScoreReachedEvent(this);
+					}
 
-				UpdateText("Ready!");
-				_readyFired = true;
+					UpdateText("Ready!");
+					_readyFired = true;
+				}
 			}
 		}
 	}
