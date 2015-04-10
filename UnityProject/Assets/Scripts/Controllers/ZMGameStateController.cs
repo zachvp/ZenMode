@@ -45,6 +45,16 @@ public class ZMGameStateController : MonoBehaviour {
 		ZMScoreController.MaxScoreReached += MatchWon;
 		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
 		ZMGameInputManager.BackInputEvent += HandleBackInputEvent;
+		ZMLobbyPedestalController.FullPathCycleEvent += HandleFullPathCycleEvent;
+	}
+
+	void HandleFullPathCycleEvent (ZMLobbyPedestalController lobbyPedestalController)
+	{
+		if (_matchState == MatchState.PRE_MATCH) {
+			_matchState = MatchState.BEGIN_COUNTDOWN;
+			
+			Time.timeScale = 1.0f;
+		}
 	}
 
 	void HandleBackInputEvent ()
@@ -71,7 +81,6 @@ public class ZMGameStateController : MonoBehaviour {
 			}
 		} else {
 			_matchState = MatchState.BEGIN_COUNTDOWN;
-
 
 			Time.timeScale = 1.0f;
 		}

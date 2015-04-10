@@ -5,8 +5,8 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	public Transform[] waypoints;
 	public float moveSpeed = 1.5f;
 
-	public delegate void AtPathEndAction(ZMLobbyPedestalController lobbyPedestalController);
-	public static event AtPathEndAction AtPathEndEvent;
+	public delegate void AtPathEndAction(ZMLobbyPedestalController lobbyPedestalController); public static event AtPathEndAction AtPathEndEvent;
+	public delegate void FullPathCycleAction(ZMLobbyPedestalController lobbyPedestalController); public static event FullPathCycleAction FullPathCycleEvent;
 
 	// movement
 	private enum MoveState { STOPPED, MOVE, MOVING, AT_TARGET };
@@ -38,9 +38,10 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	}
 
 	void OnDestroy() {
-		AtPathEndEvent = null;
-		ZMGameStateController.StartGameEvent -= HandleStartGameEvent;
+		AtPathEndEvent 	   = null;
+		FullPathCycleEvent = null;
 
+		ZMGameStateController.StartGameEvent -= HandleStartGameEvent;
 		ZMLobbyScoreController.MaxScoreReachedEvent -= HandleMaxScoreReachedEvent;
 	}
 	
@@ -71,13 +72,22 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 		} else if (_moveState == MoveState.AT_TARGET) {
 			if (_waypointIndex < waypoints.GetLength(0)) {
 				_moveState = MoveState.MOVE;
-			} else {
+			} else if (_waypointIndex == waypoints.GetLength(0)) {
 				if (AtPathEndEvent != null) {
 					AtPathEndEvent(this);
 				}
 
+				_waypointIndex += 1;
+
 				ReturnToBase();
 				//_moveState = MoveState.STOPPED;
+			} else {
+				// has returned back to start
+				_moveState = MoveState.STOPPED;
+
+				if (FullPathCycleEvent != null) {
+					FullPathCycleEvent(this);
+				}
 			}
 		}
 	}

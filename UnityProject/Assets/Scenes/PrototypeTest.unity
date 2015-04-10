@@ -38283,9 +38283,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 984321579}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cca65eb252482f5428e11916677d043f, type: 3}
+  m_Script: {fileID: 11500000, guid: 6d1c901bda2caaa49ab24bbe630002d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  endZoom: 432
 --- !u!114 &984321587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65299,7 +65300,7 @@ SpriteRenderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
+  - {fileID: 2100000, guid: 8775906ad36b1da4981ce7a54887ca02, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
