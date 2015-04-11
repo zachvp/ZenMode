@@ -4,6 +4,7 @@ using System.Collections;
 public class ZMLobbyPedestalController : MonoBehaviour {
 	public Transform[] waypoints;
 	public float moveSpeed = 1.5f;
+	public bool endPathAtStart = false;
 
 	public delegate void AtPathEndAction(ZMLobbyPedestalController lobbyPedestalController); public static event AtPathEndAction AtPathEndEvent;
 	public delegate void FullPathCycleAction(ZMLobbyPedestalController lobbyPedestalController); public static event FullPathCycleAction FullPathCycleEvent;
@@ -77,10 +78,13 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 					AtPathEndEvent(this);
 				}
 
-				_waypointIndex += 1;
-
-				ReturnToBase();
-				//_moveState = MoveState.STOPPED;
+				if (endPathAtStart) {
+					_waypointIndex += 1;
+					
+					ReturnToBase();
+				} else {
+					_moveState = MoveState.STOPPED;
+				}
 			} else {
 				// has returned back to start
 				_moveState = MoveState.STOPPED;

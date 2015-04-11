@@ -26,7 +26,7 @@ State:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: fx_plunge
-  m_Speed: 1
+  m_Speed: 2
   m_CycleOffset: 0
   m_Motions:
   - {fileID: 7400000, guid: c926c3325080d4e258d249d11e96518e, type: 2}
