@@ -40,7 +40,7 @@ GameObject:
   - 136: {fileID: 13626252}
   - 23: {fileID: 2326252}
   m_Layer: 0
-  m_Name: P2Indicator
+  m_Name: P1Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -114,7 +114,7 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 2100000, guid: 3b655e93b54cea54aa32e5df44d83a00, type: 2}
+  - {fileID: 2100000, guid: c9d6e2fe8a758b542b0daa746cb7b96c, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -237,7 +237,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 3
   m_Type: 2
-  m_Color: {r: 0, g: .958620548, b: 1, a: 1}
+  m_Color: {r: .188235298, g: .749019623, b: .41568628, a: 1}
   m_Intensity: 2.5
   m_Range: 200
   m_SpotAngle: 30
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e950e28a513cd540881118fcdedf4f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTag: 1
+  playerTag: 0
 --- !u!114 &11426256
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -373,7 +373,7 @@ MonoBehaviour:
   _audioPlunge: {fileID: 8300000, guid: 645c8ec021ec64acd89ce74eb22fa741, type: 3}
   _audioRecoil: {fileID: 8300000, guid: 76a65fde33e55446997bb3e273988ea0, type: 3}
   _audioDeath: {fileID: 8300000, guid: 50d21bffc1b5d9b449119d929da017cc, type: 3}
-  _audioLand: {fileID: 0}
+  _audioLand: {fileID: 8300000, guid: c5bc23f4d4efa964989f6bc2a1d302b5, type: 3}
 --- !u!114 &11480982
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -414,7 +414,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e950e28a513cd540881118fcdedf4f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTag: 1
+  playerTag: 0
 --- !u!114 &11493886
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -22,7 +22,7 @@ public class ZMPlayerController : MonoBehaviour
 	private float TILE_SIZE = 32.0f;
 	private float RESPAWN_TIME = 2.0f;
 	private float THROWING_KNIFE_COOLDOWN = 0.5f;
-	private float LUNGE_COOLDOWN = 0.4f;
+	private float LUNGE_COOLDOWN = 0.3f;
 
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 	private CharacterController2D _controller;
@@ -203,16 +203,18 @@ public class ZMPlayerController : MonoBehaviour
 					audio.PlayOneShot(_audioPlunge);
 					_moveModState = MoveModState.PLUNGE;
 				}
-			} else if (!IsPerformingLunge() && _canLunge) {
-				audio.PlayOneShot(_audioLunge);
-				_moveModState = MoveModState.LUNGE;
+			} else if (!IsPerformingLunge()) {
+				if (_canLunge) {
+					audio.PlayOneShot(_audioLunge);
+					_moveModState = MoveModState.LUNGE;
 
-				Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
-				Instantiate(_effectLungeObject, new Vector2(transform.position.x - 3, transform.position.y - 10), rotation);
+					Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
+					Instantiate(_effectLungeObject, new Vector2(transform.position.x - 3, transform.position.y - 10), rotation);
 
-				// Set a cooldown before we can lunge again.
-				_canLunge = false;
-				Invoke ("LungeCooldown", LUNGE_COOLDOWN);
+					// Set a cooldown before we can lunge again.
+					Invoke ("LungeCooldown", LUNGE_COOLDOWN);
+					_canLunge = false;
+				}
 			}
 		} 
 		else if (IsTouchingEitherSide()) {
@@ -284,24 +286,23 @@ public class ZMPlayerController : MonoBehaviour
 			if (_controlModState == ControlModState.WALL_JUMPING) {
 				_controlModState = ControlModState.NEUTRAL;
 
-				if (IsMovingLeft() || IsMovingRight()) {
-					_velocity.y = JUMP_HEIGHT;
-					audio.PlayOneShot(_audioJumps[Random.Range (0, _audioJumps.Length)]);
-					Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
-					Instantiate (_effectSkidObject, new Vector2 (transform.position.x, transform.position.y - 20), rotation);
+				if (IsMovingLeft () || IsMovingRight()) {
+					if (!_controller.isGrounded) {
+						_velocity.y = JUMP_HEIGHT;
+						audio.PlayOneShot(_audioJumps[Random.Range (0, _audioJumps.Length)]);
+						Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
+						Instantiate (_effectSkidObject, new Vector2 (transform.position.x, transform.position.y - 20), rotation);
+						
+						if (IsMovingLeft()) {
+							runSpeed = WALL_JUMP_KICK_SPEED * 0.6f;
+						}
+						else if (IsMovingRight()) {
+							runSpeed = -WALL_JUMP_KICK_SPEED * 0.6f;
+						}
+						
+						_moveModState = MoveModState.NEUTRAL;
+					}
 				}
-
-				if (IsMovingLeft())
-					runSpeed = WALL_JUMP_KICK_SPEED * 0.6f;
-				else 
-					runSpeed = WALL_JUMP_KICK_SPEED;
-
-				if (IsMovingRight())
-					runSpeed = -WALL_JUMP_KICK_SPEED * 0.6f;
-				else
-					runSpeed = -WALL_JUMP_KICK_SPEED;
-
-				_moveModState = MoveModState.NEUTRAL;
 			}
 		}
 
@@ -343,6 +344,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	void LungeCooldown() {
 		_canLunge = true;
+		_controlModState = ControlModState.NEUTRAL;
 	}
 
 	void OnDestroy() {
