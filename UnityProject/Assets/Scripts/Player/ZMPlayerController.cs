@@ -22,6 +22,7 @@ public class ZMPlayerController : MonoBehaviour
 	private float TILE_SIZE = 32.0f;
 	private float RESPAWN_TIME = 2.0f;
 	private float THROWING_KNIFE_COOLDOWN = 0.5f;
+	private float LUNGE_COOLDOWN = 0.4f;
 
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 	private CharacterController2D _controller;
@@ -30,7 +31,9 @@ public class ZMPlayerController : MonoBehaviour
 	private RaycastHit2D _checkTouchingLeft;
 	private RaycastHit2D _checkTouchingRight;
 	private Vector3 _velocity;
+
 	private bool _canThrowKnife;
+	private bool _canLunge;
 
 	// Speeds of two players before recoil.
 	private Vector2 _collisionVelocities;
@@ -47,7 +50,6 @@ public class ZMPlayerController : MonoBehaviour
 	private MovementDirectionState _movementDirection;
 	private MoveModState _moveModState;
 	private bool _playerInPath;
-	//private AbilityState _abilityState;
 
 	// Tags and layers.
 	private const string kPlayerTag						    = "Player";
@@ -72,7 +74,8 @@ public class ZMPlayerController : MonoBehaviour
 	public GameObject _effectLandObject;
 	public GameObject _effectLungeObject;
 	public GameObject _effectSkidObject;
-	public GameObject _clashEffect;
+	public GameObject _effectClashObject;
+	public GameObject _effectPlungeObject;
 
 	// Sound resources.
 	public AudioClip[] _audioJumps;
@@ -99,6 +102,7 @@ public class ZMPlayerController : MonoBehaviour
 		_animator = GetComponent<Animator>();
 		_controller = GetComponent<CharacterController2D>();
 		_canThrowKnife = true;
+		_canLunge = true;
 
 		_controller.onControllerCollidedEvent += onControllerCollider;
 		_controller.onTriggerEnterEvent += onTriggerEnterEvent;
@@ -199,12 +203,16 @@ public class ZMPlayerController : MonoBehaviour
 					audio.PlayOneShot(_audioPlunge);
 					_moveModState = MoveModState.PLUNGE;
 				}
-			} else if (!IsPerformingLunge()) {
+			} else if (!IsPerformingLunge() && _canLunge) {
 				audio.PlayOneShot(_audioLunge);
 				_moveModState = MoveModState.LUNGE;
 
 				Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
 				Instantiate(_effectLungeObject, new Vector2(transform.position.x - 3, transform.position.y - 10), rotation);
+
+				// Set a cooldown before we can lunge again.
+				_canLunge = false;
+				Invoke ("LungeCooldown", LUNGE_COOLDOWN);
 			}
 		} 
 		else if (IsTouchingEitherSide()) {
@@ -218,6 +226,7 @@ public class ZMPlayerController : MonoBehaviour
 			Plunge();
 		} else if (_moveModState == MoveModState.PLUNGING) {
 			if (_controller.isGrounded) {
+				Instantiate(_effectPlungeObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 				_moveModState = MoveModState.NEUTRAL;
 			}
 		} else if (_moveModState == MoveModState.LUNGE) {
@@ -248,14 +257,8 @@ public class ZMPlayerController : MonoBehaviour
 
 		if (_moveModState == MoveModState.RECOIL) {
 			audio.PlayOneShot(_audioRecoil);
-
+			Instantiate(_effectClashObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 			_moveModState = MoveModState.RECOILING;
-
-			// create recoil effect
-			if (_clashEffect != null) {
-				_clashEffect.transform.position = transform.position;
-				_clashEffect.particleSystem.Play();
-			}
 
 			if (PlayerRecoilEvent != null) {
 				PlayerRecoilEvent();
@@ -332,6 +335,10 @@ public class ZMPlayerController : MonoBehaviour
 
 	void ThrowingKnifeCooldown() {
 		_canThrowKnife = true;
+	}
+
+	void LungeCooldown() {
+		_canLunge = true;
 	}
 
 	void OnDestroy() {
@@ -421,7 +428,7 @@ public class ZMPlayerController : MonoBehaviour
 
 			if (hit.normal.y == 1.0) {
 				//hit.collider.renderer.material.color = Color.red;
-//				hit.collider.GetComponent<ZMColorResponse>().Awaken(light.color);
+				//hit.collider.GetComponent<ZMColorResponse>().Awaken(light.color);
 			}
 
 		} else if (hit.collider.gameObject.layer == LayerMask.NameToLayer(kSpecialInteractiblesLayerMaskName)) {
@@ -586,10 +593,7 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void EndLunge() {
-		float direction = Mathf.Sign(runSpeed);
-		if (runSpeed != 0) {
-			runSpeed = RUN_SPEED_MAX / 2 * direction;
-		}
+		runSpeed = 0;
 
 		_moveModState = MoveModState.NEUTRAL;
 		_playerInPath = false;

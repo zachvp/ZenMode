@@ -358,12 +358,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 127eae2410b544264aa7a0028d2bbd04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _deathSprite: {fileID: 21300000, guid: ee58f2f51553ec844b88fce6f9c89d5d, type: 3}
   _throwingKnifeObject: {fileID: 135656, guid: 7adf14dc179994333ae2098e78540206, type: 2}
   _effectJumpObject: {fileID: 186170, guid: 15ee3afdf7f3945768e4b6e895d7b6e1, type: 2}
   _effectLandObject: {fileID: 186170, guid: 68c410150b463470881a7a961a80d1cd, type: 2}
   _effectLungeObject: {fileID: 186170, guid: 26f3e19a7e31149c6b8b577ebd043b15, type: 2}
   _effectSkidObject: {fileID: 186170, guid: 54d3cfbcb35964ecaac6cbfb681e394d, type: 2}
+  _effectClashObject: {fileID: 168640, guid: df83d9dbd5bd7473a8f78bd8170e1daa, type: 2}
+  _effectPlungeObject: {fileID: 186170, guid: 915da6d3d9b4542f9b1853b021021d77, type: 2}
   _audioJumps:
   - {fileID: 8300000, guid: 05fc314cbf0524b2996a454678982d2d, type: 3}
   - {fileID: 8300000, guid: 3d73eee8c8fef460aba5dfbacdcae461, type: 3}
@@ -372,6 +373,7 @@ MonoBehaviour:
   _audioPlunge: {fileID: 8300000, guid: 645c8ec021ec64acd89ce74eb22fa741, type: 3}
   _audioRecoil: {fileID: 8300000, guid: 76a65fde33e55446997bb3e273988ea0, type: 3}
   _audioDeath: {fileID: 8300000, guid: 50d21bffc1b5d9b449119d929da017cc, type: 3}
+  _audioLand: {fileID: 0}
 --- !u!114 &11480982
 MonoBehaviour:
   m_ObjectHideFlags: 1
