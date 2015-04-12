@@ -23,6 +23,7 @@ public class ZMPlayerController : MonoBehaviour
 	private float RESPAWN_TIME = 2.0f;
 	private float THROWING_KNIFE_COOLDOWN = 0.5f;
 	private float LUNGE_COOLDOWN = 0.3f;
+	private int FRAMES_PER_STEP = 30;
 
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 	private CharacterController2D _controller;
@@ -31,6 +32,7 @@ public class ZMPlayerController : MonoBehaviour
 	private RaycastHit2D _checkTouchingLeft;
 	private RaycastHit2D _checkTouchingRight;
 	private Vector3 _velocity;
+	private int _framesUntilStep = 0;
 
 	private bool _canThrowKnife;
 	private bool _canLunge;
@@ -82,12 +84,13 @@ public class ZMPlayerController : MonoBehaviour
 	public AudioClip[] _audioJump;
 	public AudioClip[] _audioHurt;
 	public AudioClip[] _audioGore;
+	public AudioClip[] _audioStep;
+	public AudioClip[] _audioLand;
+	public AudioClip[] _audioKill;
+	public AudioClip[] _audioSword;
 	public AudioClip _audioLunge;
 	public AudioClip _audioPlunge;
 	public AudioClip _audioRecoil;
-	public AudioClip _audioDeath;
-	public AudioClip _audioLand;
-
 
 	// Delegates
 	public delegate void PlayerDeathAction(ZMPlayerController playerController); public static event PlayerDeathAction PlayerDeathEvent;
@@ -152,12 +155,13 @@ public class ZMPlayerController : MonoBehaviour
 		if (_controller.isGrounded) {
 			// Landing.
 			if (_velocity.y < -1) {
+				audio.PlayOneShot(_audioLand[Random.Range (0, _audioLand.Length)], 0.5f);
 				Instantiate(_effectLandObject, new Vector2(transform.position.x - 3, transform.position.y - 8), transform.rotation);
 			}
 			_velocity.y = 0;
 
 			if (IsPerformingPlunge()) {
-				audio.PlayOneShot(_audioLand);
+				audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 
 				if (PlayerLandPlungeEvent != null) {
 					PlayerLandPlungeEvent();
@@ -174,6 +178,14 @@ public class ZMPlayerController : MonoBehaviour
 			} else if (_movementDirection == MovementDirectionState.FACING_LEFT) {
 				if (runSpeed > -RUN_SPEED_MAX) {
 					runSpeed -= ACCELERATION;
+				}
+			}
+
+			if (_controller.isGrounded) {
+				_framesUntilStep++;
+				if (_framesUntilStep >= FRAMES_PER_STEP) {
+					_framesUntilStep = 0;
+					audio.PlayOneShot(_audioStep[Random.Range (0, _audioStep.Length)], 0.1f);
 				}
 			}
 		}
@@ -203,7 +215,7 @@ public class ZMPlayerController : MonoBehaviour
 
 			if (!_controller.isGrounded) {
 				if (!IsPerformingPlunge()) {
-					audio.PlayOneShot(_audioPlunge);
+					//audio.PlayOneShot(_audioPlunge);
 					_moveModState = MoveModState.PLUNGE;
 				}
 			} else if (!IsPerformingLunge()) {
@@ -263,7 +275,8 @@ public class ZMPlayerController : MonoBehaviour
 		}
 
 		if (_moveModState == MoveModState.RECOIL) {
-			audio.PlayOneShot(_audioRecoil);
+			//audio.PlayOneShot(_audioRecoil);
+			audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 			Instantiate(_effectClashObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 			_moveModState = MoveModState.RECOILING;
 
@@ -560,6 +573,7 @@ public class ZMPlayerController : MonoBehaviour
 
 		audio.PlayOneShot(_audioGore[Random.Range (0, _audioGore.Length)]);
 		audio.PlayOneShot(_audioHurt[Random.Range (0, _audioHurt.Length)]);
+		audio.PlayOneShot(_audioKill[Random.Range (0, _audioKill.Length)]);
 		_goreEmitter.Play();
 	}
 

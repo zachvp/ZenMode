@@ -365,15 +365,46 @@ MonoBehaviour:
   _effectSkidObject: {fileID: 186170, guid: 54d3cfbcb35964ecaac6cbfb681e394d, type: 2}
   _effectClashObject: {fileID: 168640, guid: df83d9dbd5bd7473a8f78bd8170e1daa, type: 2}
   _effectPlungeObject: {fileID: 186170, guid: 915da6d3d9b4542f9b1853b021021d77, type: 2}
-  _audioJumps:
+  _goreEmitter: {fileID: 0}
+  _audioJump:
   - {fileID: 8300000, guid: 05fc314cbf0524b2996a454678982d2d, type: 3}
   - {fileID: 8300000, guid: 3d73eee8c8fef460aba5dfbacdcae461, type: 3}
   - {fileID: 8300000, guid: ef1a9d9012c864ba38bdf0e63237f947, type: 3}
+  _audioHurt:
+  - {fileID: 8300000, guid: 2921810b545d649a5a1578d3cfe5c5b0, type: 3}
+  - {fileID: 8300000, guid: bd6e6239b0d064998acb6c2ff9a4cda6, type: 3}
+  - {fileID: 8300000, guid: 50a89e1483c4846cda3c7497f40bb78d, type: 3}
+  _audioGore:
+  - {fileID: 8300000, guid: 457f9e936d62c418ba64913a9a33e7dd, type: 3}
+  - {fileID: 8300000, guid: b207f8e292aa14fa7acd51b1fb1bfbc4, type: 3}
+  - {fileID: 8300000, guid: 16b95b729d58e4e7d9b097f09a2724bb, type: 3}
+  _audioStep:
+  - {fileID: 8300000, guid: 6f820c97a13d94878be4d1bda6fe4eea, type: 3}
+  - {fileID: 8300000, guid: d747dab8f3ae44ee6b17754f15fcf091, type: 3}
+  - {fileID: 8300000, guid: 6a7782b87ecf4441aba7615dd676ca3f, type: 3}
+  - {fileID: 8300000, guid: 18ed260c2b9c94deaa0f3a3e900a7ade, type: 3}
+  - {fileID: 8300000, guid: 4c70e580b88984941a3b6bebee74e192, type: 3}
+  - {fileID: 8300000, guid: 983044bcc4dbc4624ac4a35512da1f42, type: 3}
+  _audioLand:
+  - {fileID: 8300000, guid: ddce20cd96baa4eeb84766ec7d7ca19f, type: 3}
+  - {fileID: 8300000, guid: d6c9d6cf6aa93485698e44e63d1f5b87, type: 3}
+  - {fileID: 8300000, guid: b88eefe91c9154ccbaafcd2e9187afad, type: 3}
+  _audioKill:
+  - {fileID: 8300000, guid: 378aff85f736d42e2b95db52a34b50f2, type: 3}
+  - {fileID: 8300000, guid: b1785145bd3d24cadb6a5ce5a8c2b2ca, type: 3}
+  - {fileID: 8300000, guid: 110f1ccc8efeb493a8244a604b14d0a6, type: 3}
+  - {fileID: 8300000, guid: 54ac8d3daefe04c188e8e5604b47fa52, type: 3}
+  - {fileID: 8300000, guid: 3b47409fd01d943a5b381b797553b252, type: 3}
+  _audioSword:
+  - {fileID: 8300000, guid: 594d8400e4d7a4c46a3904097aba6b42, type: 3}
+  - {fileID: 8300000, guid: e39166e2fc96b42d7ad0c9583d7da0a4, type: 3}
+  - {fileID: 8300000, guid: 80755fc55b979415ca59cea118b16741, type: 3}
+  - {fileID: 8300000, guid: 2a3fcf69d215c4c8b9abac2a4ee2a4c3, type: 3}
+  - {fileID: 8300000, guid: b2299be54b2d5429b8ccc04b3686b971, type: 3}
+  - {fileID: 8300000, guid: ce278ac397cc447b698840dd5460a784, type: 3}
   _audioLunge: {fileID: 8300000, guid: 90f112db0fbee461ba791b35e86d94a4, type: 3}
   _audioPlunge: {fileID: 8300000, guid: 645c8ec021ec64acd89ce74eb22fa741, type: 3}
   _audioRecoil: {fileID: 8300000, guid: 76a65fde33e55446997bb3e273988ea0, type: 3}
-  _audioDeath: {fileID: 8300000, guid: 50d21bffc1b5d9b449119d929da017cc, type: 3}
-  _audioLand: {fileID: 8300000, guid: c5bc23f4d4efa964989f6bc2a1d302b5, type: 3}
 --- !u!114 &11480982
 MonoBehaviour:
   m_ObjectHideFlags: 1
