@@ -25,6 +25,7 @@ public class ZMGameStateController : MonoBehaviour {
 	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, GameObject spawnObject); public static event SpawnObjectAction SpawnObjectEvent;
 	public delegate void StartGameAction(); public static event StartGameAction StartGameEvent;
 	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
+	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
 	public delegate void GameEndAction();   public static event GameEndAction   GameEndEvent;
 	public delegate void BeginCountdownAction(); public static event BeginCountdownAction BeginCountdownEvent;
 
@@ -73,17 +74,12 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void HandleStartInputEvent ()
 	{
-		if (_matchState != MatchState.PRE_MATCH) {
-			if (_gameState == GameState.PAUSE || _gameState == GameState.PAUSED) {
-				_gameState =  GameState.RESUME;
-			} else {
-				//_previousState = _matchState;
-				_gameState = GameState.PAUSE;
-			}
-		} else {
+		if (_matchState == MatchState.PRE_MATCH) {
 			_matchState = MatchState.BEGIN_COUNTDOWN;
-
-			Time.timeScale = 1.0f;
+		} else if (_gameState == GameState.PAUSE || _gameState == GameState.PAUSED) {
+			_gameState =  GameState.RESUME;
+		} else if (_matchState != MatchState.COUNTDOWN) {
+			_gameState = GameState.PAUSE;
 		}
 	}
 
@@ -95,11 +91,12 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	void OnDestroy() {
-		SpawnObjectEvent   = null;
-		StartGameEvent     = null;
-		PauseGameEvent	   = null;
-		GameEndEvent	   = null;
+		SpawnObjectEvent    = null;
+		StartGameEvent      = null;
+		PauseGameEvent	    = null;
+		GameEndEvent	    = null;
 		BeginCountdownEvent = null;
+		ResumeGameEvent 	= null;
 	}
 
 	void Update() {
@@ -120,17 +117,23 @@ public class ZMGameStateController : MonoBehaviour {
 			if (_matchState != MatchState.POST_MATCH) {
 				_gameState = GameState.NEUTRAL;
 				outputText.text = "";
+
+				if (ResumeGameEvent != null) {
+					ResumeGameEvent();
+				}
+
 				ResumeGame();
 			}
 		} else if (_gameState == GameState.PAUSE) {
 			if (_matchState != MatchState.POST_MATCH) {
 				_gameState = GameState.PAUSED;
-				outputText.text = "Paused\nPress 'back' to reset";
-				PauseGame();
+				outputText.text = "Paused";
 
 				if (PauseGameEvent != null) {
 					PauseGameEvent();
 				}
+
+				PauseGame();
 			}
 		} else if (_gameState == GameState.RESET) {
 			_gameState = GameState.NEUTRAL;
