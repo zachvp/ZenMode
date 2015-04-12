@@ -22,11 +22,11 @@ public class ZMGameStateController : MonoBehaviour {
 	private const string kSpawnpointTag = "Spawnpoint";
 
 	// delegates
-	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, GameObject spawnObject);
-	public static event SpawnObjectAction SpawnObjectEvent;
+	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, GameObject spawnObject); public static event SpawnObjectAction SpawnObjectEvent;
+	public delegate void StartGameAction(); public static event StartGameAction StartGameEvent;
+	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
+	public delegate void GameEndAction();   public static event GameEndAction   GameEndEvent;
 
-	public delegate void StartGameAction();
-	public static event StartGameAction StartGameEvent;
 
 	// Use this for initialization
 	void Awake () {
@@ -96,6 +96,8 @@ public class ZMGameStateController : MonoBehaviour {
 	void OnDestroy() {
 		SpawnObjectEvent = null;
 		StartGameEvent   = null;
+		PauseGameEvent	 = null;
+		GameEndEvent	 = null;
 	}
 
 	void Update() {
@@ -128,6 +130,10 @@ public class ZMGameStateController : MonoBehaviour {
 		} else if (_matchState == MatchState.POST_MATCH) {
 			outputText.text = "Match Ended!";
 			PauseGame();
+
+			if (GameEndEvent != null) {
+				GameEndEvent();
+			}
 		}
 
 		if (_gameState == GameState.RESUME) {
@@ -141,6 +147,10 @@ public class ZMGameStateController : MonoBehaviour {
 				_gameState = GameState.PAUSED;
 				outputText.text = "Paused\nPress 'back' to reset";
 				PauseGame();
+
+				if (PauseGameEvent != null) {
+					PauseGameEvent();
+				}
 			}
 		} else if (_gameState == GameState.RESET) {
 			_gameState = GameState.NEUTRAL;
