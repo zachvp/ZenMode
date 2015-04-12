@@ -17,6 +17,7 @@ public class ZMCameraController : MonoBehaviour {
 		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
 		ZMPlayerController.PlayerRecoilEvent += HandlePlayerRecoilEvent;
 		ZMPlayerController.PlayerLandPlungeEvent += HandlePlayerLandPlungeEvent;
+		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
 		ZMLobbyPedestalController.AtPathEndEvent += HandleAtPathEndEvent;
 		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
 	}
@@ -36,6 +37,11 @@ public class ZMCameraController : MonoBehaviour {
 	void HandlePlayerLandPlungeEvent ()
 	{
 		Shake(10);
+	}
+
+	void HandlePlayerDeathEvent (ZMPlayerController controller)
+	{
+		Shake(25);
 	}
 	
 	void Start() {

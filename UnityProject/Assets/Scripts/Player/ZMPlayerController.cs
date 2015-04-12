@@ -76,9 +76,12 @@ public class ZMPlayerController : MonoBehaviour
 	public GameObject _effectSkidObject;
 	public GameObject _effectClashObject;
 	public GameObject _effectPlungeObject;
+	public ParticleSystem _goreEmitter;
 
 	// Sound resources.
-	public AudioClip[] _audioJumps;
+	public AudioClip[] _audioJump;
+	public AudioClip[] _audioHurt;
+	public AudioClip[] _audioGore;
 	public AudioClip _audioLunge;
 	public AudioClip _audioPlunge;
 	public AudioClip _audioRecoil;
@@ -190,7 +193,7 @@ public class ZMPlayerController : MonoBehaviour
 
 			_velocity.y = JUMP_HEIGHT;
 
-			audio.PlayOneShot(_audioJumps[Random.Range (0, _audioJumps.Length)]);
+			audio.PlayOneShot(_audioJump[Random.Range (0, _audioJump.Length)]);
 			Instantiate(_effectJumpObject, new Vector2(transform.position.x - 3, transform.position.y - 8), transform.rotation);
 		}
 
@@ -289,7 +292,7 @@ public class ZMPlayerController : MonoBehaviour
 				if (IsMovingLeft () || IsMovingRight()) {
 					if (!_controller.isGrounded) {
 						_velocity.y = JUMP_HEIGHT;
-						audio.PlayOneShot(_audioJumps[Random.Range (0, _audioJumps.Length)]);
+						audio.PlayOneShot(_audioJump[Random.Range (0, _audioJump.Length)]);
 						Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
 						Instantiate (_effectSkidObject, new Vector2 (transform.position.x, transform.position.y - 20), rotation);
 						
@@ -555,7 +558,9 @@ public class ZMPlayerController : MonoBehaviour
 			PlayerDeathEvent(this);
 		}
 
-		audio.PlayOneShot(_audioDeath);
+		audio.PlayOneShot(_audioGore[Random.Range (0, _audioGore.Length)]);
+		audio.PlayOneShot(_audioHurt[Random.Range (0, _audioHurt.Length)]);
+		_goreEmitter.Play();
 	}
 
 	private void KillOpponent(GameObject opponent) 
