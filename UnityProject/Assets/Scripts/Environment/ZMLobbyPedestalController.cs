@@ -34,8 +34,9 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	}
 
 	void Start () {
-		Invoke("Move", 0.5f);
 		_basePosition = transform.position;
+		Move ();
+		//Invoke("Move", 0.5f);
 	}
 
 	void OnDestroy() {

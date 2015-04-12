@@ -16,14 +16,15 @@ public class ZMCameraController : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
-		ZMPlayerController.PlayerRecoilEvent += HandlePlayerRecoilEvent;
+		ZMPlayerController.PlayerRecoilEvent 	 += HandlePlayerRecoilEvent;
 		ZMPlayerController.PlayerLandPlungeEvent += HandlePlayerLandPlungeEvent;
-		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
+		ZMPlayerController.PlayerDeathEvent 	 += HandlePlayerDeathEvent;
+
 		ZMLobbyPedestalController.AtPathEndEvent += HandleAtPathEndEvent;
+
 		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
 		ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
-		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+		ZMGameStateController.GameEndEvent   += HandleGameEndEvent;
 	}
 
 	void HandleGameEndEvent ()
