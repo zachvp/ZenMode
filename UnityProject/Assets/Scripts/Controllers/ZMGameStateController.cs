@@ -22,11 +22,12 @@ public class ZMGameStateController : MonoBehaviour {
 	private const string kSpawnpointTag = "Spawnpoint";
 
 	// delegates
-	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, GameObject spawnObject);
-	public static event SpawnObjectAction SpawnObjectEvent;
+	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, GameObject spawnObject); public static event SpawnObjectAction SpawnObjectEvent;
+	public delegate void StartGameAction(); public static event StartGameAction StartGameEvent;
+	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
+	public delegate void GameEndAction();   public static event GameEndAction   GameEndEvent;
+	public delegate void BeginCountdownAction(); public static event BeginCountdownAction BeginCountdownEvent;
 
-	public delegate void StartGameAction();
-	public static event StartGameAction StartGameEvent;
 
 	// Use this for initialization
 	void Awake () {
@@ -90,37 +91,18 @@ public class ZMGameStateController : MonoBehaviour {
 		outputText.text = "";
 
 		DisableGameObjects();
-		DeactivatePedestal();
+		Time.timeScale = 1.0f;
 	}
 
 	void OnDestroy() {
-		SpawnObjectEvent = null;
-		StartGameEvent   = null;
+		SpawnObjectEvent   = null;
+		StartGameEvent     = null;
+		PauseGameEvent	   = null;
+		GameEndEvent	   = null;
+		BeginCountdownEvent = null;
 	}
 
 	void Update() {
-		/** State set **/
-		/*if (Input.GetKeyDown(KeyCode.Space)) {
-			if (_matchState == MatchState.PRE_MATCH) {
-				_matchState = MatchState.BEGIN_COUNTDOWN;
-			}
-
-			if (_gameState == GameState.BEGIN) {
-				_gameState = GameState.NEUTRAL;
-			} else {
-				_gameState = GameState.RESET;
-			}
-		} else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Return)) {
-			if (_matchState != MatchState.PRE_MATCH) {
-				if (_gameState == GameState.PAUSE || _gameState == GameState.PAUSED) {
-					_gameState =  GameState.RESUME;
-				} else {
-					//_previousState = _matchState;
-					_gameState = GameState.PAUSE;
-				}
-			}
-		}*/
-
 		/** State check **/
 		if (_matchState == MatchState.BEGIN_COUNTDOWN) {
 			_matchState = MatchState.COUNTDOWN;
@@ -128,6 +110,10 @@ public class ZMGameStateController : MonoBehaviour {
 		} else if (_matchState == MatchState.POST_MATCH) {
 			outputText.text = "Match Ended!";
 			PauseGame();
+
+			if (GameEndEvent != null) {
+				GameEndEvent();
+			}
 		}
 
 		if (_gameState == GameState.RESUME) {
@@ -141,6 +127,10 @@ public class ZMGameStateController : MonoBehaviour {
 				_gameState = GameState.PAUSED;
 				outputText.text = "Paused\nPress 'back' to reset";
 				PauseGame();
+
+				if (PauseGameEvent != null) {
+					PauseGameEvent();
+				}
 			}
 		} else if (_gameState == GameState.RESET) {
 			_gameState = GameState.NEUTRAL;
@@ -175,10 +165,6 @@ public class ZMGameStateController : MonoBehaviour {
 		}
 	}
 
-	private void DeactivatePedestal() {
-		//_pedestalController.Disable();
-	}
-
 	private void PauseGame() {
 		DisableGameObjects();
 		countdownTimer.GetComponent<Text>().enabled = false;
@@ -207,7 +193,6 @@ public class ZMGameStateController : MonoBehaviour {
 		if (SpawnObjectEvent != null) {
 			SpawnObjectEvent(this, spawnObject);
 		}
-		//DeactivatePedestal();
 	}
 
 	// Event handlers

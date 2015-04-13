@@ -34,8 +34,9 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	}
 
 	void Start () {
-		Invoke("Move", 0.5f);
 		_basePosition = transform.position;
+		Move ();
+		//Invoke("Move", 0.5f);
 	}
 
 	void OnDestroy() {
@@ -46,7 +47,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 		ZMLobbyScoreController.MaxScoreReachedEvent -= HandleMaxScoreReachedEvent;
 	}
 	
-	void Update() {
+	void FixedUpdate() {
 		if (_moveState == MoveState.MOVE && _waypointIndex < waypoints.GetLength(0)) {
 			_distanceTraveled = 0.0f;
 			_targetPosition = waypoints[_waypointIndex].position;
@@ -58,9 +59,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 			_waypointIndex += 1;
 			//_waypointIndex %= waypoints.Count;			
 		}
-	}
-	
-	void FixedUpdate() {
+
 		if (_moveState == MoveState.MOVING) {
 			_distanceTraveled += moveSpeed * Time.deltaTime;
 			float distanceRatio = _distanceTraveled / _distanceToTarget;
