@@ -8,8 +8,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	public Text scoreText;
 	public Slider scoreBar;
 
-	public delegate void MaxScoreReachedAction(ZMLobbyScoreController lobbyScoreController);
-	public static event MaxScoreReachedAction MaxScoreReachedEvent;
+	public delegate void MaxScoreReachedAction(ZMLobbyScoreController lobbyScoreController); public static event MaxScoreReachedAction MaxScoreReachedEvent;
 
 	// private members
 	private float _currentScore;
