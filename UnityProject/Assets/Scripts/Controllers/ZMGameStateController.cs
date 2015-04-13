@@ -44,10 +44,33 @@ public class ZMGameStateController : MonoBehaviour {
 
 		// Add delegate handlers
 		ZMPlayerController.PlayerDeathEvent += RespawnObject;
+
 		ZMScoreController.MaxScoreReached += MatchWon;
+
 		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
 		ZMGameInputManager.BackInputEvent += HandleBackInputEvent;
+
 		ZMLobbyPedestalController.FullPathCycleEvent += HandleFullPathCycleEvent;
+
+		ZMPauseMenuController.SelectResumeEvent += HandleSelectResumeEvent;
+		ZMPauseMenuController.SelectRestartEvent += HandleSelectRestartEvent;
+		ZMPauseMenuController.SelectQuitEvent += HandleSelectQuitEvent;
+	}
+
+	void HandleSelectQuitEvent ()
+	{
+		Time.timeScale = 1.0f;
+		Application.LoadLevel(0);
+	}
+
+	void HandleSelectRestartEvent ()
+	{
+		_gameState =  GameState.RESET;
+	}
+
+	void HandleSelectResumeEvent ()
+	{
+		_gameState =  GameState.RESUME;
 	}
 
 	void HandleFullPathCycleEvent (ZMLobbyPedestalController lobbyPedestalController)
