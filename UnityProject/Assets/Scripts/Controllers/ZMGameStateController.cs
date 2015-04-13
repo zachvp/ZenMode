@@ -84,7 +84,7 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void HandleBackInputEvent ()
 	{
-		if (_matchState == MatchState.PRE_MATCH) {
+		/*if (_matchState == MatchState.PRE_MATCH) {
 			_matchState = MatchState.BEGIN_COUNTDOWN;
 		}
 		
@@ -92,7 +92,7 @@ public class ZMGameStateController : MonoBehaviour {
 			_gameState = GameState.NEUTRAL;
 		} else {
 			_gameState = GameState.RESET;
-		}
+		}*/
 	}
 
 	void HandleStartInputEvent ()
