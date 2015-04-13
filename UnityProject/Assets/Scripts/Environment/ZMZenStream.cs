@@ -12,7 +12,6 @@ public class ZMZenStream : MonoBehaviour {
 
 		ZMPedestalController.ActivateEvent += HandleActivateEvent;
 		ZMPedestalController.DeactivateEvent += HandleDeactivateEvent;
-		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
 	}
 
 	void Start () {
@@ -33,6 +32,8 @@ public class ZMZenStream : MonoBehaviour {
 	}
 
 	private void HandleMaxScoreReachedEvent(ZMLobbyScoreController lobbyScoreController) {
-		Destroy(gameObject);
+		if (gameObject != null) {
+			Destroy(gameObject);
+		}
 	}
 }
