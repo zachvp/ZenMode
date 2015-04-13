@@ -12,7 +12,7 @@ GameObject:
   - 114: {fileID: 11413462}
   - 50: {fileID: 5013462}
   - 61: {fileID: 6113462}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: ThrowingKnife
   m_TagString: ThrowingKnife
   m_Icon: {fileID: 0}

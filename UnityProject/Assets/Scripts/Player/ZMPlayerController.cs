@@ -13,13 +13,13 @@ public class ZMPlayerController : MonoBehaviour
 	private float JUMP_HEIGHT = 800.0f;
 	private float PLUNGE_SPEED = 2200.0f;
 	private float LUNGE_SPEED = 1800.0f;
-	private float LUNGE_TIME = 0.1f;
+	private float LUNGE_TIME = 0.14f;
 	private float WALL_SLIDE_SPEED = 80.0f;
 	private float WALL_JUMP_KICK_SPEED = 500.0f;
 	private float runSpeed = 0.0f;
 
 	// Additional constants.
-	private float TILE_SIZE = 32.0f;
+	private float TILE_SIZE = 28.0f;
 	private float RESPAWN_TIME = 2.0f;
 	private float THROWING_KNIFE_COOLDOWN = 0.5f;
 	private float LUNGE_COOLDOWN = 0.3f;
@@ -43,7 +43,7 @@ public class ZMPlayerController : MonoBehaviour
 	// Player states.
 	private enum MovementDirectionState { FACING_LEFT, FACING_RIGHT };
 	private enum ControlMoveState 		{ NEUTRAL, MOVING };
-	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACK, ATTACKING, WALL_JUMPING };
+	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACK, ATTACKING, WALL_JUMPING, PLUNGE, PLUNGING };
 	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING, WALL_SLIDE, RECOIL, RECOILING, DISABLE, DISABLED, RESPAWN };
 	private enum AbilityState 			{ NEUTRAL, SHOOTING };
 
@@ -88,8 +88,9 @@ public class ZMPlayerController : MonoBehaviour
 	public AudioClip[] _audioLand;
 	public AudioClip[] _audioKill;
 	public AudioClip[] _audioSword;
-	public AudioClip _audioLunge;
-	public AudioClip _audioPlunge;
+	public AudioClip[] _audioThrow;
+	public AudioClip[] _audioLunge;
+	public AudioClip[] _audioPlunge;
 	public AudioClip _audioRecoil;
 
 	// Delegates
@@ -211,30 +212,26 @@ public class ZMPlayerController : MonoBehaviour
 		// Update movement and ability state.
 		if (_controlModState == ControlModState.ATTACK) {
 			_controlModState = ControlModState.ATTACKING;
-
-			/*
-			if (!_controller.isGrounded) {
-				if (!IsPerformingPlunge()) {
-					//audio.PlayOneShot(_audioPlunge);
-					_moveModState = MoveModState.PLUNGE;
-				}
-			} else 
-			*/
-			
-			if (!IsPerformingLunge()) {
+			if (!IsPerformingLunge ()) {
 				if (_canLunge) {
-					audio.PlayOneShot(_audioLunge);
+					audio.PlayOneShot(_audioLunge[Random.Range (0, _audioLunge.Length)]);
 					_moveModState = MoveModState.LUNGE;
 
 					Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
-					Instantiate(_effectLungeObject, new Vector2(transform.position.x - 3, transform.position.y - 10), rotation);
+					Instantiate (_effectLungeObject, new Vector2 (transform.position.x - 3, transform.position.y - 10), rotation);
 
 					// Set a cooldown before we can lunge again.
 					Invoke ("LungeCooldown", LUNGE_COOLDOWN);
 					_canLunge = false;
 				}
 			}
-		} 
+		} else if (_controlModState == ControlModState.PLUNGE) {
+			_controlModState = ControlModState.PLUNGING;
+			if (!IsPerformingPlunge()) {
+				audio.PlayOneShot(_audioPlunge[Random.Range (0, _audioPlunge.Length)]);
+				_moveModState = MoveModState.PLUNGE;
+			}
+		}
 		else if (IsTouchingEitherSide()) {
 			if (!_controller.isGrounded && _moveModState == MoveModState.NEUTRAL) {
 				_moveModState = MoveModState.WALL_SLIDE;
@@ -339,6 +336,9 @@ public class ZMPlayerController : MonoBehaviour
 		// Update and apply velocity.
 		_velocity.x = runSpeed;
 		_velocity.y -= GRAVITY * Time.deltaTime;
+		if (IsPerformingLunge ()) {
+			_velocity.y = 0.0f;
+		}
 		_controller.move( _velocity * Time.deltaTime );
 
 		// Update animation states.
@@ -420,12 +420,14 @@ public class ZMPlayerController : MonoBehaviour
 	private void ThrowEvent(ZMPlayerInputController inputController) {
 		if (inputController.PlayerInfo.Equals (_playerInfo)) {
 			// Throw a throwing-knife.
+			return;
 			if (_canThrowKnife) {
 				Transform throwingKnife = Transform.Instantiate (_throwingKnifeObject.transform) as Transform;
 				int direction = (_movementDirection == MovementDirectionState.FACING_LEFT ? -1 : 1);
 				throwingKnife.position = new Vector2 (transform.position.x - 4 + (100 * direction), transform.position.y - 8);
 				throwingKnife.rotation = transform.rotation;
 				throwingKnife.SendMessage("SetDirection", direction);
+				audio.PlayOneShot(_audioThrow[Random.Range (0, _audioThrow.Length)], 1.0f);
 				_canThrowKnife = false;
 				Invoke ("ThrowingKnifeCooldown", THROWING_KNIFE_COOLDOWN);
 			}
@@ -433,7 +435,8 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void PlungeEvent(ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals (_playerInfo)) {
+		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsAttacking() && !_controller.isGrounded && _moveModState != MoveModState.RESPAWN) {
+			_controlModState = ControlModState.PLUNGE;
 		}
 	}
 
@@ -443,17 +446,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	void onControllerCollider( RaycastHit2D hit )
 	{
-		if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground")) {
-			if (hit.collider.CompareTag(kThrowingKnifeTag)) {
-				KillSelf ();
-			}
-
-			if (hit.normal.y == 1.0) {
-				//hit.collider.renderer.material.color = Color.red;
-				//hit.collider.GetComponent<ZMColorResponse>().Awaken(light.color);
-			}
-
-		} else if (hit.collider.gameObject.layer == LayerMask.NameToLayer(kSpecialInteractiblesLayerMaskName)) {
+		if (hit.collider.gameObject.layer == LayerMask.NameToLayer(kSpecialInteractiblesLayerMaskName)) {
 			if (hit.normal.y == 1.0f) {
 				if (hit.collider.CompareTag(kPlayerTag)) {
 					ZMPlayerController otherPlayer = hit.collider.GetComponent<ZMPlayerController>();
@@ -461,6 +454,10 @@ public class ZMPlayerController : MonoBehaviour
 						KillOpponent (hit.collider.gameObject);
 					}
 				}
+			}
+
+			if (hit.collider.CompareTag(kThrowingKnifeTag)) {
+				KillSelf ();
 			}
 
 			if (hit.normal.x == -1.0f || hit.normal.x == 1.0f) {

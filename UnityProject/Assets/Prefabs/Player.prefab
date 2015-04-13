@@ -153,7 +153,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Size: {x: 16, y: 22}
+  m_Size: {x: 13, y: 22}
   m_Center: {x: 2, y: -5}
 --- !u!82 &8294602
 AudioSource:
@@ -402,8 +402,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2a3fcf69d215c4c8b9abac2a4ee2a4c3, type: 3}
   - {fileID: 8300000, guid: b2299be54b2d5429b8ccc04b3686b971, type: 3}
   - {fileID: 8300000, guid: ce278ac397cc447b698840dd5460a784, type: 3}
-  _audioLunge: {fileID: 8300000, guid: 90f112db0fbee461ba791b35e86d94a4, type: 3}
-  _audioPlunge: {fileID: 8300000, guid: 645c8ec021ec64acd89ce74eb22fa741, type: 3}
+  _audioThrow:
+  - {fileID: 8300000, guid: e70e022dcaa694a1788465b1ed061526, type: 3}
+  - {fileID: 8300000, guid: 84759cb2031944cf1843f00ddd17c5f8, type: 3}
+  - {fileID: 8300000, guid: 3ca8515eb617c46499b14cf42d082973, type: 3}
+  _audioLunge:
+  - {fileID: 8300000, guid: fc1370c6186304d1688c3e45c9e10e20, type: 3}
+  - {fileID: 8300000, guid: d5835c99a585b496394459e9b7a86c51, type: 3}
+  - {fileID: 8300000, guid: 9a2c6c86099714997b72a38742f15cba, type: 3}
+  _audioPlunge:
+  - {fileID: 8300000, guid: 8dd3c74d691194b6e9107761079d723b, type: 3}
+  - {fileID: 8300000, guid: 7c0e818c5d2a54474a2b63e18242d723, type: 3}
+  - {fileID: 8300000, guid: 20c525d47c2794079b6b86d17a57cba8, type: 3}
   _audioRecoil: {fileID: 8300000, guid: 76a65fde33e55446997bb3e273988ea0, type: 3}
 --- !u!114 &11480982
 MonoBehaviour:
