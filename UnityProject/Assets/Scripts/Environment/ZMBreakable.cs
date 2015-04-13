@@ -2,11 +2,11 @@
 using System.Collections;
 
 public class ZMBreakable : MonoBehaviour {
-	public ParticleSystem particleSystem;
+	public ParticleSystem destructionEffect;
 	
 	public void HandleCollision() {
-		particleSystem.transform.position = transform.position;
-		particleSystem.Play();
+		destructionEffect.transform.position = transform.position;
+		destructionEffect.Play();
 		Invoke ("StopGibs", 0.1f);
 
 		gameObject.SetActive(false);
@@ -15,7 +15,7 @@ public class ZMBreakable : MonoBehaviour {
 	}
 
 	void StopGibs() {
-		particleSystem.Stop();
+		destructionEffect.Stop();
 		Destroy(gameObject);
 	}
 }

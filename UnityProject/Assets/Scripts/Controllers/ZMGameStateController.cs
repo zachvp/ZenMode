@@ -19,6 +19,8 @@ public class ZMGameStateController : MonoBehaviour {
 	private int _spawnpointIndex;
 	private Queue<GameObject> _objectsToSpawn;
 
+	private bool _firedGameEndEvent;
+
 	private const string kSpawnpointTag = "Spawnpoint";
 
 	// delegates
@@ -131,7 +133,9 @@ public class ZMGameStateController : MonoBehaviour {
 			outputText.text = "Match Ended!";
 			PauseGame();
 
-			if (GameEndEvent != null) {
+			if (GameEndEvent != null && !_firedGameEndEvent) {
+				_firedGameEndEvent = true;
+
 				GameEndEvent();
 			}
 		}

@@ -26,10 +26,18 @@ public class ZMPauseMenuController : MonoBehaviour {
 
 		ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
 		ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
+		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
 
 		ToggleActive(false);
 
 		_optionsSize = menuOptions.GetLength(0);
+	}
+
+	void HandleGameEndEvent ()
+	{
+		Debug.Log("Handle game end");
+
+		ShowMenu();
 	}
 
 	void OnDestroy() {
@@ -73,11 +81,7 @@ public class ZMPauseMenuController : MonoBehaviour {
 
 	void HandlePauseGameEvent ()
 	{
-		_selectedIndex = 0;
-		_canCycleSelection = true;
-
-		ToggleActive(true);
-		UpdateUI();
+		ShowMenu();
 	}
 
 	void HandleResumeGameEvent() {
@@ -140,7 +144,15 @@ public class ZMPauseMenuController : MonoBehaviour {
 		ToggleSelection(_selectedIndex, true);
 	}
 
-	void CanCycleSelection() {
+	private void CanCycleSelection() {
 		_canCycleSelection = true;
+	}
+
+	private void ShowMenu() {
+		_selectedIndex = 0;
+		_canCycleSelection = true;
+		
+		ToggleActive(true);
+		UpdateUI();
 	}
 }
