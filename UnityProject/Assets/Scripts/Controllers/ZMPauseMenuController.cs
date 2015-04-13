@@ -8,6 +8,10 @@ public class ZMPauseMenuController : MonoBehaviour {
 	private int  _selectedIndex;
 	private int  _optionsSize;
 
+	private bool _canCycleSelection;
+	private int _delayFrame = 0;
+	private const int _selectionDelay = 10;
+
 	private Color _baseColor;
 	private Color _selectedColor;
 
@@ -42,20 +46,41 @@ public class ZMPauseMenuController : MonoBehaviour {
 		} else if (Input.GetKeyDown(KeyCode.Return)) {
 			HandleMenuSelection();
 		}
+
+		if (Input.GetAxisRaw("MENU_FORWARD") > 0.8 && _canCycleSelection) {
+			_canCycleSelection = false;
+			HandleMenuNavigationForward();
+		} else if (Input.GetAxisRaw("MENU_BACKWARD") < -0.8 && _canCycleSelection) {
+			_canCycleSelection = false;
+			HandleMenuNavigationBackward();
+		}
+
+		if (Input.GetButtonDown("MENU_SELECT")) {
+			HandleMenuSelection();
+		}
+
+		if (!_canCycleSelection) {
+			_delayFrame += 1;
+
+			if (_delayFrame > _selectionDelay) {
+				CanCycleSelection();
+				_delayFrame = 0;
+			}
+		}
+		
+		//Debug.Log("menu forward " + Input.GetAxisRaw("MENU_FORWARD"));
 	}
 
 	void HandlePauseGameEvent ()
 	{
-		Debug.Log("Pause");
-
 		_selectedIndex = 0;
+		_canCycleSelection = true;
 
 		ToggleActive(true);
 		UpdateUI();
 	}
 
 	void HandleResumeGameEvent() {
-		Debug.Log("Resume");
 		ToggleActive(false);
 	}
 
@@ -113,5 +138,10 @@ public class ZMPauseMenuController : MonoBehaviour {
 		}
 		
 		ToggleSelection(_selectedIndex, true);
+	}
+
+	void CanCycleSelection() {
+		Debug.Log("Reenable selection");
+		_canCycleSelection = true;
 	}
 }
