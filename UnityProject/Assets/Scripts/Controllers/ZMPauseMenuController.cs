@@ -35,8 +35,6 @@ public class ZMPauseMenuController : MonoBehaviour {
 
 	void HandleGameEndEvent ()
 	{
-		Debug.Log("Handle game end");
-
 		ShowMenu();
 	}
 
