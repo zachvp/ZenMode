@@ -119,10 +119,9 @@ public class ZMPlayerController : MonoBehaviour
 		ZMPlayerInputController.MoveLeftEvent  += MoveLeftEvent;
 		ZMPlayerInputController.NoMoveEvent	   += NoMoveEvent;
 		ZMPlayerInputController.JumpEvent	   += JumpEvent;
-		ZMPlayerInputController.NoJumpEvent	   += NoJumpEvent;
 		ZMPlayerInputController.AttackEvent	   += AttackEvent;
-		ZMPlayerInputController.NoAttackEvent  += NoAttackEvent;
 		ZMPlayerInputController.ThrowEvent     += ThrowEvent;
+		ZMPlayerInputController.PlungeEvent    += PlungeEvent;
 
 		// Set original facing direction.
 		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
@@ -213,12 +212,16 @@ public class ZMPlayerController : MonoBehaviour
 		if (_controlModState == ControlModState.ATTACK) {
 			_controlModState = ControlModState.ATTACKING;
 
+			/*
 			if (!_controller.isGrounded) {
 				if (!IsPerformingPlunge()) {
 					//audio.PlayOneShot(_audioPlunge);
 					_moveModState = MoveModState.PLUNGE;
 				}
-			} else if (!IsPerformingLunge()) {
+			} else 
+			*/
+			
+			if (!IsPerformingLunge()) {
 				if (_canLunge) {
 					audio.PlayOneShot(_audioLunge);
 					_moveModState = MoveModState.LUNGE;
@@ -408,12 +411,6 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
-	private void NoJumpEvent(ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals(_playerInfo)) {
-			//_controlModState = ControlModState.NEUTRAL;
-		}
-	}
-
 	private void AttackEvent(ZMPlayerInputController inputController) {
 		if (inputController.PlayerInfo.Equals(_playerInfo) && !IsAttacking() && _moveModState != MoveModState.RESPAWN) {
 			_controlModState = ControlModState.ATTACK;
@@ -435,9 +432,8 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
-	private void NoAttackEvent(ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals(_playerInfo)) {
-			//_controlModState = ControlModState.NEUTRAL;
+	private void PlungeEvent(ZMPlayerInputController inputController) {
+		if (inputController.PlayerInfo.Equals (_playerInfo)) {
 		}
 	}
 
@@ -472,11 +468,9 @@ public class ZMPlayerController : MonoBehaviour
 				if (IsPerformingLunge()) {
 					if (hit.collider.CompareTag(kPlayerTag)) {
 						ZMPlayerController otherPlayer = hit.collider.GetComponent<ZMPlayerController>();
-
 						if (_playerInPath && otherPlayer._playerInPath) {
 							if (_movementDirection != otherPlayer._movementDirection) {
 								CancelInvoke(kMethodNameEndLunge);
-
 								_moveModState = MoveModState.RECOIL;
 							}
 						} else if (otherPlayer.IsAbleToDie()) {
@@ -708,7 +702,7 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private bool ShouldEnable() {
-		return !_controller.isGrounded && !IsPerformingPlunge() && !IsRecoiling();
+		return !_controller.isGrounded && !IsPerformingPlunge() && !IsRecoiling() && !IsPerformingLunge();
 	}
 
 	private bool ShouldRecoilWithPlayer(ZMPlayerController other) {

@@ -18,16 +18,13 @@ namespace ZMPlayer {
 		public static event NoMoveAction NoMoveEvent;
 		public delegate void JumpAction(ZMPlayerInputController playerInputController);
 		public static event JumpAction JumpEvent;
-		public delegate void NoJumpAction(ZMPlayerInputController playerInputController);
-		public static event NoJumpAction NoJumpEvent;
 		public delegate void AttackAction(ZMPlayerInputController playerInputController);
 		public static event AttackAction AttackEvent;
-		public delegate void NoAttackAction(ZMPlayerInputController playerInputController);
-		public static event NoAttackAction NoAttackEvent;
 		public delegate void ThrowAction(ZMPlayerInputController playerInputController);
 		public static event ThrowAction ThrowEvent;
+		public delegate void PlungeAction(ZMPlayerInputController playerInputController);
+		public static event PlungeAction PlungeEvent;
 
-		
 		// booleans to treat axes as buttons
 		private bool _attackPressed = false;
 
@@ -58,12 +55,8 @@ namespace ZMPlayer {
 				if (JumpEvent != null) {
 					JumpEvent(this);
 				}
-			} else if (Input.GetButtonUp(PlayerControl ("JUMP"))) {
-				if (NoJumpEvent != null) {
-					NoJumpEvent(this);
-				}
 			}
-			
+
 			// Handle attacking.
 			if (Input.GetButtonDown (PlayerControl ("ATTACK"))) {
 				if (AttackEvent != null) {
@@ -77,10 +70,6 @@ namespace ZMPlayer {
 						AttackEvent(this);
 					}
 				}
-			} else if (Input.GetButtonUp (PlayerControl ("ATTACK"))) {
-				if (NoAttackEvent != null) {
-					NoAttackEvent(this);
-				}
 			} else if (Input.GetAxisRaw(PlayerControl ("ATTACK")) == 0.0f) {
 				_attackPressed = false;
 			}
@@ -91,6 +80,16 @@ namespace ZMPlayer {
 					ThrowEvent(this);
 				}
 			} 
+
+			// Handle plunging.
+			if (_playerNumber == 1) {
+				// Debug.Log (Input.GetAxis (PlayerControl ("PLUNGE")));
+			}
+			if (Input.GetAxisRaw(PlayerControl ("PLUNGE")) > 0.0f) {
+				if (PlungeEvent != null) {
+					PlungeEvent(this);
+				}
+			}
 		}
 
 		void OnDestroy() {
@@ -98,10 +97,9 @@ namespace ZMPlayer {
 			MoveLeftEvent  = null;
 			NoMoveEvent	   = null;
 			JumpEvent	   = null;
-			NoJumpEvent    = null;
 			AttackEvent	   = null;
-			NoAttackEvent  = null;
 			ThrowEvent     = null;
+			PlungeEvent    = null;
 		}
 
 		string PlayerControl (string control) {
