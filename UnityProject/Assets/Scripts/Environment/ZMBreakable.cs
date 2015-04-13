@@ -7,6 +7,7 @@ public class ZMBreakable : MonoBehaviour {
 	public void HandleCollision() {
 		destructionEffect.transform.position = transform.position;
 		destructionEffect.Play();
+
 		Invoke ("StopGibs", 0.1f);
 
 		gameObject.SetActive(false);
