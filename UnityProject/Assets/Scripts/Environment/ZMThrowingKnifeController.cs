@@ -19,10 +19,6 @@ public class ZMThrowingKnifeController : MonoBehaviour {
 		if (!isActive) {
 			rigidbody2D.velocity = new Vector2 (SPEED, 0.0f);
 		}
-		else {
-			tag = "Untagged";
-			gameObject.layer = LayerMask.NameToLayer("ThrowingKnives");
-		}
 	}
 
 	void OnCollisionEnter2D (Collision2D coll) {

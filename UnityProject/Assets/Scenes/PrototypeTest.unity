@@ -73,6 +73,7 @@ NavMeshSettings:
     minRegionArea: 2
     widthInaccuracy: 16.666666
     heightInaccuracy: 10
+    tileSizeHint: 0
   m_NavMesh: {fileID: 0}
 --- !u!1 &1846941
 GameObject:
@@ -11380,8 +11381,8 @@ MonoBehaviour:
   m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ignoreReversedGraphics: 1
-  blockingObjects: 0
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -37265,6 +37266,10 @@ Prefab:
       propertyPath: _goreEmitter
       value: 
       objectReference: {fileID: 1064785729}
+    - target: {fileID: 6180978, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: m_Size.x
+      value: 13
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
   m_RootGameObject: {fileID: 2125206126}
@@ -81083,6 +81088,10 @@ Prefab:
       propertyPath: _goreEmitter
       value: 
       objectReference: {fileID: 1585583824}
+    - target: {fileID: 6180978, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: m_Size.x
+      value: 13
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
   m_RootGameObject: {fileID: 2011538750}
@@ -115231,8 +115240,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2a3fcf69d215c4c8b9abac2a4ee2a4c3, type: 3}
   - {fileID: 8300000, guid: b2299be54b2d5429b8ccc04b3686b971, type: 3}
   - {fileID: 8300000, guid: ce278ac397cc447b698840dd5460a784, type: 3}
-  _audioLunge: {fileID: 8300000, guid: 90f112db0fbee461ba791b35e86d94a4, type: 3}
-  _audioPlunge: {fileID: 8300000, guid: 645c8ec021ec64acd89ce74eb22fa741, type: 3}
+  _audioThrow:
+  - {fileID: 8300000, guid: e70e022dcaa694a1788465b1ed061526, type: 3}
+  - {fileID: 8300000, guid: 84759cb2031944cf1843f00ddd17c5f8, type: 3}
+  - {fileID: 8300000, guid: 3ca8515eb617c46499b14cf42d082973, type: 3}
+  _audioLunge:
+  - {fileID: 8300000, guid: fc1370c6186304d1688c3e45c9e10e20, type: 3}
+  - {fileID: 8300000, guid: d5835c99a585b496394459e9b7a86c51, type: 3}
+  - {fileID: 8300000, guid: 9a2c6c86099714997b72a38742f15cba, type: 3}
+  _audioPlunge:
+  - {fileID: 8300000, guid: 8dd3c74d691194b6e9107761079d723b, type: 3}
+  - {fileID: 8300000, guid: 7c0e818c5d2a54474a2b63e18242d723, type: 3}
+  - {fileID: 8300000, guid: 20c525d47c2794079b6b86d17a57cba8, type: 3}
   _audioRecoil: {fileID: 8300000, guid: 76a65fde33e55446997bb3e273988ea0, type: 3}
 --- !u!61 &2011538756
 BoxCollider2D:
@@ -115244,7 +115263,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Size: {x: 16, y: 22}
+  m_Size: {x: 13, y: 22}
   m_Center: {x: 2, y: -5}
 --- !u!95 &2011538757
 Animator:
@@ -121261,8 +121280,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2a3fcf69d215c4c8b9abac2a4ee2a4c3, type: 3}
   - {fileID: 8300000, guid: b2299be54b2d5429b8ccc04b3686b971, type: 3}
   - {fileID: 8300000, guid: ce278ac397cc447b698840dd5460a784, type: 3}
-  _audioLunge: {fileID: 8300000, guid: 90f112db0fbee461ba791b35e86d94a4, type: 3}
-  _audioPlunge: {fileID: 8300000, guid: 645c8ec021ec64acd89ce74eb22fa741, type: 3}
+  _audioThrow:
+  - {fileID: 8300000, guid: e70e022dcaa694a1788465b1ed061526, type: 3}
+  - {fileID: 8300000, guid: 84759cb2031944cf1843f00ddd17c5f8, type: 3}
+  - {fileID: 8300000, guid: 3ca8515eb617c46499b14cf42d082973, type: 3}
+  _audioLunge:
+  - {fileID: 8300000, guid: fc1370c6186304d1688c3e45c9e10e20, type: 3}
+  - {fileID: 8300000, guid: d5835c99a585b496394459e9b7a86c51, type: 3}
+  - {fileID: 8300000, guid: 9a2c6c86099714997b72a38742f15cba, type: 3}
+  _audioPlunge:
+  - {fileID: 8300000, guid: 8dd3c74d691194b6e9107761079d723b, type: 3}
+  - {fileID: 8300000, guid: 7c0e818c5d2a54474a2b63e18242d723, type: 3}
+  - {fileID: 8300000, guid: 20c525d47c2794079b6b86d17a57cba8, type: 3}
   _audioRecoil: {fileID: 8300000, guid: 76a65fde33e55446997bb3e273988ea0, type: 3}
 --- !u!61 &2125206134
 BoxCollider2D:
@@ -121274,7 +121303,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Size: {x: 16, y: 22}
+  m_Size: {x: 13, y: 22}
   m_Center: {x: 2, y: -5}
 --- !u!50 &2125206135
 Rigidbody2D:
