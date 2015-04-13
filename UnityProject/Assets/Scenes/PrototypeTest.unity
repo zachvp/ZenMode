@@ -73,7 +73,6 @@ NavMeshSettings:
     minRegionArea: 2
     widthInaccuracy: 16.666666
     heightInaccuracy: 10
-    tileSizeHint: 0
   m_NavMesh: {fileID: 0}
 --- !u!1 &1846941
 GameObject:
@@ -11381,8 +11380,8 @@ MonoBehaviour:
   m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
+  ignoreReversedGraphics: 1
+  blockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -37270,6 +37269,30 @@ Prefab:
       propertyPath: m_Size.x
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioLunge.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: fc1370c6186304d1688c3e45c9e10e20, type: 3}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioLunge.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: d5835c99a585b496394459e9b7a86c51, type: 3}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioLunge.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: 9a2c6c86099714997b72a38742f15cba, type: 3}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioPlunge.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 8dd3c74d691194b6e9107761079d723b, type: 3}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioPlunge.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: 7c0e818c5d2a54474a2b63e18242d723, type: 3}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioPlunge.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: 20c525d47c2794079b6b86d17a57cba8, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
   m_RootGameObject: {fileID: 2125206126}
@@ -81032,6 +81055,10 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 721819096}
     m_Modifications:
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioLunge.Array.size
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 411554, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
       propertyPath: m_LocalPosition.x
       value: 498
@@ -81092,6 +81119,34 @@ Prefab:
       propertyPath: m_Size.x
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioLunge.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 90f112db0fbee461ba791b35e86d94a4, type: 3}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioLunge.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: fc1370c6186304d1688c3e45c9e10e20, type: 3}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioLunge.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: d5835c99a585b496394459e9b7a86c51, type: 3}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioLunge.Array.data[3]
+      value: 
+      objectReference: {fileID: 8300000, guid: 9a2c6c86099714997b72a38742f15cba, type: 3}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioPlunge.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 8dd3c74d691194b6e9107761079d723b, type: 3}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioPlunge.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: 7c0e818c5d2a54474a2b63e18242d723, type: 3}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _audioPlunge.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: 20c525d47c2794079b6b86d17a57cba8, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
   m_RootGameObject: {fileID: 2011538750}
@@ -94645,7 +94700,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1694741304
 Transform:
   m_ObjectHideFlags: 0
@@ -115241,10 +115296,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: b2299be54b2d5429b8ccc04b3686b971, type: 3}
   - {fileID: 8300000, guid: ce278ac397cc447b698840dd5460a784, type: 3}
   _audioThrow:
-  - {fileID: 8300000, guid: e70e022dcaa694a1788465b1ed061526, type: 3}
-  - {fileID: 8300000, guid: 84759cb2031944cf1843f00ddd17c5f8, type: 3}
-  - {fileID: 8300000, guid: 3ca8515eb617c46499b14cf42d082973, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   _audioLunge:
+  - {fileID: 8300000, guid: 90f112db0fbee461ba791b35e86d94a4, type: 3}
   - {fileID: 8300000, guid: fc1370c6186304d1688c3e45c9e10e20, type: 3}
   - {fileID: 8300000, guid: d5835c99a585b496394459e9b7a86c51, type: 3}
   - {fileID: 8300000, guid: 9a2c6c86099714997b72a38742f15cba, type: 3}
@@ -121281,9 +121337,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: b2299be54b2d5429b8ccc04b3686b971, type: 3}
   - {fileID: 8300000, guid: ce278ac397cc447b698840dd5460a784, type: 3}
   _audioThrow:
-  - {fileID: 8300000, guid: e70e022dcaa694a1788465b1ed061526, type: 3}
-  - {fileID: 8300000, guid: 84759cb2031944cf1843f00ddd17c5f8, type: 3}
-  - {fileID: 8300000, guid: 3ca8515eb617c46499b14cf42d082973, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   _audioLunge:
   - {fileID: 8300000, guid: fc1370c6186304d1688c3e45c9e10e20, type: 3}
   - {fileID: 8300000, guid: d5835c99a585b496394459e9b7a86c51, type: 3}
