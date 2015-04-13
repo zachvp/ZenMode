@@ -60,7 +60,7 @@ public class ZMGameStateController : MonoBehaviour {
 	void HandleSelectQuitEvent ()
 	{
 		Time.timeScale = 1.0f;
-		Application.LoadLevel(0);
+		Application.LoadLevel(1);
 	}
 
 	void HandleSelectRestartEvent ()

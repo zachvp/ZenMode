@@ -10,6 +10,6 @@ public class ZMMainMenuController : MonoBehaviour {
 
 	void HandleStartInputEvent ()
 	{
-		Application.LoadLevel(1);
+		Application.LoadLevel(2);
 	}
 }

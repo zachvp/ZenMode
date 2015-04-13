@@ -22,6 +22,6 @@ public class ZMLobbyController : MonoBehaviour {
 	}
 
 	void LoadLevel() {
-		Application.LoadLevel(2);
+		Application.LoadLevel(3);
 	}
 }

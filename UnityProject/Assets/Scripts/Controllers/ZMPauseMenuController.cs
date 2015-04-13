@@ -141,7 +141,6 @@ public class ZMPauseMenuController : MonoBehaviour {
 	}
 
 	void CanCycleSelection() {
-		Debug.Log("Reenable selection");
 		_canCycleSelection = true;
 	}
 }
