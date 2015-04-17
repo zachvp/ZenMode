@@ -25,8 +25,11 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		_readyFired = false;
 		_pedestalAtEnd = false;
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
+		gameObject.SetActive(false);
+		light.enabled = false;
 
 		ZMLobbyPedestalController.AtPathEndEvent += HandleAtPathEndEvent;
+		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
 
 		UpdateUI();
 	}
@@ -83,5 +86,11 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	void HandleAtPathEndEvent (ZMLobbyPedestalController lobbyPedestalController)
 	{
 		_pedestalAtEnd = true;
+	}
+
+	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
+	{
+		gameObject.SetActive(true);
+		light.enabled = true;
 	}
 }

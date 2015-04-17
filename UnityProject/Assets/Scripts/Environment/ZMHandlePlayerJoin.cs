@@ -12,7 +12,6 @@ public class ZMHandlePlayerJoin : MonoBehaviour {
 	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
 	{
 		if (playerTag.Equals(this.playerTag)) {
-			Debug.Log ("Handle player join!");
 			SendMessage("Break");
 		}
 	}

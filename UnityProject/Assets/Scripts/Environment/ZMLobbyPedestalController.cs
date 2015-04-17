@@ -19,12 +19,28 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	private float _distanceTraveled;
 	private Vector3 _targetPosition;
 
+	// ID
+	ZMPlayer.ZMPlayerInfo _playerInfo;
+
 	// Use this for initialization
 	void Awake() {
 		_moveState = MoveState.STOPPED;
+		gameObject.SetActive(false);
+		light.enabled = false;
+
+		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 
 		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
 		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
+		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
+	}
+
+	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
+	{
+		if (playerTag.Equals(_playerInfo.playerTag)) {
+			gameObject.SetActive(true);
+			light.enabled = true;
+		}
 	}
 
 	void HandleStartGameEvent ()
