@@ -8,7 +8,7 @@ public class ZMMainMenuController : MonoBehaviour {
 		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
 	}
 
-	void HandleStartInputEvent ()
+	void HandleStartInputEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
 	{
 		Application.LoadLevel(2);
 	}

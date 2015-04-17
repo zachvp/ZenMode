@@ -2,16 +2,11 @@
 using System.Collections;
 
 public class ZMGameInputManager : MonoBehaviour {
-	public delegate void StartInputAction();
+	public delegate void StartInputAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag);
 	public static event StartInputAction StartInputEvent;
 
 	public delegate void BackInputAction();
-	public static event StartInputAction BackInputEvent;
-
-	// Use this for initialization
-	void Start () {
-	
-	}
+	public static event BackInputAction BackInputEvent;
 
 	void OnDestroy() {
 		StartInputEvent = null;
@@ -19,12 +14,18 @@ public class ZMGameInputManager : MonoBehaviour {
 	}
 
 	void Update () {
-		if (Input.GetButtonDown ("P1_START") || Input.GetButtonDown ("P2_START")) {
+		if (Input.GetButtonDown ("P1_START")) {
 			if (StartInputEvent != null) {
-				StartInputEvent();
+				StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1);
 			}
 		}
-		
+
+		if (Input.GetButtonDown ("P2_START")) {
+			if (StartInputEvent != null) {
+				StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2);
+			}
+		}
+
 		if (Input.GetButtonDown("BACK")) {
 			if (BackInputEvent != null) {
 				BackInputEvent();
