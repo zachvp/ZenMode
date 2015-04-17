@@ -7,8 +7,9 @@ public class ZMBreakable : MonoBehaviour {
 	private bool _handlingCollision;
 
 	public void HandleCollision() {
-		if (!_handlingCollision)
+		if (!_handlingCollision) {
 			Break ();
+		}
 		_handlingCollision = true;
 		//renderer.enabled = false;
 		//collider2D.enabled = false;
@@ -16,7 +17,8 @@ public class ZMBreakable : MonoBehaviour {
 
 	void StopGibs() {
 		destructionEffect.Stop();
-		Destroy(gameObject);
+		gameObject.SetActive(false);
+		//Destroy(gameObject);
 
 		_handlingCollision = false;
 	}

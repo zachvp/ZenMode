@@ -90,7 +90,9 @@ public class ZMLobbyScoreController : MonoBehaviour {
 
 	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
 	{
-		gameObject.SetActive(true);
-		light.enabled = true;
+		if (_playerInfo.playerTag.Equals(playerTag)) {
+			gameObject.SetActive(true);
+			light.enabled = true;
+		}
 	}
 }
