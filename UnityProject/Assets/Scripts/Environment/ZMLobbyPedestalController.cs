@@ -7,6 +7,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	public bool endPathAtStart = false;
 	public bool deactivateAtStart = false;
 
+	public delegate void AtPathNodeAction(ZMLobbyPedestalController lobbyPedestalController); public static event AtPathNodeAction AtPathNodeEvent;
 	public delegate void AtPathEndAction(ZMLobbyPedestalController lobbyPedestalController); public static event AtPathEndAction AtPathEndEvent;
 	public delegate void FullPathCycleAction(ZMLobbyPedestalController lobbyPedestalController); public static event FullPathCycleAction FullPathCycleEvent;
 
@@ -60,6 +61,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	}
 
 	void OnDestroy() {
+		AtPathNodeEvent    = null;
 		AtPathEndEvent 	   = null;
 		FullPathCycleEvent = null;
 
@@ -92,6 +94,10 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 		} else if (_moveState == MoveState.AT_TARGET) {
 			if (_waypointIndex < waypoints.GetLength(0)) {
 				_moveState = MoveState.MOVE;
+
+				if (AtPathNodeEvent != null) {
+					AtPathNodeEvent(this);
+				}
 			} else if (_waypointIndex == waypoints.GetLength(0)) {
 				if (AtPathEndEvent != null) {
 					AtPathEndEvent(this);

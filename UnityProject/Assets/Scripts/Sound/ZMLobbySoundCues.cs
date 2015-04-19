@@ -12,9 +12,4 @@ public class ZMLobbySoundCues : MonoBehaviour {
 	{
 		audio.PlayOneShot(readyUpClip);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }
