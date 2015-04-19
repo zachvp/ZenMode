@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 
 public class ZMPauseMenuController : MonoBehaviour {
+	public bool startActive = true;
 	public Text[] menuOptions;
 
 	private bool _active;
@@ -28,7 +29,8 @@ public class ZMPauseMenuController : MonoBehaviour {
 		ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
 
-		ToggleActive(false);
+
+		ToggleActive(startActive);
 
 		_optionsSize = menuOptions.GetLength(0);
 	}
