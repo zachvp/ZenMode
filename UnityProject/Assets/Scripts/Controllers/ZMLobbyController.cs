@@ -34,7 +34,7 @@ public class ZMLobbyController : MonoBehaviour {
 		_currentSignalCount += 1;
 
 		if(_currentSignalCount == requiredPlayerCount) {
-			Invoke("LoadLevel", 1.0f);
+			Invoke("LoadLevel", 3.0f);
 		}
 	}
 
