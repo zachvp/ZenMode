@@ -157,8 +157,10 @@ public class ZMPedestalController : MonoBehaviour {
 	}
 
 	private void MoveToLocation(Vector3 location) {
+		Vector3 newLocation = new Vector3(location.x, location.y, transform.position.z);
+
 		_moveState = MoveState.MOVE;
-		gameObject.transform.position = location;
+		gameObject.transform.position = newLocation;
 	}
 
 	public bool IsEnabled() { return _scoreState == ScoreState.SCORING_ENABLED; }
