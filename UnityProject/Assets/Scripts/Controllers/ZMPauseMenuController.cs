@@ -33,6 +33,7 @@ public class ZMPauseMenuController : MonoBehaviour {
 		ToggleActive(startActive);
 
 		_optionsSize = menuOptions.GetLength(0);
+		UpdateUI();
 	}
 
 	void HandleGameEndEvent ()

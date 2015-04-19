@@ -5,9 +5,6 @@ public class ZMStageSoundCues : MonoBehaviour {
 	public AudioClip focusOnPlayer;
 	public AudioClip matchStart;
 
-	// what node the camera is focused on
-	private int focusIndex = 0;
-
 	void Awake () {
 		ZMLobbyPedestalController.AtPathNodeEvent += HandleAtPathNodeEvent;
 		ZMLobbyPedestalController.FullPathCycleEvent  += HandleFullCycleEvent;
