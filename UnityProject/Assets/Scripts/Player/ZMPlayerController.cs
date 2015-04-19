@@ -582,6 +582,8 @@ public class ZMPlayerController : MonoBehaviour
 				collector.AddDeathData(1);
 			}
 		}
+
+		// TODO: fire death event
 	}
 
 	private void Respawn() {

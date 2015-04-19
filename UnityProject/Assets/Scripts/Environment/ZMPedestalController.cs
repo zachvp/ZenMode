@@ -6,6 +6,7 @@ using ZMPlayer;
 public class ZMPedestalController : MonoBehaviour {
 	public enum MoveType { CYCLE, RANDOM };
 	public MoveType moveType;
+	public ParticleSystem zenStream;
 
 	public float moveSpeed;
 	public float lingerAfterSpawnTime = 3.0f;
@@ -34,11 +35,9 @@ public class ZMPedestalController : MonoBehaviour {
 	private const string kDisableMethodName   = "Disable";
 
 	// delegates
-	public delegate void ActivateAction(ZMPedestalController pedestalController);
-	public static ActivateAction ActivateEvent;
+	public delegate void ActivateAction(ZMPedestalController pedestalController); public static ActivateAction ActivateEvent;
 
-	public delegate void DeactivateAction(ZMPedestalController pedestalController);
-	public static DeactivateAction DeactivateEvent;
+	public delegate void DeactivateAction(ZMPedestalController pedestalController); public static DeactivateAction DeactivateEvent;
 
 	void Awake() {
 		_waypoints = new List<Transform>();
@@ -169,6 +168,14 @@ public class ZMPedestalController : MonoBehaviour {
 	// event handlers
 	void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
+		Color newColor = new Color(playerController.light.color.r,
+		                           playerController.light.color.g,
+		                           playerController.light.color.b,
+		                           renderer.material.color.a);
+
+		renderer.material.color = newColor;
+		zenStream.renderer.material.color = newColor;
+
 		MoveToLocation(playerController.transform.position);
 		Enable();
 
