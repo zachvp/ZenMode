@@ -5,6 +5,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	public Transform[] waypoints;
 	public float moveSpeed = 1.5f;
 	public bool endPathAtStart = false;
+	public bool deactivateAtStart = false;
 
 	public delegate void AtPathEndAction(ZMLobbyPedestalController lobbyPedestalController); public static event AtPathEndAction AtPathEndEvent;
 	public delegate void FullPathCycleAction(ZMLobbyPedestalController lobbyPedestalController); public static event FullPathCycleAction FullPathCycleEvent;
@@ -25,8 +26,11 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	// Use this for initialization
 	void Awake() {
 		_moveState = MoveState.STOPPED;
-		gameObject.SetActive(false);
-		light.enabled = false;
+		if (deactivateAtStart)
+			gameObject.SetActive(false);
+
+		if (light != null)
+			light.enabled = false;
 
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 

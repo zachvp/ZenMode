@@ -5,14 +5,22 @@ public class ZMBreakable : MonoBehaviour {
 	public ParticleSystem destructionEffect;
 
 	private bool _handlingCollision;
+	private ZMPlayer.ZMPlayerInfo _playerInfo;
 
-	public void HandleCollision() {
-		if (!_handlingCollision) {
-			Break ();
+	void Awake() {
+		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
+
+	}
+
+	public void HandleCollision(ZMPlayer.ZMPlayerInfo playerInfo) {
+		if (_playerInfo.playerTag.Equals(playerInfo.playerTag)) {
+			if (!_handlingCollision) {
+				Break ();
+			}
+			_handlingCollision = true;
+			//renderer.enabled = false;
+			//collider2D.enabled = false;
 		}
-		_handlingCollision = true;
-		//renderer.enabled = false;
-		//collider2D.enabled = false;
 	}
 
 	void StopGibs() {

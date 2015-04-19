@@ -36963,46 +36963,6 @@ Prefab:
   m_RootGameObject: {fileID: 284456235}
   m_IsPrefabParent: 0
   m_IsExploded: 1
---- !u!1 &691626115
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 691626117}
-  - 114: {fileID: 691626116}
-  m_Layer: 0
-  m_Name: MetricsParser
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &691626116
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 691626115}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91cb9976b21727346b6a8c441167276d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  filename: ZenMode_Metrics_4-8-2015 11-02-31 PM.txt
---- !u!4 &691626117
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 691626115}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 15
 --- !u!1001 &691830798
 Prefab:
   m_ObjectHideFlags: 0
@@ -53044,11 +53004,11 @@ GameObject:
   - 20: {fileID: 984321583}
   - 92: {fileID: 984321582}
   - 124: {fileID: 984321581}
-  - 81: {fileID: 984321580}
   - 114: {fileID: 984321585}
   - 114: {fileID: 984321586}
   - 114: {fileID: 984321587}
   - 114: {fileID: 984321588}
+  - 81: {fileID: 984321580}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -53059,9 +53019,8 @@ GameObject:
 --- !u!81 &984321580
 AudioListener:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 8129098, guid: 4c81dd23405c4a04d9387327bd258b21,
-    type: 2}
-  m_PrefabInternal: {fileID: 1185421946}
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 984321579}
   m_Enabled: 1
 --- !u!124 &984321581
@@ -53166,6 +53125,7 @@ MonoBehaviour:
   - {fileID: 2094209104}
   moveSpeed: 10
   endPathAtStart: 1
+  deactivateAtStart: 0
 --- !u!114 &984321588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65347,7 +65307,8 @@ Prefab:
       propertyPath: orthographic size
       value: 200
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8129098, guid: 4c81dd23405c4a04d9387327bd258b21, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 4c81dd23405c4a04d9387327bd258b21, type: 2}
   m_RootGameObject: {fileID: 984321579}
   m_IsPrefabParent: 0

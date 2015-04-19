@@ -475,7 +475,7 @@ public class ZMPlayerController : MonoBehaviour
 							KillOpponent (hit.collider.gameObject);
 						}
 					} else if (hit.collider.CompareTag("Breakable")) {
-						hit.collider.GetComponent<ZMBreakable>().HandleCollision();
+						hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
 					}
 				}
 			}
