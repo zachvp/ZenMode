@@ -8,8 +8,8 @@ public class ZMPlayerController : MonoBehaviour
 	// Movement constants.
 	private float GRAVITY = 2200.0f;
 	private float RUN_SPEED_MAX = 500.0f;
-	private float ACCELERATION = 30.0f;
-	private float FRICTION = 25.0f;
+	private float ACCELERATION = 30.0f; // 30.0f
+	private float FRICTION = 25.0f; // 25.0f
 	private float JUMP_HEIGHT = 800.0f;
 	private float PLUNGE_SPEED = 2200.0f;
 	private float LUNGE_SPEED = 1800.0f;
@@ -525,11 +525,27 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void SetMovementDirection(MovementDirectionState direction)
 	{
+		MovementDirectionState previousDirection = _movementDirection;
+
 		_movementDirection = direction;
 		
 		// Modify x-scale and flip our sprite based on our direction.
 		float scaleFactor = (direction == MovementDirectionState.FACING_LEFT ? -1 : 1);
-		transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * scaleFactor, transform.localScale.y, transform.localScale.z);
+		transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * scaleFactor,
+		                                   transform.localScale.y,
+		                                   transform.localScale.z);
+
+		if (!previousDirection.Equals(_movementDirection)) {
+			Vector3 shiftedPos = transform.position;
+
+			if (CheckRight(2.0f, _controller.platformMask)) {
+				shiftedPos.x -= 8.0f;
+			} else if (CheckLeft(2.0f, _controller.platformMask)) {
+				shiftedPos.x += 8.0f;
+			}
+
+			transform.position = shiftedPos;
+		}
 	}
 
 	void CheckSkidding() {

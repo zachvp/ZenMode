@@ -77,7 +77,7 @@ public class ZMPauseMenuController : MonoBehaviour {
 			}
 		}
 		
-		//Debug.Log("menu forward " + Input.GetAxisRaw("MENU_FORWARD"));
+		Debug.Log("menu forward " + Input.GetAxisRaw("MENU_FORWARD"));
 	}
 
 	void HandlePauseGameEvent ()
