@@ -16,7 +16,11 @@ public class ZMPauseMenuController : MonoBehaviour {
 	private Color _baseColor;
 	private Color _selectedColor;
 
-	public delegate void SelectResumeOption(); public static event SelectResumeOption SelectResumeEvent;
+	private int _resumeOption  = 0;
+	private int _restartOption = 1;
+	private int _quitOption	   = 2;
+
+	public delegate void SelectResumeOption();  public static event SelectResumeOption SelectResumeEvent;
 	public delegate void SelectRestartOption(); public static event SelectRestartOption SelectRestartEvent;
 	public delegate void SelectQuitOption();	public static event SelectQuitOption SelectQuitEvent;
 
@@ -38,7 +42,23 @@ public class ZMPauseMenuController : MonoBehaviour {
 
 	void HandleGameEndEvent ()
 	{
+		Vector3 shiftedPosition = transform.position;
+
+		shiftedPosition.y += 64.0f;
+		transform.position = shiftedPosition;
+
 		ShowMenu();
+
+		menuOptions[0].gameObject.SetActive(false);
+		menuOptions[0] = menuOptions[1];
+		menuOptions[1] = menuOptions[2];
+
+		_optionsSize -= 1;
+		_resumeOption--;
+		_restartOption--;
+		_quitOption--;
+
+		ToggleSelection(0, true);
 	}
 
 	void OnDestroy() {
@@ -77,7 +97,7 @@ public class ZMPauseMenuController : MonoBehaviour {
 			}
 		}
 		
-		//Debug.Log("menu forward " + Input.GetAxisRaw("MENU_FORWARD"));
+		Debug.Log("menu forward " + Input.GetAxisRaw("MENU_FORWARD"));
 	}
 
 	void HandlePauseGameEvent ()
@@ -104,26 +124,40 @@ public class ZMPauseMenuController : MonoBehaviour {
 	}
 
 	void HandleMenuSelection() {
-		switch(_selectedIndex) {
-			case 0: { 
+		if (_selectedIndex == _resumeOption) {
+			if (SelectResumeEvent != null) {
+				SelectResumeEvent();
+			}
+		} else if (_selectedIndex == _restartOption) {
+			if (SelectRestartEvent != null) {
+				SelectRestartEvent();
+			}
+		} else if (_selectedIndex == _quitOption) {
+			if (SelectQuitEvent != null) {
+				SelectQuitEvent();
+			}
+		}
+
+		/*switch(_selectedIndex) {
+			case _resumeOption: { 
 				if (SelectResumeEvent != null) {
 					SelectResumeEvent();
 				}
 				break;
 			}
-			case 1: {
+			case _restartOption: {
 				if (SelectRestartEvent != null) {
 					SelectRestartEvent();
 				}
 				break;
 			}
-			case 2: {
+			case _quitOption: {
 				if (SelectQuitEvent != null) {
 					SelectQuitEvent();
 				}
 				break;
 			}
-		}
+		}*/
 	}
 
 	private void ToggleSelection(int index, bool selected) {
