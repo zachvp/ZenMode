@@ -350,6 +350,8 @@ public class ZMPlayerController : MonoBehaviour
 
 		_animator.SetBool ("isSkidding", isSkidding || isSliding);
 		_animator.SetBool ("isGrounded", _controller.isGrounded);
+		_animator.SetBool ("isPlunging", IsPerformingPlunge());
+		_animator.SetBool ("isLunging", IsPerformingLunge());
 		_animator.SetFloat ("velocityY", _velocity.y);
 
 		if (PlayerRunEvent != null) {
