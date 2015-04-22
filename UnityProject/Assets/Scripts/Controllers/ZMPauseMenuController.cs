@@ -4,6 +4,8 @@ using UnityEngine.UI;
 public class ZMPauseMenuController : MonoBehaviour {
 	public bool startActive = true;
 	public Text[] menuOptions;
+	public AudioClip[] _audioChoose;
+	public AudioClip[] _audioHighlight;
 
 	private bool _active;
 	private int  _selectedIndex;
@@ -96,20 +98,19 @@ public class ZMPauseMenuController : MonoBehaviour {
 				_delayFrame = 0;
 			}
 		}
-		
-		Debug.Log("menu forward " + Input.GetAxisRaw("MENU_FORWARD"));
 	}
 
-	void HandlePauseGameEvent ()
-	{
+	void HandlePauseGameEvent () {
 		ShowMenu();
 	}
 
 	void HandleResumeGameEvent() {
+		audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
 		ToggleActive(false);
 	}
 
 	void HandleMenuNavigationForward() {
+		audio.PlayOneShot(_audioHighlight[Random.Range (0, _audioHighlight.Length)], 0.5f);
 		_selectedIndex += 1;
 		_selectedIndex %= _optionsSize;
 
@@ -117,6 +118,7 @@ public class ZMPauseMenuController : MonoBehaviour {
 	}
 
 	void HandleMenuNavigationBackward() {
+		audio.PlayOneShot(_audioHighlight[Random.Range (0, _audioHighlight.Length)], 0.5f);
 		_selectedIndex -= 1;
 		_selectedIndex = _selectedIndex < 0 ? _optionsSize - 1 : _selectedIndex;
 
@@ -139,27 +141,6 @@ public class ZMPauseMenuController : MonoBehaviour {
 		}
 
 		ToggleActive(false);
-
-		/*switch(_selectedIndex) {
-			case _resumeOption: { 
-				if (SelectResumeEvent != null) {
-					SelectResumeEvent();
-				}
-				break;
-			}
-			case _restartOption: {
-				if (SelectRestartEvent != null) {
-					SelectRestartEvent();
-				}
-				break;
-			}
-			case _quitOption: {
-				if (SelectQuitEvent != null) {
-					SelectQuitEvent();
-				}
-				break;
-			}
-		}*/
 	}
 
 	private void ToggleSelection(int index, bool selected) {

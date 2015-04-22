@@ -87,12 +87,7 @@ public class ZMCameraController : MonoBehaviour {
 	{
 		Shake(25);
 	}
-
-	/*void Shake(float time) {
-		GetComponent<ZMMovementBobbing>().enabled = true;
-		//Invoke("StopShake", time);
-	}*/
-
+	
 	void Shake(int frames) {
 		GetComponent<ZMMovementBobbing>().enabled = true;
 		_zoomStep = 0;
