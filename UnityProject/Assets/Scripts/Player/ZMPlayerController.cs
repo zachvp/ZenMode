@@ -491,8 +491,10 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 	
-	void onTriggerEnterEvent( Collider2D collider )
-	{
+	void onTriggerEnterEvent( Collider2D collider ) {
+		if (collider.CompareTag ("Grass")) {
+			collider.GetComponent<ZMGrassController>().GrassEnter();
+		}
 	}
 	
 	void onTriggerExitEvent( Collider2D collider )
@@ -500,6 +502,10 @@ public class ZMPlayerController : MonoBehaviour
 		ZMWarpController warpController = gameObject.GetComponent<ZMWarpController>();
 		if (warpController != null) {
 			warpController.OnTriggerEnterCC2D(collider);
+		}
+
+		if (collider.CompareTag ("Grass")) {
+			collider.GetComponent<ZMGrassController>().GrassExit();
 		}
 	}
 	
