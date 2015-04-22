@@ -6,6 +6,8 @@ public class ZMGrassController : MonoBehaviour {
 	public Sprite[] grassSpritesUp;
 	public Sprite[] grassSpritesDown;
 	public Vector3 origin;
+	public ParticleSystem _cutEmitter;
+
 
 	public void GrassEnter () {
 		StartCoroutine (TranslateGrass (Vector3.zero, new Vector3(0.0f, -10.0f, 0.0f), 0.1f));
@@ -13,6 +15,12 @@ public class ZMGrassController : MonoBehaviour {
 
 	public void GrassExit () {
 		StartCoroutine (TranslateGrass (new Vector3(0.0f, -10.0f, 0.0f), Vector3.zero, 0.1f));
+	}
+
+	public void CutGrass () {
+		_cutEmitter.Play ();
+		GetComponent<SpriteRenderer> ().enabled = false;
+		Destroy (gameObject, 1.0f);
 	}
 
 	void Awake () {
@@ -33,4 +41,6 @@ public class ZMGrassController : MonoBehaviour {
 		transform.localPosition = end;
 		yield break;
 	}
+
+
 }

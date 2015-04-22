@@ -494,6 +494,9 @@ public class ZMPlayerController : MonoBehaviour
 	void onTriggerEnterEvent( Collider2D collider ) {
 		if (collider.CompareTag ("Grass")) {
 			collider.GetComponent<ZMGrassController>().GrassEnter();
+			if (IsPerformingLunge() || IsPerformingPlunge()) {
+				collider.GetComponent<ZMGrassController>().CutGrass();
+			}
 		}
 	}
 	
