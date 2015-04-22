@@ -34,7 +34,7 @@ public class ZMPauseMenuController : MonoBehaviour {
 		ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
 		ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
-
+		ZMLobbyController.PauseGameEvent += HandlePauseGameEvent;
 
 		ToggleActive(startActive);
 
@@ -139,6 +139,8 @@ public class ZMPauseMenuController : MonoBehaviour {
 				SelectQuitEvent();
 			}
 		}
+
+		ToggleActive(false);
 	}
 
 	private void ToggleSelection(int index, bool selected) {

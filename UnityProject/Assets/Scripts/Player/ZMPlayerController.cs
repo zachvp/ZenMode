@@ -682,21 +682,21 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private RaycastHit2D CheckLeft(float distance, LayerMask mask) {
-		Vector2 rayOrigin = new Vector2(_controller.transform.position.x - 17f, _controller.transform.position.y);
+		Vector2 rayOrigin = new Vector2(transform.position.x - 17f, transform.position.y);
 		Vector2 rayDirection = new Vector2(-1.0f, 0.0f);
 
 		return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
 	}
 
 	private RaycastHit2D CheckRight(float distance, LayerMask mask) {
-		Vector2 rayOrigin = new Vector2( _controller.transform.position.x + 17f, _controller.transform.position.y);
+		Vector2 rayOrigin = new Vector2(transform.position.x + 17f, transform.position.y);
 		Vector2 rayDirection = new Vector2(1.0f, 0.0f);
 
 		return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
 	}
 
 	private RaycastHit2D CheckBelowPlatform(float distance) {
-		Vector2 rayOrigin = new Vector2( _controller.transform.position.x, _controller.transform.position.y);
+		Vector2 rayOrigin = new Vector2(transform.position.x, transform.position.y);
 		Vector2 rayDirection = new Vector2(0.0f, -1.0f);
 		
 		return Physics2D.Raycast(rayOrigin, rayDirection, distance, _controller.platformMask);
