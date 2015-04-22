@@ -104,7 +104,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 220944766}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
   m_AnchoredPosition: {x: 696, y: 302}
@@ -2119,7 +2119,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 220944766}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
   m_AnchoredPosition: {x: -712, y: 309}
@@ -2642,6 +2642,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 87849926}
+  - {fileID: 817529144}
   - {fileID: 1409261776}
   - {fileID: 1484832259}
   - {fileID: 1694741304}
@@ -10263,6 +10264,10 @@ Prefab:
       propertyPath: m_SortingOrder
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _tauntText
+      value: 
+      objectReference: {fileID: 817529146}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
   m_RootGameObject: {fileID: 2125206126}
@@ -11615,7 +11620,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 220944766}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
   m_AnchoredPosition: {x: 288, y: 96}
@@ -11901,6 +11906,72 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1532862018}
   m_RootOrder: 380
+--- !u!1 &817529143
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 817529144}
+  - 222: {fileID: 817529147}
+  - 114: {fileID: 817529146}
+  m_Layer: 5
+  m_Name: TauntText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &817529144
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 817529143}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 220944766}
+  m_RootOrder: 1
+  m_AnchorMin: {x: .5, y: .5}
+  m_AnchorMax: {x: .5, y: .5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1520.69995, y: 482.019989}
+  m_Pivot: {x: .5, y: .5}
+--- !u!114 &817529146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 817529143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: .568627477}
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 2ea5a10b04910487f8ef993bd6072ab7, type: 3}
+    m_FontSize: 200
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: SPLAT
+--- !u!222 &817529147
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 817529143}
 --- !u!1 &819517681
 GameObject:
   m_ObjectHideFlags: 0
@@ -21573,7 +21644,7 @@ RectTransform:
   - {fileID: 2100881038}
   - {fileID: 1191220590}
   m_Father: {fileID: 220944766}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
   m_AnchoredPosition: {x: 382, y: 334}
@@ -22544,7 +22615,7 @@ RectTransform:
   - {fileID: 1253725331}
   - {fileID: 1349224279}
   m_Father: {fileID: 220944766}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
   m_AnchoredPosition: {x: -382, y: 334}
@@ -22751,6 +22822,10 @@ Prefab:
       propertyPath: m_SortingOrder
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
+      propertyPath: _tauntText
+      value: 
+      objectReference: {fileID: 817529146}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
   m_RootGameObject: {fileID: 2011538750}
@@ -24697,7 +24772,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 220944766}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
   m_AnchoredPosition: {x: 96, y: 96}
@@ -27167,7 +27242,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 220944766}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
   m_AnchoredPosition: {x: 0, y: 126}
@@ -27515,7 +27590,7 @@ Transform:
   - {fileID: 1420293159}
   - {fileID: 1085806528}
   m_Father: {fileID: 220944766}
-  m_RootOrder: 3
+  m_RootOrder: 4
 --- !u!114 &1694741305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33897,7 +33972,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 127eae2410b544264aa7a0028d2bbd04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _throwingKnifeObject: {fileID: 135656, guid: 7adf14dc179994333ae2098e78540206, type: 2}
   _effectJumpObject: {fileID: 186170, guid: 15ee3afdf7f3945768e4b6e895d7b6e1, type: 2}
   _effectLandObject: {fileID: 186170, guid: 68c410150b463470881a7a961a80d1cd, type: 2}
   _effectLungeObject: {fileID: 186170, guid: 26f3e19a7e31149c6b8b577ebd043b15, type: 2}
@@ -33905,6 +33979,7 @@ MonoBehaviour:
   _effectClashObject: {fileID: 168640, guid: df83d9dbd5bd7473a8f78bd8170e1daa, type: 2}
   _effectPlungeObject: {fileID: 186170, guid: 915da6d3d9b4542f9b1853b021021d77, type: 2}
   _goreEmitter: {fileID: 1585583824}
+  _tauntText: {fileID: 817529146}
   _audioJump:
   - {fileID: 8300000, guid: 05fc314cbf0524b2996a454678982d2d, type: 3}
   - {fileID: 8300000, guid: 3d73eee8c8fef460aba5dfbacdcae461, type: 3}
@@ -33941,10 +34016,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2a3fcf69d215c4c8b9abac2a4ee2a4c3, type: 3}
   - {fileID: 8300000, guid: b2299be54b2d5429b8ccc04b3686b971, type: 3}
   - {fileID: 8300000, guid: ce278ac397cc447b698840dd5460a784, type: 3}
-  _audioThrow:
-  - {fileID: 8300000, guid: e70e022dcaa694a1788465b1ed061526, type: 3}
-  - {fileID: 8300000, guid: 84759cb2031944cf1843f00ddd17c5f8, type: 3}
-  - {fileID: 8300000, guid: 3ca8515eb617c46499b14cf42d082973, type: 3}
   _audioLunge:
   - {fileID: 8300000, guid: 9a2c6c86099714997b72a38742f15cba, type: 3}
   - {fileID: 8300000, guid: fc1370c6186304d1688c3e45c9e10e20, type: 3}
@@ -35358,7 +35429,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 127eae2410b544264aa7a0028d2bbd04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _throwingKnifeObject: {fileID: 135656, guid: 7adf14dc179994333ae2098e78540206, type: 2}
   _effectJumpObject: {fileID: 186170, guid: 15ee3afdf7f3945768e4b6e895d7b6e1, type: 2}
   _effectLandObject: {fileID: 186170, guid: 68c410150b463470881a7a961a80d1cd, type: 2}
   _effectLungeObject: {fileID: 186170, guid: 26f3e19a7e31149c6b8b577ebd043b15, type: 2}
@@ -35366,6 +35436,7 @@ MonoBehaviour:
   _effectClashObject: {fileID: 168640, guid: df83d9dbd5bd7473a8f78bd8170e1daa, type: 2}
   _effectPlungeObject: {fileID: 186170, guid: 915da6d3d9b4542f9b1853b021021d77, type: 2}
   _goreEmitter: {fileID: 1064785729}
+  _tauntText: {fileID: 817529146}
   _audioJump:
   - {fileID: 8300000, guid: 05fc314cbf0524b2996a454678982d2d, type: 3}
   - {fileID: 8300000, guid: 3d73eee8c8fef460aba5dfbacdcae461, type: 3}
@@ -35402,10 +35473,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2a3fcf69d215c4c8b9abac2a4ee2a4c3, type: 3}
   - {fileID: 8300000, guid: b2299be54b2d5429b8ccc04b3686b971, type: 3}
   - {fileID: 8300000, guid: ce278ac397cc447b698840dd5460a784, type: 3}
-  _audioThrow:
-  - {fileID: 8300000, guid: e70e022dcaa694a1788465b1ed061526, type: 3}
-  - {fileID: 8300000, guid: 84759cb2031944cf1843f00ddd17c5f8, type: 3}
-  - {fileID: 8300000, guid: 3ca8515eb617c46499b14cf42d082973, type: 3}
   _audioLunge:
   - {fileID: 8300000, guid: fc1370c6186304d1688c3e45c9e10e20, type: 3}
   - {fileID: 8300000, guid: d5835c99a585b496394459e9b7a86c51, type: 3}

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using ZMPlayer;
@@ -21,7 +22,6 @@ public class ZMPlayerController : MonoBehaviour
 	// Additional constants.
 	private float TILE_SIZE = 28.0f;
 	private float RESPAWN_TIME = 2.0f;
-	private float THROWING_KNIFE_COOLDOWN = 0.5f;
 	private float LUNGE_COOLDOWN = 0.3f;
 	private int FRAMES_PER_STEP = 30;
 
@@ -33,8 +33,7 @@ public class ZMPlayerController : MonoBehaviour
 	private RaycastHit2D _checkTouchingRight;
 	private Vector3 _velocity;
 	private int _framesUntilStep = 0;
-
-	private bool _canThrowKnife;
+	private string[] kDeathStrings;
 	private bool _canLunge;
 
 	// Speeds of two players before recoil.
@@ -56,7 +55,6 @@ public class ZMPlayerController : MonoBehaviour
 	// Tags and layers.
 	private const string kPlayerTag						    = "Player";
 	private const string kWarpVolumeTag						= "WarpVolume";
-	private const string kThrowingKnifeTag 					= "ThrowingKnife";
 	private const string kGroundLayerMaskName 			    = "Ground";
 	private const string kSpecialInteractiblesLayerMaskName = "SpecialInteractibles";
 	
@@ -65,13 +63,12 @@ public class ZMPlayerController : MonoBehaviour
 	private const string kMethodNameEndLunge 	  			= "EndLunge";
 	private const string kGameStateControllerName 			= "GameController";
 	private const string kRespawnMethodName 	  			= "Respawn";
-
+	
 	// Debug.
 	private Color _initialColor;
 	private Sprite _baseSprite;
 
-	// Game Objects.
-	public GameObject _throwingKnifeObject;
+	// Public references.
 	public GameObject _effectJumpObject;
 	public GameObject _effectLandObject;
 	public GameObject _effectLungeObject;
@@ -79,6 +76,7 @@ public class ZMPlayerController : MonoBehaviour
 	public GameObject _effectClashObject;
 	public GameObject _effectPlungeObject;
 	public ParticleSystem _goreEmitter;
+	public Text _tauntText;
 
 	// Sound resources.
 	public AudioClip[] _audioJump;
@@ -88,10 +86,10 @@ public class ZMPlayerController : MonoBehaviour
 	public AudioClip[] _audioLand;
 	public AudioClip[] _audioKill;
 	public AudioClip[] _audioSword;
-	public AudioClip[] _audioThrow;
 	public AudioClip[] _audioLunge;
 	public AudioClip[] _audioPlunge;
 	public AudioClip _audioRecoil;
+	
 
 	// Delegates
 	public delegate void PlayerDeathAction(ZMPlayerController playerController); public static event PlayerDeathAction PlayerDeathEvent;
@@ -108,7 +106,6 @@ public class ZMPlayerController : MonoBehaviour
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_animator = GetComponent<Animator>();
 		_controller = GetComponent<CharacterController2D>();
-		_canThrowKnife = true;
 		_canLunge = true;
 
 		_controller.onControllerCollidedEvent += onControllerCollider;
@@ -121,7 +118,6 @@ public class ZMPlayerController : MonoBehaviour
 		ZMPlayerInputController.NoMoveEvent	   += NoMoveEvent;
 		ZMPlayerInputController.JumpEvent	   += JumpEvent;
 		ZMPlayerInputController.AttackEvent	   += AttackEvent;
-		ZMPlayerInputController.ThrowEvent     += ThrowEvent;
 		ZMPlayerInputController.PlungeEvent    += PlungeEvent;
 
 		// Set original facing direction.
@@ -131,6 +127,38 @@ public class ZMPlayerController : MonoBehaviour
 	void Start() 
 	{
 		_baseSprite = GetComponent<SpriteRenderer>().sprite;
+		kDeathStrings = new string[31];
+		kDeathStrings[0] = "OOOAHH";
+		kDeathStrings[1] = "WHOOOP";
+		kDeathStrings[2] = "AYYYEEH";
+		kDeathStrings[3] = "HADOOOP";
+		kDeathStrings[4] = "WHUAAAH";
+		kDeathStrings[5] = "BLARHGH";
+		kDeathStrings[6] = "OUCH";
+		kDeathStrings[7] = "DUN GOOFD";
+		kDeathStrings[8] = "REKT";
+		kDeathStrings[9] = "PWNED";
+		kDeathStrings[10] = "SPLAT";
+		kDeathStrings[11] = "SPLUUSH";
+		kDeathStrings[12] = "ASDF";
+		kDeathStrings[13] = "WHAAUH";
+		kDeathStrings[14] = "AUUGH";
+		kDeathStrings[15] = "WAOOOH";
+		kDeathStrings[16] = "DERP";
+		kDeathStrings[17] = "DISGRACE";
+		kDeathStrings[18] = "DISHONOR";
+		kDeathStrings[19] = "HUUUAP";
+		kDeathStrings[20] = "PUUUAH";
+		kDeathStrings[21] = "AYUUSH";
+		kDeathStrings[22] = "WYAAAH";
+		kDeathStrings[23] = "KWAAAH";
+		kDeathStrings[24] = "HUZZAH";
+		kDeathStrings[25] = "#WINNING";
+		kDeathStrings[26] = "NOOB";
+		kDeathStrings[27] = "ELEGANT";
+		kDeathStrings[28] = "SWIFT";
+		kDeathStrings[29] = "WAHH";
+		kDeathStrings[30] = "OOOOHHHH";
 	}
 
 	void FixedUpdate()
@@ -275,7 +303,6 @@ public class ZMPlayerController : MonoBehaviour
 		}
 
 		if (_moveModState == MoveModState.RECOIL) {
-			//audio.PlayOneShot(_audioRecoil);
 			audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 			Instantiate(_effectClashObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 			_moveModState = MoveModState.RECOILING;
@@ -358,11 +385,7 @@ public class ZMPlayerController : MonoBehaviour
 			PlayerRunEvent(this, _controlMoveState == ControlMoveState.MOVING);
 		}
 	}
-
-	void ThrowingKnifeCooldown() {
-		_canThrowKnife = true;
-	}
-
+	
 	void LungeCooldown() {
 		_canLunge = true;
 		_controlModState = ControlModState.NEUTRAL;
@@ -419,23 +442,6 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
-	private void ThrowEvent(ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals (_playerInfo)) {
-			// Throw a throwing-knife.
-			return;
-			if (_canThrowKnife) {
-				Transform throwingKnife = Transform.Instantiate (_throwingKnifeObject.transform) as Transform;
-				int direction = (_movementDirection == MovementDirectionState.FACING_LEFT ? -1 : 1);
-				throwingKnife.position = new Vector2 (transform.position.x - 4 + (100 * direction), transform.position.y - 8);
-				throwingKnife.rotation = transform.rotation;
-				throwingKnife.SendMessage("SetDirection", direction);
-				audio.PlayOneShot(_audioThrow[Random.Range (0, _audioThrow.Length)], 1.0f);
-				_canThrowKnife = false;
-				Invoke ("ThrowingKnifeCooldown", THROWING_KNIFE_COOLDOWN);
-			}
-		}
-	}
-
 	private void PlungeEvent(ZMPlayerInputController inputController) {
 		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsAttacking() && !_controller.isGrounded && _moveModState != MoveModState.RESPAWN) {
 			_controlModState = ControlModState.PLUNGE;
@@ -456,10 +462,6 @@ public class ZMPlayerController : MonoBehaviour
 						KillOpponent (hit.collider.gameObject);
 					}
 				}
-			}
-
-			if (hit.collider.CompareTag(kThrowingKnifeTag)) {
-				KillSelf ();
 			}
 
 			if (hit.normal.x == -1.0f || hit.normal.x == 1.0f) {
@@ -584,6 +586,15 @@ public class ZMPlayerController : MonoBehaviour
 		audio.PlayOneShot(_audioHurt[Random.Range (0, _audioHurt.Length)]);
 		audio.PlayOneShot(_audioKill[Random.Range (0, _audioKill.Length)]);
 		_goreEmitter.Play();
+
+		// Handle taunt text.
+		_tauntText.gameObject.SetActive (true);
+		_tauntText.text = kDeathStrings [Random.Range (0, kDeathStrings.Length)];
+		_tauntText.transform.rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, Random.Range (-20, 20)));
+		_tauntText.transform.position = new Vector3 (Random.Range (-100, 100), Random.Range (-100, 100), 0.0f);
+		StartCoroutine (ScaleTauntText (new Vector3(1.5f, 1.5f, 1.5f), Vector3.one, 0.05f));
+		Invoke ("HideTauntText", 0.5f);
+
 	}
 
 	private void KillOpponent(GameObject opponent) 
@@ -602,6 +613,21 @@ public class ZMPlayerController : MonoBehaviour
 		}
 
 		// TODO: fire death event
+	}
+
+	private IEnumerator ScaleTauntText(Vector3 start, Vector3 end, float totalTime) {
+		float t = 0;
+		while (t < totalTime) {
+			_tauntText.transform.localScale = Vector3.Lerp(start, end, t / totalTime);
+			yield return null;
+			t += Time.deltaTime;
+		} 
+		_tauntText.transform.localScale = end;
+		yield break;
+	}
+
+	private void HideTauntText() {
+		_tauntText.gameObject.SetActive (false);
 	}
 
 	private void Respawn() {
