@@ -17,10 +17,9 @@ public class ZMGameStateController : MonoBehaviour {
 	private MatchState _matchState;
 	private List<Transform> _spawnpoints;
 	private int _spawnpointIndex;
+	private int _pausedPlayer;
 	private Queue<GameObject> _objectsToSpawn;
-
 	private bool _firedGameEndEvent;
-
 	private const string kSpawnpointTag = "Spawnpoint";
 
 	// delegates
@@ -90,6 +89,7 @@ public class ZMGameStateController : MonoBehaviour {
 		} else if (_gameState == GameState.PAUSE || _gameState == GameState.PAUSED) {
 			_gameState =  GameState.RESUME;
 		} else if (_matchState != MatchState.COUNTDOWN) {
+			_pausedPlayer = (int)playerTag;
 			_gameState = GameState.PAUSE;
 		}
 	}
@@ -140,7 +140,7 @@ public class ZMGameStateController : MonoBehaviour {
 		} else if (_gameState == GameState.PAUSE) {
 			if (_matchState != MatchState.POST_MATCH) {
 				_gameState = GameState.PAUSED;
-				outputText.text = "Paused";
+				outputText.text = "P" + (_pausedPlayer + 1).ToString() + " PAUSED";
 
 				if (PauseGameEvent != null) {
 					PauseGameEvent();
