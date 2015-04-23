@@ -20,6 +20,7 @@ public class ZMPlayerController : MonoBehaviour
 	private float runSpeed = 0.0f;
 	private float EDGE_OFFSET = 16.0f;
 	private float AOE_RANGE = 10.0f;
+	private float PLUNGE_PARRY_TIME = 0.5f;
 
 
 	// Additional constants.
@@ -46,7 +47,7 @@ public class ZMPlayerController : MonoBehaviour
 	private enum MovementDirectionState { FACING_LEFT, FACING_RIGHT };
 	private enum ControlMoveState 		{ NEUTRAL, MOVING };
 	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACK, ATTACKING, WALL_JUMPING, PLUNGE, PLUNGING };
-	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING, WALL_SLIDE, RECOIL, RECOILING, DISABLE, DISABLED, RESPAWN };
+	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING, WALL_SLIDE, RECOIL, RECOILING, DISABLE, DISABLED, PARRY, RESPAWN };
 	private enum AbilityState 			{ NEUTRAL, SHOOTING };
 
 	private ControlMoveState _controlMoveState;
@@ -273,6 +274,7 @@ public class ZMPlayerController : MonoBehaviour
 			_moveModState = MoveModState.PLUNGING;
 			Plunge();
 		} else if (_moveModState == MoveModState.PLUNGING) {
+			// ZVP
 			if (_controller.isGrounded) {
 				Instantiate(_effectPlungeObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 
@@ -295,9 +297,12 @@ public class ZMPlayerController : MonoBehaviour
 				}
 
 
-				_moveModState = MoveModState.NEUTRAL;
+//				_moveModState = MoveModState.NEUTRAL;
+				_moveModState = MoveModState.PARRY;
+				DisablePlayer();
 
-				Invoke("ResetControlModState", 0.1f);
+				Invoke(kMethodNameEnablePlayer, PLUNGE_PARRY_TIME);
+				Invoke("ResetControlModState", PLUNGE_PARRY_TIME + 0.1f);
 			}
 		} else if (_moveModState == MoveModState.LUNGE) {
 			_moveModState = MoveModState.LUNGING;
@@ -379,6 +384,8 @@ public class ZMPlayerController : MonoBehaviour
 			this.renderer.material.color = Color.grey;
 		} else if (_moveModState == MoveModState.RESPAWN) {
 			this.renderer.material.color = Color.white;
+		} else if (_moveModState == MoveModState.PARRY) {
+			renderer.material.color = Color.magenta;
 		} else {
 			this.renderer.material.color = _initialColor;
 		}
@@ -405,7 +412,11 @@ public class ZMPlayerController : MonoBehaviour
 		_animator.SetFloat ("velocityY", _velocity.y);
 
 		// ZVP
-
+		if (_playerInfo.playerTag.Equals(ZMPlayerInfo.PlayerTag.PLAYER_2)) {
+			if (Input.GetKeyDown(KeyCode.Y)) {
+				_moveModState = MoveModState.PARRY;
+			}
+		}
 	}
 	
 	void LungeCooldown() {
@@ -492,11 +503,14 @@ public class ZMPlayerController : MonoBehaviour
 				if (IsPerformingLunge()) {
 					if (hit.collider.CompareTag(kPlayerTag)) {
 						ZMPlayerController otherPlayer = hit.collider.GetComponent<ZMPlayerController>();
+
 						if (_playerInPath && otherPlayer._playerInPath) {
 							if (_movementDirection != otherPlayer._movementDirection) {
 								CancelInvoke(kMethodNameEndLunge);
 								_moveModState = MoveModState.RECOIL;
 							}
+						} else if (otherPlayer._moveModState == MoveModState.PARRY) {
+							_moveModState = MoveModState.RECOIL;
 						} else {
 							_playerInPath = false;
 							KillOpponent (otherPlayer);
@@ -602,12 +616,12 @@ public class ZMPlayerController : MonoBehaviour
 		this.renderer.material.color = Color.red;
 		light.enabled = false;
 
-		DisablePlayer();
-		Invoke(kRespawnMethodName, RESPAWN_TIME);
-
 		// Set player states
 		_playerInPath = false;
 		runSpeed = 0f;
+
+		DisablePlayer();
+		Invoke(kRespawnMethodName, RESPAWN_TIME);
 
 		// Notify event handlers of player's death
 		if (PlayerDeathEvent != null) {
@@ -707,8 +721,6 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private RaycastHit2D CheckLeft(float distance, LayerMask mask) {
-		Vector2 rayOrigin = new Vector2(transform.position.x - 17f, transform.position.y);
-
 		return CheckLeft(Vector2.zero, distance, mask);
 	}
 
@@ -723,8 +735,6 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private RaycastHit2D CheckRight(float distance, LayerMask mask) {
-		Vector2 rayOrigin = new Vector2(transform.position.x + 17f, transform.position.y);
-
 		return CheckRight (Vector2.zero, distance, mask);
 	}
 
