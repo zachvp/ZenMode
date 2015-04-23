@@ -11,7 +11,7 @@ public class ZMPlayerController : MonoBehaviour
 	private float RUN_SPEED_MAX = 500.0f;
 	private float ACCELERATION = 30.0f; // 30.0f
 	private float FRICTION = 25.0f; // 25.0f
-	private float JUMP_HEIGHT = 300.0f;
+	private float JUMP_HEIGHT = 800.0f;
 	private float PLUNGE_SPEED = 2200.0f;
 	private float LUNGE_SPEED = 1800.0f;
 	private float LUNGE_TIME = 0.14f;
@@ -121,7 +121,7 @@ public class ZMPlayerController : MonoBehaviour
 		ZMPlayerInputController.PlungeEvent    += PlungeEvent;
 
 		// Set original facing direction.
-		//SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
+		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
 	}
 
 	void Start() 

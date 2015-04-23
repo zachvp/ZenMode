@@ -4,9 +4,11 @@ using System.Collections;
 public class ZMTrailerCameraController : MonoBehaviour {
 	public float speed = 128.0f;
 	public Transform[] focusPoints;
+	public AudioClip mainAudio;
 
 	private Vector3 _movePosition;
 	private int _focusIndex = 0;
+	private bool _toggleMusic;
 
 	// Update is called once per frame
 	void Update () {
@@ -32,15 +34,36 @@ public class ZMTrailerCameraController : MonoBehaviour {
 			transform.position = _movePosition;
 		}
 
-		if (Input.GetKey(KeyCode.Alpha1)) {
+		if (Input.GetKeyDown(KeyCode.Alpha1)) {
 			transform.position = focusPoints[0].position;
 			camera.orthographicSize = 90;
-		} else if (Input.GetKey(KeyCode.Alpha2)) {
+		} else if (Input.GetKeyDown(KeyCode.Alpha2)) {
 			transform.position = focusPoints[1].position;
 			camera.orthographicSize = 90;
-		} else if (Input.GetKey(KeyCode.Alpha3)) {
+		} else if (Input.GetKeyDown(KeyCode.Alpha3)) {
 			transform.position = focusPoints[2].position;
 			camera.orthographicSize = 200;
+		} else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+			_movePosition = focusPoints[3].position;
+			_movePosition.z = -192;
+
+			transform.position = _movePosition;
+			camera.orthographicSize = 100;
+		} else if (Input.GetKeyDown(KeyCode.Alpha0)) {
+			_movePosition = Vector3.zero;
+			_movePosition.z = -192;
+
+			transform.position = _movePosition;
+			camera.orthographicSize = 432;
+		}
+
+		if (Input.GetKeyDown(KeyCode.U)) {
+			if (!_toggleMusic)
+				audio.Play();
+			else
+				audio.Stop();
+
+			_toggleMusic = !_toggleMusic;
 		}
 	}
 

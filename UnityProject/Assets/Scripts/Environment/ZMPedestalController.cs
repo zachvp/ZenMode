@@ -131,7 +131,7 @@ public class ZMPedestalController : MonoBehaviour {
 	// public methods
 	public void Enable() {
 		_scoreState = ScoreState.SCORING_ENABLED;
-		//renderer.enabled = true;
+		renderer.enabled = true;
 
 		if (_pedestalLight != null)
 			_pedestalLight.enabled = true;
