@@ -350,7 +350,6 @@ public class ZMPlayerController : MonoBehaviour
 
 			if (_moveModState == MoveModState.LUNGING_GROUND) {
 				if (!checkEdgeRight && _movementDirection == MovementDirectionState.FACING_RIGHT) {
-					//CancelInvoke(kMethodNameEndLunge);
 					runSpeed = 0;
 				} else if (!checkEdgeLeft && _movementDirection == MovementDirectionState.FACING_LEFT) {
 					runSpeed = 0;
