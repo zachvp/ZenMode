@@ -18,6 +18,9 @@ public class ZMPlayerController : MonoBehaviour
 	private float WALL_SLIDE_SPEED = 80.0f;
 	private float WALL_JUMP_KICK_SPEED = 500.0f;
 	private float runSpeed = 0.0f;
+	private float EDGE_OFFSET = 16.0f;
+	private float AOE_RANGE = 10.0f;
+
 
 	// Additional constants.
 	private float TILE_SIZE = 28.0f;
@@ -272,6 +275,26 @@ public class ZMPlayerController : MonoBehaviour
 		} else if (_moveModState == MoveModState.PLUNGING) {
 			if (_controller.isGrounded) {
 				Instantiate(_effectPlungeObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
+
+				// AOE Check
+				RaycastHit2D killAOER = CheckRight(new Vector2(EDGE_OFFSET, -16.0f), AOE_RANGE, _controller.specialInteractibleMask);
+				RaycastHit2D killAOEL = CheckLeft(new Vector2(-EDGE_OFFSET, -16.0f), AOE_RANGE, _controller.specialInteractibleMask);
+				ZMPlayerController playerController;
+				if (killAOER) {
+					playerController = killAOER.collider.GetComponent<ZMPlayerController>();
+					
+					if (playerController != null)
+						KillOpponent(playerController);
+				}
+				
+				if (killAOEL) {
+					playerController = killAOEL.collider.GetComponent<ZMPlayerController>();
+					
+					if (playerController != null)
+						KillOpponent(playerController);
+				}
+
+
 				_moveModState = MoveModState.NEUTRAL;
 
 				Invoke("ResetControlModState", 0.1f);
@@ -381,9 +404,8 @@ public class ZMPlayerController : MonoBehaviour
 		_animator.SetBool ("isLunging", IsPerformingLunge());
 		_animator.SetFloat ("velocityY", _velocity.y);
 
-		if (PlayerRunEvent != null) {
-			PlayerRunEvent(this, _controlMoveState == ControlMoveState.MOVING);
-		}
+		// ZVP
+
 	}
 	
 	void LungeCooldown() {
@@ -458,8 +480,9 @@ public class ZMPlayerController : MonoBehaviour
 			if (hit.normal.y == 1.0f) {
 				if (hit.collider.CompareTag(kPlayerTag)) {
 					ZMPlayerController otherPlayer = hit.collider.GetComponent<ZMPlayerController>();
-					if (IsPerformingPlunge() && otherPlayer.IsAbleToDie()) {
-						KillOpponent (hit.collider.gameObject);
+
+					if (IsPerformingPlunge()) {
+						KillOpponent (otherPlayer);
 					}
 				}
 			}
@@ -474,9 +497,9 @@ public class ZMPlayerController : MonoBehaviour
 								CancelInvoke(kMethodNameEndLunge);
 								_moveModState = MoveModState.RECOIL;
 							}
-						} else if (otherPlayer.IsAbleToDie()) {
+						} else {
 							_playerInPath = false;
-							KillOpponent (hit.collider.gameObject);
+							KillOpponent (otherPlayer);
 						}
 					} else if (hit.collider.CompareTag("Breakable")) {
 						hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
@@ -606,11 +629,10 @@ public class ZMPlayerController : MonoBehaviour
 
 	}
 
-	private void KillOpponent(GameObject opponent) 
+	private void KillOpponent(ZMPlayerController playerController) 
 	{
-		ZMPlayerController playerController = opponent.GetComponent<ZMPlayerController>();
-
-		playerController.KillSelf();
+		if (playerController.IsAbleToDie())
+			playerController.KillSelf();
 
 		ZMMetricsCollector collector = GetComponent<ZMMetricsCollector>();
 		if (collector != null) {
@@ -686,15 +708,33 @@ public class ZMPlayerController : MonoBehaviour
 
 	private RaycastHit2D CheckLeft(float distance, LayerMask mask) {
 		Vector2 rayOrigin = new Vector2(transform.position.x - 17f, transform.position.y);
+
+		return CheckLeft(Vector2.zero, distance, mask);
+	}
+
+	private RaycastHit2D CheckLeft(Vector2 offset, float distance, LayerMask mask) {
+		Vector2 rayOrigin = new Vector2(transform.position.x - 17f, transform.position.y);
 		Vector2 rayDirection = new Vector2(-1.0f, 0.0f);
 
+		rayOrigin += offset;
+		Debug.DrawRay(rayOrigin, rayDirection, Color.yellow);
+		
 		return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
 	}
 
 	private RaycastHit2D CheckRight(float distance, LayerMask mask) {
 		Vector2 rayOrigin = new Vector2(transform.position.x + 17f, transform.position.y);
+
+		return CheckRight (Vector2.zero, distance, mask);
+	}
+
+	private RaycastHit2D CheckRight(Vector2 offset, float distance, LayerMask mask) {
+		Vector2 rayOrigin = new Vector2(transform.position.x + 17f, transform.position.y);
 		Vector2 rayDirection = new Vector2(1.0f, 0.0f);
 
+		rayOrigin += offset;
+		Debug.DrawRay(rayOrigin, rayDirection, Color.yellow);
+		
 		return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
 	}
 
