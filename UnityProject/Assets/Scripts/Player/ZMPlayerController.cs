@@ -47,7 +47,7 @@ public class ZMPlayerController : MonoBehaviour
 	private enum MovementDirectionState { FACING_LEFT, FACING_RIGHT };
 	private enum ControlMoveState 		{ NEUTRAL, MOVING };
 	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACK, ATTACKING, WALL_JUMPING, PLUNGE, PLUNGING };
-	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING_AIR, LUNGING_GROUND, WALL_SLIDE, RECOIL, RECOILING, DISABLE, DISABLED, PARRY, RESPAWN };
+	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING_AIR, LUNGING_GROUND, WALL_SLIDE, RECOIL, RECOILING, DISABLE, DISABLED, PARRY_LUNGE, PARRY_PLUNGE, RESPAWN };
 	private enum AbilityState 			{ NEUTRAL, SHOOTING };
 
 	private ControlMoveState _controlMoveState;
@@ -293,7 +293,7 @@ public class ZMPlayerController : MonoBehaviour
 						KillOpponent(playerController);
 				}
 
-				_moveModState = MoveModState.PARRY;
+				_moveModState = MoveModState.PARRY_PLUNGE;
 				DisablePlayer();
 
 				Invoke(kMethodNameEnablePlayer, PARRY_TIME);
@@ -395,7 +395,7 @@ public class ZMPlayerController : MonoBehaviour
 			this.renderer.material.color = Color.grey;
 		} else if (_moveModState == MoveModState.RESPAWN) {
 			this.renderer.material.color = Color.white;
-		} else if (_moveModState == MoveModState.PARRY) {
+		} else if (_moveModState == MoveModState.PARRY_PLUNGE || _moveModState == MoveModState.PARRY_LUNGE) {
 			renderer.material.color = Color.magenta;
 		} else {
 			this.renderer.material.color = _initialColor;
@@ -420,7 +420,7 @@ public class ZMPlayerController : MonoBehaviour
 		_animator.SetBool ("isGrounded", _controller.isGrounded);
 		_animator.SetBool ("isPlunging", IsPerformingPlunge());
 		_animator.SetBool ("isLunging", IsPerformingLunge());
-		_animator.SetBool ("isParrying", _moveModState == MoveModState.PARRY);
+		_animator.SetBool ("isParrying", _moveModState == MoveModState.PARRY_PLUNGE);
 		_animator.SetBool ("isNeutral", _moveModState == MoveModState.NEUTRAL);
 		_animator.SetFloat ("velocityY", _velocity.y);
 	}
@@ -515,7 +515,9 @@ public class ZMPlayerController : MonoBehaviour
 								CancelInvoke(kMethodNameEndLunge);
 								_moveModState = MoveModState.RECOIL;
 							}
-						} else if (otherPlayer._moveModState == MoveModState.PARRY && IsOpposingDirection(otherPlayer)) {
+						} else if (otherPlayer._moveModState == MoveModState.PARRY_LUNGE && IsOpposingDirection(otherPlayer)) {
+							_moveModState = MoveModState.RECOIL;
+						} else if (otherPlayer._moveModState == MoveModState.PARRY_PLUNGE) {
 							_moveModState = MoveModState.RECOIL;
 						} else {
 							_playerInPath = false;
@@ -617,6 +619,9 @@ public class ZMPlayerController : MonoBehaviour
 		_moveModState = MoveModState.RESPAWN;
 		_controlModState = ControlModState.NEUTRAL;
 		_controlMoveState = ControlMoveState.NEUTRAL;
+		CancelInvoke(kMethodNameEndLunge);
+		CancelInvoke("ResetControlModState");
+		CancelInvoke(kMethodNameEnablePlayer);
 
 		// Handle death visuals here
 		this.renderer.material.color = Color.red;
@@ -626,7 +631,6 @@ public class ZMPlayerController : MonoBehaviour
 		_playerInPath = false;
 		runSpeed = 0f;
 
-		DisablePlayer();
 		Invoke(kRespawnMethodName, RESPAWN_TIME);
 
 		// Notify event handlers of player's death
@@ -647,6 +651,7 @@ public class ZMPlayerController : MonoBehaviour
 		StartCoroutine (ScaleTauntText (new Vector3(1.5f, 1.5f, 1.5f), Vector3.one, 0.05f));
 		Invoke ("HideTauntText", 0.5f);
 
+		DisablePlayer();
 	}
 
 	private void KillOpponent(ZMPlayerController playerController) 
@@ -722,7 +727,7 @@ public class ZMPlayerController : MonoBehaviour
 		runSpeed = 0;
 		_playerInPath = false;
 
-		_moveModState = MoveModState.PARRY;
+		_moveModState = MoveModState.PARRY_LUNGE;
 		Invoke(kMethodNameEnablePlayer, PARRY_TIME);
 
 		// Set a cooldown before we can lunge again.
@@ -816,13 +821,9 @@ public class ZMPlayerController : MonoBehaviour
 		return _moveModState == MoveModState.DISABLE && _controller.isGrounded;
 	}
 
-	private bool ShouldEnableWhenGrounded() {
-		return _moveModState == MoveModState.NEUTRAL && _controller.isGrounded;
-	}
-
 	private bool ShouldEnable() {
 		return !_controller.isGrounded && !IsPerformingPlunge() && !IsRecoiling() && !IsPerformingLunge()
-			   && _moveModState != MoveModState.PARRY;
+			   && _moveModState != MoveModState.PARRY_LUNGE && _moveModState != MoveModState.PARRY_PLUNGE;;
 	}
 
 	private bool ShouldRecoilWithPlayer(ZMPlayerController other) {
