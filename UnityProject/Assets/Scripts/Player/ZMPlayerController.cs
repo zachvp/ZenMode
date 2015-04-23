@@ -349,10 +349,10 @@ public class ZMPlayerController : MonoBehaviour
 			RaycastHit2D checkEdgeLeft  = CheckBelow(new Vector2(-17.0f, 0), 16.0f, _controller.platformMask);
 
 			if (_moveModState == MoveModState.LUNGING_GROUND) {
-				if (!checkEdgeRight) {
+				if (!checkEdgeRight && _movementDirection == MovementDirectionState.FACING_RIGHT) {
 					//CancelInvoke(kMethodNameEndLunge);
 					runSpeed = 0;
-				} else if (!checkEdgeLeft) {
+				} else if (!checkEdgeLeft && _movementDirection == MovementDirectionState.FACING_LEFT) {
 					runSpeed = 0;
 				}
 			}
