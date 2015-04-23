@@ -409,6 +409,8 @@ public class ZMPlayerController : MonoBehaviour
 		_animator.SetBool ("isGrounded", _controller.isGrounded);
 		_animator.SetBool ("isPlunging", IsPerformingPlunge());
 		_animator.SetBool ("isLunging", IsPerformingLunge());
+		_animator.SetBool ("isParrying", _moveModState == MoveModState.PARRY);
+		_animator.SetBool ("isNeutral", _moveModState == MoveModState.NEUTRAL);
 		_animator.SetFloat ("velocityY", _velocity.y);
 
 		// ZVP
