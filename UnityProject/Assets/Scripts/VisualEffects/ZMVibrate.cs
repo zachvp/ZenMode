@@ -43,7 +43,6 @@ public class ZMVibrate : MonoBehaviour {
 				_switchCounter += 1;
 				
 				if (_switchCounter > switchLimit) {
-					Debug.Log("Other way!");
 					_rotateToMin = true;
 					_switchCounter = 0;
 				}
