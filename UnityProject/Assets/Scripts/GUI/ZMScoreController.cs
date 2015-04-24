@@ -31,7 +31,7 @@ namespace ZMPlayer{
 		public static event StopScoreAction StopScoreEvent;
 
 		// References
-		//private ZMPlayerInfo _playerInfo;
+		private ZMPlayerInfo _playerInfo;
 		List<ZMScoreController> _allScoreControllers;
 		
 		// Constants
@@ -58,7 +58,7 @@ namespace ZMPlayer{
 		void Awake() {
 			_scoreMax = ZMScorePool.MaxScore;
 
-			//_playerInfo = GetComponent<ZMPlayerInfo>();
+			_playerInfo = GetComponent<ZMPlayerInfo>();
 			_allScoreControllers = new List<ZMScoreController>();
 
 			_scoreState  = ScoreState.OUT_OF_ZONE;
@@ -145,8 +145,13 @@ namespace ZMPlayer{
 
 		void OnTriggerStay2D(Collider2D collision) {
 			if (collision.gameObject.CompareTag(kPedestalTag)) {
-				if (_zoneState == ZoneState.ACTIVE && _targetState == TargetState.ALIVE) {
-					_scoreState = ScoreState.IN_ZONE;
+				ZMPedestalController pedestalController = collision.GetComponent<ZMPedestalController>();
+				if (pedestalController.KillPlayerInfo == null) return;
+
+				if (!pedestalController.KillPlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+					if (_zoneState == ZoneState.ACTIVE && _targetState == TargetState.ALIVE) {
+						_scoreState = ScoreState.IN_ZONE;
+					}
 				}
 			}
 		}
@@ -177,6 +182,7 @@ namespace ZMPlayer{
 
 			UpdateUI();
 		}
+
 
 		private void UpdateUI() {
 			_totalScore = Mathf.Max(_totalScore, 0);

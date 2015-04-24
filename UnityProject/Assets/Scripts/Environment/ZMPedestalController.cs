@@ -11,6 +11,8 @@ public class ZMPedestalController : MonoBehaviour {
 	public float moveSpeed;
 	public float lingerAfterSpawnTime = 3.0f;
 
+	private ZMPlayerInfo _killPlayerInfo; public ZMPlayerInfo KillPlayerInfo { get { return _killPlayerInfo; } }
+
 	private enum ScoreState { SCORING_ENABLED, SCORING_DISABLED };
 	private enum MoveState  { NEUTRAL, MOVE, MOVING, AT_TARGET };
 	private ScoreState _scoreState;
@@ -109,6 +111,21 @@ public class ZMPedestalController : MonoBehaviour {
 		DeactivateEvent = null;
 	}
 
+	void OnTriggerEnter2D(Collider2D collider) {
+		if (collider.CompareTag("Player")) {
+			if (_killPlayerInfo == null) return;
+
+			ZMPlayerController playerController = collider.GetComponent<ZMPlayerController>();
+
+			if (!playerController.IsDead()) {
+				if (playerController.GetComponent<ZMPlayerInfo>().playerTag.Equals(_killPlayerInfo.playerTag)) {
+					Debug.Log("POP!");
+					Disable();
+				}
+			}
+		}
+	}
+
 	private void ToggleOn() {
 		Invoke("ToggleEnabled", 2.0f);
 	}
@@ -182,6 +199,8 @@ public class ZMPedestalController : MonoBehaviour {
 		if (IsInvoking(kDisableMethodName)) {
 			CancelInvoke(kDisableMethodName);
 		}
+
+		_killPlayerInfo = playerController.GetComponent<ZMPlayerInfo>();
 	}
 
 	void HandleUpdateScoreEvent(ZMScoreController scoreController) {

@@ -827,6 +827,10 @@ public class ZMPlayerController : MonoBehaviour
 		return _moveModState != MoveModState.RESPAWN && !IsRecoiling();
 	}
 
+	public bool IsDead() {
+		return _moveModState == MoveModState.RESPAWN;
+	}
+
 	private bool IsOpposingDirection(ZMPlayerController otherPlayer) {
 		return _movementDirection != otherPlayer._movementDirection;
 	}
