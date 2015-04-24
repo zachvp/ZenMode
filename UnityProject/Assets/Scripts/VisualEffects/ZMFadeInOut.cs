@@ -10,6 +10,7 @@ public class ZMFadeInOut : MonoBehaviour {
 
 	private Color _fadeColor;
 	private Image _image;
+
 	private bool _fadingIn = true;
 	private int _currentFrame;
 	private int _fadeFrame;
@@ -17,6 +18,7 @@ public class ZMFadeInOut : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		_image = GetComponent<Image>();
+
 		_currentFrame = 0;
 		_fadeFrame = 5;
 
