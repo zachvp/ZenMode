@@ -7,6 +7,7 @@ public class ZMPedestalController : MonoBehaviour {
 	public enum MoveType { CYCLE, RANDOM };
 	public MoveType moveType;
 	public ParticleSystem zenStream;
+	public ParticleSystem zenPop;
 
 	public float moveSpeed;
 	public float lingerAfterSpawnTime = 3.0f;
@@ -120,6 +121,11 @@ public class ZMPedestalController : MonoBehaviour {
 			if (!playerController.IsDead()) {
 				if (playerController.GetComponent<ZMPlayerInfo>().playerTag.Equals(_killPlayerInfo.playerTag)) {
 					Debug.Log("POP!");
+					zenPop.renderer.material.color = renderer.material.color;
+					zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
+					zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
+					zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
+
 					Disable();
 				}
 			}
