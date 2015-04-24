@@ -22,7 +22,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	private Vector3 _targetPosition;
 
 	// ID
-	ZMPlayer.ZMPlayerInfo _playerInfo;
+	private ZMPlayer.ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 
 	// Use this for initialization
 	void Awake() {

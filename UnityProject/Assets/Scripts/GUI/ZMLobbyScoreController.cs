@@ -38,11 +38,6 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		MaxScoreReachedEvent = null;
 	}
 
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
 	void OnTriggerStay2D(Collider2D collider) {
 		if (collider.CompareTag("Pedestal")) {
 			if (collider.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(_playerInfo.playerTag)) {
@@ -85,7 +80,9 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	// event handlers
 	void HandleAtPathEndEvent (ZMLobbyPedestalController lobbyPedestalController)
 	{
-		_pedestalAtEnd = true;
+		if (lobbyPedestalController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			_pedestalAtEnd = true;
+		}
 	}
 
 	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
