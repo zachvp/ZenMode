@@ -101,7 +101,21 @@ public class ZMPauseMenuController : MonoBehaviour {
 	}
 
 	void HandlePauseGameEvent () {
+		Time.timeScale = 0;
 		ShowMenu();
+
+		if (Application.loadedLevel == 2) {
+			menuOptions[2].gameObject.SetActive(false);
+			//menuOptions[0] = menuOptions[1];
+			menuOptions[1].text = "Quit To Menu";
+			
+			_optionsSize = 2;
+			_resumeOption = 0;
+			_restartOption = -1;
+			_quitOption = 1;
+			
+			ToggleSelection(0, true);
+		}
 	}
 
 	void HandleResumeGameEvent() {
@@ -128,6 +142,7 @@ public class ZMPauseMenuController : MonoBehaviour {
 	void HandleMenuSelection() {
 		if (_selectedIndex == _resumeOption) {
 			if (SelectResumeEvent != null) {
+				Time.timeScale = 1.0f;
 				SelectResumeEvent();
 			}
 		} else if (_selectedIndex == _restartOption) {
@@ -136,6 +151,8 @@ public class ZMPauseMenuController : MonoBehaviour {
 			}
 		} else if (_selectedIndex == _quitOption) {
 			if (SelectQuitEvent != null) {
+				Time.timeScale = 1.0f;
+				Debug.Log("Quit!");
 				SelectQuitEvent();
 			}
 		}

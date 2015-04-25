@@ -629,11 +629,6 @@ public class ZMPlayerController : MonoBehaviour
 
 		Invoke(kRespawnMethodName, RESPAWN_TIME);
 
-		// Notify event handlers of player's death
-		if (PlayerDeathEvent != null) {
-			PlayerDeathEvent(this);
-		}
-
 		audio.PlayOneShot(_audioGore[Random.Range (0, _audioGore.Length)]);
 		audio.PlayOneShot(_audioHurt[Random.Range (0, _audioHurt.Length)]);
 		audio.PlayOneShot(_audioKill[Random.Range (0, _audioKill.Length)]);
@@ -652,6 +647,11 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void KillOpponent(ZMPlayerController playerController) 
 	{
+		// Notify event handlers of player's death
+		if (PlayerDeathEvent != null) {
+			PlayerDeathEvent(playerController);
+		}
+
 		if (playerController.IsAbleToDie())
 			playerController.KillSelf();
 

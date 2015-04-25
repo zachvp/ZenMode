@@ -71,8 +71,9 @@ public class ZMCameraController : MonoBehaviour {
 		_basePosition = transform.position;
 		_speed = 10f;
 		Zoom(200, controller.transform.position);
+		Time.timeScale = 0.15f;
+
 		Invoke("ResetZoom", 0.5f);
-		Time.timeScale = 0.2f;
 	}
 
 	void Update() {
