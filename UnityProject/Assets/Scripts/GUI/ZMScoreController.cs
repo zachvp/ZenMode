@@ -91,7 +91,7 @@ namespace ZMPlayer{
 			}
 
 			scoreBar.handleRect = null;
-			SetScore (50);
+			SetScore (33.33f);
 		}
 
 		void FixedUpdate() {
@@ -180,9 +180,14 @@ namespace ZMPlayer{
 
 		// utility methods
 		public void AddToScore(float amount) {
-			_totalScore += amount;
+			if (_totalScore >= 0.0f && _totalScore < 100.0f) {
+				_totalScore += amount;
 
-			UpdateUI();
+				if (_totalScore < 0) _totalScore = 0;
+				if (_totalScore > 100) _totalScore = 100;
+
+				UpdateUI();
+			}
 		}
 
 
@@ -204,7 +209,7 @@ namespace ZMPlayer{
 		// conditions
 		public bool IsAbleToScore() { return _targetState == TargetState.ALIVE && _zoneState == ZoneState.ACTIVE &&
 											 _scoreState == ScoreState.IN_ZONE; }
-		public bool IsBeingDrained() { return CanOtherScore() && _scoreState == ScoreState.OUT_OF_ZONE; }
+		public bool IsBeingDrained() { return CanOtherScore() && _scoreState == ScoreState.OUT_OF_ZONE && _totalScore > 0; }
 
 		private bool IsMaxed() { return _goalState == GoalState.MAX || _goalState == GoalState.MAXED; }
 

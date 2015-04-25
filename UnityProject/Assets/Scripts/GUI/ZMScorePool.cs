@@ -8,7 +8,7 @@ public class ZMScorePool : MonoBehaviour {
 	public float scoreAmount;
 
 	// class members
-	public static float CurrentScorePool = 50;
+	public static float CurrentScorePool = 33.33f;
 
 	HashSet<ZMScoreController> _gainingAgents;
 	HashSet<ZMScoreController> _drainingAgents;
@@ -28,7 +28,7 @@ public class ZMScorePool : MonoBehaviour {
 	void Update () {
 		if (_gainingAgents.Count > 0) {
 			foreach (ZMScoreController scoreController in _gainingAgents) {
-				//Debug.Log ("gain agent count " + _gainingAgents.Count.ToString());
+				Debug.Log ("gain agent count " + _gainingAgents.Count.ToString());
 				scoreController.AddToScore(scoreAmount / _gainingAgents.Count);
 				CurrentScorePool -= scoreAmount;
 			}
@@ -36,7 +36,7 @@ public class ZMScorePool : MonoBehaviour {
 
 		if (_drainingAgents.Count > 0) {
 			foreach (ZMScoreController scoreController in _drainingAgents) {
-				//Debug.Log ("drain agent count " + _drainingAgents.Count.ToString());
+				Debug.Log ("drain agent count " + _drainingAgents.Count.ToString());
 				scoreController.AddToScore(-scoreAmount / _drainingAgents.Count);
 				CurrentScorePool += scoreAmount;
 			}
