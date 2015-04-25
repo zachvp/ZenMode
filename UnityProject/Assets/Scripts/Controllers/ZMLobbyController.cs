@@ -27,6 +27,12 @@ public class ZMLobbyController : MonoBehaviour {
 		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
 		ZMGameInputManager.MainInputEvent += HandleMainInputEvent;
 		ZMPauseMenuController.SelectResumeEvent += HandleSelectResumeEvent;
+		ZMPauseMenuController.SelectQuitEvent += HandleSelectQuitEvent;
+	}
+
+	void HandleSelectQuitEvent ()
+	{
+		Application.LoadLevel(1);
 	}
 
 	void HandleMainInputEvent (ZMPlayerInfo.PlayerTag playerTag)
@@ -56,7 +62,6 @@ public class ZMLobbyController : MonoBehaviour {
 
 	void HandleSelectResumeEvent ()
 	{
-		Time.timeScale = 1;
 		_paused = false;
 	}
 
@@ -83,8 +88,6 @@ public class ZMLobbyController : MonoBehaviour {
 			if (!_paused) {
 				if (PauseGameEvent != null) {
 					PauseGameEvent();
-
-					Time.timeScale = 0;
 
 					_paused = true;
 				}
