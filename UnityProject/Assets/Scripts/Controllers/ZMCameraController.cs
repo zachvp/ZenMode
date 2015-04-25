@@ -67,13 +67,13 @@ public class ZMCameraController : MonoBehaviour {
 
 	void HandlePlayerDeathEvent (ZMPlayerController controller)
 	{
-	//	Shake(25);
-		_basePosition = transform.position;
-		_speed = 10f;
-		Zoom(200, controller.transform.position);
-		Time.timeScale = 0.15f;
+		Shake(25);
+		//_basePosition = transform.position;
+		//_speed = 10f;
+		//Zoom(200, controller.transform.position);
+		//Time.timeScale = 0.15f;
 
-		Invoke("ResetZoom", 0.5f);
+		//Invoke("ResetZoom", 0.5f);
 	}
 
 	void Update() {
@@ -128,6 +128,6 @@ public class ZMCameraController : MonoBehaviour {
 	void ResetZoom() {
 		Zoom (endZoom, _basePosition);
 		_speed = 10f;
-		Time.timeScale = 1.0f;
+		//Time.timeScale = 1.0f;
 	}
 }

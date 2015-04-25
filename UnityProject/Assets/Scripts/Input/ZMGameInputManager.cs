@@ -42,5 +42,11 @@ public class ZMGameInputManager : MonoBehaviour {
 				MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2);
 			}
 		}
+
+		if (Input.GetButtonDown("P3_JUMP")) {
+			if (MainInputEvent != null) {
+				MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3);
+			}
+		}
 	}
 }
