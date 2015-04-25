@@ -346,18 +346,6 @@ public class ZMPlayerController : MonoBehaviour
 			_controlModState = ControlModState.NEUTRAL;
 
 			_playerInPath = false;
-		} else if (_moveModState == MoveModState.LUNGING_GROUND || _moveModState == MoveModState.LUNGING_AIR) {
-			// TODO: prevent player from going over edge
-			RaycastHit2D checkEdgeRight = CheckBelow(new Vector2(17.0f, 0), 16.0f, _controller.platformMask);
-			RaycastHit2D checkEdgeLeft  = CheckBelow(new Vector2(-17.0f, 0), 16.0f, _controller.platformMask);
-
-			if (_moveModState == MoveModState.LUNGING_GROUND) {
-				if (!checkEdgeRight && _movementDirection == MovementDirectionState.FACING_RIGHT) {
-					runSpeed = 0;
-				} else if (!checkEdgeLeft && _movementDirection == MovementDirectionState.FACING_LEFT) {
-					runSpeed = 0;
-				}
-			}
 		} else if (_moveModState == MoveModState.WALL_SLIDE) {
 			// Wall slide.
 			if (_velocity.y < 1.0f &&  _controlMoveState == ControlMoveState.MOVING) {
