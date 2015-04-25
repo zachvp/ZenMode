@@ -69,7 +69,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 		ZMLobbyScoreController.MaxScoreReachedEvent -= HandleMaxScoreReachedEvent;
 	}
 	
-	void FixedUpdate() {
+	void Update() {
 		if (_moveState == MoveState.MOVE && _waypointIndex < waypoints.GetLength(0)) {
 			_distanceTraveled = 0.0f;
 			_targetPosition = waypoints[_waypointIndex].position;
@@ -137,7 +137,8 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	void HandleMaxScoreReachedEvent (ZMLobbyScoreController lobbyScoreController)
 	{
 		if (lobbyScoreController.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag)) {
-			Destroy(gameObject);
+			gameObject.SetActive(false);
+			//Destroy(gameObject);
 		}
 	}
 }

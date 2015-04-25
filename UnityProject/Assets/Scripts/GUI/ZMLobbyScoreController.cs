@@ -42,6 +42,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		if (collider.CompareTag("Pedestal")) {
 			if (collider.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(_playerInfo.playerTag)) {
 				if (_currentScore < maxScore) {
+
 					if (_pedestalAtEnd)
 						AddToScore(scoreAmount);
 				} else if(!_readyFired) {

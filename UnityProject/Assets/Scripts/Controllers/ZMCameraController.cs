@@ -6,16 +6,23 @@ public class ZMCameraController : MonoBehaviour {
 
 	private float _zoomTargetSize;
 	private bool  _isZooming;
-	private float _speed = 3f;
+	private float _baseSpeed = 3f;
+	private float _speed;
 
 	private float _totalDistance;
 	private int _zoomStep;
 	private int _zoomFrames;
 
+	private Vector3 _basePosition;
+
 	private bool _isShaking = false;
 
 	// Use this for initialization
 	void Awake () {
+		_speed = _baseSpeed;
+		
+		GetComponent<ZMMovementBobbing>().enabled = false;
+
 		ZMPlayerController.PlayerRecoilEvent 	 += HandlePlayerRecoilEvent;
 		ZMPlayerController.PlayerLandPlungeEvent += HandlePlayerLandPlungeEvent;
 		ZMPlayerController.PlayerDeathEvent 	 += HandlePlayerDeathEvent;
@@ -60,19 +67,21 @@ public class ZMCameraController : MonoBehaviour {
 
 	void HandlePlayerDeathEvent (ZMPlayerController controller)
 	{
-		Shake(25);
-	}
-	
-	void Start() {
-		GetComponent<ZMMovementBobbing>().enabled = false;
+	//	Shake(25);
+		_basePosition = transform.position;
+		_speed = 10f;
+		Zoom(200, controller.transform.position);
+		Invoke("ResetZoom", 0.5f);
+		Time.timeScale = 0.2f;
 	}
 
-	void FixedUpdate() {
+	void Update() {
 		if (_isZooming) {
 			camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, _zoomTargetSize, _speed * Time.deltaTime);
 
 			if (Mathf.Abs(camera.orthographicSize - _zoomTargetSize) < 1f) {
 				_isZooming = false;
+				_speed = _baseSpeed;
 			}
 		}
 
@@ -112,6 +121,12 @@ public class ZMCameraController : MonoBehaviour {
 	}
 
 	private void MoveTo(Vector3 position) {
-		camera.transform.position = new Vector3(position.x, position.y, position.z);
+		camera.transform.position = new Vector3(position.x, position.y, -192.0f);
+	}
+
+	void ResetZoom() {
+		Zoom (endZoom, _basePosition);
+		_speed = 10f;
+		Time.timeScale = 1.0f;
 	}
 }
