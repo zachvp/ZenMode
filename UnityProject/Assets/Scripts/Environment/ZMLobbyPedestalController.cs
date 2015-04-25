@@ -137,7 +137,8 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	void HandleMaxScoreReachedEvent (ZMLobbyScoreController lobbyScoreController)
 	{
 		if (lobbyScoreController.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag)) {
-			Destroy(gameObject);
+			gameObject.SetActive(false);
+			//Destroy(gameObject);
 		}
 	}
 }

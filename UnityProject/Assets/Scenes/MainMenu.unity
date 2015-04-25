@@ -710,6 +710,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1882317491}
   - 114: {fileID: 1882317492}
+  - 82: {fileID: 1882317493}
   m_Layer: 0
   m_Name: Menu
   m_TagString: Untagged
@@ -746,3 +747,72 @@ MonoBehaviour:
   menuOptions:
   - {fileID: 568259843}
   - {fileID: 954772224}
+  _audioChoose:
+  - {fileID: 8300000, guid: 594d8400e4d7a4c46a3904097aba6b42, type: 3}
+  - {fileID: 8300000, guid: e39166e2fc96b42d7ad0c9583d7da0a4, type: 3}
+  - {fileID: 8300000, guid: 80755fc55b979415ca59cea118b16741, type: 3}
+  - {fileID: 8300000, guid: 2a3fcf69d215c4c8b9abac2a4ee2a4c3, type: 3}
+  - {fileID: 8300000, guid: b2299be54b2d5429b8ccc04b3686b971, type: 3}
+  - {fileID: 8300000, guid: ce278ac397cc447b698840dd5460a784, type: 3}
+  _audioHighlight:
+  - {fileID: 8300000, guid: fc1370c6186304d1688c3e45c9e10e20, type: 3}
+  - {fileID: 8300000, guid: d5835c99a585b496394459e9b7a86c51, type: 3}
+  - {fileID: 8300000, guid: 9a2c6c86099714997b72a38742f15cba, type: 3}
+--- !u!82 &1882317493
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1882317490}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2

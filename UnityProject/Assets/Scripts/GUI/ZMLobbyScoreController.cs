@@ -41,7 +41,9 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	void OnTriggerStay2D(Collider2D collider) {
 		if (collider.CompareTag("Pedestal")) {
 			if (collider.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(_playerInfo.playerTag)) {
+				Debug.Log(gameObject.name + ": my player tag");
 				if (_currentScore < maxScore) {
+
 					if (_pedestalAtEnd)
 						AddToScore(scoreAmount);
 				} else if(!_readyFired) {
@@ -80,6 +82,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	// event handlers
 	void HandleAtPathEndEvent (ZMLobbyPedestalController lobbyPedestalController)
 	{
+		Debug.Log(gameObject.name + ": orb at path end " + lobbyPedestalController.PlayerInfo.playerTag.ToString());
 		if (lobbyPedestalController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 			_pedestalAtEnd = true;
 		}
