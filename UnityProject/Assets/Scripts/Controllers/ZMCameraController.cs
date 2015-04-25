@@ -72,9 +72,10 @@ public class ZMCameraController : MonoBehaviour {
 		_speed = 10f;
 		Zoom(200, controller.transform.position);
 		Invoke("ResetZoom", 0.5f);
+		Time.timeScale = 0.2f;
 	}
 
-	void FixedUpdate() {
+	void Update() {
 		if (_isZooming) {
 			camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, _zoomTargetSize, _speed * Time.deltaTime);
 
@@ -126,5 +127,6 @@ public class ZMCameraController : MonoBehaviour {
 	void ResetZoom() {
 		Zoom (endZoom, _basePosition);
 		_speed = 10f;
+		Time.timeScale = 1.0f;
 	}
 }
