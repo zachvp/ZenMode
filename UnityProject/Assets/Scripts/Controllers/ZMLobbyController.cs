@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ZMPlayer;
 
 public class ZMLobbyController : MonoBehaviour {
-	public int requiredPlayerCount = 1;
+	public int requiredPlayerCount = 2;
 
 	public delegate void PlayerJoinedAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag); public static event PlayerJoinedAction PlayerJoinedEvent;
 	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
