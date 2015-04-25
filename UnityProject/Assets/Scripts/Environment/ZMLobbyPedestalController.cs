@@ -69,7 +69,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 		ZMLobbyScoreController.MaxScoreReachedEvent -= HandleMaxScoreReachedEvent;
 	}
 	
-	void FixedUpdate() {
+	void Update() {
 		if (_moveState == MoveState.MOVE && _waypointIndex < waypoints.GetLength(0)) {
 			_distanceTraveled = 0.0f;
 			_targetPosition = waypoints[_waypointIndex].position;
