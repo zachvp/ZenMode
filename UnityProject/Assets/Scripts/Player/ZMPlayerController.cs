@@ -9,24 +9,23 @@ public class ZMPlayerController : MonoBehaviour
 	// Movement constants.
 	private float GRAVITY = 2200.0f;
 	private float RUN_SPEED_MAX = 500.0f;
-	private float ACCELERATION = 30.0f; // 30.0f
-	private float FRICTION = 25.0f; // 25.0f
+	private float ACCELERATION = 30.0f;
+	private float FRICTION = 25.0f;
 	private float JUMP_HEIGHT = 800.0f;
 	private float PLUNGE_SPEED = 2200.0f;
 	private float LUNGE_SPEED = 1800.0f;
 	private float LUNGE_TIME = 0.14f;
 	private float WALL_SLIDE_SPEED = 80.0f;
 	private float WALL_JUMP_KICK_SPEED = 500.0f;
-	private float runSpeed = 0.0f;
 	private float EDGE_OFFSET = 16.0f;
-	private float AOE_RANGE = 10.0f;
-	private float PARRY_TIME = 1.0f;
-
+	private float AOE_RANGE = 32.0f;
+	private float PARRY_TIME = 0.30f;
+	private float PARRY_TIME_AIR = 0.15f;
+	private float runSpeed = 0.0f;
 
 	// Additional constants.
 	private float TILE_SIZE = 28.0f;
 	private float RESPAWN_TIME = 2.0f;
-	private float LUNGE_COOLDOWN = 0.3f;
 	private int FRAMES_PER_STEP = 30;
 
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
@@ -39,6 +38,7 @@ public class ZMPlayerController : MonoBehaviour
 	private int _framesUntilStep = 0;
 	private string[] kDeathStrings;
 	private bool _canLunge;
+	private bool _canWallJump;
 
 	// Speeds of two players before recoil.
 	private Vector2 _collisionVelocities;
@@ -111,6 +111,7 @@ public class ZMPlayerController : MonoBehaviour
 		_animator = GetComponent<Animator>();
 		_controller = GetComponent<CharacterController2D>();
 		_canLunge = true;
+		_canWallJump = true;
 
 		_controller.onControllerCollidedEvent += onControllerCollider;
 		_controller.onTriggerEnterEvent += onTriggerEnterEvent;
@@ -273,31 +274,33 @@ public class ZMPlayerController : MonoBehaviour
 			if (_controller.isGrounded) {
 				Instantiate(_effectPlungeObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 
-				// AOE Check
-				RaycastHit2D killAOE = CheckRight(new Vector2(EDGE_OFFSET, -16.0f), AOE_RANGE, _controller.specialInteractibleMask);
+				// AOE Check:
 				ZMPlayerController playerController;
 
-				if (killAOE) {
-					playerController = killAOE.collider.GetComponent<ZMPlayerController>();
-					
-					if (playerController != null)
-						KillOpponent(playerController);
+				// Check right:
+				RaycastHit2D recoilAOE = CheckRight(new Vector2(EDGE_OFFSET, -16.0f), AOE_RANGE, _controller.specialInteractibleMask);
+				if (recoilAOE) {
+					playerController = recoilAOE.collider.GetComponent<ZMPlayerController>();
+					if (playerController != null) {
+						playerController._movementDirection = MovementDirectionState.FACING_LEFT;
+						playerController._moveModState = MoveModState.RECOIL;
+					}
 				}
-
-				killAOE = CheckLeft(new Vector2(-EDGE_OFFSET, -16.0f), AOE_RANGE, _controller.specialInteractibleMask);
-
-				if (killAOE) {
-					playerController = killAOE.collider.GetComponent<ZMPlayerController>();
-					
-					if (playerController != null)
-						KillOpponent(playerController);
+				// Check left:
+				recoilAOE = CheckLeft(new Vector2(-EDGE_OFFSET, -16.0f), AOE_RANGE, _controller.specialInteractibleMask);
+				if (recoilAOE) {
+					playerController = recoilAOE.collider.GetComponent<ZMPlayerController>();
+					if (playerController != null) {
+						playerController._movementDirection = MovementDirectionState.FACING_RIGHT;
+						playerController._moveModState = MoveModState.RECOIL;
+					}
 				}
 
 				_moveModState = MoveModState.PARRY_PLUNGE;
 				DisablePlayer();
 
 				Invoke(kMethodNameEnablePlayer, PARRY_TIME);
-				Invoke("ResetControlModState", PARRY_TIME + 0.1f);
+				Invoke("ResetControlModState", PARRY_TIME + 0.02f);
 			}
 		} else if (_moveModState == MoveModState.LUNGE) {
 			_moveModState = _controller.isGrounded ? MoveModState.LUNGING_GROUND : MoveModState.LUNGING_AIR;
@@ -343,19 +346,6 @@ public class ZMPlayerController : MonoBehaviour
 			_controlModState = ControlModState.NEUTRAL;
 
 			_playerInPath = false;
-		} else if (_moveModState == MoveModState.LUNGING_GROUND || _moveModState == MoveModState.LUNGING_AIR) {
-			// TODO: prevent player from going over edge
-			RaycastHit2D checkEdgeRight = CheckBelow(new Vector2(17.0f, 0), 16.0f, _controller.platformMask);
-			RaycastHit2D checkEdgeLeft  = CheckBelow(new Vector2(-17.0f, 0), 16.0f, _controller.platformMask);
-
-			if (_moveModState == MoveModState.LUNGING_GROUND) {
-				if (!checkEdgeRight) {
-					//CancelInvoke(kMethodNameEndLunge);
-					runSpeed = 0;
-				} else if (!checkEdgeLeft) {
-					runSpeed = 0;
-				}
-			}
 		} else if (_moveModState == MoveModState.WALL_SLIDE) {
 			// Wall slide.
 			if (_velocity.y < 1.0f &&  _controlMoveState == ControlMoveState.MOVING) {
@@ -373,16 +363,18 @@ public class ZMPlayerController : MonoBehaviour
 						_velocity.y = JUMP_HEIGHT;
 						audio.PlayOneShot(_audioJump[Random.Range (0, _audioJump.Length)]);
 						Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
-						Instantiate (_effectSkidObject, new Vector2 (transform.position.x, transform.position.y - 20), rotation);
-						
+						float offset = (_movementDirection == MovementDirectionState.FACING_RIGHT ? 12.0f : -12.0f);
+						Instantiate (_effectSkidObject, new Vector2 (transform.position.x + offset, transform.position.y - 20), rotation);
+						_moveModState = MoveModState.NEUTRAL;
+						_canWallJump = false;
+						Invoke("WallJumpCooldown", 0.05f);
+
 						if (IsMovingLeft()) {
 							runSpeed = WALL_JUMP_KICK_SPEED * 0.6f;
 						}
 						else if (IsMovingRight()) {
 							runSpeed = -WALL_JUMP_KICK_SPEED * 0.6f;
 						}
-						
-						_moveModState = MoveModState.NEUTRAL;
 					}
 				}
 			}
@@ -424,7 +416,11 @@ public class ZMPlayerController : MonoBehaviour
 		_animator.SetBool ("isNeutral", _moveModState == MoveModState.NEUTRAL);
 		_animator.SetFloat ("velocityY", _velocity.y);
 	}
-	
+
+	void WallJumpCooldown() {
+		_canWallJump = true;
+	}
+
 	void LungeCooldown() {
 		_canLunge = true;
 		_controlModState = ControlModState.NEUTRAL;
@@ -469,7 +465,7 @@ public class ZMPlayerController : MonoBehaviour
 		if (inputController.PlayerInfo.Equals(_playerInfo)) {
 			if (_controller.isGrounded && _controlModState != ControlModState.JUMPING) {
 				_controlModState = ControlModState.JUMPING;
-			} else if (IsTouchingEitherSide()) {
+			} else if (IsTouchingEitherSide() && _canWallJump) {
 				_controlModState = ControlModState.WALL_JUMPING;
 			}
 		}
@@ -667,8 +663,6 @@ public class ZMPlayerController : MonoBehaviour
 				collector.AddDeathData(1);
 			}
 		}
-
-		// TODO: fire death event
 	}
 
 	private IEnumerator ScaleTauntText(Vector3 start, Vector3 end, float totalTime) {
@@ -710,6 +704,14 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
+	private void Recoil(MovementDirectionState direction)
+	{
+		float recoilSpeed = 700f;
+		_velocity.y = JUMP_HEIGHT / 2.0f;
+		runSpeed = recoilSpeed * (direction == MovementDirectionState.FACING_LEFT ? 1 : -1);
+	}
+
+
 	private void Plunge() {
 		runSpeed = 0.0f;
 		_velocity.y = -PLUNGE_SPEED;
@@ -727,13 +729,13 @@ public class ZMPlayerController : MonoBehaviour
 		runSpeed = 0;
 		_playerInPath = false;
 
+		float lagTime = (_moveModState == MoveModState.LUNGING_AIR ? PARRY_TIME_AIR : PARRY_TIME);
 		_moveModState = MoveModState.PARRY_LUNGE;
-		Invoke(kMethodNameEnablePlayer, PARRY_TIME);
+		Invoke(kMethodNameEnablePlayer, lagTime);
 
 		// Set a cooldown before we can lunge again.
-		Invoke ("LungeCooldown", LUNGE_COOLDOWN);
+		Invoke ("LungeCooldown", lagTime);
 		_canLunge = false;
-
 		DisablePlayer();
 	}
 
@@ -811,6 +813,10 @@ public class ZMPlayerController : MonoBehaviour
 
 	private bool IsAbleToDie() {
 		return _moveModState != MoveModState.RESPAWN && !IsRecoiling();
+	}
+
+	public bool IsDead() {
+		return _moveModState == MoveModState.RESPAWN;
 	}
 
 	private bool IsOpposingDirection(ZMPlayerController otherPlayer) {

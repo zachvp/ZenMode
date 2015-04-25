@@ -7,9 +7,12 @@ public class ZMPedestalController : MonoBehaviour {
 	public enum MoveType { CYCLE, RANDOM };
 	public MoveType moveType;
 	public ParticleSystem zenStream;
+	public ParticleSystem zenPop;
 
 	public float moveSpeed;
 	public float lingerAfterSpawnTime = 3.0f;
+
+	private ZMPlayerInfo _killPlayerInfo; public ZMPlayerInfo KillPlayerInfo { get { return _killPlayerInfo; } }
 
 	private enum ScoreState { SCORING_ENABLED, SCORING_DISABLED };
 	private enum MoveState  { NEUTRAL, MOVE, MOVING, AT_TARGET };
@@ -109,6 +112,26 @@ public class ZMPedestalController : MonoBehaviour {
 		DeactivateEvent = null;
 	}
 
+	void OnTriggerEnter2D(Collider2D collider) {
+		if (collider.CompareTag("Player")) {
+			if (_killPlayerInfo == null) return;
+
+			ZMPlayerController playerController = collider.GetComponent<ZMPlayerController>();
+
+			if (!playerController.IsDead()) {
+				if (playerController.GetComponent<ZMPlayerInfo>().playerTag.Equals(_killPlayerInfo.playerTag) && _scoreState != ScoreState.SCORING_DISABLED) {
+					Debug.Log("POP!");
+					zenPop.renderer.material.color = renderer.material.color;
+					zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
+					zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
+					zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
+
+					Disable();
+				}
+			}
+		}
+	}
+
 	private void ToggleOn() {
 		Invoke("ToggleEnabled", 2.0f);
 	}
@@ -182,6 +205,8 @@ public class ZMPedestalController : MonoBehaviour {
 		if (IsInvoking(kDisableMethodName)) {
 			CancelInvoke(kDisableMethodName);
 		}
+
+		_killPlayerInfo = playerController.GetComponent<ZMPlayerInfo>();
 	}
 
 	void HandleUpdateScoreEvent(ZMScoreController scoreController) {
