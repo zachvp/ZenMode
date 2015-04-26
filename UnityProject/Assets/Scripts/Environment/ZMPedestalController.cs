@@ -121,7 +121,6 @@ public class ZMPedestalController : MonoBehaviour {
 
 			if (!playerController.IsDead()) {
 				if (playerController.GetComponent<ZMPlayerInfo>().playerTag.Equals(_killPlayerInfo.playerTag) && _scoreState != ScoreState.SCORING_DISABLED) {
-					Debug.Log("POP!");
 					zenPop.renderer.material.color = renderer.material.color;
 					zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
 					zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;

@@ -99,14 +99,14 @@ namespace ZMPlayer{
 			if (IsAbleToScore()) {
 				if (_pointState != PointState.GAINING) {
 					_pointState = PointState.GAINING;
-					scoreBar.SendMessage("VibrateStart");
+					// scoreBar.SendMessage("VibrateStart");
 				}
 			} else if (IsBeingDrained()) {
 				if (_pointState != PointState.LOSING)
 					_pointState = PointState.LOSING;
 			} else if (_pointState != PointState.NEUTRAL) {
 				_pointState = PointState.NEUTRAL;
-				scoreBar.SendMessage("VibrateStop");
+				// scoreBar.SendMessage("VibrateStop");
 			}
 
 			// state handling

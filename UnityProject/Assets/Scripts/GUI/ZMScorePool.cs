@@ -28,7 +28,6 @@ public class ZMScorePool : MonoBehaviour {
 	void Update () {
 		if (_gainingAgents.Count > 0) {
 			foreach (ZMScoreController scoreController in _gainingAgents) {
-				Debug.Log ("gain agent count " + _gainingAgents.Count.ToString());
 				scoreController.AddToScore(scoreAmount / _gainingAgents.Count);
 				CurrentScorePool -= scoreAmount;
 			}
@@ -36,7 +35,6 @@ public class ZMScorePool : MonoBehaviour {
 
 		if (_drainingAgents.Count > 0) {
 			foreach (ZMScoreController scoreController in _drainingAgents) {
-				Debug.Log ("drain agent count " + _drainingAgents.Count.ToString());
 				scoreController.AddToScore(-scoreAmount / _drainingAgents.Count);
 				CurrentScorePool += scoreAmount;
 			}
