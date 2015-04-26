@@ -77,8 +77,8 @@ namespace ZMPlayer{
 			ZMPlayerController.PlayerDeathEvent   += HandlePlayerDeathEvent;
 			ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
 
-			ZMPedestalController.ActivateEvent   += HandlePedestalActivation;
-			ZMPedestalController.DeactivateEvent += HandlePedestalDeactivation;
+			/*ZMPedestalController.ActivateEvent   += HandlePedestalActivation;
+			ZMPedestalController.DeactivateEvent += HandlePedestalDeactivation;*/
 		}
 
 		void Start () {
@@ -171,9 +171,10 @@ namespace ZMPlayer{
 		void OnTriggerStay2D(Collider2D collision) {
 			if (collision.gameObject.CompareTag(kPedestalTag)) {
 				ZMSoul soul = collision.GetComponent<ZMSoul>();
+				ZMPedestalController pedestalController = collision.GetComponent<ZMPedestalController>();
 
 				if (!soul.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-					if (_zoneState == ZoneState.ACTIVE && _targetState == TargetState.ALIVE) {
+					if (pedestalController.IsEnabled() && _targetState == TargetState.ALIVE) {
 						_scoreState = ScoreState.IN_ZONE;
 						AddSoul(soul);
 					}
@@ -263,7 +264,7 @@ namespace ZMPlayer{
 			}
 		}
 
-		private void HandlePedestalActivation (ZMPedestalController pedestalController) {
+		/*private void HandlePedestalActivation (ZMPedestalController pedestalController) {
 			_zoneState = ZoneState.ACTIVE;
 		}
 
@@ -272,7 +273,7 @@ namespace ZMPlayer{
 			_zoneState = ZoneState.INACTIVE;
 
 			RemoveSoul(pedestalController);
-		}
+		}*/
 
 		private void RemoveSoul(ZMPedestalController pedestalController) {
 			ZMSoul soul = pedestalController.GetComponent<ZMSoul>();

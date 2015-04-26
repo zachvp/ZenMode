@@ -18,12 +18,12 @@ public class ZMGameStateController : MonoBehaviour {
 	private List<Transform> _spawnpoints;
 	private int _spawnpointIndex;
 	private int _pausedPlayer;
-	private Queue<GameObject> _objectsToSpawn;
+	private Queue<ZMPlayerController> _objectsToSpawn;
 	private bool _firedGameEndEvent;
 	private const string kSpawnpointTag = "Spawnpoint";
 
 	// delegates
-	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, GameObject spawnObject); public static event SpawnObjectAction SpawnObjectEvent;
+	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, ZMPlayerController spawnObject); public static event SpawnObjectAction SpawnObjectEvent;
 	public delegate void StartGameAction(); public static event StartGameAction StartGameEvent;
 	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
 	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
@@ -36,7 +36,7 @@ public class ZMGameStateController : MonoBehaviour {
 		_matchState = MatchState.PRE_MATCH;
 		_gameState  = GameState.NEUTRAL;
 		_spawnpoints = new List<Transform>();
-		_objectsToSpawn = new Queue<GameObject>();
+		_objectsToSpawn = new Queue<ZMPlayerController>();
 		_spawnpointIndex = 0;
 
 		foreach (GameObject spawnpointObject in GameObject.FindGameObjectsWithTag(kSpawnpointTag)) {
@@ -203,7 +203,7 @@ public class ZMGameStateController : MonoBehaviour {
 		_spawnpointIndex += 1;
 		_spawnpointIndex %= 4;
 
-		GameObject spawnObject = _objectsToSpawn.Dequeue();
+		ZMPlayerController spawnObject = _objectsToSpawn.Dequeue();
 		spawnObject.transform.position	= _spawnpoints[_spawnpointIndex].position;
 
 		if (SpawnObjectEvent != null) {
@@ -213,10 +213,8 @@ public class ZMGameStateController : MonoBehaviour {
 
 	// Event handlers
 	private void RespawnObject(ZMPlayerController playerController) {
-		GameObject respawnObject = playerController.gameObject;
-		
-		if (!_objectsToSpawn.Contains(respawnObject)) {
-			_objectsToSpawn.Enqueue(respawnObject);
+		if (!_objectsToSpawn.Contains(playerController)) {
+			_objectsToSpawn.Enqueue(playerController);
 			Invoke("SpawnObject", 2.0f);
 		}
 	}

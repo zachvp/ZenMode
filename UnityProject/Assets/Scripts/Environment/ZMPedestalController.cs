@@ -183,11 +183,13 @@ public class ZMPedestalController : MonoBehaviour {
 	// event handlers
 	void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
-		MoveToLocation(playerController.transform.position);
-		Enable();
+		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			MoveToLocation(playerController.transform.position);
+			Enable();
 
-		if (IsInvoking(kDisableMethodName)) {
-			CancelInvoke(kDisableMethodName);
+			if (IsInvoking(kDisableMethodName)) {
+				CancelInvoke(kDisableMethodName);
+			}
 		}
 	}
 
@@ -223,8 +225,10 @@ public class ZMPedestalController : MonoBehaviour {
 		_scoringAgents.Remove(scoreController);
 	}
 
-	void HandleSpawnObjectEvent(ZMGameStateController gameStateController, GameObject spawnObject) {
-		_moveState = MoveState.MOVE;
-		Invoke(kDisableMethodName, lingerAfterSpawnTime);
+	void HandleSpawnObjectEvent(ZMGameStateController gameStateController, ZMPlayerController playerController) {
+		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			_moveState = MoveState.MOVE;
+			Invoke(kDisableMethodName, lingerAfterSpawnTime);
+		}
 	}
 }
