@@ -7,7 +7,7 @@ public class ZMPlayerManager : MonoBehaviour {
 	public int NumPlayers { get { return _numPlayers; } }
 	
 	void Awake () {
-		_numPlayers = 3;
+		_numPlayers = 2;
 		DontDestroyOnLoad(gameObject);
 
 		ZMLobbyController.PlayerReadyEvent += HandlePlayerReadyEvent;;

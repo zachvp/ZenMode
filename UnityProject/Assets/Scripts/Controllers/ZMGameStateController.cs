@@ -24,7 +24,7 @@ public class ZMGameStateController : MonoBehaviour {
 	private const string kSpawnpointTag = "Spawnpoint";
 	private const string kPlayerTag 	= "Player";
 
-	private const float END_GAME_DELAY = 3.0f;
+	private const float END_GAME_DELAY = 1.0f;
 	private const int MAX_PLAYERS = 4;
 
 	// delegates
@@ -182,6 +182,13 @@ public class ZMGameStateController : MonoBehaviour {
 
 	// public methods
 	public void CountdownEnded() {
+		// Game ran out of time.
+		if (_matchState == MatchState.MATCH) {
+			_matchState = MatchState.POST_MATCH;
+			return;
+		}
+
+		// Game start.
 		_matchState = MatchState.MATCH;
 		EnableGameObjects();
 

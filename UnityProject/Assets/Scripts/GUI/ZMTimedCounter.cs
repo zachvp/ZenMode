@@ -12,18 +12,12 @@ public class ZMTimedCounter : MonoBehaviour {
 	public bool shouldClearOnCompletion;
 	public bool start;
 	public Text counterUIText;
-	// will display strings upon reaching the min/max
 	public string minMessage, maxMessage;
 
 	private const string kCountMethodName = "Count";
-
 	private int _value;
-
-	// Use this for initialization
+	
 	void Awake () {
-		//startValue += 1;
-		//max += 1;
-		//min -= 1;
 		_value = startValue;
 	}
 

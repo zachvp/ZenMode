@@ -20,7 +20,7 @@ public class ZMPlayerController : MonoBehaviour
 	private float EDGE_OFFSET = 16.0f;
 	private float AOE_RANGE = 32.0f;
 	private float PARRY_TIME = 0.30f;
-	private float PARRY_TIME_AIR = 0.15f;
+	private float PARRY_TIME_AIR = 0.10f;
 	private float runSpeed = 0.0f;
 
 	// Additional constants.
@@ -649,13 +649,14 @@ public class ZMPlayerController : MonoBehaviour
 		_goreEmitter.Play();
 
 		// Handle taunt text.
-		_tauntText.gameObject.SetActive (true);
-		_tauntText.text = kDeathStrings [Random.Range (0, kDeathStrings.Length)];
-		_tauntText.transform.rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, Random.Range (-20, 20)));
-		_tauntText.transform.position = new Vector3 (Random.Range (-100, 100), Random.Range (-100, 100), 0.0f);
-		StartCoroutine (ScaleTauntText (new Vector3(1.5f, 1.5f, 1.5f), Vector3.one, 0.05f));
-		Invoke ("HideTauntText", 0.5f);
-
+		if (_tauntText) {
+			_tauntText.gameObject.SetActive (true);
+			_tauntText.text = kDeathStrings [Random.Range (0, kDeathStrings.Length)];
+			_tauntText.transform.rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, Random.Range (-20, 20)));
+			_tauntText.transform.position = new Vector3 (Random.Range (-100, 100), Random.Range (-100, 100), 0.0f);
+			StartCoroutine (ScaleTauntText (new Vector3 (1.5f, 1.5f, 1.5f), Vector3.one, 0.05f));
+			Invoke ("HideTauntText", 0.5f);
+		}
 		DisablePlayer();
 	}
 
