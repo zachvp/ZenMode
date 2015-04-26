@@ -98,7 +98,7 @@ public class ZMPlayerController : MonoBehaviour
 	// Delegates
 	public delegate void PlayerDeathAction(ZMPlayerController playerController); public static event PlayerDeathAction PlayerDeathEvent;
 	public delegate void PlayerRespawnAction(ZMPlayerController playerController); public static event PlayerRespawnAction PlayerRespawnEvent;
-	public delegate void PlayerRunBroadcast(ZMPlayerController playerController, bool isRunning); public static event PlayerRunBroadcast PlayerRunEvent;
+	public delegate void PlayerEliminatedAction(ZMPlayerController playerController); public static event PlayerEliminatedAction PlayerEliminatedEvent;
 	public delegate void PlayerRecoilAction(); public static event PlayerRecoilAction PlayerRecoilEvent;
 	public delegate void PlayerLandPlungeAction(); public static event PlayerLandPlungeAction PlayerLandPlungeEvent;
 
@@ -116,7 +116,6 @@ public class ZMPlayerController : MonoBehaviour
 		_controller.onControllerCollidedEvent += onControllerCollider;
 		_controller.onTriggerEnterEvent += onTriggerEnterEvent;
 		_controller.onTriggerExitEvent += onTriggerExitEvent;
-		_controller.onCollisionEnterEvent += onCollisionEnterEvent;
 
 		ZMPlayerInputController.MoveRightEvent += MoveRightEvent;
 		ZMPlayerInputController.MoveLeftEvent  += MoveLeftEvent;
@@ -124,6 +123,8 @@ public class ZMPlayerController : MonoBehaviour
 		ZMPlayerInputController.JumpEvent	   += JumpEvent;
 		ZMPlayerInputController.AttackEvent	   += AttackEvent;
 		ZMPlayerInputController.PlungeEvent    += PlungeEvent;
+
+		ZMScoreController.MinScoreReached += HandleMinScoreReached;
 
 		// Set original facing direction.
 		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
@@ -429,7 +430,7 @@ public class ZMPlayerController : MonoBehaviour
 	void OnDestroy() {
 		PlayerDeathEvent   	  = null;
 		PlayerRespawnEvent 	  = null;
-		PlayerRunEvent 	   	  = null;
+		PlayerEliminatedEvent = null;
 		PlayerRecoilEvent  	  = null;
 		PlayerLandPlungeEvent = null;
 	}
@@ -552,9 +553,17 @@ public class ZMPlayerController : MonoBehaviour
 			collider.GetComponent<ZMGrassController>().GrassExit();
 		}
 	}
-	
-	void onCollisionEnterEvent(Collision2D collision) 
+
+	void HandleMinScoreReached (ZMScoreController scoreController)
 	{
+		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			gameObject.SetActive(false);
+
+			if (PlayerEliminatedEvent != null) {
+				PlayerEliminatedEvent(this);
+			}
+			//Destroy(gameObject);
+		}
 	}
 
 	// Player state utility methods
