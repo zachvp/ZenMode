@@ -47,7 +47,7 @@ public class ZMPlayerController : MonoBehaviour
 	private enum MovementDirectionState { FACING_LEFT, FACING_RIGHT };
 	private enum ControlMoveState 		{ NEUTRAL, MOVING };
 	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACK, ATTACKING, WALL_JUMPING, PLUNGE, PLUNGING };
-	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING_AIR, LUNGING_GROUND, WALL_SLIDE, RECOIL, RECOILING, DISABLE, DISABLED, PARRY_LUNGE, PARRY_PLUNGE, RESPAWN };
+	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING_AIR, LUNGING_GROUND, WALL_SLIDE, RECOIL, RECOILING, DISABLE, DISABLED, PARRY_LUNGE, PARRY_PLUNGE, RESPAWN, ELIMINATED };
 	private enum AbilityState 			{ NEUTRAL, SHOOTING };
 
 	private ControlMoveState _controlMoveState;
@@ -557,19 +557,20 @@ public class ZMPlayerController : MonoBehaviour
 	void HandleMinScoreReached (ZMScoreController scoreController)
 	{
 		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-			Debug.Log (gameObject.name + ": eliminated!");
 			gameObject.SetActive(false);
+			_moveModState = MoveModState.ELIMINATED;
 
 			if (PlayerEliminatedEvent != null) {
 				PlayerEliminatedEvent(this);
 			}
-			//Destroy(gameObject);
 		}
 	}
 
 	// Player state utility methods
 	public void EnablePlayer()
 	{
+		if (_moveModState == MoveModState.ELIMINATED) return;
+
 		_moveModState = MoveModState.NEUTRAL;
 		//_abilityState  = AbilityState.NEUTRAL;
 

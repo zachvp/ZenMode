@@ -211,10 +211,13 @@ public class ZMGameStateController : MonoBehaviour {
 		_spawnpointIndex %= 4;
 
 		ZMPlayerController spawnObject = _objectsToSpawn.Dequeue();
-		spawnObject.transform.position	= _spawnpoints[_spawnpointIndex].position;
 
-		if (SpawnObjectEvent != null && spawnObject != null) {
-			SpawnObjectEvent(this, spawnObject);
+		if (spawnObject != null && spawnObject) {
+			spawnObject.transform.position	= _spawnpoints[_spawnpointIndex].position;
+
+			if (SpawnObjectEvent != null) {
+				SpawnObjectEvent(this, spawnObject);
+			}
 		}
 	}
 

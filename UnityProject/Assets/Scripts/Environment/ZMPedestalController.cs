@@ -207,7 +207,7 @@ public class ZMPedestalController : MonoBehaviour {
 			zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
 			zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
 
-			Destroy(gameObject);
+			gameObject.SetActive(false);
 		}
 	}
 

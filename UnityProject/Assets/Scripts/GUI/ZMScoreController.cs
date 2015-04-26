@@ -80,6 +80,7 @@ namespace ZMPlayer{
 			}
 
 			scoreBar.handleRect = null;
+			scoreBar.maxValue = ZMScorePool.MaxScore;
 			SetScore (ZMScorePool.CurrentScorePool);
 		}
 
@@ -100,11 +101,11 @@ namespace ZMPlayer{
 				foreach (ZMSoul soul in _drainingSouls) {
 					if (soul.GetComponent<ZMPedestalController>().IsDiabled()) continue;
 
-					if ((soul.GetZen() - scoreRate) * Time.deltaTime > 0) {
-						AddToScore(scoreRate * Time.deltaTime);
-						soul.AddZen(-scoreRate * Time.deltaTime);
+					if ((soul.GetZen() - scoreRate) > 0) {
+						AddToScore(scoreRate);
+						soul.AddZen(-scoreRate);
 					} else if (soul.GetZen() > 0) {
-						AddToScore((scoreRate - soul.GetZen()) * Time.deltaTime);
+						AddToScore(scoreRate - soul.GetZen());
 						soul.SetZen(0);
 						scoreBar.SendMessage("VibrateStop");
 					}
