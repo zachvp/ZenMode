@@ -7,7 +7,6 @@ using ZMPlayer;
 public class ZMGameStateController : MonoBehaviour {
 	public ZMTimedCounter countdownTimer;
 	public Text outputText;
-
 	private int _playerCount;
 
 	private enum GameState { BEGIN, NEUTRAL, PAUSE, PAUSED, RESUME, RESET }
@@ -16,7 +15,6 @@ public class ZMGameStateController : MonoBehaviour {
 	private enum MatchState { PRE_MATCH, BEGIN_COUNTDOWN, COUNTDOWN, MATCH, POST_MATCH };
 	private MatchState _matchState;
 	private List<Transform> _spawnpoints;
-	private int _spawnpointIndex;
 	private int _pausedPlayer;
 	private Queue<ZMPlayerController> _objectsToSpawn;
 	private List<ZMPlayerController> _players;
@@ -45,7 +43,6 @@ public class ZMGameStateController : MonoBehaviour {
 		_spawnpoints = new List<Transform>();
 		_objectsToSpawn = new Queue<ZMPlayerController>(MAX_PLAYERS);
 		_players =  new List<ZMPlayerController>(MAX_PLAYERS);
-		_spawnpointIndex = 0;
 
 		// Add delegate handlers
 		ZMPlayerController.PlayerDeathEvent += RespawnObject;
@@ -233,13 +230,28 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	private void SpawnObject() {
-		_spawnpointIndex += 1;
-		_spawnpointIndex %= 4;
+		float maximumDistance = float.MinValue;
+		int targetIndex = 0;
+
+		for (int i = 0; i < _spawnpoints.Count; i++) {
+			Transform point = _spawnpoints[i];
+			float distance = 0.0f;
+			foreach (ZMPlayerController player in _players) {
+				if (player.isActiveAndEnabled) {
+					distance += Mathf.Abs (point.position.y - player.transform.position.y) + Mathf.Abs (point.position.x - player.transform.position.x);
+				}
+			}
+
+			if (distance > maximumDistance) {
+				maximumDistance = distance;
+				targetIndex = i;
+			}
+		}
 
 		ZMPlayerController spawnObject = _objectsToSpawn.Dequeue();
 
 		if (spawnObject != null && spawnObject) {
-			spawnObject.transform.position	= _spawnpoints[_spawnpointIndex].position;
+			spawnObject.transform.position = _spawnpoints[targetIndex].position;
 
 			if (SpawnObjectEvent != null) {
 				SpawnObjectEvent(this, spawnObject);
