@@ -215,10 +215,6 @@ public class ZMPedestalController : MonoBehaviour {
 		foreach (ZMScoreController agent in _scoringAgents) {
 			scoreSum += agent.TotalScore;
 		}
-
-		_normalizedScale = 1.0f - (scoreSum / ZMScorePool.MaxScore);
-
-		transform.localScale = _baseScale * Mathf.Max(0.35f, _normalizedScale);
 	}
 
 	void HandleCanScoreEvent(ZMScoreController scoreController) {
