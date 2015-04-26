@@ -4,11 +4,11 @@ using ZMPlayer;
 
 public class ZMScorePool : MonoBehaviour {
 	// editor exposed members
-	public static float MaxScore = 100;
-	public float scoreAmount;
+	public static float MaxScore = 100.0f;
+	public float scoreRate;
 
 	// class members
-	public static float CurrentScorePool = 33.33f;
+	public static float CurrentScorePool = 100.0f / 3.0f;
 
 	HashSet<ZMScoreController> _gainingAgents;
 	HashSet<ZMScoreController> _drainingAgents;
@@ -28,15 +28,19 @@ public class ZMScorePool : MonoBehaviour {
 	void Update () {
 		if (_gainingAgents.Count > 0) {
 			foreach (ZMScoreController scoreController in _gainingAgents) {
-				scoreController.AddToScore(scoreAmount / _gainingAgents.Count);
-				CurrentScorePool -= scoreAmount;
+				float scoreInterval = scoreRate * Time.deltaTime;
+
+				scoreController.AddToScore(scoreInterval);
+				CurrentScorePool -= scoreInterval * _gainingAgents.Count;
 			}
 		}
 
 		if (_drainingAgents.Count > 0) {
 			foreach (ZMScoreController scoreController in _drainingAgents) {
-				scoreController.AddToScore(-scoreAmount / _drainingAgents.Count);
-				CurrentScorePool += scoreAmount;
+				float scoreInterval = -scoreRate * Time.deltaTime;
+
+				scoreController.AddToScore(scoreInterval);
+				CurrentScorePool += scoreInterval;
 			}
 		}
 	}

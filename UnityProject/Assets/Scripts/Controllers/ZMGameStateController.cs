@@ -6,7 +6,6 @@ using ZMPlayer;
 
 public class ZMGameStateController : MonoBehaviour {
 	public ZMTimedCounter countdownTimer;
-	public ZMPlayerController[] players;
 	public Text outputText;
 	public static int PlayerCount = 2;
 
@@ -18,12 +17,14 @@ public class ZMGameStateController : MonoBehaviour {
 	private List<Transform> _spawnpoints;
 	private int _spawnpointIndex;
 	private int _pausedPlayer;
-	private Queue<GameObject> _objectsToSpawn;
+	private Queue<ZMPlayerController> _objectsToSpawn;
+	private List<ZMPlayerController> _players;
 	private bool _firedGameEndEvent;
 	private const string kSpawnpointTag = "Spawnpoint";
+	private const string kPlayerTag 	= "Player";
 
 	// delegates
-	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, GameObject spawnObject); public static event SpawnObjectAction SpawnObjectEvent;
+	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, ZMPlayerController spawnObject); public static event SpawnObjectAction SpawnObjectEvent;
 	public delegate void StartGameAction(); public static event StartGameAction StartGameEvent;
 	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
 	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
@@ -36,15 +37,21 @@ public class ZMGameStateController : MonoBehaviour {
 		_matchState = MatchState.PRE_MATCH;
 		_gameState  = GameState.NEUTRAL;
 		_spawnpoints = new List<Transform>();
-		_objectsToSpawn = new Queue<GameObject>();
+		_objectsToSpawn = new Queue<ZMPlayerController>(4);
+		_players =  new List<ZMPlayerController>(4);
 		_spawnpointIndex = 0;
 
 		foreach (GameObject spawnpointObject in GameObject.FindGameObjectsWithTag(kSpawnpointTag)) {
 			_spawnpoints.Add(spawnpointObject.transform);
 		}
 
+		foreach (GameObject player in GameObject.FindGameObjectsWithTag(kPlayerTag)) {
+			_players.Add(player.GetComponent<ZMPlayerController>());
+		}
+
 		// Add delegate handlers
 		ZMPlayerController.PlayerDeathEvent += RespawnObject;
+		ZMPlayerController.PlayerEliminatedEvent += HandlePlayerEliminatedEvent;
 
 		ZMScoreController.MaxScoreReached += MatchWon;
 
@@ -55,6 +62,11 @@ public class ZMGameStateController : MonoBehaviour {
 		ZMPauseMenuController.SelectResumeEvent += HandleSelectResumeEvent;
 		ZMPauseMenuController.SelectRestartEvent += HandleSelectRestartEvent;
 		ZMPauseMenuController.SelectQuitEvent += HandleSelectQuitEvent;
+	}
+
+	void HandlePlayerEliminatedEvent (ZMPlayerController playerController)
+	{
+		_players.Remove(playerController);
 	}
 
 	void HandleSelectQuitEvent ()
@@ -116,14 +128,7 @@ public class ZMGameStateController : MonoBehaviour {
 			_matchState = MatchState.COUNTDOWN;
 			countdownTimer.BeginCount();
 		} else if (_matchState == MatchState.POST_MATCH) {
-			outputText.text = "Match Ended!";
-			PauseGame();
-
-			if (GameEndEvent != null && !_firedGameEndEvent) {
-				_firedGameEndEvent = true;
-
-				GameEndEvent();
-			}
+			Invoke("EndGame", 3.0f);
 		}
 
 		if (_gameState == GameState.RESUME) {
@@ -170,14 +175,16 @@ public class ZMGameStateController : MonoBehaviour {
 
 	// Private methods
 	private void DisableGameObjects() {
-		foreach (ZMPlayerController playerController in players) {
+		foreach (ZMPlayerController playerController in _players) {
 			playerController.DisablePlayer();
 		}
 	}
 
 	private void EnableGameObjects() {
-		foreach (ZMPlayerController playerController in players) {
-			playerController.EnablePlayer();
+		foreach (ZMPlayerController playerController in _players) {
+			if (playerController.gameObject != null) {
+				playerController.EnablePlayer();
+			}
 		}
 	}
 
@@ -203,20 +210,29 @@ public class ZMGameStateController : MonoBehaviour {
 		_spawnpointIndex += 1;
 		_spawnpointIndex %= 4;
 
-		GameObject spawnObject = _objectsToSpawn.Dequeue();
+		ZMPlayerController spawnObject = _objectsToSpawn.Dequeue();
 		spawnObject.transform.position	= _spawnpoints[_spawnpointIndex].position;
 
-		if (SpawnObjectEvent != null) {
+		if (SpawnObjectEvent != null && spawnObject != null) {
 			SpawnObjectEvent(this, spawnObject);
+		}
+	}
+
+	void EndGame() {
+		outputText.text = "Match Ended!";
+		PauseGame();
+		
+		if (GameEndEvent != null && !_firedGameEndEvent) {
+			_firedGameEndEvent = true;
+			
+			GameEndEvent();
 		}
 	}
 
 	// Event handlers
 	private void RespawnObject(ZMPlayerController playerController) {
-		GameObject respawnObject = playerController.gameObject;
-		
-		if (!_objectsToSpawn.Contains(respawnObject)) {
-			_objectsToSpawn.Enqueue(respawnObject);
+		if (!_objectsToSpawn.Contains(playerController)) {
+			_objectsToSpawn.Enqueue(playerController);
 			Invoke("SpawnObject", 5.0f);
 		}
 	}

@@ -11,7 +11,8 @@ public class ZMPedestalController : MonoBehaviour {
 	public TextMesh timerText;
 	public float moveSpeed;
 
-	private ZMPlayerInfo _killPlayerInfo; public ZMPlayerInfo KillPlayerInfo { get { return _killPlayerInfo; } }
+	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
+
 	private enum ScoreState { SCORING_ENABLED, SCORING_DISABLED };
 	private enum MoveState  { NEUTRAL, MOVE, MOVING, AT_TARGET };
 	private int RESPAWN_TIME = 5;
@@ -31,10 +32,6 @@ public class ZMPedestalController : MonoBehaviour {
 	// references
 	private HashSet<ZMScoreController> _scoringAgents;
 
-	// scale
-	Vector3 _baseScale;
-	float _normalizedScale = 1.0f;
-
 	private const string kPedestalWaypointTag = "PedestalWaypoint";
 	private const string kDisableMethodName   = "Disable";
 
@@ -46,15 +43,16 @@ public class ZMPedestalController : MonoBehaviour {
 	void Awake() {
 		_waypoints = new List<Transform>();
 		_scoringAgents = new HashSet<ZMScoreController>();
-		_moveState = MoveState.MOVE;
-		_baseScale = transform.localScale;
+		_playerInfo = GetComponent<ZMPlayerInfo>();
 
+		_moveState = MoveState.MOVE;
 		// event handler subscriptions
-		ZMPlayerController.PlayerDeathEvent    += HandlePlayerDeathEvent;
-		ZMScoreController.UpdateScoreEvent     += HandleUpdateScoreEvent;
-		ZMScoreController.CanScoreEvent 	   += HandleCanScoreEvent;
-		ZMScoreController.StopScoreEvent   	   += HandleStopScoreEvent;
-		ZMGameStateController.SpawnObjectEvent += HandleSpawnObjectEvent;
+		ZMPlayerController.PlayerDeathEvent      += HandlePlayerDeathEvent;
+		ZMScoreController.UpdateScoreEvent       += HandleUpdateScoreEvent;
+		ZMScoreController.CanScoreEvent 	     += HandleCanScoreEvent;
+		ZMScoreController.StopScoreEvent   	     += HandleStopScoreEvent;
+		ZMScoreController.MinScoreReached	     += HandleMinScoreReached;
+		ZMGameStateController.SpawnObjectEvent   += HandleSpawnObjectEvent;
 	}
 
 	void Start () {
@@ -77,7 +75,7 @@ public class ZMPedestalController : MonoBehaviour {
 			_targetPosition = _waypoints[_waypointIndex].position;
 			_totalDistance = (_targetPosition - gameObject.transform.position).magnitude;
 			
-			_moveState = MoveState.MOVING;
+			//_moveState = MoveState.MOVING;
 			
 			// update waypoint index
 			if(moveType == MoveType.CYCLE) {
@@ -208,22 +206,28 @@ public class ZMPedestalController : MonoBehaviour {
 	// event handlers
 	void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
-		Color newColor = new Color(playerController.light.color.r,
-		                           playerController.light.color.g,
-		                           playerController.light.color.b,
-		                           renderer.material.color.a);
+		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			MoveToLocation(playerController.transform.position);
+			Enable();
 
-		renderer.material.color = newColor;
-		zenAbsorbEffect.renderer.material.color = newColor;
-
-		MoveToLocation(playerController.transform.position);
-		Enable();
-
-		if (IsInvoking(kDisableMethodName)) {
-			CancelInvoke(kDisableMethodName);
+			if (IsInvoking(kDisableMethodName)) {
+				CancelInvoke(kDisableMethodName);
+			}
 		}
+	}
 
-		_killPlayerInfo = playerController.GetComponent<ZMPlayerInfo>();
+	void HandleMinScoreReached (ZMScoreController scoreController)
+	{
+		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			ZMScoreController.MinScoreReached -= HandleMinScoreReached;
+
+			zenPop.renderer.material.color = renderer.material.color;
+			zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
+			zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
+			zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
+
+			Destroy(gameObject);
+		}
 	}
 
 	void HandleUpdateScoreEvent(ZMScoreController scoreController) {
@@ -232,9 +236,6 @@ public class ZMPedestalController : MonoBehaviour {
 		foreach (ZMScoreController agent in _scoringAgents) {
 			scoreSum += agent.TotalScore;
 		}
-
-		_normalizedScale = 1.0f - (scoreSum / ZMScorePool.MaxScore);
-		transform.localScale = _baseScale * Mathf.Max(0.35f, _normalizedScale);
 	}
 
 	void HandleCanScoreEvent(ZMScoreController scoreController) {
@@ -247,8 +248,10 @@ public class ZMPedestalController : MonoBehaviour {
 		_scoringAgents.Remove(scoreController);
 	}
 
-	void HandleSpawnObjectEvent(ZMGameStateController gameStateController, GameObject spawnObject) {
-		_moveState = MoveState.MOVE;
-		Invoke(kDisableMethodName, lingerAfterSpawnTime);
+	void HandleSpawnObjectEvent(ZMGameStateController gameStateController, ZMPlayerController playerController) {
+		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			_moveState = MoveState.MOVE;
+			Invoke(kDisableMethodName, lingerAfterSpawnTime);
+		}
 	}
 }
