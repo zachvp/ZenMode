@@ -133,7 +133,6 @@ public class ZMPlayerController : MonoBehaviour
 	void Start() 
 	{
 		_baseSprite = GetComponent<SpriteRenderer>().sprite;
-		_scoreController = GetComponent<ZMScoreController>();
 
 		kDeathStrings = new string[31];
 		kDeathStrings[0] = "OOOAHH";
