@@ -195,8 +195,6 @@ public class ZMGameStateController : MonoBehaviour {
 	private void DisableGameObjects() {
 		foreach (ZMPlayerController playerController in _players) {
 			if (playerController.gameObject != null) {
-				Debug.Log(gameObject.name + ": playa " + playerController.name);
-
 				playerController.DisablePlayer();
 			}
 		}
