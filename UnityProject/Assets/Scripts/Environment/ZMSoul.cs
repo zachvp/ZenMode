@@ -8,8 +8,25 @@ public class ZMSoul : MonoBehaviour {
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 	//private float _currentZen; public float CurrentZen { get { return _currentZen; } set { _currentZen = value; } }
 
+	public delegate void SoulDestroyedAction(ZMSoul soul); public static event SoulDestroyedAction SoulDestroyedEvent;
+
 	void Awake () {
 		_playerInfo = GetComponent<ZMPlayerInfo>();
+
+		ZMScoreController.MinScoreReached += HandleMinScoreReached;
+	}
+
+	void OnDestroy() {
+		SoulDestroyedEvent = null;
+	}
+
+	void HandleMinScoreReached (ZMScoreController scoreController)
+	{
+		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			if (SoulDestroyedEvent != null) {
+				SoulDestroyedEvent(this);
+			}
+		}
 	}
 
 	void Start() {

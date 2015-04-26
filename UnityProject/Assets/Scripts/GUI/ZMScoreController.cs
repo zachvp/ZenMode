@@ -13,7 +13,6 @@ namespace ZMPlayer{
 
 		// members
 		private float _scoreMax;
-		//Dictionary<ZMPlayerInfo.PlayerTag, string> playerNames;
 
 		// Events
 		public delegate void MaxScoreAction(ZMScoreController scoreController);
@@ -48,14 +47,11 @@ namespace ZMPlayer{
 		private float _totalScore;   public float TotalScore { get { return _totalScore; } set { _totalScore = value; } }
 
 		// States
-		private enum ScoreState  { OUT_OF_ZONE, IN_ZONE };
 		private enum ZoneState   { INACTIVE, ACTIVE };
 		private enum TargetState { ALIVE, DEAD }
 		private enum GoalState   { NEUTRAL, MAX, MAXED }
 		private enum PointState  { NEUTRAL, GAINING, LOSING, GARBAGE };
 
-		private ScoreState  _scoreState;
-		private ZoneState   _zoneState;
 		private TargetState _targetState;
 		private GoalState   _goalState;
 		private PointState  _pointState;
@@ -67,8 +63,6 @@ namespace ZMPlayer{
 			_playerInfo = GetComponent<ZMPlayerInfo>();
 			_allScoreControllers = new List<ZMScoreController>();
 
-			_scoreState  = ScoreState.OUT_OF_ZONE;
-			_zoneState   = ZoneState.ACTIVE;
 			_targetState = TargetState.ALIVE;
 			_goalState   = GoalState.NEUTRAL;
 			_pointState  = PointState.NEUTRAL;
@@ -77,20 +71,12 @@ namespace ZMPlayer{
 			ZMPlayerController.PlayerDeathEvent   += HandlePlayerDeathEvent;
 			ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
 
-			/*ZMPedestalController.ActivateEvent   += HandlePedestalActivation;
-			ZMPedestalController.DeactivateEvent += HandlePedestalDeactivation;*/
+			ZMSoul.SoulDestroyedEvent += HandleSoulDestroyedEvent;
+
+			ZMPedestalController.DeactivateEvent += HandlePedestalDeactivation;
 		}
 
 		void Start () {
-			/*playerNames = new Dictionary<ZMPlayerInfo.PlayerTag, string>()
-			{
-				{ ZMPlayerInfo.PlayerTag.PLAYER_1, "P1" },
-				{ ZMPlayerInfo.PlayerTag.PLAYER_2, "P2" },
-				{ ZMPlayerInfo.PlayerTag.PLAYER_3, "P3" },
-				{ ZMPlayerInfo.PlayerTag.PLAYER_4, "P4" }
-			};*/
-			//playerNames.TryGetValue (_playerInfo.playerTag, out _playerName);
-
 			GameObject[] scoreObjects = GameObject.FindGameObjectsWithTag("Player");
 			foreach (GameObject scoreObject in scoreObjects) {
 				_allScoreControllers.Add(scoreObject.GetComponent<ZMScoreController>());
@@ -107,9 +93,6 @@ namespace ZMPlayer{
 					_pointState = PointState.GAINING;
 					scoreBar.SendMessage("VibrateStart");
 				}
-			} else if (IsBeingDrained()) {
-				if (_pointState != PointState.LOSING)
-					_pointState = PointState.LOSING;
 			} else if (_pointState != PointState.NEUTRAL) {
 				_pointState = PointState.NEUTRAL;
 				scoreBar.SendMessage("VibrateStop");
@@ -118,6 +101,8 @@ namespace ZMPlayer{
 			// state handling
 			if (_pointState == PointState.GAINING) {
 				foreach (ZMSoul soul in _drainingSouls) {
+					if (soul.GetComponent<ZMPedestalController>().IsDiabled()) continue;
+
 					if (soul.GetZen() - scoreRate > 0) {
 						AddToScore(scoreRate);
 						soul.AddZen(-scoreRate);
@@ -137,6 +122,8 @@ namespace ZMPlayer{
 				}
 
 			} else if (_pointState == PointState.NEUTRAL) {
+				scoreBar.SendMessage("VibrateStop");
+
 				if (StopScoreEvent != null) {
 					StopScoreEvent(this);
 				}
@@ -175,8 +162,9 @@ namespace ZMPlayer{
 
 				if (!soul.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 					if (pedestalController.IsEnabled() && _targetState == TargetState.ALIVE) {
-						_scoreState = ScoreState.IN_ZONE;
 						AddSoul(soul);
+					} else if (!pedestalController.IsEnabled()) {
+						RemoveSoul(soul);
 					}
 				}
 			}
@@ -184,7 +172,6 @@ namespace ZMPlayer{
 
 		void OnTriggerExit2D(Collider2D collision) {
 			if (collision.gameObject.CompareTag(kPedestalTag)) {
-				_scoreState = ScoreState.OUT_OF_ZONE;
 				RemoveSoul(collision.GetComponent<ZMPedestalController>());
 			}
 		}
@@ -233,26 +220,13 @@ namespace ZMPlayer{
 
 
 		// conditions
-		public bool IsAbleToScore() { return _targetState == TargetState.ALIVE && _zoneState == ZoneState.ACTIVE &&
-											 _scoreState == ScoreState.IN_ZONE; }
-		public bool IsBeingDrained() { return CanOtherScore() && _scoreState == ScoreState.OUT_OF_ZONE && _totalScore > 0; }
+		public bool IsAbleToScore() { return _targetState == TargetState.ALIVE && _drainingSouls.Count > 0; }
 
 		private bool IsMaxed() { return _goalState == GoalState.MAX || _goalState == GoalState.MAXED; }
-
-		private bool CanOtherScore() {
-			foreach (ZMScoreController scoreObject in _allScoreControllers) {
-				if (scoreObject != null && scoreObject.IsAbleToScore()) {
-					return true;
-				}
-			}
-
-			return false;
-		}
 
 		// event handlers
 		private void HandlePlayerDeathEvent (ZMPlayerController playerController) {
 			if (playerController.gameObject.Equals(gameObject)) {
-				_scoreState = ScoreState.OUT_OF_ZONE;
 				_targetState = TargetState.DEAD;
 			}
 		}
@@ -264,21 +238,29 @@ namespace ZMPlayer{
 			}
 		}
 
-		/*private void HandlePedestalActivation (ZMPedestalController pedestalController) {
-			_zoneState = ZoneState.ACTIVE;
+		private void HandlePedestalDeactivation (ZMPedestalController pedestalController) {
+			if (_playerInfo.playerTag.Equals(pedestalController.PlayerInfo.playerTag)) {
+				RemoveSoul(pedestalController);
+			}
 		}
 
-		private void HandlePedestalDeactivation (ZMPedestalController pedestalController) {
-			_scoreState = ScoreState.OUT_OF_ZONE;
-			_zoneState = ZoneState.INACTIVE;
+		void HandleSoulDestroyedEvent (ZMSoul soul)
+		{
+			RemoveSoul(soul);
+		}
+		
+		private void RemoveSoul(ZMSoul soul) {
+			_drainingSouls.Remove(soul);
 
-			RemoveSoul(pedestalController);
-		}*/
+			if (_drainingSouls.Count == 0) {
+				scoreBar.SendMessage("VibrateStop");
+			}
+		}
 
 		private void RemoveSoul(ZMPedestalController pedestalController) {
 			ZMSoul soul = pedestalController.GetComponent<ZMSoul>();
 
-			_drainingSouls.Remove(soul);
+			RemoveSoul(soul);
 		}
 
 		private void AddSoul(ZMSoul soul) {
