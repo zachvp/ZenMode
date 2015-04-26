@@ -6,16 +6,17 @@ using ZMPlayer;
 public class ZMPedestalController : MonoBehaviour {
 	public enum MoveType { CYCLE, RANDOM };
 	public MoveType moveType;
-	public ParticleSystem zenStream;
+	public ParticleEmitter zenAbsorbEffect;
 	public ParticleSystem zenPop;
-
+	public TextMesh timerText;
 	public float moveSpeed;
-	public float lingerAfterSpawnTime = 3.0f;
 
 	private ZMPlayerInfo _killPlayerInfo; public ZMPlayerInfo KillPlayerInfo { get { return _killPlayerInfo; } }
-
 	private enum ScoreState { SCORING_ENABLED, SCORING_DISABLED };
 	private enum MoveState  { NEUTRAL, MOVE, MOVING, AT_TARGET };
+	private int RESPAWN_TIME = 5;
+	private int currentTimer;
+	private float lingerAfterSpawnTime = 0.0f;
 	private ScoreState _scoreState;
 	private MoveState _moveState;
 	private Light _pedestalLight;
@@ -45,9 +46,7 @@ public class ZMPedestalController : MonoBehaviour {
 	void Awake() {
 		_waypoints = new List<Transform>();
 		_scoringAgents = new HashSet<ZMScoreController>();
-
 		_moveState = MoveState.MOVE;
-
 		_baseScale = transform.localScale;
 
 		// event handler subscriptions
@@ -60,6 +59,8 @@ public class ZMPedestalController : MonoBehaviour {
 
 	void Start () {
 		_pedestalLight = gameObject.GetComponent<Light>();
+		currentTimer = RESPAWN_TIME;
+		timerText.text = currentTimer.ToString ();
 
 		foreach (GameObject waypointObject in GameObject.FindGameObjectsWithTag(kPedestalWaypointTag)) {
 			_waypoints.Add(waypointObject.transform);
@@ -151,10 +152,25 @@ public class ZMPedestalController : MonoBehaviour {
 		}
 	}
 
+	private void CountdownText() {
+		if (currentTimer > 0) {
+			currentTimer--;
+			timerText.text = currentTimer.ToString ();
+			Invoke ("CountdownText", 1.0f);
+		}
+	}
+
 	// public methods
 	public void Enable() {
 		_scoreState = ScoreState.SCORING_ENABLED;
 		renderer.enabled = true;
+		zenAbsorbEffect.enabled = true;
+		if (timerText.renderer.enabled == false) {
+			currentTimer = RESPAWN_TIME;
+			timerText.text = RESPAWN_TIME.ToString();
+			timerText.renderer.enabled = true;
+			Invoke ("CountdownText", 1.0f);
+		}
 
 		if (_pedestalLight != null)
 			_pedestalLight.enabled = true;
@@ -168,6 +184,8 @@ public class ZMPedestalController : MonoBehaviour {
 	private void Disable() {
 		_scoreState = ScoreState.SCORING_DISABLED;
 		renderer.enabled = false;
+		zenAbsorbEffect.enabled = false;
+		timerText.renderer.enabled = false;
 
 		if (_pedestalLight != null) {
 			_pedestalLight.enabled = false;
@@ -197,7 +215,7 @@ public class ZMPedestalController : MonoBehaviour {
 		                           renderer.material.color.a);
 
 		renderer.material.color = newColor;
-		zenStream.renderer.material.color = newColor;
+		zenAbsorbEffect.renderer.material.color = newColor;
 
 		MoveToLocation(playerController.transform.position);
 		Enable();
@@ -217,7 +235,6 @@ public class ZMPedestalController : MonoBehaviour {
 		}
 
 		_normalizedScale = 1.0f - (scoreSum / ZMScorePool.MaxScore);
-
 		transform.localScale = _baseScale * Mathf.Max(0.35f, _normalizedScale);
 	}
 

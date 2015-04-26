@@ -217,7 +217,7 @@ public class ZMGameStateController : MonoBehaviour {
 		
 		if (!_objectsToSpawn.Contains(respawnObject)) {
 			_objectsToSpawn.Enqueue(respawnObject);
-			Invoke("SpawnObject", 2.0f);
+			Invoke("SpawnObject", 5.0f);
 		}
 	}
 }

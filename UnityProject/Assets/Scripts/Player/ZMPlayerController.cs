@@ -25,7 +25,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	// Additional constants.
 	private float TILE_SIZE = 28.0f;
-	private float RESPAWN_TIME = 2.0f;
+	private float RESPAWN_TIME = 5.0f;
 	private int FRAMES_PER_STEP = 30;
 
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
