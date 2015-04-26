@@ -8,8 +8,7 @@ namespace ZMPlayer{
 		public Slider scoreBar;
 		private const float SCORE_RATE = 1.0f; // default 0.8f
 
-		// members
-		private float _scoreMax;
+		private const float MAX_SCORE = 1000.0f;
 
 		// Events
 		public delegate void MaxScoreAction(ZMScoreController scoreController);
@@ -54,8 +53,7 @@ namespace ZMPlayer{
 		private PointState  _pointState;
 
 		void Awake() {
-			_scoreMax = ZMScorePool.MaxScore;
-			scoreBar.maxValue = _scoreMax;
+			scoreBar.maxValue = MAX_SCORE;
 
 			_playerInfo = GetComponent<ZMPlayerInfo>();
 			_allScoreControllers = new List<ZMScoreController>();
@@ -79,9 +77,13 @@ namespace ZMPlayer{
 				_allScoreControllers.Add(scoreObject.GetComponent<ZMScoreController>());
 			}
 
+
+
 			scoreBar.handleRect = null;
-			scoreBar.maxValue = ZMScorePool.MaxScore;
-			SetScore (ZMScorePool.CurrentScorePool);
+			scoreBar.maxValue = MAX_SCORE;
+
+			// xD
+			SetScore (MAX_SCORE / GameObject.FindGameObjectWithTag("PlayerManager").GetComponent<ZMPlayerManager>().NumPlayers);
 		}
 
 		void FixedUpdate() {
@@ -136,7 +138,7 @@ namespace ZMPlayer{
 				}
 			}
 
-			if (_totalScore >= _scoreMax && !IsMaxed()) {
+			if (_totalScore >= MAX_SCORE && !IsMaxed()) {
 				_goalState = GoalState.MAX;
 			}
 
@@ -190,11 +192,11 @@ namespace ZMPlayer{
 
 		// utility methods
 		public void AddToScore(float amount) {
-			if (_totalScore >= 0.0f && _totalScore < _scoreMax) {
+			if (_totalScore >= 0.0f && _totalScore < MAX_SCORE) {
 				_totalScore += amount;
 
 				if (_totalScore < 0) _totalScore = 0;
-				if (_totalScore > _scoreMax) _totalScore = _scoreMax;
+				if (_totalScore > MAX_SCORE) _totalScore = MAX_SCORE;
 
 				UpdateUI();
 			}
@@ -204,7 +206,7 @@ namespace ZMPlayer{
 		private void UpdateUI() {
 			_totalScore = Mathf.Max(_totalScore, 0);
 
-			float normalizedScore = (_totalScore / _scoreMax) * _scoreMax;
+			float normalizedScore = (_totalScore / MAX_SCORE) * MAX_SCORE;
 
 			scoreBar.value = normalizedScore;
 

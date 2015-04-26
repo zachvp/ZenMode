@@ -13,6 +13,7 @@ TagManager:
   - CameraFocus
   - Breakable
   - Grass
+  - PlayerManager
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
