@@ -75,7 +75,7 @@ public class ZMPedestalController : MonoBehaviour {
 			_targetPosition = _waypoints[_waypointIndex].position;
 			_totalDistance = (_targetPosition - gameObject.transform.position).magnitude;
 			
-			_moveState = MoveState.MOVING;
+			//_moveState = MoveState.MOVING;
 			
 			// update waypoint index
 			if(moveType == MoveType.CYCLE) {

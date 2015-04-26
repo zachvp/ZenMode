@@ -31,9 +31,12 @@ public class ZMPauseMenuController : MonoBehaviour {
 		_baseColor 	   = menuOptions[0].color;
 		_selectedColor = new Color(255, 255, 255, 255);
 
-		ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
-		ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
-		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+		if (Application.loadedLevel > 2) {
+			ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
+			ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
+			ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+		}
+
 		ZMLobbyController.PauseGameEvent += HandlePauseGameEvent;
 
 		ToggleActive(startActive);
