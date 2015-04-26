@@ -5,10 +5,7 @@ using UnityEngine.UI;
 
 namespace ZMPlayer{
 	public class ZMScoreController : MonoBehaviour {
-		public Text scoreText;
 		public Slider scoreBar;
-		public string objectiveMessage = "Get to pedestal!";
-		public string maxScoreMessage  = "Winner!";
 		public float scoreRate;
 
 		// members
@@ -103,11 +100,11 @@ namespace ZMPlayer{
 				foreach (ZMSoul soul in _drainingSouls) {
 					if (soul.GetComponent<ZMPedestalController>().IsDiabled()) continue;
 
-					if (soul.GetZen() - scoreRate > 0) {
-						AddToScore(scoreRate);
-						soul.AddZen(-scoreRate);
+					if ((soul.GetZen() - scoreRate) * Time.deltaTime > 0) {
+						AddToScore(scoreRate * Time.deltaTime);
+						soul.AddZen(-scoreRate * Time.deltaTime);
 					} else if (soul.GetZen() > 0) {
-						AddToScore(scoreRate - soul.GetZen());
+						AddToScore((scoreRate - soul.GetZen()) * Time.deltaTime);
 						soul.SetZen(0);
 						scoreBar.SendMessage("VibrateStop");
 					}
@@ -137,7 +134,6 @@ namespace ZMPlayer{
 			}
 
 			if (_totalScore >= _scoreMax && !IsMaxed()) {
-				scoreText.text = objectiveMessage;
 				_goalState = GoalState.MAX;
 			}
 
@@ -147,8 +143,6 @@ namespace ZMPlayer{
 			}
 
 			if (_goalState == GoalState.MAXED) {
-				scoreText.text = maxScoreMessage;
-
 				if (MaxScoreReached != null) {
 					MaxScoreReached(this);
 				}
@@ -208,8 +202,6 @@ namespace ZMPlayer{
 			_totalScore = Mathf.Max(_totalScore, 0);
 
 			float normalizedScore = (_totalScore / _scoreMax) * _scoreMax;
-			
-			scoreText.text = normalizedScore.ToString(kScoreFormat) + "%";
 
 			scoreBar.value = normalizedScore;
 

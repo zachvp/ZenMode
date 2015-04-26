@@ -557,6 +557,7 @@ public class ZMPlayerController : MonoBehaviour
 	void HandleMinScoreReached (ZMScoreController scoreController)
 	{
 		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			Debug.Log (gameObject.name + ": eliminated!");
 			gameObject.SetActive(false);
 
 			if (PlayerEliminatedEvent != null) {
