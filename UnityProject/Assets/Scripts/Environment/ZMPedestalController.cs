@@ -45,12 +45,12 @@ public class ZMPedestalController : MonoBehaviour {
 		_moveState = MoveState.MOVE;
 
 		// event handler subscriptions
-		ZMPlayerController.PlayerDeathEvent    += HandlePlayerDeathEvent;
-		ZMScoreController.UpdateScoreEvent     += HandleUpdateScoreEvent;
-		ZMScoreController.CanScoreEvent 	   += HandleCanScoreEvent;
-		ZMScoreController.StopScoreEvent   	   += HandleStopScoreEvent;
-		ZMScoreController.MinScoreReached	   += HandleMinScoreReached;
-		ZMGameStateController.SpawnObjectEvent += HandleSpawnObjectEvent;
+		ZMPlayerController.PlayerDeathEvent      += HandlePlayerDeathEvent;
+		ZMScoreController.UpdateScoreEvent       += HandleUpdateScoreEvent;
+		ZMScoreController.CanScoreEvent 	     += HandleCanScoreEvent;
+		ZMScoreController.StopScoreEvent   	     += HandleStopScoreEvent;
+		ZMScoreController.MinScoreReached	     += HandleMinScoreReached;
+		ZMGameStateController.SpawnObjectEvent   += HandleSpawnObjectEvent;
 	}
 
 	void Start () {
@@ -105,23 +105,6 @@ public class ZMPedestalController : MonoBehaviour {
 		// unsubscribe all event listeners
 		ActivateEvent  = null;
 		DeactivateEvent = null;
-	}
-
-	void OnTriggerEnter2D(Collider2D collider) {
-		/*if (collider.CompareTag("Player")) {
-			ZMPlayerController playerController = collider.GetComponent<ZMPlayerController>();
-
-			if (!playerController.IsDead()) {
-				if (_scoreState != ScoreState.SCORING_DISABLED) {
-					zenPop.renderer.material.color = renderer.material.color;
-					zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
-					zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
-					zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
-
-					Disable();
-				}
-			}
-		}*/
 	}
 
 	private void ToggleOn() {
