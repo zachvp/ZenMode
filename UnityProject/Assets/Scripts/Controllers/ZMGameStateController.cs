@@ -125,9 +125,15 @@ public class ZMGameStateController : MonoBehaviour {
 			ZMPlayerController playerController = player.GetComponent<ZMPlayerController>();
 			int index = (int) playerController.PlayerInfo.playerTag;
 
+			playerController.gameObject.SetActive(false);
+
 			if (index < _playerCount) {
 				_players[index] = playerController;
 			}
+		}
+
+		for (int i = 0; i < _playerCount; ++i) {
+			_players[i].gameObject.SetActive(true);
 		}
 	}
 
