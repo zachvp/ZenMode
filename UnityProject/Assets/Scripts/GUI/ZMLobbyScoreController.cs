@@ -16,17 +16,16 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	private bool _pedestalAtEnd;
 	private ZMPlayer.ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 
-	// consntants
-	private const string kScoreFormat = "0.0";
-
 	// Use this for initialization
 	void Awake () {
 		_currentScore = 0;
 		_readyFired = false;
 		_pedestalAtEnd = false;
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
+
 		gameObject.SetActive(false);
 		light.enabled = false;
+		scoreBar.gameObject.SetActive(false);
 
 		ZMLobbyPedestalController.AtPathEndEvent += HandleAtPathEndEvent;
 		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
@@ -69,8 +68,6 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		
 		float normalizedScore = (_currentScore / maxScore) * 100.0f;
 		
-		scoreText.text = normalizedScore.ToString(kScoreFormat) + "%";
-		
 		scoreBar.value = normalizedScore; 
 	}
 
@@ -83,6 +80,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	{
 		if (lobbyPedestalController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 			_pedestalAtEnd = true;
+			scoreBar.gameObject.SetActive(true);
 		}
 	}
 
