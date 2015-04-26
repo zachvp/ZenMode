@@ -7,7 +7,8 @@ using ZMPlayer;
 public class ZMGameStateController : MonoBehaviour {
 	public ZMTimedCounter countdownTimer;
 	public Text outputText;
-	public static int PlayerCount = 2;
+
+	private int _playerCount;
 
 	private enum GameState { BEGIN, NEUTRAL, PAUSE, PAUSED, RESUME, RESET }
 	GameState _gameState;
@@ -20,8 +21,13 @@ public class ZMGameStateController : MonoBehaviour {
 	private Queue<ZMPlayerController> _objectsToSpawn;
 	private List<ZMPlayerController> _players;
 	private bool _firedGameEndEvent;
+
+	// constants
 	private const string kSpawnpointTag = "Spawnpoint";
 	private const string kPlayerTag 	= "Player";
+
+	private const float END_GAME_DELAY = 3.0f;
+	private const int MAX_PLAYERS = 4;
 
 	// delegates
 	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, ZMPlayerController spawnObject); public static event SpawnObjectAction SpawnObjectEvent;
@@ -37,23 +43,15 @@ public class ZMGameStateController : MonoBehaviour {
 		_matchState = MatchState.PRE_MATCH;
 		_gameState  = GameState.NEUTRAL;
 		_spawnpoints = new List<Transform>();
-		_objectsToSpawn = new Queue<ZMPlayerController>(4);
-		_players =  new List<ZMPlayerController>(4);
+		_objectsToSpawn = new Queue<ZMPlayerController>(MAX_PLAYERS);
+		_players =  new List<ZMPlayerController>(MAX_PLAYERS);
 		_spawnpointIndex = 0;
-
-		foreach (GameObject spawnpointObject in GameObject.FindGameObjectsWithTag(kSpawnpointTag)) {
-			_spawnpoints.Add(spawnpointObject.transform);
-		}
-
-		foreach (GameObject player in GameObject.FindGameObjectsWithTag(kPlayerTag)) {
-			_players.Add(player.GetComponent<ZMPlayerController>());
-		}
 
 		// Add delegate handlers
 		ZMPlayerController.PlayerDeathEvent += RespawnObject;
 		ZMPlayerController.PlayerEliminatedEvent += HandlePlayerEliminatedEvent;
 
-		ZMScoreController.MaxScoreReached += MatchWon;
+		ZMScoreController.MaxScoreReached += HandleMaxScoreReached;
 
 		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
 
@@ -110,7 +108,27 @@ public class ZMGameStateController : MonoBehaviour {
 		outputText.text = "";
 
 		DisableGameObjects();
+
 		Time.timeScale = 1.0f;
+
+		_playerCount = GameObject.FindGameObjectWithTag("PlayerManager").GetComponent<ZMPlayerManager>().NumPlayers;
+
+		foreach (GameObject spawnpointObject in GameObject.FindGameObjectsWithTag(kSpawnpointTag)) {
+			_spawnpoints.Add(spawnpointObject.transform);
+		}
+
+		for (int i = 0; i < _playerCount; ++i) {
+			_players.Add(null);
+		}
+
+		foreach (GameObject player in GameObject.FindGameObjectsWithTag(kPlayerTag)) {
+			ZMPlayerController playerController = player.GetComponent<ZMPlayerController>();
+			int index = (int) playerController.PlayerInfo.playerTag;
+
+			if (index < _playerCount) {
+				_players[index] = playerController;
+			}
+		}
 	}
 
 	void OnDestroy() {
@@ -128,7 +146,7 @@ public class ZMGameStateController : MonoBehaviour {
 			_matchState = MatchState.COUNTDOWN;
 			countdownTimer.BeginCount();
 		} else if (_matchState == MatchState.POST_MATCH) {
-			Invoke("EndGame", 3.0f);
+			Invoke("EndGame", END_GAME_DELAY);
 		}
 
 		if (_gameState == GameState.RESUME) {
@@ -143,7 +161,7 @@ public class ZMGameStateController : MonoBehaviour {
 				ResumeGame();
 			}
 		} else if (_gameState == GameState.PAUSE) {
-			if (_matchState != MatchState.POST_MATCH) {
+			if (_matchState != MatchState.POST_MATCH && _matchState != MatchState.PRE_MATCH) {
 				_gameState = GameState.PAUSED;
 				outputText.text = "P" + (_pausedPlayer + 1).ToString() + " PAUSED";
 
@@ -169,14 +187,18 @@ public class ZMGameStateController : MonoBehaviour {
 		}
 	}
 
-	public void MatchWon(ZMScoreController scoreController) {
+	private void HandleMaxScoreReached(ZMScoreController scoreController) {
 		_matchState = MatchState.POST_MATCH;
 	}
 
 	// Private methods
 	private void DisableGameObjects() {
 		foreach (ZMPlayerController playerController in _players) {
-			playerController.DisablePlayer();
+			if (playerController.gameObject != null) {
+				Debug.Log(gameObject.name + ": playa " + playerController.name);
+
+				playerController.DisablePlayer();
+			}
 		}
 	}
 

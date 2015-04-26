@@ -53,6 +53,7 @@ namespace ZMPlayer{
 		private PointState  _pointState;
 
 		void Awake() {
+			_totalScore = 0;
 			scoreBar.maxValue = MAX_SCORE;
 
 			_playerInfo = GetComponent<ZMPlayerInfo>();

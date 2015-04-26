@@ -6,9 +6,7 @@ public class ZMPlayerManager : MonoBehaviour {
 	private int _numPlayers; public int NumPlayers { get { return _numPlayers; } }
 	
 	void Awake () {
-		Debug.Log(gameObject.name + ": Awake!");
-
-		_numPlayers = 0;
+		_numPlayers = 2;
 		DontDestroyOnLoad(gameObject);
 
 		ZMLobbyController.PlayerReadyEvent += HandlePlayerReadyEvent;;
@@ -22,7 +20,6 @@ public class ZMPlayerManager : MonoBehaviour {
 
 	void HandlePlayerReadyEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
 	{
-		Debug.Log("num players " + _numPlayers);
 		_numPlayers += 1;
 	}
 }
