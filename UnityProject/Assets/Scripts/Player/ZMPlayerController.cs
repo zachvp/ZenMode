@@ -428,6 +428,8 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	void OnDestroy() {
+		ZMScoreController.MinScoreReached -= HandleMinScoreReached;
+
 		PlayerDeathEvent   	  = null;
 		PlayerRespawnEvent 	  = null;
 		PlayerEliminatedEvent = null;
@@ -558,6 +560,7 @@ public class ZMPlayerController : MonoBehaviour
 	{
 		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 			gameObject.SetActive(false);
+
 			_moveModState = MoveModState.ELIMINATED;
 
 			if (PlayerEliminatedEvent != null) {

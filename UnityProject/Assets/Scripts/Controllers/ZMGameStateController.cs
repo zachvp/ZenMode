@@ -28,7 +28,7 @@ public class ZMGameStateController : MonoBehaviour {
 	public delegate void StartGameAction(); public static event StartGameAction StartGameEvent;
 	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
 	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
-	public delegate void GameEndAction();   public static event GameEndAction   GameEndEvent;
+	public delegate void GameEndAction();   public static event GameEndAction GameEndEvent;
 	public delegate void BeginCountdownAction(); public static event BeginCountdownAction BeginCountdownEvent;
 
 

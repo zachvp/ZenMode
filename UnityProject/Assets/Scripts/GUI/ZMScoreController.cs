@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace ZMPlayer{
 	public class ZMScoreController : MonoBehaviour {
 		public Slider scoreBar;
-		public float scoreRate;
+		private const float SCORE_RATE = 1.0f; // default 0.8f
 
 		// members
 		private float _scoreMax;
@@ -46,8 +46,8 @@ namespace ZMPlayer{
 		// States
 		private enum ZoneState   { INACTIVE, ACTIVE };
 		private enum TargetState { ALIVE, DEAD }
-		private enum GoalState   { NEUTRAL, MAX, MAXED }
-		private enum PointState  { NEUTRAL, GAINING, LOSING, GARBAGE };
+		private enum GoalState   { NEUTRAL, MAX, MAXED, ELIMINATED }
+		private enum PointState  { NEUTRAL, GAINING, LOSING };
 
 		private TargetState _targetState;
 		private GoalState   _goalState;
@@ -101,11 +101,11 @@ namespace ZMPlayer{
 				foreach (ZMSoul soul in _drainingSouls) {
 					if (soul.GetComponent<ZMPedestalController>().IsDiabled()) continue;
 
-					if ((soul.GetZen() - scoreRate) > 0) {
-						AddToScore(scoreRate);
-						soul.AddZen(-scoreRate);
+					if ((soul.GetZen() - SCORE_RATE) > 0) {
+						AddToScore(SCORE_RATE);
+						soul.AddZen(-SCORE_RATE);
 					} else if (soul.GetZen() > 0) {
-						AddToScore(scoreRate - soul.GetZen());
+						AddToScore(SCORE_RATE - soul.GetZen());
 						soul.SetZen(0);
 						scoreBar.SendMessage("VibrateStop");
 					}
@@ -128,7 +128,9 @@ namespace ZMPlayer{
 			}
 
 			// player score checks
-			if (_totalScore <= 0) {
+			if (_totalScore <= 0 && _goalState != GoalState.ELIMINATED) {
+				_goalState = GoalState.ELIMINATED;
+
 				if (MinScoreReached != null) {
 					MinScoreReached(this);
 				}

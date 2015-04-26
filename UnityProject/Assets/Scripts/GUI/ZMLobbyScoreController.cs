@@ -14,7 +14,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	private float _currentScore;
 	private bool _readyFired;
 	private bool _pedestalAtEnd;
-	private ZMPlayer.ZMPlayerInfo _playerInfo;
+	private ZMPlayer.ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 
 	// consntants
 	private const string kScoreFormat = "0.0";
