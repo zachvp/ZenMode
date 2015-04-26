@@ -237,7 +237,7 @@ public class ZMGameStateController : MonoBehaviour {
 			Transform point = _spawnpoints[i];
 			float distance = 0.0f;
 			foreach (ZMPlayerController player in _players) {
-				if (player.isActiveAndEnabled) {
+				if (!player.IsDead()) {
 					distance += Mathf.Abs (point.position.y - player.transform.position.y) + Mathf.Abs (point.position.x - player.transform.position.x);
 				}
 			}

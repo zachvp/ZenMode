@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace ZMPlayer{
 	public class ZMScoreController : MonoBehaviour {
 		public Slider scoreBar;
-		private const float SCORE_RATE = 1.0f; // default 0.8f
+		private const float SCORE_RATE = 0.85f;
 
 		private const float MAX_SCORE = 1000.0f;
 
@@ -110,7 +110,7 @@ namespace ZMPlayer{
 					} else if (soul.GetZen() > 0) {
 						AddToScore(SCORE_RATE - soul.GetZen());
 						soul.SetZen(0);
-						scoreBar.SendMessage("VibrateStop");
+						//scoreBar.SendMessage("VibrateStop");
 					}
 				}
 
@@ -123,7 +123,7 @@ namespace ZMPlayer{
 				}
 
 			} else if (_pointState == PointState.NEUTRAL) {
-				scoreBar.SendMessage("VibrateStop");
+				//scoreBar.SendMessage("VibrateStop");
 
 				if (StopScoreEvent != null) {
 					StopScoreEvent(this);
@@ -250,9 +250,9 @@ namespace ZMPlayer{
 		private void RemoveSoul(ZMSoul soul) {
 			_drainingSouls.Remove(soul);
 
-			if (_drainingSouls.Count == 0) {
+			/*if (_drainingSouls.Count == 0) {
 				scoreBar.SendMessage("VibrateStop");
-			}
+			}*/
 		}
 
 		private void RemoveSoul(ZMPedestalController pedestalController) {
