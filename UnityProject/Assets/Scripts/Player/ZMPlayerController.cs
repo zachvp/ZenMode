@@ -125,8 +125,18 @@ public class ZMPlayerController : MonoBehaviour
 		ZMPlayerInputController.AttackEvent	   += AttackEvent;
 		ZMPlayerInputController.PlungeEvent    += PlungeEvent;
 
+		ZMScoreController.MinScoreReached += HandleMinScoreReached;
+
 		// Set original facing direction.
 		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
+	}
+
+	void HandleMinScoreReached (ZMScoreController scoreController)
+	{
+		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			gameObject.SetActive(false);
+			//Destroy(gameObject);
+		}
 	}
 
 	void Start() 

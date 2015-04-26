@@ -9,6 +9,7 @@ namespace ZMPlayer{
 		public Slider scoreBar;
 		public string objectiveMessage = "Get to pedestal!";
 		public string maxScoreMessage  = "Winner!";
+		public float scoreRate;
 
 		// members
 		private float _scoreMax;
@@ -17,6 +18,9 @@ namespace ZMPlayer{
 		// Events
 		public delegate void MaxScoreAction(ZMScoreController scoreController);
 		public static event MaxScoreAction MaxScoreReached;
+
+		public delegate void MinScoreAction(ZMScoreController scoreController);
+		public static event MinScoreAction MinScoreReached;
 
 		public delegate void UpdateScoreAction(ZMScoreController scoreController);
 		public static event UpdateScoreAction UpdateScoreEvent;
@@ -31,8 +35,9 @@ namespace ZMPlayer{
 		public static event StopScoreAction StopScoreEvent;
 
 		// References
-		private ZMPlayerInfo _playerInfo;
-		List<ZMScoreController> _allScoreControllers;
+		private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
+		private List<ZMScoreController> _allScoreControllers;
+		private List<ZMSoul> _drainingSouls = new List<ZMSoul>();
 		
 		// Constants
 		private const string kPedestalTag					      = "Pedestal";
@@ -57,6 +62,7 @@ namespace ZMPlayer{
 
 		void Awake() {
 			_scoreMax = ZMScorePool.MaxScore;
+			scoreBar.maxValue = _scoreMax;
 
 			_playerInfo = GetComponent<ZMPlayerInfo>();
 			_allScoreControllers = new List<ZMScoreController>();
@@ -91,7 +97,7 @@ namespace ZMPlayer{
 			}
 
 			scoreBar.handleRect = null;
-			SetScore (33.33f);
+			SetScore (ZMScorePool.CurrentScorePool);
 		}
 
 		void FixedUpdate() {
@@ -111,6 +117,17 @@ namespace ZMPlayer{
 
 			// state handling
 			if (_pointState == PointState.GAINING) {
+				foreach (ZMSoul soul in _drainingSouls) {
+					if (soul.GetZen() - scoreRate > 0) {
+						AddToScore(scoreRate);
+						soul.AddZen(-scoreRate);
+					} else if (soul.GetZen() > 0) {
+						AddToScore(scoreRate - soul.GetZen());
+						soul.SetZen(0);
+						scoreBar.SendMessage("VibrateStop");
+					}
+				}
+
 				if (CanScoreEvent != null) {
 					CanScoreEvent(this);
 				}
@@ -126,6 +143,12 @@ namespace ZMPlayer{
 			}
 
 			// player score checks
+			if (_totalScore <= 0) {
+				if (MinScoreReached != null) {
+					MinScoreReached(this);
+				}
+			}
+
 			if (_totalScore >= _scoreMax && !IsMaxed()) {
 				scoreText.text = objectiveMessage;
 				_goalState = GoalState.MAX;
@@ -147,12 +170,12 @@ namespace ZMPlayer{
 
 		void OnTriggerStay2D(Collider2D collision) {
 			if (collision.gameObject.CompareTag(kPedestalTag)) {
-				ZMPedestalController pedestalController = collision.GetComponent<ZMPedestalController>();
-				if (pedestalController.KillPlayerInfo == null) return;
+				ZMSoul soul = collision.GetComponent<ZMSoul>();
 
-				if (!pedestalController.KillPlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+				if (!soul.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 					if (_zoneState == ZoneState.ACTIVE && _targetState == TargetState.ALIVE) {
 						_scoreState = ScoreState.IN_ZONE;
+						AddSoul(soul);
 					}
 				}
 			}
@@ -161,18 +184,20 @@ namespace ZMPlayer{
 		void OnTriggerExit2D(Collider2D collision) {
 			if (collision.gameObject.CompareTag(kPedestalTag)) {
 				_scoreState = ScoreState.OUT_OF_ZONE;
+				RemoveSoul(collision.GetComponent<ZMPedestalController>());
 			}
 		}
 
 		void OnDestroy() {
 			MaxScoreReached    = null;
+			MinScoreReached    = null;
 			UpdateScoreEvent   = null;
 			CanScoreEvent	   = null;
 			CanDrainEvent      = null;
 			StopScoreEvent	   = null;
 		}
 
-		private void SetScore(float newScore) {
+		public void SetScore(float newScore) {
 			_totalScore = newScore;
 
 			UpdateUI();
@@ -180,11 +205,11 @@ namespace ZMPlayer{
 
 		// utility methods
 		public void AddToScore(float amount) {
-			if (_totalScore >= 0.0f && _totalScore < 100.0f) {
+			if (_totalScore >= 0.0f && _totalScore < _scoreMax) {
 				_totalScore += amount;
 
 				if (_totalScore < 0) _totalScore = 0;
-				if (_totalScore > 100) _totalScore = 100;
+				if (_totalScore > _scoreMax) _totalScore = _scoreMax;
 
 				UpdateUI();
 			}
@@ -194,7 +219,7 @@ namespace ZMPlayer{
 		private void UpdateUI() {
 			_totalScore = Mathf.Max(_totalScore, 0);
 
-			float normalizedScore = (_totalScore / _scoreMax) * 100.0f;
+			float normalizedScore = (_totalScore / _scoreMax) * _scoreMax;
 			
 			scoreText.text = normalizedScore.ToString(kScoreFormat) + "%";
 
@@ -245,6 +270,20 @@ namespace ZMPlayer{
 		private void HandlePedestalDeactivation (ZMPedestalController pedestalController) {
 			_scoreState = ScoreState.OUT_OF_ZONE;
 			_zoneState = ZoneState.INACTIVE;
+
+			RemoveSoul(pedestalController);
+		}
+
+		private void RemoveSoul(ZMPedestalController pedestalController) {
+			ZMSoul soul = pedestalController.GetComponent<ZMSoul>();
+
+			_drainingSouls.Remove(soul);
+		}
+
+		private void AddSoul(ZMSoul soul) {
+			if (!_drainingSouls.Contains(soul)) {
+				_drainingSouls.Add(soul);
+			}
 		}
 	}
 }

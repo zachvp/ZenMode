@@ -2,8 +2,6 @@
 using System.Collections;
 
 public class ZMZenStream : MonoBehaviour {
-	public Transform parent;
-
 	ParticleSystem _particleSystem;
 
 	// Use this for initialization
@@ -16,11 +14,6 @@ public class ZMZenStream : MonoBehaviour {
 
 	void Start () {
 		_particleSystem.renderer.sortingLayerName = "Foreground";
-	}
-
-	void FixedUpdate() {
-		transform.position = parent.position;
-		transform.localScale = parent.localScale;
 	}
 
 	private void HandleActivateEvent(ZMPedestalController pedestalController) {
