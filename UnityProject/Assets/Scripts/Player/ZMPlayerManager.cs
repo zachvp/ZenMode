@@ -3,10 +3,11 @@ using System.Collections;
 
 public class ZMPlayerManager : MonoBehaviour {
 	// the number of players that will be in the current game
-	private int _numPlayers; public int NumPlayers { get { return _numPlayers; } }
+	private int _numPlayers; 
+	public int NumPlayers { get { return _numPlayers; } }
 	
 	void Awake () {
-		_numPlayers = 2;
+		_numPlayers = 3;
 		DontDestroyOnLoad(gameObject);
 
 		ZMLobbyController.PlayerReadyEvent += HandlePlayerReadyEvent;;
