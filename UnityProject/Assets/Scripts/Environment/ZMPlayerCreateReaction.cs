@@ -2,8 +2,6 @@
 using ZMPlayer;
 
 public class ZMPlayerCreateReaction : MonoBehaviour {
-	public bool activateOnJoin = true;
-
 	ZMPlayerInfo _playerInfo;
 
 	void Awake() {
@@ -11,7 +9,11 @@ public class ZMPlayerCreateReaction : MonoBehaviour {
 	}
 
 	void Start() {
-		if ((int) _playerInfo.playerTag > ZMPlayerManager.NumPlayers - 1)
-			Destroy(gameObject);
+		if ((int) _playerInfo.playerTag > ZMPlayerManager.NumPlayers - 1) {
+			if (CompareTag("CameraFocus"))
+				Destroy(gameObject);
+			else
+				gameObject.SetActive(false);
+		}
 	}
 }

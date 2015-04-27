@@ -3,6 +3,7 @@ using System.Collections;
 
 public class ZMCameraController : MonoBehaviour {
 	public float endZoom = 432;
+	public bool zoomAtStart;
 	public float zoomDelay = 6;
 
 	private float _zoomTargetSize;
@@ -41,7 +42,8 @@ public class ZMCameraController : MonoBehaviour {
 		if (_movementBobbing != null)
 			_movementBobbing.enabled = false;
 
-		Invoke("StartZoom", zoomDelay);
+		if (zoomAtStart)
+			Invoke("StartZoom", zoomDelay);
 	}
 
 	void HandleGameEndEvent ()
