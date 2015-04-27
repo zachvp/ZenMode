@@ -25,7 +25,7 @@ public class ZMStageSoundCues : MonoBehaviour {
 		audio.PlayOneShot(matchStart, 0.5f);
 	}
 
-	void HandleAtPathNodeEvent (ZMWaypointMovement waypointMovement) {
+	void HandleAtPathNodeEvent (ZMWaypointMovement waypointMovement, int index) {
 		//audio.PlayOneShot (switchFocus);
 		if (waypointMovement.name.Equals("Main Camera"))
 			Invoke ("SwitchFocus", 0.1f);

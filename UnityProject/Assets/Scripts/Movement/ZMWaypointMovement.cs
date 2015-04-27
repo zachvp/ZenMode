@@ -5,8 +5,9 @@ public class ZMWaypointMovement : MonoBehaviour {
 	public Transform[] waypoints;
 	public float moveSpeed = 8f;
 	public bool moveAtStart = false;
+	public float startMoveDelay = 3.0f;
 	
-	public delegate void AtPathNodeAction(ZMWaypointMovement waypointMovement); public static event AtPathNodeAction AtPathNodeEvent;
+	public delegate void AtPathNodeAction(ZMWaypointMovement waypointMovement, int index); public static event AtPathNodeAction AtPathNodeEvent;
 	public delegate void AtPathEndAction(ZMWaypointMovement waypointMovement); public static event AtPathEndAction AtPathEndEvent;
 	
 	// movement
@@ -24,8 +25,12 @@ public class ZMWaypointMovement : MonoBehaviour {
 		_waypointSize = waypoints.GetLength(0);
 
 		if (moveAtStart) {
-			Move(0);
-			_moveState = MoveState.MOVE;
+			if (startMoveDelay > 0) {
+				Invoke("Move", startMoveDelay);
+			} else {
+				Move(0);
+				_moveState = MoveState.MOVE;
+			}
 		} else {
 			Stop();
 		}
@@ -74,7 +79,7 @@ public class ZMWaypointMovement : MonoBehaviour {
 				_moveState = MoveState.MOVE;
 				
 				if (AtPathNodeEvent != null) {
-					AtPathNodeEvent(this);
+					AtPathNodeEvent(this, _waypointIndex);
 				}
 			} else if (_waypointIndex == _waypointSize) {
 				_moveState = MoveState.COMPLETED;
@@ -93,6 +98,11 @@ public class ZMWaypointMovement : MonoBehaviour {
 
 	private void Move(int index) {
 		_waypointIndex = index;
+	}
+
+	void Move() {
+		_waypointIndex = 0;
+		_moveState = MoveState.MOVE;
 	}
 
 	// event handlers	

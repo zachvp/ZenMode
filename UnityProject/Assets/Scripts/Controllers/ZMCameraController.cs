@@ -3,6 +3,7 @@ using System.Collections;
 
 public class ZMCameraController : MonoBehaviour {
 	public float endZoom = 432;
+	public float zoomDelay = 6;
 
 	private float _zoomTargetSize;
 	private bool  _isZooming;
@@ -39,6 +40,8 @@ public class ZMCameraController : MonoBehaviour {
 	void Start() {
 		if (_movementBobbing != null)
 			_movementBobbing.enabled = false;
+
+		Invoke("StartZoom", zoomDelay);
 	}
 
 	void HandleGameEndEvent ()
@@ -61,10 +64,12 @@ public class ZMCameraController : MonoBehaviour {
 		_speed = 1.0f;
 	}
 
-	void HandleAtPathEndEvent (ZMWaypointMovement lobbyPedestalController)
+	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
 	{
-		Zoom(endZoom);
-		_speed = 1.0f;
+		if (waypointMovement.name.Equals("Main Camera")) {
+			Zoom(endZoom);
+			_speed = 1.0f;
+		}
 	}
 
 	void HandlePlayerLandPlungeEvent ()
@@ -139,5 +144,9 @@ public class ZMCameraController : MonoBehaviour {
 	void ResetZoom() {
 		Zoom (endZoom, _basePosition);
 		_speed = 10f;
+	}
+
+	void StartZoom() {
+		Zoom (200);
 	}
 }
