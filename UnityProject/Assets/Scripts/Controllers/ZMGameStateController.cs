@@ -143,8 +143,10 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void Update() {
 		/** State check **/
-		if (_matchState == MatchState.BEGIN_COUNTDOWN) {
-			BeginMatch();
+		if (_matchState == MatchState.PRE_MATCH) {
+			outputText.text = "Get Ready";
+		} else if (_matchState == MatchState.BEGIN_COUNTDOWN) {
+			BeginGame();
 		} else if (_matchState == MatchState.POST_MATCH) {
 			Invoke("EndGame", END_GAME_DELAY);
 		}
@@ -177,17 +179,6 @@ public class ZMGameStateController : MonoBehaviour {
 		}
 	}
 
-	// public methods
-	private void BeginMatch() {
-		// Game start.
-		_matchState = MatchState.MATCH;
-		EnableGameObjects();
-
-		if (StartGameEvent != null) {
-			StartGameEvent();
-		}
-	}
-
 	private void HandleMaxScoreReached(ZMScoreController scoreController) {
 		_matchState = MatchState.POST_MATCH;
 	}
@@ -208,6 +199,18 @@ public class ZMGameStateController : MonoBehaviour {
 			}
 		}
 	}
+	
+	private void BeginGame() {
+		outputText.text = "Begin!";
+		_matchState = MatchState.MATCH;
+		EnableGameObjects();
+		
+		if (StartGameEvent != null) {
+			StartGameEvent();
+		}
+
+		Invoke("ClearOutputText", 1.0f);
+	}
 
 	private void PauseGame() {
 		DisableGameObjects();
@@ -219,6 +222,10 @@ public class ZMGameStateController : MonoBehaviour {
 		EnableGameObjects();
 
 		Time.timeScale = 1.0f;
+	}
+
+	void ClearOutputText() {
+		outputText.text = "";
 	}
 
 	private void ResetGame() {

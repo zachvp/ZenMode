@@ -21,6 +21,13 @@ public class ZMTimedCounter : MonoBehaviour {
 	
 	void Awake () {
 		_value = startValue;
+
+		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
+	}
+
+	void HandleStartGameEvent ()
+	{
+		BeginCount();
 	}
 
 	void OnDestroy() {
@@ -29,10 +36,6 @@ public class ZMTimedCounter : MonoBehaviour {
 
 	void Start() {
 		UpdateText();
-
-		if (start) {
-			BeginCount();
-		}
 	}
 
 	void UpdateText() {
