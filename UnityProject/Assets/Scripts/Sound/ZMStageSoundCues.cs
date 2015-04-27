@@ -14,8 +14,10 @@ public class ZMStageSoundCues : MonoBehaviour {
 
 	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
 	{
-		audio.Play();
-		audio.loop = true;
+		if (waypointMovement.name.Equals("Main Camera")) {
+			audio.Play();
+			audio.loop = true;
+		}
 	}
 
 	void HandleStartGameEvent ()
@@ -23,9 +25,10 @@ public class ZMStageSoundCues : MonoBehaviour {
 		audio.PlayOneShot(matchStart, 0.5f);
 	}
 
-	void HandleAtPathNodeEvent (ZMWaypointMovement lobbyPedestalController) {
+	void HandleAtPathNodeEvent (ZMWaypointMovement waypointMovement) {
 		//audio.PlayOneShot (switchFocus);
-		Invoke ("SwitchFocus", 0.1f);
+		if (waypointMovement.name.Equals("Main Camera"))
+			Invoke ("SwitchFocus", 0.1f);
 	}
 
 	void SwitchFocus() {

@@ -59,7 +59,8 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
 	{
-		_matchState = MatchState.BEGIN_COUNTDOWN;
+		if (waypointMovement.name.Equals("Main Camera"))
+			_matchState = MatchState.BEGIN_COUNTDOWN;
 	}
 
 	void HandleGameTimerEndedEvent ()
