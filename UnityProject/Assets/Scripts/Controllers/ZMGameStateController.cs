@@ -65,7 +65,8 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void HandleGameTimerEndedEvent ()
 	{
-		_matchState = MatchState.POST_MATCH;
+		if (_matchState != MatchState.POST_MATCH)
+			_matchState = MatchState.POST_MATCH;
 	}
 
 	void HandlePlayerEliminatedEvent (ZMPlayerController playerController)
@@ -149,7 +150,8 @@ public class ZMGameStateController : MonoBehaviour {
 		} else if (_matchState == MatchState.BEGIN_COUNTDOWN) {
 			BeginGame();
 		} else if (_matchState == MatchState.POST_MATCH) {
-			Invoke("EndGame", END_GAME_DELAY);
+			if (!IsInvoking("EndGame"))
+				Invoke("EndGame", END_GAME_DELAY);
 		}
 
 		if (_gameState == GameState.RESUME) {
@@ -234,6 +236,8 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	private void SpawnObject() {
+		if (_matchState == MatchState.POST_MATCH) return;
+
 		float maximumDistance = float.MinValue;
 		int targetIndex = 0;
 
@@ -264,7 +268,11 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	void EndGame() {
+		if (outputText == null)
+			return;
+		
 		outputText.text = "Match Ended!";
+
 		PauseGame();
 		
 		if (GameEndEvent != null && !_firedGameEndEvent) {

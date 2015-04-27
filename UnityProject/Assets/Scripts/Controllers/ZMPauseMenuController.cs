@@ -155,7 +155,6 @@ public class ZMPauseMenuController : MonoBehaviour {
 		} else if (_selectedIndex == _quitOption) {
 			if (SelectQuitEvent != null) {
 				Time.timeScale = 1.0f;
-				Debug.Log("Quit!");
 				SelectQuitEvent();
 			}
 		}

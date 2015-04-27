@@ -23,6 +23,12 @@ public class ZMTimedCounter : MonoBehaviour {
 		_value = startValue;
 
 		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
+		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+	}
+
+	void HandleGameEndEvent ()
+	{
+		CancelInvoke(kCountMethodName);
 	}
 
 	void HandleStartGameEvent ()
