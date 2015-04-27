@@ -8,6 +8,7 @@ public class ZMMovementBobbing : MonoBehaviour {
 	private float _theta;
 	private Vector3 _basePosition;
 	private Vector3 _updatedPosition;
+	private bool bobbing = true;
 
 	// Use this for initialization
 	void Awake () {
@@ -24,5 +25,13 @@ public class ZMMovementBobbing : MonoBehaviour {
 		_updatedPosition.y = _basePosition.y + amplitude * Mathf.Sin(_theta);
 
 		transform.position = _updatedPosition;
+	}
+
+	void BobbingOff() {
+		bobbing = false;
+	}
+
+	void BobbingOn() {
+		bobbing = true;
 	}
 }

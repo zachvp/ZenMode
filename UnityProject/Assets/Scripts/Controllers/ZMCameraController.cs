@@ -17,11 +17,11 @@ public class ZMCameraController : MonoBehaviour {
 
 	private bool _isShaking = false;
 
+	private ZMMovementBobbing _movementBobbing;
+
 	// Use this for initialization
 	void Awake () {
 		_speed = _baseSpeed;
-		
-		GetComponent<ZMMovementBobbing>().enabled = false;
 
 		ZMPlayerController.PlayerRecoilEvent 	 += HandlePlayerRecoilEvent;
 		ZMPlayerController.PlayerLandPlungeEvent += HandlePlayerLandPlungeEvent;
@@ -32,6 +32,13 @@ public class ZMCameraController : MonoBehaviour {
 		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
 		ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
 		ZMGameStateController.GameEndEvent   += HandleGameEndEvent;
+
+		_movementBobbing = GetComponent<ZMMovementBobbing>();
+	}
+
+	void Start() {
+		if (_movementBobbing != null)
+			_movementBobbing.enabled = false;
 	}
 
 	void HandleGameEndEvent ()
@@ -99,7 +106,9 @@ public class ZMCameraController : MonoBehaviour {
 	}
 	
 	void Shake(int frames) {
-		GetComponent<ZMMovementBobbing>().enabled = true;
+		//SendMessage("BobbingOn");
+		if (_movementBobbing != null)
+			_movementBobbing.enabled = true;
 		_zoomStep = 0;
 		_zoomFrames = frames;
 		_isShaking = true;
@@ -107,7 +116,9 @@ public class ZMCameraController : MonoBehaviour {
 	}
 
 	void StopShake() {
-		GetComponent<ZMMovementBobbing>().enabled = false;
+		SendMessage("BobbingOff");
+		if (_movementBobbing != null)
+			_movementBobbing.enabled = false;
 		_isShaking = false;
 	}
 
