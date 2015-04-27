@@ -2,13 +2,13 @@
 using System.Collections;
 
 public class ZMZenStream : MonoBehaviour {
-	public Transform parent;
-
-	ParticleSystem _particleSystem;
+	private ZMPlayer.ZMPlayerInfo _playerInfo;
+	private ParticleSystem _particleSystem;
 
 	// Use this for initialization
 	void Awake () {
 		_particleSystem = GetComponent<ParticleSystem>();
+		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 
 		ZMPedestalController.ActivateEvent += HandleActivateEvent;
 		ZMPedestalController.DeactivateEvent += HandleDeactivateEvent;
@@ -18,22 +18,23 @@ public class ZMZenStream : MonoBehaviour {
 		_particleSystem.renderer.sortingLayerName = "Foreground";
 	}
 
-	void FixedUpdate() {
-		transform.position = parent.position;
-		transform.localScale = parent.localScale;
-	}
-
 	private void HandleActivateEvent(ZMPedestalController pedestalController) {
-		_particleSystem.enableEmission = true;
+		if (_playerInfo.playerTag.Equals(pedestalController.PlayerInfo.playerTag)) {
+			_particleSystem.enableEmission = true;
+		}
 	}
 
 	private void HandleDeactivateEvent(ZMPedestalController pedestalController) {
-		_particleSystem.enableEmission = false;
+		if (_playerInfo.playerTag.Equals(pedestalController.PlayerInfo.playerTag)) {
+			_particleSystem.enableEmission = false;
+		}
 	}
 
 	private void HandleMaxScoreReachedEvent(ZMLobbyScoreController lobbyScoreController) {
-		if (gameObject != null) {
-			Destroy(gameObject);
+		if (_playerInfo.playerTag.Equals(lobbyScoreController.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag)) {
+			if (gameObject != null) {
+				Destroy(gameObject);
+			}
 		}
 	}
 }

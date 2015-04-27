@@ -27,6 +27,10 @@ public class ZMMainMenuController : MonoBehaviour {
 	}
 
 	private void BeginGame() {
+		Invoke("LoadGame", 0.5f);
+	}
+
+	void LoadGame() {
 		Application.LoadLevel(2);
 	}
 }

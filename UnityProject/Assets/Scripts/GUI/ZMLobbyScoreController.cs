@@ -14,10 +14,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	private float _currentScore;
 	private bool _readyFired;
 	private bool _pedestalAtEnd;
-	private ZMPlayer.ZMPlayerInfo _playerInfo;
-
-	// consntants
-	private const string kScoreFormat = "0.0";
+	private ZMPlayer.ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 
 	// Use this for initialization
 	void Awake () {
@@ -25,8 +22,10 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		_readyFired = false;
 		_pedestalAtEnd = false;
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
+
 		gameObject.SetActive(false);
 		light.enabled = false;
+		scoreBar.gameObject.SetActive(false);
 
 		ZMLobbyPedestalController.AtPathEndEvent += HandleAtPathEndEvent;
 		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
@@ -38,15 +37,11 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		MaxScoreReachedEvent = null;
 	}
 
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
 	void OnTriggerStay2D(Collider2D collider) {
 		if (collider.CompareTag("Pedestal")) {
 			if (collider.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(_playerInfo.playerTag)) {
 				if (_currentScore < maxScore) {
+
 					if (_pedestalAtEnd)
 						AddToScore(scoreAmount);
 				} else if(!_readyFired) {
@@ -73,8 +68,6 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		
 		float normalizedScore = (_currentScore / maxScore) * 100.0f;
 		
-		scoreText.text = normalizedScore.ToString(kScoreFormat) + "%";
-		
 		scoreBar.value = normalizedScore; 
 	}
 
@@ -85,7 +78,10 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	// event handlers
 	void HandleAtPathEndEvent (ZMLobbyPedestalController lobbyPedestalController)
 	{
-		_pedestalAtEnd = true;
+		if (lobbyPedestalController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			_pedestalAtEnd = true;
+			scoreBar.gameObject.SetActive(true);
+		}
 	}
 
 	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)

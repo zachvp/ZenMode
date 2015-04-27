@@ -20,8 +20,6 @@ namespace ZMPlayer {
 		public static event JumpAction JumpEvent;
 		public delegate void AttackAction(ZMPlayerInputController playerInputController);
 		public static event AttackAction AttackEvent;
-		public delegate void ThrowAction(ZMPlayerInputController playerInputController);
-		public static event ThrowAction ThrowEvent;
 		public delegate void PlungeAction(ZMPlayerInputController playerInputController);
 		public static event PlungeAction PlungeEvent;
 
@@ -74,13 +72,6 @@ namespace ZMPlayer {
 				_attackPressed = false;
 			}
 
-			// Handle throwing knives.
-			if (Input.GetButtonDown (PlayerControl ("THROW"))) {
-				if (ThrowEvent != null) {
-					ThrowEvent(this);
-				}
-			} 
-
 			// Handle plunging.
 			if (_playerNumber == 1) {
 				// Debug.Log (Input.GetAxis (PlayerControl ("PLUNGE")));
@@ -98,7 +89,6 @@ namespace ZMPlayer {
 			NoMoveEvent	   = null;
 			JumpEvent	   = null;
 			AttackEvent	   = null;
-			ThrowEvent     = null;
 			PlungeEvent    = null;
 		}
 

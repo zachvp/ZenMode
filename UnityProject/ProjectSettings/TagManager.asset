@@ -12,6 +12,9 @@ TagManager:
   - ClashEffect
   - CameraFocus
   - Breakable
+  - Grass
+  - PlayerManager
+  - ScoreGui
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX

@@ -22,7 +22,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	private Vector3 _targetPosition;
 
 	// ID
-	ZMPlayer.ZMPlayerInfo _playerInfo;
+	private ZMPlayer.ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 
 	// Use this for initialization
 	void Awake() {
@@ -79,7 +79,6 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 			
 			// update waypoint index
 			_waypointIndex += 1;
-			//_waypointIndex %= waypoints.Count;			
 		}
 
 		if (_moveState == MoveState.MOVING) {
@@ -137,7 +136,7 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	void HandleMaxScoreReachedEvent (ZMLobbyScoreController lobbyScoreController)
 	{
 		if (lobbyScoreController.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag)) {
-			Destroy(gameObject);
+			gameObject.SetActive(false);
 		}
 	}
 }
