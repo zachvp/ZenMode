@@ -52,7 +52,7 @@ public class ZMGameStateController : MonoBehaviour {
 
 		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
 
-		ZMLobbyPedestalController.FullPathCycleEvent += HandleFullPathCycleEvent;
+		ZMWaypointMovement.FullPathCycleEvent += HandleFullPathCycleEvent;
 
 		ZMPauseMenuController.SelectResumeEvent += HandleSelectResumeEvent;
 		ZMPauseMenuController.SelectRestartEvent += HandleSelectRestartEvent;
@@ -80,7 +80,7 @@ public class ZMGameStateController : MonoBehaviour {
 		_gameState =  GameState.RESUME;
 	}
 
-	void HandleFullPathCycleEvent (ZMLobbyPedestalController lobbyPedestalController)
+	void HandleFullPathCycleEvent (ZMWaypointMovement lobbyPedestalController)
 	{
 		if (_matchState == MatchState.PRE_MATCH) {
 			_matchState = MatchState.BEGIN_COUNTDOWN;

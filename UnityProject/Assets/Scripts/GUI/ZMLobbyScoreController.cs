@@ -13,24 +13,35 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	// private members
 	private float _currentScore;
 	private bool _readyFired;
-	private bool _pedestalAtEnd;
 	private ZMPlayer.ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
+
+	// references
+	private ZMLobbyPedestalController _pedestalController;
 
 	// Use this for initialization
 	void Awake () {
 		_currentScore = 0;
 		_readyFired = false;
-		_pedestalAtEnd = false;
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 
 		gameObject.SetActive(false);
 		light.enabled = false;
-		scoreBar.gameObject.SetActive(false);
+		//scoreBar.gameObject.SetActive(false);
 
-		ZMLobbyPedestalController.AtPathEndEvent += HandleAtPathEndEvent;
+		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
 
 		UpdateUI();
+	}
+
+	void Start() {
+		foreach (GameObject pedestal in GameObject.FindGameObjectsWithTag("Pedestal")) {
+			ZMLobbyPedestalController controller = pedestal.GetComponent<ZMLobbyPedestalController>();
+			
+			if (controller.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+				_pedestalController = controller;
+			}
+		}
 	}
 
 	void OnDestroy() {
@@ -38,20 +49,17 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	}
 
 	void OnTriggerStay2D(Collider2D collider) {
-		if (collider.CompareTag("Pedestal")) {
-			if (collider.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(_playerInfo.playerTag)) {
-				if (_currentScore < maxScore) {
-
-					if (_pedestalAtEnd)
-						AddToScore(scoreAmount);
-				} else if(!_readyFired) {
-					if (MaxScoreReachedEvent != null) {
-						MaxScoreReachedEvent(this);
-					}
-
-					UpdateText("Ready!");
-					_readyFired = true;
+		if (collider.gameObject.Equals(_pedestalController.gameObject)) {
+			if (_currentScore < maxScore) {
+				if (_pedestalController.Active)
+					AddToScore(scoreAmount);
+			} else if(!_readyFired) {
+				if (MaxScoreReachedEvent != null) {
+					MaxScoreReachedEvent(this);
 				}
+
+				SetDisplayText("Ready!");
+				_readyFired = true;
 			}
 		}
 	}
@@ -71,17 +79,17 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		scoreBar.value = normalizedScore; 
 	}
 
-	private void UpdateText(string text) {
+	private void SetDisplayText(string text) {
 		scoreText.text = text;
 	}
 
 	// event handlers
-	void HandleAtPathEndEvent (ZMLobbyPedestalController lobbyPedestalController)
+	void HandleAtPathEndEvent (ZMWaypointMovement lobbyPedestalController)
 	{
-		if (lobbyPedestalController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		/*if (lobbyPedestalController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 			_pedestalAtEnd = true;
 			scoreBar.gameObject.SetActive(true);
-		}
+		}*/
 	}
 
 	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)

@@ -7,8 +7,8 @@ public class ZMStageSoundCues : MonoBehaviour {
 	public AudioClip switchFocus;
 
 	void Awake () {
-		ZMLobbyPedestalController.AtPathNodeEvent += HandleAtPathNodeEvent;
-		ZMLobbyPedestalController.FullPathCycleEvent  += HandleFullCycleEvent;
+		ZMWaypointMovement.AtPathNodeEvent += HandleAtPathNodeEvent;
+		ZMWaypointMovement.FullPathCycleEvent  += HandleFullCycleEvent;
 		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
 	}
 
@@ -17,12 +17,12 @@ public class ZMStageSoundCues : MonoBehaviour {
 		audio.PlayOneShot(matchStart, 0.5f);
 	}
 
-	void HandleFullCycleEvent (ZMLobbyPedestalController lobbyPedestalController) {
+	void HandleFullCycleEvent (ZMWaypointMovement lobbyPedestalController) {
 		audio.Play();
 		audio.loop = true;
 	}
 
-	void HandleAtPathNodeEvent (ZMLobbyPedestalController lobbyPedestalController) {
+	void HandleAtPathNodeEvent (ZMWaypointMovement lobbyPedestalController) {
 		audio.PlayOneShot (switchFocus);
 		Invoke ("SwitchFocus", 0.4f);
 	}

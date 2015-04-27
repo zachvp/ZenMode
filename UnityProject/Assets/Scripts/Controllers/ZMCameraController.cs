@@ -27,7 +27,7 @@ public class ZMCameraController : MonoBehaviour {
 		ZMPlayerController.PlayerLandPlungeEvent += HandlePlayerLandPlungeEvent;
 		ZMPlayerController.PlayerDeathEvent 	 += HandlePlayerDeathEvent;
 
-		ZMLobbyPedestalController.AtPathEndEvent += HandleAtPathEndEvent;
+		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 
 		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
 		ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
@@ -61,7 +61,7 @@ public class ZMCameraController : MonoBehaviour {
 		_speed = 1.0f;
 	}
 
-	void HandleAtPathEndEvent (ZMLobbyPedestalController lobbyPedestalController)
+	void HandleAtPathEndEvent (ZMWaypointMovement lobbyPedestalController)
 	{
 		Zoom(endZoom);
 		_speed = 1.0f;
