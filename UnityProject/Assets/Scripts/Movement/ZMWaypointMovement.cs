@@ -47,12 +47,14 @@ public class ZMWaypointMovement : MonoBehaviour {
 		if (_moveState == MoveState.MOVE && _waypointIndex < _waypointSize) {
 			// set up the movement variables
 			_distanceTraveled = 0.0f;
-			_targetPosition = waypoints[_waypointIndex].position;
-			_distanceToTarget = (_targetPosition - transform.position).magnitude;
-			
-			_moveState = MoveState.MOVING;
-			
-			// update waypoint index
+
+			if (waypoints[_waypointIndex] != null) {
+				_targetPosition = waypoints[_waypointIndex].position;
+				_distanceToTarget = (_targetPosition - transform.position).magnitude;
+				
+				_moveState = MoveState.MOVING;
+			}
+
 			_waypointIndex += 1;
 		}
 

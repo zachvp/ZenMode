@@ -139,6 +139,5 @@ public class ZMCameraController : MonoBehaviour {
 	void ResetZoom() {
 		Zoom (endZoom, _basePosition);
 		_speed = 10f;
-		//Time.timeScale = 1.0f;
 	}
 }

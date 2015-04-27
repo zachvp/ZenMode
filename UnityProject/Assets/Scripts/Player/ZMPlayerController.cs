@@ -96,6 +96,7 @@ public class ZMPlayerController : MonoBehaviour
 	
 
 	// Delegates
+	public delegate void PlayerCreateAction(ZMPlayerController playerController); public static event PlayerCreateAction PlayerCreateEvent;
 	public delegate void PlayerDeathAction(ZMPlayerController playerController); public static event PlayerDeathAction PlayerDeathEvent;
 	public delegate void PlayerRespawnAction(ZMPlayerController playerController); public static event PlayerRespawnAction PlayerRespawnEvent;
 	public delegate void PlayerEliminatedAction(ZMPlayerController playerController); public static event PlayerEliminatedAction PlayerEliminatedEvent;
@@ -165,6 +166,10 @@ public class ZMPlayerController : MonoBehaviour
 		kDeathStrings[28] = "SWIFT";
 		kDeathStrings[29] = "WAHH";
 		kDeathStrings[30] = "OOOOHHHH";
+
+		if (PlayerCreateEvent != null) {
+			PlayerCreateEvent(this);
+		}
 	}
 
 	void FixedUpdate()
@@ -430,6 +435,7 @@ public class ZMPlayerController : MonoBehaviour
 	void OnDestroy() {
 		ZMScoreController.MinScoreReached -= HandleMinScoreReached;
 
+		PlayerCreateEvent	  = null;
 		PlayerDeathEvent   	  = null;
 		PlayerRespawnEvent 	  = null;
 		PlayerEliminatedEvent = null;
