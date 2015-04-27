@@ -10,6 +10,14 @@ public class ZMTrailerCameraController : MonoBehaviour {
 	private int _focusIndex = 0;
 	private bool _toggleMusic;
 
+	private Vector3 _basePos;
+	private float _baseZoom;
+
+	void Start() {
+		_basePos = transform.position;
+		_baseZoom = camera.orthographicSize;
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKey(KeyCode.H)) {
@@ -32,6 +40,8 @@ public class ZMTrailerCameraController : MonoBehaviour {
 			_movePosition.y -= speed * Time.deltaTime;
 			
 			transform.position = _movePosition;
+		} else if (Input.GetKey(KeyCode.I)) {
+			Application.LoadLevel(Application.loadedLevel);
 		}
 
 		if (Input.GetKeyDown(KeyCode.Alpha1)) {
@@ -55,6 +65,11 @@ public class ZMTrailerCameraController : MonoBehaviour {
 
 			transform.position = _movePosition;
 			camera.orthographicSize = 432;
+		} else if (Input.GetKeyDown(KeyCode.Alpha9)) {
+			_movePosition = _basePos;
+			
+			transform.position = _movePosition;
+			camera.orthographicSize = _baseZoom;
 		}
 
 		if (Input.GetKeyDown(KeyCode.U)) {
@@ -66,6 +81,4 @@ public class ZMTrailerCameraController : MonoBehaviour {
 			_toggleMusic = !_toggleMusic;
 		}
 	}
-
-
 }

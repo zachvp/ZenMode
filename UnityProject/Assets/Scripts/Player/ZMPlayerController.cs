@@ -127,7 +127,7 @@ public class ZMPlayerController : MonoBehaviour
 		ZMScoreController.MinScoreReached += HandleMinScoreReached;
 
 		// Set original facing direction.
-		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
+		//SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
 	}
 
 	void Start() 
@@ -697,14 +697,14 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void Respawn() {
 		GetComponent<SpriteRenderer>().sprite = _baseSprite;
-		light.enabled = true;
-		_velocity.y = 100f;
+		//light.enabled = true;
+		//_velocity.y = 100f;
 		
-		EnablePlayer();
+		//EnablePlayer();
 
-		if (PlayerRespawnEvent != null) {
+		/*if (PlayerRespawnEvent != null) {
 			PlayerRespawnEvent(this);
-		}
+		}*/
 	}
 
 	private void Recoil()
