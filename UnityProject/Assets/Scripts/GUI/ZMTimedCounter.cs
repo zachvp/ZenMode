@@ -16,9 +16,15 @@ public class ZMTimedCounter : MonoBehaviour {
 
 	private const string kCountMethodName = "Count";
 	private int _value;
+
+	public delegate void GameTimerEndedAction(); public static event GameTimerEndedAction GameTimerEndedEvent;
 	
 	void Awake () {
 		_value = startValue;
+	}
+
+	void OnDestroy() {
+		GameTimerEndedEvent = null;
 	}
 
 	void Start() {
@@ -54,9 +60,10 @@ public class ZMTimedCounter : MonoBehaviour {
 
 		if (_value == min || _value == max) {
 			CancelInvoke(kCountMethodName);
-			GameObject controllerObject = GameObject.Find("GameStateManager");
-			ZMGameStateController controller = controllerObject.GetComponent<ZMGameStateController>();
-			controller.CountdownEnded();
+
+			if (GameTimerEndedEvent != null) {
+				GameTimerEndedEvent();
+			}
 
 			if (shouldClearOnCompletion)
 				Invoke("ClearText", timeIncrement);

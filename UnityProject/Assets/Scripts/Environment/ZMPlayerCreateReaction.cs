@@ -8,12 +8,10 @@ public class ZMPlayerCreateReaction : MonoBehaviour {
 
 	void Awake() {
 		_playerInfo = GetComponent<ZMPlayerInfo>();
-		ZMPlayerController.PlayerCreateEvent += HandlePlayerCreateEvent;
 	}
 
-	void HandlePlayerCreateEvent (ZMPlayerController playerController)
-	{
-		if ((int) _playerInfo.playerTag > ZMPlayerManager.NumPlayers - 1 && gameObject != null)
+	void Start() {
+		if ((int) _playerInfo.playerTag > ZMPlayerManager.NumPlayers - 1)
 			Destroy(gameObject);
-	}	
+	}
 }

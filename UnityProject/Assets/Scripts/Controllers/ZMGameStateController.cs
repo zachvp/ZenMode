@@ -5,14 +5,13 @@ using UnityEngine.UI;
 using ZMPlayer;
 
 public class ZMGameStateController : MonoBehaviour {
-	public ZMTimedCounter countdownTimer;
 	public Text outputText;
 	private int _playerCount;
 
 	private enum GameState { BEGIN, NEUTRAL, PAUSE, PAUSED, RESUME, RESET }
 	GameState _gameState;
 
-	private enum MatchState { PRE_MATCH, BEGIN_COUNTDOWN, COUNTDOWN, MATCH, POST_MATCH };
+	private enum MatchState { PRE_MATCH, BEGIN_COUNTDOWN, MATCH, POST_MATCH };
 	private MatchState _matchState;
 	private List<Transform> _spawnpoints;
 	private int _pausedPlayer;
@@ -33,7 +32,6 @@ public class ZMGameStateController : MonoBehaviour {
 	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
 	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
 	public delegate void GameEndAction();   public static event GameEndAction GameEndEvent;
-	public delegate void BeginCountdownAction(); public static event BeginCountdownAction BeginCountdownEvent;
 
 
 	// Use this for initialization
@@ -52,11 +50,21 @@ public class ZMGameStateController : MonoBehaviour {
 
 		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
 
-		ZMWaypointMovement.FullPathCycleEvent += HandleFullPathCycleEvent;
-
 		ZMPauseMenuController.SelectResumeEvent += HandleSelectResumeEvent;
 		ZMPauseMenuController.SelectRestartEvent += HandleSelectRestartEvent;
 		ZMPauseMenuController.SelectQuitEvent += HandleSelectQuitEvent;
+		ZMTimedCounter.GameTimerEndedEvent += HandleGameTimerEndedEvent;
+		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
+	}
+
+	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
+	{
+		_matchState = MatchState.BEGIN_COUNTDOWN;
+	}
+
+	void HandleGameTimerEndedEvent ()
+	{
+		_matchState = MatchState.POST_MATCH;
 	}
 
 	void HandlePlayerEliminatedEvent (ZMPlayerController playerController)
@@ -80,22 +88,13 @@ public class ZMGameStateController : MonoBehaviour {
 		_gameState =  GameState.RESUME;
 	}
 
-	void HandleFullPathCycleEvent (ZMWaypointMovement waypointMovement)
-	{
-		if (_matchState == MatchState.PRE_MATCH) {
-			_matchState = MatchState.BEGIN_COUNTDOWN;
-			
-			Time.timeScale = 1.0f;
-		}
-	}
-
 	void HandleStartInputEvent (ZMPlayerInfo.PlayerTag playerTag)
 	{
 		if (_matchState == MatchState.PRE_MATCH) {
 			_matchState = MatchState.BEGIN_COUNTDOWN;
 		} else if (_gameState == GameState.PAUSE || _gameState == GameState.PAUSED) {
 			_gameState =  GameState.RESUME;
-		} else if (_matchState != MatchState.COUNTDOWN) {
+		} else {
 			_pausedPlayer = (int)playerTag;
 			_gameState = GameState.PAUSE;
 		}
@@ -103,8 +102,6 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void Start() {
 		outputText.text = "";
-
-		DisableGameObjects();
 
 		Time.timeScale = 1.0f;
 
@@ -132,6 +129,8 @@ public class ZMGameStateController : MonoBehaviour {
 		for (int i = 0; i < _playerCount; ++i) {
 			_players[i].gameObject.SetActive(true);
 		}
+
+		DisableGameObjects();
 	}
 
 	void OnDestroy() {
@@ -139,15 +138,13 @@ public class ZMGameStateController : MonoBehaviour {
 		StartGameEvent      = null;
 		PauseGameEvent	    = null;
 		GameEndEvent	    = null;
-		BeginCountdownEvent = null;
 		ResumeGameEvent 	= null;
 	}
 
 	void Update() {
 		/** State check **/
 		if (_matchState == MatchState.BEGIN_COUNTDOWN) {
-			_matchState = MatchState.COUNTDOWN;
-			countdownTimer.BeginCount();
+			BeginMatch();
 		} else if (_matchState == MatchState.POST_MATCH) {
 			Invoke("EndGame", END_GAME_DELAY);
 		}
@@ -181,13 +178,7 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	// public methods
-	public void CountdownEnded() {
-		// Game ran out of time.
-		if (_matchState == MatchState.MATCH) {
-			_matchState = MatchState.POST_MATCH;
-			return;
-		}
-
+	private void BeginMatch() {
 		// Game start.
 		_matchState = MatchState.MATCH;
 		EnableGameObjects();
@@ -220,14 +211,12 @@ public class ZMGameStateController : MonoBehaviour {
 
 	private void PauseGame() {
 		DisableGameObjects();
-		countdownTimer.GetComponent<Text>().enabled = false;
 
 		Time.timeScale = 0.0f;
 	}
 
 	private void ResumeGame() {
 		EnableGameObjects();
-		countdownTimer.GetComponent<Text>().enabled = true;
 
 		Time.timeScale = 1.0f;
 	}

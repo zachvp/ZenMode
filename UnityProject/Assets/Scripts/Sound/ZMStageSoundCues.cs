@@ -8,8 +8,14 @@ public class ZMStageSoundCues : MonoBehaviour {
 
 	void Awake () {
 		ZMWaypointMovement.AtPathNodeEvent += HandleAtPathNodeEvent;
-		ZMWaypointMovement.FullPathCycleEvent  += HandleFullCycleEvent;
+		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
+	}
+
+	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
+	{
+		audio.Play();
+		audio.loop = true;
 	}
 
 	void HandleStartGameEvent ()
@@ -17,22 +23,12 @@ public class ZMStageSoundCues : MonoBehaviour {
 		audio.PlayOneShot(matchStart, 0.5f);
 	}
 
-	void HandleFullCycleEvent (ZMWaypointMovement lobbyPedestalController) {
-		audio.Play();
-		audio.loop = true;
-	}
-
 	void HandleAtPathNodeEvent (ZMWaypointMovement lobbyPedestalController) {
-		audio.PlayOneShot (switchFocus);
-		Invoke ("SwitchFocus", 0.4f);
+		//audio.PlayOneShot (switchFocus);
+		Invoke ("SwitchFocus", 0.1f);
 	}
 
 	void SwitchFocus() {
 		audio.PlayOneShot (focusOnPlayer);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 }

@@ -8,7 +8,6 @@ public class ZMWaypointMovement : MonoBehaviour {
 	
 	public delegate void AtPathNodeAction(ZMWaypointMovement waypointMovement); public static event AtPathNodeAction AtPathNodeEvent;
 	public delegate void AtPathEndAction(ZMWaypointMovement waypointMovement); public static event AtPathEndAction AtPathEndEvent;
-	public delegate void FullPathCycleAction(ZMWaypointMovement waypointMovement); public static event FullPathCycleAction FullPathCycleEvent;
 	
 	// movement
 	private enum MoveState { STOPPED, MOVE, MOVING, AT_TARGET, COMPLETED };
@@ -26,6 +25,7 @@ public class ZMWaypointMovement : MonoBehaviour {
 
 		if (moveAtStart) {
 			Move(0);
+			_moveState = MoveState.MOVE;
 		} else {
 			Stop();
 		}
@@ -36,7 +36,6 @@ public class ZMWaypointMovement : MonoBehaviour {
 	void OnDestroy() {
 		AtPathNodeEvent    = null;
 		AtPathEndEvent 	   = null;
-		FullPathCycleEvent = null;
 		
 		ZMGameStateController.StartGameEvent -= HandleStartGameEvent;
 	}
@@ -79,6 +78,7 @@ public class ZMWaypointMovement : MonoBehaviour {
 				}
 			} else if (_waypointIndex == _waypointSize) {
 				_moveState = MoveState.COMPLETED;
+				_waypointIndex += 1;
 
 				if (AtPathEndEvent != null) {
 					AtPathEndEvent(this);
@@ -91,8 +91,7 @@ public class ZMWaypointMovement : MonoBehaviour {
 		_moveState = MoveState.STOPPED;
 	}
 
-	void Move(int index) {
-		_moveState = MoveState.MOVE;
+	private void Move(int index) {
 		_waypointIndex = index;
 	}
 
@@ -100,6 +99,7 @@ public class ZMWaypointMovement : MonoBehaviour {
 	private void HandleStartGameEvent ()
 	{
 		// cut to the last waypoint
-		Move(waypoints.GetLength(0) - 1);
+		if (_waypointIndex <= _waypointSize)
+			Move(waypoints.GetLength(0) - 1);
 	}
 }
