@@ -58,10 +58,6 @@ public class ZMWaypointMovement : MonoBehaviour {
 			_waypointIndex += 1;
 		}
 
-		if ((_targetPosition - gameObject.transform.position).sqrMagnitude < 4.0f * 4.0f) {
-			_moveState = MoveState.AT_TARGET;
-		}
-
 		// state checks
 		if (_moveState == MoveState.MOVING) {
 			float distanceRatio;
@@ -70,6 +66,10 @@ public class ZMWaypointMovement : MonoBehaviour {
 			distanceRatio = _distanceTraveled / _distanceToTarget;
 			
 			gameObject.transform.position = Vector3.Lerp(transform.position, _targetPosition, distanceRatio);
+
+			if ((_targetPosition - gameObject.transform.position).sqrMagnitude < 4.0f * 4.0f) {
+				_moveState = MoveState.AT_TARGET;
+			}
 		} else if (_moveState == MoveState.AT_TARGET) {
 			if (_waypointIndex < _waypointSize) {
 				_moveState = MoveState.MOVE;

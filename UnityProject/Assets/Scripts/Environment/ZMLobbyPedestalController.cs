@@ -5,11 +5,10 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	// ID
 	private ZMPlayer.ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 
-	private bool _active; public bool Active { get { return _active; } }
+	public delegate void ActivateAction(ZMLobbyPedestalController lobbyPedestalController); public static event ActivateAction ActivateEvent;
 
 	// Use this for initialization
 	void Awake() {
-		_active = false;
 		gameObject.SetActive(false);
 
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
@@ -19,10 +18,16 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 	}
 
+	void OnDestroy() {
+		ActivateEvent = null;
+	}
+
 	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
 	{
 		if (waypointMovement.gameObject.Equals(gameObject)) {
-			_active = true;
+			if (ActivateEvent != null) {
+				ActivateEvent(this);
+			}
 		}
 	}
 
@@ -32,10 +37,6 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 			gameObject.SetActive(true);
 		}
 	}
-
-	/*void OnDestroy() {
-		ZMLobbyScoreController.MaxScoreReachedEvent -= HandleMaxScoreReachedEvent;
-	}*/
 
 	void HandleMaxScoreReachedEvent (ZMLobbyScoreController lobbyScoreController)
 	{

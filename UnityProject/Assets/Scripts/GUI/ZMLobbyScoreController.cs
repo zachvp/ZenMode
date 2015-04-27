@@ -12,6 +12,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 
 	// private members
 	private float _currentScore;
+	private bool _pedestalActive;
 	private bool _readyFired;
 	private ZMPlayer.ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 
@@ -21,17 +22,26 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 		_currentScore = 0;
+		_pedestalActive = false;
 		_readyFired = false;
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 
 		gameObject.SetActive(false);
 		light.enabled = false;
-		//scoreBar.gameObject.SetActive(false);
+		scoreBar.gameObject.SetActive(false);
 
-		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
+		ZMLobbyPedestalController.ActivateEvent += HandleActivateEvent;
 
 		UpdateUI();
+	}
+
+	void HandleActivateEvent (ZMLobbyPedestalController lobbyPedestalController)
+	{
+		if (lobbyPedestalController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			_pedestalActive = true;
+			scoreBar.gameObject.SetActive(true);
+		}
 	}
 
 	void Start() {
@@ -51,7 +61,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	void OnTriggerStay2D(Collider2D collider) {
 		if (collider.gameObject.Equals(_pedestalController.gameObject)) {
 			if (_currentScore < maxScore) {
-				if (_pedestalController.Active)
+				if (_pedestalActive)
 					AddToScore(scoreAmount);
 			} else if(!_readyFired) {
 				if (MaxScoreReachedEvent != null) {
@@ -81,15 +91,6 @@ public class ZMLobbyScoreController : MonoBehaviour {
 
 	private void SetDisplayText(string text) {
 		scoreText.text = text;
-	}
-
-	// event handlers
-	void HandleAtPathEndEvent (ZMWaypointMovement lobbyPedestalController)
-	{
-		/*if (lobbyPedestalController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-			_pedestalAtEnd = true;
-			scoreBar.gameObject.SetActive(true);
-		}*/
 	}
 
 	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
