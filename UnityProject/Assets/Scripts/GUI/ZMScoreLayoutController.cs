@@ -11,17 +11,17 @@ public class ZMScoreLayoutController : MonoBehaviour {
 	private const float _paddingTop = -20;
 
 	private Vector2 _positionSlot0;
-    private Vector2 _positionSlot1;
+    //private Vector2 _positionSlot1;
 	private Vector2 _positionSlot2;
-	private Vector2 _positionSlot3;
+	//private Vector2 _positionSlot3;
 
 	void Awake() {
 		_scoreTransforms = new List<RectTransform>();
 
 		_positionSlot0 = new Vector2(32,  _paddingTop);
-		_positionSlot1 = new Vector2(314, _paddingTop);
+		//_positionSlot1 = new Vector2(314, _paddingTop);
 	    _positionSlot2 = new Vector2(716, _paddingTop);
-		_positionSlot3 = new Vector2(998, _paddingTop);
+		//_positionSlot3 = new Vector2(998, _paddingTop);
 	}
 
 	void Start() {
