@@ -80,7 +80,7 @@ public class ZMGameStateController : MonoBehaviour {
 		_gameState =  GameState.RESUME;
 	}
 
-	void HandleFullPathCycleEvent (ZMWaypointMovement lobbyPedestalController)
+	void HandleFullPathCycleEvent (ZMWaypointMovement waypointMovement)
 	{
 		if (_matchState == MatchState.PRE_MATCH) {
 			_matchState = MatchState.BEGIN_COUNTDOWN;

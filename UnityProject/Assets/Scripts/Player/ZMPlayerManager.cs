@@ -3,6 +3,7 @@ using System.Collections;
 
 public class ZMPlayerManager : MonoBehaviour {
 	public bool debug = false;
+	public int debugPlayerCount = 2;
 
 	private enum State { NONE, MENU, LOBBY, STAGE };
 
@@ -13,7 +14,7 @@ public class ZMPlayerManager : MonoBehaviour {
 	void Awake () {
 		if (debug) {
 			_state = State.STAGE;
-			_numPlayers = 2;
+			_numPlayers = debugPlayerCount;
 		}
 
 		switch(_state) {
