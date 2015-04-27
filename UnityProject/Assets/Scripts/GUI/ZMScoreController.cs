@@ -84,7 +84,7 @@ namespace ZMPlayer{
 			scoreBar.maxValue = MAX_SCORE;
 
 			// xD
-			SetScore (MAX_SCORE / GameObject.FindGameObjectWithTag("PlayerManager").GetComponent<ZMPlayerManager>().NumPlayers);
+			SetScore (MAX_SCORE / ZMPlayerManager.NumPlayers);
 		}
 
 		void FixedUpdate() {
@@ -108,7 +108,7 @@ namespace ZMPlayer{
 						AddToScore(SCORE_RATE);
 						soul.AddZen(-SCORE_RATE);
 					} else if (soul.GetZen() > 0) {
-						AddToScore(SCORE_RATE - soul.GetZen());
+						AddToScore(soul.GetZen());
 						soul.SetZen(0);
 						//scoreBar.SendMessage("VibrateStop");
 					}
@@ -146,9 +146,7 @@ namespace ZMPlayer{
 			// player score state checks
 			if (_goalState == GoalState.MAX) {
 				_goalState = GoalState.MAXED;
-			}
 
-			if (_goalState == GoalState.MAXED) {
 				if (MaxScoreReached != null) {
 					MaxScoreReached(this);
 				}

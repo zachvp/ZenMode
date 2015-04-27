@@ -108,7 +108,7 @@ public class ZMGameStateController : MonoBehaviour {
 
 		Time.timeScale = 1.0f;
 
-		_playerCount = GameObject.FindGameObjectWithTag("PlayerManager").GetComponent<ZMPlayerManager>().NumPlayers;
+		_playerCount = ZMPlayerManager.NumPlayers;
 
 		foreach (GameObject spawnpointObject in GameObject.FindGameObjectsWithTag(kSpawnpointTag)) {
 			_spawnpoints.Add(spawnpointObject.transform);

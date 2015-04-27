@@ -6,7 +6,7 @@ using ZMPlayer;
 public class ZMPedestalController : MonoBehaviour {
 	public enum MoveType { CYCLE, RANDOM };
 	public MoveType moveType;
-	public ParticleEmitter zenAbsorbEffect;
+	public ParticleSystem zenAbsorbEffect;
 	public ParticleSystem zenPop;
 	public TextMesh timerText;
 	public float moveSpeed;
@@ -142,7 +142,7 @@ public class ZMPedestalController : MonoBehaviour {
 	public void Enable() {
 		_scoreState = ScoreState.SCORING_ENABLED;
 		renderer.enabled = true;
-		zenAbsorbEffect.enabled = true;
+		zenAbsorbEffect.Play();
 		if (timerText.renderer.enabled == false) {
 			currentTimer = RESPAWN_TIME;
 			timerText.text = RESPAWN_TIME.ToString();
@@ -162,7 +162,7 @@ public class ZMPedestalController : MonoBehaviour {
 	private void Disable() {
 		_scoreState = ScoreState.SCORING_DISABLED;
 		renderer.enabled = false;
-		zenAbsorbEffect.enabled = false;
+		zenAbsorbEffect.Stop();
 		timerText.renderer.enabled = false;
 
 		if (_pedestalLight != null) {

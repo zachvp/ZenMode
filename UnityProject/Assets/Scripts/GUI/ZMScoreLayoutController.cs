@@ -25,14 +25,13 @@ public class ZMScoreLayoutController : MonoBehaviour {
 	}
 
 	void Start() {
-		_playerCount = GameObject.FindGameObjectWithTag("PlayerManager").GetComponent<ZMPlayerManager>().NumPlayers;
+		_playerCount = ZMPlayerManager.NumPlayers;
 
 		for (int i = 0; i < _playerCount; ++i) {
 			_scoreTransforms.Add(null);
 		}
 
 		foreach (GameObject item in GameObject.FindGameObjectsWithTag("ScoreGui")) {
-			//_scoreTransforms.Add(item.GetComponent<RectTransform>());
 			int index = (int) item.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag;
 
 			item.gameObject.SetActive(false);
