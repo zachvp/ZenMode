@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using ZMPlayer;
 
 public class ZMLobbyController : MonoBehaviour {
-	public int requiredPlayerCount = 2;
-
 	public delegate void PlayerJoinedAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag); public static event PlayerJoinedAction PlayerJoinedEvent;
 	public delegate void PlayerReadyAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag); public static event PlayerReadyAction PlayerReadyEvent;
 	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
-
-	// how many clients have readied
+	
+	private int _requiredPlayerCount;
 	private int _currentJoinCount; // i.e. how many  have pressed a button to join
 	private int _currentReadyCount; // i.e. how many have actually readied up
 
@@ -29,6 +27,12 @@ public class ZMLobbyController : MonoBehaviour {
 		ZMGameInputManager.MainInputEvent += HandleMainInputEvent;
 		ZMPauseMenuController.SelectResumeEvent += HandleSelectResumeEvent;
 		ZMPauseMenuController.SelectQuitEvent += HandleSelectQuitEvent;
+	}
+
+	void OnDestroy() {
+		PlayerJoinedEvent = null;
+		PauseGameEvent    = null;
+		PlayerReadyEvent  = null;
 	}
 
 	void HandleSelectQuitEvent ()
@@ -57,6 +61,7 @@ public class ZMLobbyController : MonoBehaviour {
 				PlayerJoinedEvent(playerTag);
 			}
 
+			_requiredPlayerCount += 1;
 			_joinedPlayers[playerIndex] = true;
 		}
 	}
@@ -64,12 +69,6 @@ public class ZMLobbyController : MonoBehaviour {
 	void HandleSelectResumeEvent ()
 	{
 		_paused = false;
-	}
-
-	void OnDestroy() {
-		PlayerJoinedEvent = null;
-		PauseGameEvent    = null;
-		PlayerReadyEvent  = null;
 	}
 
 	void HandleStartInputEvent (ZMPlayerInfo.PlayerTag playerTag)
@@ -104,8 +103,8 @@ public class ZMLobbyController : MonoBehaviour {
 			PlayerReadyEvent(scoreController.PlayerInfo.playerTag);
 		}
 
-		if(_currentReadyCount == requiredPlayerCount) {
-			Invoke("LoadLevel", 3.0f);
+		if(_currentReadyCount > 1 && _currentReadyCount == _requiredPlayerCount) {
+			Invoke("LoadLevel", 2.0f);
 		}
 	}
 
