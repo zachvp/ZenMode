@@ -9,16 +9,22 @@ public class ZMMainMenuController : MonoBehaviour {
 
 		ZMPauseMenuController.SelectResumeEvent += HandleSelectResumeEvent;
 		ZMPauseMenuController.SelectRestartEvent += HandleSelectRestartEvent;
+		ZMPauseMenuController.SelectQuitEvent += HandleSelectQuitEvent;
 	}
 
 	void HandleSelectRestartEvent ()
 	{
-		Application.Quit();
+		Application.LoadLevel (4);
 	}
 
 	void HandleSelectResumeEvent ()
 	{
 		BeginGame();
+	}
+
+	void HandleSelectQuitEvent ()
+	{
+		Application.Quit();
 	}
 
 	void HandleStartInputEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)

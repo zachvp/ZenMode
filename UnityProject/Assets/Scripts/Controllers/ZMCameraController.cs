@@ -14,7 +14,7 @@ public class ZMCameraController : MonoBehaviour {
 	private int _zoomStep;
 	private int _zoomFrames;
 
-	private Vector3 _basePosition;
+	//private Vector3 _basePosition;
 
 	private bool _isShaking = false;
 
@@ -142,8 +142,8 @@ public class ZMCameraController : MonoBehaviour {
 	}
 
 	void ResetZoom() {
-		Zoom (endZoom, _basePosition);
-		_speed = 10f;
+		//Zoom (endZoom, _basePosition);
+		//_speed = 10f;
 	}
 
 	void StartZoom() {

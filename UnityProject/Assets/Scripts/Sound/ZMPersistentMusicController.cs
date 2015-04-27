@@ -6,6 +6,10 @@ public class ZMPersistentMusicController : MonoBehaviour {
 	
 	void Awake()
 	{
+		if (GameObject.FindGameObjectsWithTag ("Music").Length > 1) {
+			return;
+		}
+
 		if (!AudioBegin) {
 			audio.Play ();
 			DontDestroyOnLoad (gameObject);
@@ -14,7 +18,7 @@ public class ZMPersistentMusicController : MonoBehaviour {
 	}
 	
 	void Update () {
-		if(Application.loadedLevelName == "PrototypeTest")
+		if (Application.loadedLevelName == "PrototypeTest")
 		{
 			audio.Stop();
 			AudioBegin = false;
