@@ -107,9 +107,11 @@ namespace ZMPlayer{
 					if ((soul.GetZen() - SCORE_RATE) > 0) {
 						AddToScore(SCORE_RATE);
 						soul.AddZen(-SCORE_RATE);
+						soul.SendMessage("SetPulsingOn");
 					} else if (soul.GetZen() > 0) {
 						AddToScore(soul.GetZen());
 						soul.SetZen(0);
+						soul.SendMessage("SetPulsingOff");
 						//scoreBar.SendMessage("VibrateStop");
 					}
 				}
@@ -255,6 +257,7 @@ namespace ZMPlayer{
 
 		private void RemoveSoul(ZMPedestalController pedestalController) {
 			ZMSoul soul = pedestalController.GetComponent<ZMSoul>();
+			soul.SendMessage("SetPulsingOff");
 
 			RemoveSoul(soul);
 		}

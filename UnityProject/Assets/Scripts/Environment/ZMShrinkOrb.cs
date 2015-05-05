@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class ZMShrinkOrb : MonoBehaviour {
-	private float _shrinkRate = 0.04f;
+	public float _shrinkRate = 0.04f;
 	private bool _shrinking;
 	private Vector3 _baseScale;
 
