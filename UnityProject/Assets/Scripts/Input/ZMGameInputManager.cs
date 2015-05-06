@@ -25,6 +25,12 @@ public class ZMGameInputManager : MonoBehaviour {
 			}
 		}
 
+		if (Input.GetButtonDown ("P3_START")) {
+			if (StartInputEvent != null) {
+				StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3);
+			}
+		}
+
 		if (Input.GetButtonDown("BACK")) {
 			if (BackInputEvent != null) {
 				BackInputEvent();
@@ -46,6 +52,12 @@ public class ZMGameInputManager : MonoBehaviour {
 		if (Input.GetButtonDown("P3_JUMP")) {
 			if (MainInputEvent != null) {
 				MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3);
+			}
+		}
+
+		if (Input.GetButtonDown("P4_JUMP")) {
+			if (MainInputEvent != null) {
+				MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_4);
 			}
 		}
 	}
