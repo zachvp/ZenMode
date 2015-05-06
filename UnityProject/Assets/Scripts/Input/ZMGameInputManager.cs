@@ -1,63 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
+using InControl;
 
 public class ZMGameInputManager : MonoBehaviour {
 	public delegate void StartInputAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag); public static event StartInputAction StartInputEvent;
-	public delegate void BackInputAction(); public static event BackInputAction BackInputEvent;
 	public delegate void MainInputAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag); public static event MainInputAction MainInputEvent;
 
 	void OnDestroy() {
 		StartInputEvent = null;
-		BackInputEvent  = null;
 		MainInputEvent  = null;
 	}
 
 	void Update () {
-		if (Input.GetButtonDown ("P1_START")) {
-			if (StartInputEvent != null) {
-				StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1);
+		for (int i = 0; i < InputManager.Devices.Count; i++) {
+			// Broadcast start input.
+			if (InputManager.Devices[i].MenuWasPressed && StartInputEvent != null) {
+				if (i == 0) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1); }
+				if (i == 1) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2); }
+				if (i == 2) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3); }
+				if (i == 3) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_4); }
 			}
-		}
 
-		if (Input.GetButtonDown ("P2_START")) {
-			if (StartInputEvent != null) {
-				StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2);
-			}
-		}
-
-		if (Input.GetButtonDown ("P3_START")) {
-			if (StartInputEvent != null) {
-				StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3);
-			}
-		}
-
-		if (Input.GetButtonDown("BACK")) {
-			if (BackInputEvent != null) {
-				BackInputEvent();
-			}
-		}
-
-		if (Input.GetButtonDown("P1_JUMP")) {
-			if (MainInputEvent != null) {
-				MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1);
-			}
-		}
-
-		if (Input.GetButtonDown("P2_JUMP")) {
-			if (MainInputEvent != null) {
-				MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2);
-			}
-		}
-
-		if (Input.GetButtonDown("P3_JUMP")) {
-			if (MainInputEvent != null) {
-				MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3);
-			}
-		}
-
-		if (Input.GetButtonDown("P4_JUMP")) {
-			if (MainInputEvent != null) {
-				MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_4);
+			// Broadcast A button input.
+			if (InputManager.Devices[i].Action1 && MainInputEvent != null) {
+				if (i == 0) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1); }
+				if (i == 1) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2); }
+				if (i == 2) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3); }
+				if (i == 3) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_4); }
 			}
 		}
 	}
