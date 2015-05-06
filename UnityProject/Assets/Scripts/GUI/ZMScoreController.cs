@@ -257,9 +257,11 @@ namespace ZMPlayer{
 
 		private void RemoveSoul(ZMPedestalController pedestalController) {
 			ZMSoul soul = pedestalController.GetComponent<ZMSoul>();
-			soul.SendMessage("SetPulsingOff");
 
-			RemoveSoul(soul);
+			if (soul != null) {
+				soul.SendMessage("SetPulsingOff");
+				RemoveSoul(soul);
+			}
 		}
 
 		private void AddSoul(ZMSoul soul) {
