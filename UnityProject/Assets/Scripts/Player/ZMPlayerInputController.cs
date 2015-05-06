@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using InControl;
 
 namespace ZMPlayer {
 	public class ZMPlayerInputController : MonoBehaviour {
@@ -23,22 +24,19 @@ namespace ZMPlayer {
 		public delegate void PlungeAction(ZMPlayerInputController playerInputController);
 		public static event PlungeAction PlungeEvent;
 
-		// booleans to treat axes as buttons
-		private bool _attackPressed = false;
-
 		void Awake () {
 			_playerInfo = GetComponent<ZMPlayerInfo> ();
 			string playerInfoString = _playerInfo.playerTag.ToString ();
-			_playerNumber = int.Parse(playerInfoString.Substring (playerInfoString.Length - 1));
+			_playerNumber = int.Parse (playerInfoString.Substring (playerInfoString.Length - 1)) - 1;
 		}
 
 		void FixedUpdate () {
 			// Handle horizontal movement.
-			if (Input.GetAxis(PlayerControl ("RUN")) > 0.5f) {
+			if (InputManager.Devices[_playerNumber].LeftStickX > 0.5f) {
 				if (MoveRightEvent != null) {
 					MoveRightEvent(this);
 				}
-			} else if (Input.GetAxis(PlayerControl ("RUN")) < -0.5f) {
+			} else if (InputManager.Devices[_playerNumber].LeftStickX < -0.5f) {
 				if (MoveLeftEvent != null) {
 					MoveLeftEvent(this);
 				}
@@ -49,34 +47,25 @@ namespace ZMPlayer {
 			}
 
 			// Handle jumping.
-			if (Input.GetButtonDown(PlayerControl ("JUMP"))) {
+			if (InputManager.Devices[_playerNumber].Action1.WasPressed) {
 				if (JumpEvent != null) {
 					JumpEvent(this);
 				}
 			}
 
 			// Handle attacking.
-			if (Input.GetButtonDown (PlayerControl ("ATTACK"))) {
+			if (InputManager.Devices[_playerNumber].Action2.WasPressed || 
+			    InputManager.Devices[_playerNumber].LeftBumper.WasPressed || 
+			    InputManager.Devices[_playerNumber].RightBumper.WasPressed) {
 				if (AttackEvent != null) {
 					AttackEvent(this);
 				}
-			} else if (Input.GetAxisRaw(PlayerControl ("ATTACK")) != 0.0f) {
-				if (!_attackPressed) {
-					_attackPressed = true;
-
-					if (AttackEvent != null) {
-						AttackEvent(this);
-					}
-				}
-			} else if (Input.GetAxisRaw(PlayerControl ("ATTACK")) == 0.0f) {
-				_attackPressed = false;
 			}
 
 			// Handle plunging.
-			if (_playerNumber == 1) {
-				// Debug.Log (Input.GetAxis (PlayerControl ("PLUNGE")));
-			}
-			if (Input.GetAxisRaw(PlayerControl ("PLUNGE")) > 0.0f) {
+			if (InputManager.Devices[_playerNumber].LeftTrigger.WasPressed ||
+			    InputManager.Devices[_playerNumber].RightTrigger.WasPressed ||
+			    InputManager.Devices[_playerNumber].Action3.WasPressed) {
 				if (PlungeEvent != null) {
 					PlungeEvent(this);
 				}
@@ -90,11 +79,6 @@ namespace ZMPlayer {
 			JumpEvent	   = null;
 			AttackEvent	   = null;
 			PlungeEvent    = null;
-		}
-
-		string PlayerControl (string control) {
-			string result = "P" + _playerNumber.ToString () + "_" + control;
-			return result;
 		}
 	}
 }

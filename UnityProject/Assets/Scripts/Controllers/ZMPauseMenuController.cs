@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using InControl;
 
 public class ZMPauseMenuController : MonoBehaviour {
 	public bool startActive = true;
@@ -73,23 +74,17 @@ public class ZMPauseMenuController : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetKeyDown(KeyCode.DownArrow)) {
-			HandleMenuNavigationForward();
-		} else if (Input.GetKeyDown(KeyCode.UpArrow)) {
-			HandleMenuNavigationBackward();
-		} else if (Input.GetKeyDown(KeyCode.Return)) {
-			HandleMenuSelection();
-		}
+		var inputDevice = InputManager.ActiveDevice;
 
-		if (Input.GetAxisRaw("MENU_FORWARD") > 0.8 && _canCycleSelection) {
+		if ((inputDevice.DPadDown || inputDevice.LeftStick.Y < -0.8f) && _canCycleSelection) {
 			_canCycleSelection = false;
 			HandleMenuNavigationForward();
-		} else if (Input.GetAxisRaw("MENU_BACKWARD") < -0.8 && _canCycleSelection) {
+		} else if ((inputDevice.DPadUp || inputDevice.LeftStick.Y > 0.8f) && _canCycleSelection) {
 			_canCycleSelection = false;
 			HandleMenuNavigationBackward();
 		}
 
-		if (Input.GetButtonDown("MENU_SELECT")) {
+		if (inputDevice.Action1 || inputDevice.MenuWasPressed) {
 			HandleMenuSelection();
 		}
 
