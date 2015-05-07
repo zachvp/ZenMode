@@ -123,7 +123,8 @@ public class ZMCameraController : MonoBehaviour {
 	}
 
 	void StopShake() {
-		SendMessage("BobbingOff");
+		//SendMessage("BobbingOff");
+
 		if (_movementBobbing != null)
 			_movementBobbing.enabled = false;
 		_isShaking = false;
