@@ -662,13 +662,13 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void KillOpponent(ZMPlayerController playerController) 
 	{
-		// Notify event handlers of player's death
-		if (PlayerDeathEvent != null) {
-			PlayerDeathEvent(playerController);
-		}
-
-		if (playerController.IsAbleToDie())
+		if (playerController.IsAbleToDie()) {
 			playerController.KillSelf();
+
+			if (PlayerDeathEvent != null) {
+				PlayerDeathEvent(playerController);
+			}
+		}
 
 		ZMMetricsCollector collector = GetComponent<ZMMetricsCollector>();
 		if (collector != null) {
