@@ -6,7 +6,6 @@ public class ZMSoul : MonoBehaviour {
 	private ZMScoreController _scoreController;
 
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
-	//private float _currentZen; public float CurrentZen { get { return _currentZen; } set { _currentZen = value; } }
 
 	public delegate void SoulDestroyedAction(ZMSoul soul); public static event SoulDestroyedAction SoulDestroyedEvent;
 
@@ -61,7 +60,7 @@ public class ZMSoul : MonoBehaviour {
 
 	void Update() {
 		if (_fadingIn) {
-			if (audio.volume < 1)
+			if (audio.volume < 0.75f)
 				audio.volume += 0.02f;
 		} else {
 			if (audio.volume > 0)
