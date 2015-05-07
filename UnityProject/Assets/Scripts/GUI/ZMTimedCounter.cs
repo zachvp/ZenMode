@@ -11,8 +11,10 @@ public class ZMTimedCounter : MonoBehaviour {
 	public float timeIncrement;
 	public bool shouldClearOnCompletion;
 	public bool start;
+	public bool juicy;
 	public Text counterUIText;
 	public string minMessage, maxMessage;
+	public AudioClip audioTick;
 
 	private const string kCountMethodName = "Count";
 	private int _value;
@@ -56,6 +58,16 @@ public class ZMTimedCounter : MonoBehaviour {
 			int seconds = Mathf.FloorToInt(_value - minutes * 60);
 
 			counterUIText.text =  string.Format("{0:0}:{1:00}", minutes, seconds); _value.ToString ();
+
+			if (juicy) {
+				if (_value <= 30) {
+					counterUIText.color = new Color(0.905f, 0.698f, 0.635f, 0.75f);
+					audio.PlayOneShot(audioTick, (_value <= 10 ? 1.0f : 0.25f));
+				} else {
+					counterUIText.color = new Color(1.000f, 1.000f, 1.000f, 0.75f);
+				}
+			}
+
 		}
 	}
 
