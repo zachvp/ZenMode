@@ -29,6 +29,9 @@ public class ZMPedestalController : MonoBehaviour {
 	private float _distanceFromStart;
 	private float _totalDistance;
 
+	// scaling
+	Vector3 _baseScale;
+
 	// references
 	private HashSet<ZMScoreController> _scoringAgents;
 
@@ -37,13 +40,13 @@ public class ZMPedestalController : MonoBehaviour {
 
 	// delegates
 	public delegate void ActivateAction(ZMPedestalController pedestalController); public static ActivateAction ActivateEvent;
-
 	public delegate void DeactivateAction(ZMPedestalController pedestalController); public static DeactivateAction DeactivateEvent;
 
 	void Awake() {
 		_waypoints = new List<Transform>();
 		_scoringAgents = new HashSet<ZMScoreController>();
 		_playerInfo = GetComponent<ZMPlayerInfo>();
+		_baseScale = transform.localScale;
 
 		_moveState = MoveState.MOVE;
 		// event handler subscriptions
@@ -102,6 +105,12 @@ public class ZMPedestalController : MonoBehaviour {
 			}
 		} else if (_moveState == MoveState.AT_TARGET) {
 			_moveState = MoveState.MOVE;
+		}
+
+		if (IsEnabled()) {
+			Vector3 newScale = Vector3.Lerp(transform.localScale, _baseScale, 3.0f * Time.deltaTime);
+
+			transform.localScale = newScale;
 		}
 	}
 
@@ -188,6 +197,8 @@ public class ZMPedestalController : MonoBehaviour {
 	void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
 		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+
 			MoveToLocation(playerController.transform.position);
 			Enable();
 
