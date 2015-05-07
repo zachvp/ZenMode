@@ -17,6 +17,7 @@ public class ZMGameStateController : MonoBehaviour {
 	private int _pausedPlayer;
 	private Queue<ZMPlayerController> _objectsToSpawn;
 	private List<ZMPlayerController> _players;
+	private List<ZMScoreController> _scoreControllers;
 	private bool _firedGameEndEvent;
 
 	// constants
@@ -43,6 +44,7 @@ public class ZMGameStateController : MonoBehaviour {
 		_spawnpoints = new List<Transform>();
 		_objectsToSpawn = new Queue<ZMPlayerController>(MAX_PLAYERS);
 		_players =  new List<ZMPlayerController>(MAX_PLAYERS);
+		_scoreControllers = new List<ZMScoreController>(MAX_PLAYERS);
 
 		// Add delegate handlers
 		ZMPlayerController.PlayerDeathEvent += RespawnObject;
@@ -119,16 +121,20 @@ public class ZMGameStateController : MonoBehaviour {
 
 		for (int i = 0; i < _playerCount; ++i) {
 			_players.Add(null);
+			_scoreControllers.Add(null);
 		}
 
 		foreach (GameObject player in GameObject.FindGameObjectsWithTag(kPlayerTag)) {
 			ZMPlayerController playerController = player.GetComponent<ZMPlayerController>();
+			ZMScoreController scoreController = player.GetComponent<ZMScoreController>();
+
 			int index = (int) playerController.PlayerInfo.playerTag;
 
 			playerController.gameObject.SetActive(false);
 
 			if (index < _playerCount) {
 				_players[index] = playerController;
+				_scoreControllers[index] = scoreController;
 			}
 		}
 
@@ -156,9 +162,7 @@ public class ZMGameStateController : MonoBehaviour {
 		} else if (_matchState == MatchState.POST_MATCH) {
 			float maxScore = 0.0f;
 
-			foreach (ZMPlayerController player in _players) {
-				ZMScoreController scoreController = player.GetComponent<ZMScoreController>();
-
+			foreach (ZMScoreController scoreController in _scoreControllers) {
 				if (scoreController.TotalScore > maxScore) {
 					maxScore = scoreController.TotalScore;
 					_victoryMessage =  "P" + (int) (scoreController.PlayerInfo.playerTag + 1) + " WINS!";
