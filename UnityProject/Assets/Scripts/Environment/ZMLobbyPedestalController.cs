@@ -41,7 +41,21 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 	void HandleMaxScoreReachedEvent (ZMLobbyScoreController lobbyScoreController)
 	{
 		if (lobbyScoreController.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag)) {
+
+			GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+			
+			foreach (GameObject player in players) {
+				ZMPlayerController playerController = player.GetComponent<ZMPlayerController>();
+				if (playerController.PlayerInfo.playerTag.Equals(GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag)) {
+					playerController.DisablePlayer();
+					playerController.renderer.enabled = false;
+					playerController.transform.position = new Vector3(9000.0f, 9000.0f, 9000.0f);
+					break;
+				}
+			}
+
 			gameObject.SetActive(false);
+
 		}
 	}
 }
