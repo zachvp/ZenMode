@@ -5,20 +5,14 @@ public class ZMCameraController : MonoBehaviour {
 	public float endZoom = 432;
 	public bool zoomAtStart;
 	public float zoomDelay = 6;
-
 	private float _zoomTargetSize;
 	private bool  _isZooming;
 	private float _baseSpeed = 3f;
 	private float _speed;
-
 	private float _totalDistance;
 	private int _zoomStep;
 	private int _zoomFrames;
-
-	//private Vector3 _basePosition;
-
 	private bool _isShaking = false;
-
 	private ZMMovementBobbing _movementBobbing;
 
 	// Use this for initialization
@@ -82,12 +76,6 @@ public class ZMCameraController : MonoBehaviour {
 	void HandlePlayerDeathEvent (ZMPlayerController controller)
 	{
 		Shake(25);
-		//_basePosition = transform.position;
-		//_speed = 10f;
-		//Zoom(200, controller.transform.position);
-		//Time.timeScale = 0.15f;
-
-		//Invoke("ResetZoom", 0.5f);
 	}
 
 	void Update() {
@@ -113,18 +101,14 @@ public class ZMCameraController : MonoBehaviour {
 	}
 	
 	void Shake(int frames) {
-		//SendMessage("BobbingOn");
 		if (_movementBobbing != null)
 			_movementBobbing.enabled = true;
 		_zoomStep = 0;
 		_zoomFrames = frames;
 		_isShaking = true;
-		//Invoke("StopShake", time);
 	}
 
 	void StopShake() {
-		//SendMessage("BobbingOff");
-
 		if (_movementBobbing != null)
 			_movementBobbing.enabled = false;
 		_isShaking = false;
@@ -145,8 +129,6 @@ public class ZMCameraController : MonoBehaviour {
 	}
 
 	void ResetZoom() {
-		//Zoom (endZoom, _basePosition);
-		//_speed = 10f;
 	}
 
 	void StartZoom() {
