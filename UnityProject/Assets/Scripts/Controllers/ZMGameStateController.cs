@@ -67,8 +67,10 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void HandleGameTimerEndedEvent ()
 	{
-		if (_matchState != MatchState.POST_MATCH)
+		if (_matchState != MatchState.POST_MATCH) {
 			_matchState = MatchState.POST_MATCH;
+			outputText.text = _victoryMessage;
+		}
 	}
 
 	void HandlePlayerEliminatedEvent (ZMPlayerController playerController)
@@ -152,6 +154,17 @@ public class ZMGameStateController : MonoBehaviour {
 		} else if (_matchState == MatchState.BEGIN_COUNTDOWN) {
 			BeginGame();
 		} else if (_matchState == MatchState.POST_MATCH) {
+			float maxScore = 0.0f;
+
+			foreach (ZMPlayerController player in _players) {
+				ZMScoreController scoreController = player.GetComponent<ZMScoreController>();
+
+				if (scoreController.TotalScore > maxScore) {
+					maxScore = scoreController.TotalScore;
+					_victoryMessage =  "P" + (int) (scoreController.PlayerInfo.playerTag + 1) + " WINS!";
+				}
+			}
+
 			if (!IsInvoking("EndGame"))
 				Invoke("EndGame", END_GAME_DELAY);
 		}
@@ -185,7 +198,7 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	private void HandleMaxScoreReached(ZMScoreController scoreController) {
-		_victoryMessage =  "P" + (int) (scoreController.PlayerInfo.playerTag + 1) + " WINS!";
+		//_victoryMessage =  "P" + (int) (scoreController.PlayerInfo.playerTag + 1) + " WINS!";
 
 		_matchState = MatchState.POST_MATCH;
 	}
@@ -241,6 +254,7 @@ public class ZMGameStateController : MonoBehaviour {
 		PauseGameEvent	    = null;
 		GameEndEvent	    = null;
 		ResumeGameEvent 	= null;
+		_players.Clear();
 
 		Application.LoadLevel(Application.loadedLevelName);
 	}
