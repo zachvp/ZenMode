@@ -33,6 +33,8 @@ public class ZMGameStateController : MonoBehaviour {
 	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
 	public delegate void GameEndAction();   public static event GameEndAction GameEndEvent;
 
+	// HACKS!
+	private string _victoryMessage;
 
 	// Use this for initialization
 	void Awake () {
@@ -183,6 +185,8 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	private void HandleMaxScoreReached(ZMScoreController scoreController) {
+		_victoryMessage =  "P" + (int) (scoreController.PlayerInfo.playerTag + 1) + " WINS!";
+
 		_matchState = MatchState.POST_MATCH;
 	}
 
@@ -277,7 +281,8 @@ public class ZMGameStateController : MonoBehaviour {
 		if (outputText == null)
 			return;
 		
-		outputText.text = "Match Ended!";
+		//outputText.text = "Match Ended!";
+		outputText.text = _victoryMessage;
 
 		PauseGame();
 		
