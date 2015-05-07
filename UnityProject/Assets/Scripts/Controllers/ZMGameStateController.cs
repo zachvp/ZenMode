@@ -6,6 +6,7 @@ using ZMPlayer;
 
 public class ZMGameStateController : MonoBehaviour {
 	public Text outputText;
+	public GameObject[] crowns;
 	private int _playerCount;
 
 	private enum GameState { BEGIN, NEUTRAL, PAUSE, PAUSED, RESUME, RESET }
@@ -199,6 +200,20 @@ public class ZMGameStateController : MonoBehaviour {
 			_gameState = GameState.NEUTRAL;
 			ResetGame();
 		}
+
+		float maxScoreCrown = 0;
+		ZMScoreController maxScoreController = null;
+
+		foreach(ZMScoreController scoreController in _scoreControllers) {
+			if (scoreController.TotalScore > maxScoreCrown) {
+				maxScoreCrown = scoreController.TotalScore;
+				maxScoreController = scoreController;
+			}
+
+			crowns[(int) scoreController.PlayerInfo.playerTag].SetActive(false);
+		}
+
+		crowns[(int) maxScoreController.PlayerInfo.playerTag].SetActive(true);
 	}
 
 	private void HandleMaxScoreReached(ZMScoreController scoreController) {
