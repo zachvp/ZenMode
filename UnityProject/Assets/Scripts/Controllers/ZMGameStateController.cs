@@ -232,6 +232,12 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	private void ResetGame() {
+		SpawnObjectEvent    = null;
+		StartGameEvent      = null;
+		PauseGameEvent	    = null;
+		GameEndEvent	    = null;
+		ResumeGameEvent 	= null;
+
 		Application.LoadLevel(Application.loadedLevelName);
 	}
 
