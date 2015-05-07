@@ -46,7 +46,7 @@ public class ZMWaypointMovement : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 		// state sets
 		if (_moveState == MoveState.MOVE && _waypointIndex < _waypointSize) {
 			// set up the movement variables

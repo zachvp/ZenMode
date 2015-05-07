@@ -63,17 +63,7 @@ public class ZMLobbyController : MonoBehaviour {
 
 	void HandleStartInputEvent (ZMPlayerInfo.PlayerTag playerTag)
 	{
-		int playerIndex;
-		
-		if (playerTag.Equals(ZMPlayerInfo.PlayerTag.PLAYER_1)) {
-			playerIndex = 1;
-		} else if (playerTag.Equals(ZMPlayerInfo.PlayerTag.PLAYER_2)) {
-			playerIndex = 2;
-		} else if (playerTag.Equals(ZMPlayerInfo.PlayerTag.PLAYER_3)) {
-			playerIndex = 3;
-		} else {
-			playerIndex = 4;
-		}
+		int playerIndex = (int) playerTag;
 
 		if (_joinedPlayers[playerIndex]) {
 			if (!_paused) {
