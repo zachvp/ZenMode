@@ -36,13 +36,13 @@ public class ZMPauseMenuController : MonoBehaviour {
 			ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
 			ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 			ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+		} else {
+			ZMLobbyController.PauseGameEvent += HandlePauseGameEvent;
 		}
-
-		ZMLobbyController.PauseGameEvent += HandlePauseGameEvent;
 
 		ToggleActive(startActive);
 
-		_optionsSize = menuOptions.GetLength(0);
+		_optionsSize = menuOptions.Length;
 		UpdateUI();
 	}
 
@@ -140,7 +140,6 @@ public class ZMPauseMenuController : MonoBehaviour {
 	void HandleMenuSelection() {
 		if (_selectedIndex == _resumeOption) {
 			if (SelectResumeEvent != null) {
-				Time.timeScale = 1.0f;
 				SelectResumeEvent();
 			}
 		} else if (_selectedIndex == _restartOption) {
@@ -149,10 +148,11 @@ public class ZMPauseMenuController : MonoBehaviour {
 			}
 		} else if (_selectedIndex == _quitOption) {
 			if (SelectQuitEvent != null) {
-				Time.timeScale = 1.0f;
 				SelectQuitEvent();
 			}
 		}
+
+		Time.timeScale = 1.0f;
 
 		ToggleActive(false);
 	}

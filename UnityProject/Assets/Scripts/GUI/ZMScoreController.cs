@@ -6,8 +6,8 @@ using UnityEngine.UI;
 namespace ZMPlayer{
 	public class ZMScoreController : MonoBehaviour {
 		public Slider scoreBar;
-		private const float SCORE_RATE = 0.5f;
 
+		private const float SCORE_RATE = 0.5f;
 		private const float MAX_SCORE = 1000.0f;
 
 		// Events
@@ -92,11 +92,18 @@ namespace ZMPlayer{
 			if (IsAbleToScore()) {
 				if (_pointState != PointState.GAINING) {
 					_pointState = PointState.GAINING;
-					scoreBar.SendMessage("VibrateStart");
+					if (CanScoreEvent != null) {
+						CanScoreEvent(this);
+					}
+					// scoreBar.SendMessage("VibrateStart");
 				}
 			} else if (_pointState != PointState.NEUTRAL) {
 				_pointState = PointState.NEUTRAL;
-				scoreBar.SendMessage("VibrateStop");
+
+				if (StopScoreEvent != null) {
+					StopScoreEvent(this);
+				}
+				// scoreBar.SendMessage("VibrateStop");
 			}
 
 			// state handling
@@ -115,20 +122,13 @@ namespace ZMPlayer{
 						scoreBar.SendMessage("VibrateStop");
 					}
 				}
-
-				if (CanScoreEvent != null) {
-					CanScoreEvent(this);
-				}
 			} else if (_pointState == PointState.LOSING) {
 				if (CanDrainEvent != null) {
 					CanDrainEvent(this);
 				}
 
 			} else if (_pointState == PointState.NEUTRAL) {
-				scoreBar.SendMessage("VibrateStop");
-				if (StopScoreEvent != null) {
-					StopScoreEvent(this);
-				}
+				//scoreBar.SendMessage("VibrateStop");
 			}
 
 			// player score checks

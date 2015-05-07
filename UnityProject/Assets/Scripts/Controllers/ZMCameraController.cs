@@ -5,20 +5,14 @@ public class ZMCameraController : MonoBehaviour {
 	public float endZoom = 432;
 	public bool zoomAtStart;
 	public float zoomDelay = 6;
-
 	private float _zoomTargetSize;
 	private bool  _isZooming;
 	private float _baseSpeed = 3f;
 	private float _speed;
-
 	private float _totalDistance;
 	private int _zoomStep;
 	private int _zoomFrames;
-
-	//private Vector3 _basePosition;
-
 	private bool _isShaking = false;
-
 	private ZMMovementBobbing _movementBobbing;
 
 	// Use this for initialization
