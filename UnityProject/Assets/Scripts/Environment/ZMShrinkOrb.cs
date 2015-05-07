@@ -4,18 +4,10 @@ using System.Collections;
 public class ZMShrinkOrb : MonoBehaviour {
 	public float _shrinkRate = 0.04f;
 	private bool _shrinking;
-	private Vector3 _baseScale;
-
-	private float _baseLightRange;
-
 	private ZMPlayer.ZMPlayerInfo _playerInfo;
 
 	void Awake () {
-		_baseScale = transform.localScale;
-		_baseLightRange = light.range;
-
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
-
 		ZMWaypointMovement.AtPathNodeEvent += HandleAtPathNodeEvent;
 	}
 
