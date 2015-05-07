@@ -18,11 +18,11 @@ public class ZMMovementBobbing : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		_theta += speed;
-		_theta %= 360;
-
 		_updatedPosition.y = _basePosition.y + amplitude * Mathf.Sin(_theta);
 
 		transform.position = _updatedPosition;
+
+		_theta += speed;
+		_theta %= 360;
 	}
 }
