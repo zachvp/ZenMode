@@ -92,11 +92,11 @@ namespace ZMPlayer{
 			if (IsAbleToScore()) {
 				if (_pointState != PointState.GAINING) {
 					_pointState = PointState.GAINING;
-					// scoreBar.SendMessage("VibrateStart");
+					scoreBar.SendMessage("VibrateStart");
 				}
 			} else if (_pointState != PointState.NEUTRAL) {
 				_pointState = PointState.NEUTRAL;
-				// scoreBar.SendMessage("VibrateStop");
+				scoreBar.SendMessage("VibrateStop");
 			}
 
 			// state handling
@@ -112,7 +112,7 @@ namespace ZMPlayer{
 						AddToScore(soul.GetZen());
 						soul.SetZen(0);
 						soul.SendMessage("SetPulsingOff");
-						//scoreBar.SendMessage("VibrateStop");
+						scoreBar.SendMessage("VibrateStop");
 					}
 				}
 
@@ -125,8 +125,7 @@ namespace ZMPlayer{
 				}
 
 			} else if (_pointState == PointState.NEUTRAL) {
-				//scoreBar.SendMessage("VibrateStop");
-
+				scoreBar.SendMessage("VibrateStop");
 				if (StopScoreEvent != null) {
 					StopScoreEvent(this);
 				}
@@ -250,9 +249,9 @@ namespace ZMPlayer{
 		private void RemoveSoul(ZMSoul soul) {
 			_drainingSouls.Remove(soul);
 
-			/*if (_drainingSouls.Count == 0) {
+			if (_drainingSouls.Count == 0) {
 				scoreBar.SendMessage("VibrateStop");
-			}*/
+			}
 		}
 
 		private void RemoveSoul(ZMPedestalController pedestalController) {
