@@ -32,42 +32,44 @@ namespace ZMPlayer {
 
 		void FixedUpdate () {
 			// Handle horizontal movement.
-			if (InputManager.Devices[_playerNumber].LeftStickX > 0.5f) {
-				if (MoveRightEvent != null) {
-					MoveRightEvent(this);
+			if (InputManager.Devices != null) {
+				if (InputManager.Devices[_playerNumber].LeftStickX > 0.5f) {
+					if (MoveRightEvent != null) {
+						MoveRightEvent(this);
+					}
+				} else if (InputManager.Devices[_playerNumber].LeftStickX < -0.5f) {
+					if (MoveLeftEvent != null) {
+						MoveLeftEvent(this);
+					}
+				} else {
+					if (NoMoveEvent != null) {
+						NoMoveEvent(this);
+					}
 				}
-			} else if (InputManager.Devices[_playerNumber].LeftStickX < -0.5f) {
-				if (MoveLeftEvent != null) {
-					MoveLeftEvent(this);
-				}
-			} else {
-				if (NoMoveEvent != null) {
-					NoMoveEvent(this);
-				}
-			}
 
-			// Handle jumping.
-			if (InputManager.Devices[_playerNumber].Action1.WasPressed) {
-				if (JumpEvent != null) {
-					JumpEvent(this);
+				// Handle jumping.
+				if (InputManager.Devices[_playerNumber].Action1.WasPressed) {
+					if (JumpEvent != null) {
+						JumpEvent(this);
+					}
 				}
-			}
 
-			// Handle attacking.
-			if (InputManager.Devices[_playerNumber].Action2.WasPressed || 
-			    InputManager.Devices[_playerNumber].LeftBumper.WasPressed || 
-			    InputManager.Devices[_playerNumber].RightBumper.WasPressed) {
-				if (AttackEvent != null) {
-					AttackEvent(this);
+				// Handle attacking.
+				if (InputManager.Devices[_playerNumber].Action2.WasPressed || 
+				    InputManager.Devices[_playerNumber].LeftBumper.WasPressed || 
+				    InputManager.Devices[_playerNumber].RightBumper.WasPressed) {
+					if (AttackEvent != null) {
+						AttackEvent(this);
+					}
 				}
-			}
 
-			// Handle plunging.
-			if (InputManager.Devices[_playerNumber].LeftTrigger.WasPressed ||
-			    InputManager.Devices[_playerNumber].RightTrigger.WasPressed ||
-			    InputManager.Devices[_playerNumber].Action3.WasPressed) {
-				if (PlungeEvent != null) {
-					PlungeEvent(this);
+				// Handle plunging.
+				if (InputManager.Devices[_playerNumber].LeftTrigger.WasPressed ||
+				    InputManager.Devices[_playerNumber].RightTrigger.WasPressed ||
+				    InputManager.Devices[_playerNumber].Action3.WasPressed) {
+					if (PlungeEvent != null) {
+						PlungeEvent(this);
+					}
 				}
 			}
 		}

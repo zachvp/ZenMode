@@ -12,21 +12,23 @@ public class ZMGameInputManager : MonoBehaviour {
 	}
 
 	void Update () {
-		for (int i = 0; i < InputManager.Devices.Count; i++) {
-			// Broadcast start input.
-			if (InputManager.Devices[i].MenuWasPressed && StartInputEvent != null) {
-				if (i == 0) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1); }
-				if (i == 1) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2); }
-				if (i == 2) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3); }
-				if (i == 3) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_4); }
-			}
+		if (InputManager.Devices != null) {
+			for (int i = 0; i < InputManager.Devices.Count; i++) {
+				// Broadcast start input.
+				if (InputManager.Devices[i].MenuWasPressed && StartInputEvent != null) {
+					if (i == 0) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1); }
+					if (i == 1) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2); }
+					if (i == 2) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3); }
+					if (i == 3) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_4); }
+				}
 
-			// Broadcast A button input.
-			if (InputManager.Devices[i].Action1 && MainInputEvent != null) {
-				if (i == 0) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1); }
-				if (i == 1) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2); }
-				if (i == 2) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3); }
-				if (i == 3) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_4); }
+				// Broadcast A button input.
+				if (InputManager.Devices[i].Action1 && MainInputEvent != null) {
+					if (i == 0) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1); }
+					if (i == 1) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2); }
+					if (i == 2) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3); }
+					if (i == 3) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_4); }
+				}
 			}
 		}
 	}
