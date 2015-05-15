@@ -177,15 +177,19 @@ public class ZMGameStateController : MonoBehaviour {
 			ZMScoreController maxScoreController = null;
 			
 			foreach(ZMScoreController scoreController in _scoreControllers) {
+				int scoreControllerIndex = (int) scoreController.PlayerInfo.playerTag;
+
 				if (scoreController.TotalScore > maxScoreCrown) {
 					maxScoreCrown = scoreController.TotalScore;
 					maxScoreController = scoreController;
 				}
-				
-				crowns[(int) scoreController.PlayerInfo.playerTag].SetActive(false);
+
+				if (crowns[scoreControllerIndex] != null)
+					crowns[scoreControllerIndex].SetActive(false);
 			}
-			
-			crowns[(int) maxScoreController.PlayerInfo.playerTag].SetActive(true);
+
+			if (maxScoreController != null)
+				crowns[(int) maxScoreController.PlayerInfo.playerTag].SetActive(true);
 		}
 
 		if (_gameState == GameState.RESUME) {
@@ -217,8 +221,6 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	private void HandleMaxScoreReached(ZMScoreController scoreController) {
-		//_victoryMessage =  "P" + (int) (scoreController.PlayerInfo.playerTag + 1) + " WINS!";
-
 		_matchState = MatchState.POST_MATCH;
 	}
 
