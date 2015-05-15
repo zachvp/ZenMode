@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using InControl;
 
 public class ZMGoBackController : MonoBehaviour {
 
@@ -12,9 +13,16 @@ public class ZMGoBackController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetButtonDown("MENU_SELECT")) {
+		/*if (Input.GetButtonDown("MENU_SELECT")) {
 			audio.PlayOneShot(_audioBack);
 			Application.LoadLevel(1);
+		}*/
+
+		for (int i = 0; i < InputManager.Devices.Count; ++i) {
+			if (InputManager.Devices[i].Action1.WasPressed) {
+				audio.PlayOneShot(_audioBack);
+				Application.LoadLevel(1);
+			}
 		}
 	}
 }

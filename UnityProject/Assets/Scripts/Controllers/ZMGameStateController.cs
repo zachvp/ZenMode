@@ -172,6 +172,20 @@ public class ZMGameStateController : MonoBehaviour {
 
 			if (!IsInvoking("EndGame"))
 				Invoke("EndGame", END_GAME_DELAY);
+		} else {
+			float maxScoreCrown = 0;
+			ZMScoreController maxScoreController = null;
+			
+			foreach(ZMScoreController scoreController in _scoreControllers) {
+				if (scoreController.TotalScore > maxScoreCrown) {
+					maxScoreCrown = scoreController.TotalScore;
+					maxScoreController = scoreController;
+				}
+				
+				crowns[(int) scoreController.PlayerInfo.playerTag].SetActive(false);
+			}
+			
+			crowns[(int) maxScoreController.PlayerInfo.playerTag].SetActive(true);
 		}
 
 		if (_gameState == GameState.RESUME) {
@@ -200,20 +214,6 @@ public class ZMGameStateController : MonoBehaviour {
 			_gameState = GameState.NEUTRAL;
 			ResetGame();
 		}
-
-		float maxScoreCrown = 0;
-		ZMScoreController maxScoreController = null;
-
-		foreach(ZMScoreController scoreController in _scoreControllers) {
-			if (scoreController.TotalScore > maxScoreCrown) {
-				maxScoreCrown = scoreController.TotalScore;
-				maxScoreController = scoreController;
-			}
-
-			crowns[(int) scoreController.PlayerInfo.playerTag].SetActive(false);
-		}
-
-		crowns[(int) maxScoreController.PlayerInfo.playerTag].SetActive(true);
 	}
 
 	private void HandleMaxScoreReached(ZMScoreController scoreController) {

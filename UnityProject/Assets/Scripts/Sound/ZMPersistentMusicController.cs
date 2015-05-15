@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class ZMPersistentMusicController : MonoBehaviour {
-	static bool AudioBegin = false; 
+	static bool AudioBegin;
 	
 	void Awake()
 	{
@@ -12,8 +12,8 @@ public class ZMPersistentMusicController : MonoBehaviour {
 
 		if (!AudioBegin) {
 			audio.Play ();
-			DontDestroyOnLoad (gameObject);
 			AudioBegin = true;
+			DontDestroyOnLoad (gameObject);
 		} 
 	}
 	
