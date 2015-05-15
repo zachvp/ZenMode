@@ -381,19 +381,6 @@ public class ZMPlayerController : MonoBehaviour
 			}
 		}
 
-		// Handle material color.
-		if (IsAbleToKill()) {
-			this.renderer.material.color = Color.yellow;
-		} else if (_moveModState == MoveModState.DISABLED) {
-			this.renderer.material.color = Color.grey;
-		} else if (_moveModState == MoveModState.RESPAWN) {
-			this.renderer.material.color = Color.white;
-		} else if (_moveModState == MoveModState.PARRY_PLUNGE || _moveModState == MoveModState.PARRY_LUNGE) {
-			renderer.material.color = Color.magenta;
-		} else {
-			this.renderer.material.color = _initialColor;
-		}
-
 		// Update and apply velocity.
 		_velocity.x = runSpeed;
 		_velocity.y -= GRAVITY * Time.deltaTime;
@@ -476,7 +463,22 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void AttackEvent(ZMPlayerInputController inputController) {
 		if (inputController.PlayerInfo.Equals(_playerInfo) && !IsAttacking() && _moveModState != MoveModState.RESPAWN) {
+			RaycastHit2D hit;
+
 			_controlModState = ControlModState.ATTACK;
+
+			// hack for destroying a breakable when pressed up against it
+			if (_movementDirection == MovementDirectionState.FACING_LEFT) {
+				hit = CheckLeft(2.0f, _controller.specialInteractibleMask);
+			} else {
+				hit = CheckRight(2.0f, _controller.specialInteractibleMask);
+			}
+
+			if (hit != null) {
+				if (hit.collider.CompareTag("Breakable")) {
+					hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
+				}
+			}
 		}
 	}
 
@@ -696,9 +698,7 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void Respawn() {
-		GetComponent<SpriteRenderer>().sprite = _baseSprite;
 		light.enabled = true;
-		_velocity.y = 100f;
 		
 		EnablePlayer();
 
