@@ -14,6 +14,8 @@ public class ZMGameStateController : MonoBehaviour {
 
 	private enum MatchState { PRE_MATCH, BEGIN_COUNTDOWN, MATCH, POST_MATCH };
 	private MatchState _matchState;
+
+	// references
 	private List<Transform> _spawnpoints;
 	private int _pausedPlayer;
 	private Queue<ZMPlayerController> _objectsToSpawn;
@@ -33,6 +35,7 @@ public class ZMGameStateController : MonoBehaviour {
 	public delegate void StartGameAction(); public static event StartGameAction StartGameEvent;
 	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
 	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
+	public delegate void ResetGameAction(); public static event ResetGameAction ResetGameEvent;
 	public delegate void GameEndAction();   public static event GameEndAction GameEndEvent;
 
 	// HACKS!
@@ -60,6 +63,52 @@ public class ZMGameStateController : MonoBehaviour {
 		ZMPauseMenuController.SelectQuitEvent += HandleSelectQuitEvent;
 		ZMTimedCounter.GameTimerEndedEvent += HandleGameTimerEndedEvent;
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
+	}
+
+	void Start() {
+		outputText.text = "";
+		
+		Time.timeScale = 1.0f;
+		
+		_playerCount = ZMPlayerManager.NumPlayers;
+		
+		foreach (GameObject spawnpointObject in GameObject.FindGameObjectsWithTag(kSpawnpointTag)) {
+			_spawnpoints.Add(spawnpointObject.transform);
+		}
+		
+		for (int i = 0; i < _playerCount; ++i) {
+			_players.Add(null);
+			_scoreControllers.Add(null);
+		}
+		
+		foreach (GameObject player in GameObject.FindGameObjectsWithTag(kPlayerTag)) {
+			ZMPlayerController playerController = player.GetComponent<ZMPlayerController>();
+			ZMScoreController scoreController = player.GetComponent<ZMScoreController>();
+			
+			int index = (int) playerController.PlayerInfo.playerTag;
+			
+			playerController.gameObject.SetActive(false);
+			
+			if (index < _playerCount) {
+				_players[index] = playerController;
+				_scoreControllers[index] = scoreController;
+			}
+		}
+		
+		for (int i = 0; i < _playerCount; ++i) {
+			_players[i].gameObject.SetActive(true);
+		}
+
+		DisableGameObjects();
+	}
+	
+	void OnDestroy() {
+		SpawnObjectEvent    = null;
+		StartGameEvent      = null;
+		PauseGameEvent	    = null;
+		GameEndEvent	    = null;
+		ResetGameEvent 		= null;
+		ResumeGameEvent 	= null;
 	}
 
 	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
@@ -107,51 +156,6 @@ public class ZMGameStateController : MonoBehaviour {
 			_pausedPlayer = (int)playerTag;
 			_gameState = GameState.PAUSE;
 		}
-	}
-
-	void Start() {
-		outputText.text = "";
-
-		Time.timeScale = 1.0f;
-
-		_playerCount = ZMPlayerManager.NumPlayers;
-
-		foreach (GameObject spawnpointObject in GameObject.FindGameObjectsWithTag(kSpawnpointTag)) {
-			_spawnpoints.Add(spawnpointObject.transform);
-		}
-
-		for (int i = 0; i < _playerCount; ++i) {
-			_players.Add(null);
-			_scoreControllers.Add(null);
-		}
-
-		foreach (GameObject player in GameObject.FindGameObjectsWithTag(kPlayerTag)) {
-			ZMPlayerController playerController = player.GetComponent<ZMPlayerController>();
-			ZMScoreController scoreController = player.GetComponent<ZMScoreController>();
-
-			int index = (int) playerController.PlayerInfo.playerTag;
-
-			playerController.gameObject.SetActive(false);
-
-			if (index < _playerCount) {
-				_players[index] = playerController;
-				_scoreControllers[index] = scoreController;
-			}
-		}
-
-		for (int i = 0; i < _playerCount; ++i) {
-			_players[i].gameObject.SetActive(true);
-		}
-
-		DisableGameObjects();
-	}
-
-	void OnDestroy() {
-		SpawnObjectEvent    = null;
-		StartGameEvent      = null;
-		PauseGameEvent	    = null;
-		GameEndEvent	    = null;
-		ResumeGameEvent 	= null;
 	}
 
 	void Update() {
@@ -270,14 +274,11 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	private void ResetGame() {
-		SpawnObjectEvent    = null;
-		StartGameEvent      = null;
-		PauseGameEvent	    = null;
-		GameEndEvent	    = null;
-		ResumeGameEvent 	= null;
-		_players.Clear();
-
 		Application.LoadLevel(Application.loadedLevelName);
+
+		if (ResetGameEvent != null) {
+			ResetGameEvent();
+		}
 	}
 
 	private void SpawnObject() {

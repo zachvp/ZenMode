@@ -94,9 +94,8 @@ public class ZMTimedCounter : MonoBehaviour {
 	void ClearText() {
 		counterUIText.text = "";
 	}
-
-	// public facing methods
-	public void BeginCount() {
+	
+	private void BeginCount() {
 		UpdateText ();
 		StartCount ();
 	}

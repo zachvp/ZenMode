@@ -31,7 +31,10 @@ public class ZMPlayerManager : MonoBehaviour {
 			}
 			case State.LOBBY: {
 				_state = State.STAGE;
+
 				ZMPauseMenuController.SelectQuitEvent += HandleSelectQuitEvent;
+				ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+
 				break;
 			}
 			default: {
@@ -41,6 +44,11 @@ public class ZMPlayerManager : MonoBehaviour {
 
 
 		DontDestroyOnLoad(gameObject);
+	}
+
+	void HandleGameEndEvent ()
+	{
+		Destroy(gameObject);
 	}
 
 	void HandleSelectQuitEvent() {
