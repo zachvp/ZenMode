@@ -474,7 +474,7 @@ public class ZMPlayerController : MonoBehaviour
 				hit = CheckRight(2.0f, _controller.specialInteractibleMask);
 			}
 
-			if (hit != null) {
+			if (hit != null && hit.collider != null) {
 				if (hit.collider.CompareTag("Breakable")) {
 					hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
 				}
