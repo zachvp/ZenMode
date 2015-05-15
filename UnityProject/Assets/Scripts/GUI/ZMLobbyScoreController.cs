@@ -90,7 +90,9 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	}
 
 	private void SetDisplayText(string text) {
-		scoreText.text = text;
+		if (scoreText != null) {
+			scoreText.text = text;
+		}
 	}
 
 	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
