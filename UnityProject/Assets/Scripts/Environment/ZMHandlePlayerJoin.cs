@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.UI;
 
 public class ZMHandlePlayerJoin : MonoBehaviour {
 	public string methodAction;
@@ -31,5 +31,15 @@ public class ZMHandlePlayerJoin : MonoBehaviour {
 
 	void Disable() {
 		gameObject.SetActive(false);
+	}
+
+	void Enable() {
+		Image image = gameObject.GetComponent<Image>();
+
+		gameObject.SetActive(true);
+
+		if (image != null) {
+			image.enabled = true;
+		}
 	}
 }

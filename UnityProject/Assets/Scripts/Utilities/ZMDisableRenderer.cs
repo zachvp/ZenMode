@@ -1,10 +1,18 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.UI;
 
 public class ZMDisableRenderer : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		renderer.enabled = false;
+		Image image = GetComponent<Image>();
+
+		if (renderer != null) {
+			renderer.enabled = false;
+		}
+
+		if (image != null) {
+			image.enabled = false;
+		}
 	}
 }
