@@ -108,6 +108,6 @@ public class ZMLobbyController : MonoBehaviour {
 	}
 
 	void LoadLevel() {
-		Application.LoadLevel(3);
+		Application.LoadLevel(ZMSceneIndexList.INDEX_STAGE);
 	}
 }

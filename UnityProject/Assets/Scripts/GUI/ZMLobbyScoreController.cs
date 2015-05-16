@@ -5,7 +5,6 @@ using UnityEngine.UI;
 public class ZMLobbyScoreController : MonoBehaviour {
 	public float maxScore = 100.0f;
 	public float scoreAmount = 0.5f;
-	public Text scoreText;
 	public Slider scoreBar;
 
 	public delegate void MaxScoreReachedAction(ZMLobbyScoreController lobbyScoreController); public static event MaxScoreReachedAction MaxScoreReachedEvent;
@@ -68,7 +67,6 @@ public class ZMLobbyScoreController : MonoBehaviour {
 					MaxScoreReachedEvent(this);
 				}
 
-				SetDisplayText("Ready!");
 				_readyFired = true;
 			}
 		}
@@ -87,12 +85,6 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		float normalizedScore = (_currentScore / maxScore) * 100.0f;
 		
 		scoreBar.value = normalizedScore; 
-	}
-
-	private void SetDisplayText(string text) {
-		if (scoreText != null) {
-			scoreText.text = text;
-		}
 	}
 
 	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)

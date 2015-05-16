@@ -11,18 +11,12 @@ namespace ZMPlayer {
 		private int _playerNumber;
 
 		// Delegates.
-		public delegate void MoveRightAction(ZMPlayerInputController playerInputController);
-		public static event MoveRightAction MoveRightEvent;
-		public delegate void MoveLeftAction(ZMPlayerInputController playerInputController);
-		public static event MoveRightAction MoveLeftEvent;
-		public delegate void NoMoveAction(ZMPlayerInputController playerInputController);
-		public static event NoMoveAction NoMoveEvent;
-		public delegate void JumpAction(ZMPlayerInputController playerInputController);
-		public static event JumpAction JumpEvent;
-		public delegate void AttackAction(ZMPlayerInputController playerInputController);
-		public static event AttackAction AttackEvent;
-		public delegate void PlungeAction(ZMPlayerInputController playerInputController);
-		public static event PlungeAction PlungeEvent;
+		public delegate void MoveRightAction(ZMPlayerInputController playerInputController); 	public static event MoveRightAction MoveRightEvent;
+		public delegate void MoveLeftAction(ZMPlayerInputController playerInputController);		public static event MoveRightAction MoveLeftEvent;
+		public delegate void NoMoveAction(ZMPlayerInputController playerInputController);		public static event NoMoveAction NoMoveEvent;
+		public delegate void JumpAction(ZMPlayerInputController playerInputController);			public static event JumpAction JumpEvent;
+		public delegate void AttackAction(ZMPlayerInputController playerInputController); 		public static event AttackAction AttackEvent;
+		public delegate void PlungeAction(ZMPlayerInputController playerInputController);		public static event PlungeAction PlungeEvent;
 
 		void Awake () {
 			_playerInfo = GetComponent<ZMPlayerInfo> ();

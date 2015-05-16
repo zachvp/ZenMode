@@ -14,7 +14,7 @@ public class ZMPersistentMusicController : MonoBehaviour {
 	}
 	
 	void Update () {
-		if (Application.loadedLevelName == "PrototypeTest")
+		if (Application.loadedLevel == ZMSceneIndexList.INDEX_STAGE)
 		{
 			audio.Stop();
 			AudioBegin = false;
