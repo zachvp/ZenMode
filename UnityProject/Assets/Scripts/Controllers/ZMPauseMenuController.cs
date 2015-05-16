@@ -36,7 +36,7 @@ public class ZMPauseMenuController : MonoBehaviour {
 			ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
 			ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 			ZMGameStateController.GameEndEvent += HandleGameEndEvent;
-		} else {
+		} else if (Application.loadedLevel == 2) {
 			ZMLobbyController.PauseGameEvent += HandlePauseGameEvent;
 		}
 
@@ -44,27 +44,6 @@ public class ZMPauseMenuController : MonoBehaviour {
 
 		_optionsSize = menuOptions.Length;
 		UpdateUI();
-	}
-
-	void HandleGameEndEvent ()
-	{
-		Vector3 shiftedPosition = transform.position;
-
-		shiftedPosition.y += 64.0f;
-		transform.position = shiftedPosition;
-
-		ShowMenu();
-
-		menuOptions[0].gameObject.SetActive(false);
-		menuOptions[0] = menuOptions[1];
-		menuOptions[1] = menuOptions[2];
-
-		_optionsSize -= 1;
-		_resumeOption--;
-		_restartOption--;
-		_quitOption--;
-
-		ToggleSelection(0, true);
 	}
 
 	void OnDestroy() {
@@ -114,6 +93,27 @@ public class ZMPauseMenuController : MonoBehaviour {
 			
 			ToggleSelection(0, true);
 		}
+	}
+
+	void HandleGameEndEvent ()
+	{
+		Vector3 shiftedPosition = transform.position;
+		
+		shiftedPosition.y += 64.0f;
+		transform.position = shiftedPosition;
+		
+		ShowMenu();
+		
+		menuOptions[0].gameObject.SetActive(false);
+		menuOptions[0] = menuOptions[1];
+		menuOptions[1] = menuOptions[2];
+		
+		_optionsSize -= 1;
+		_resumeOption--;
+		_restartOption--;
+		_quitOption--;
+		
+		ToggleSelection(0, true);
 	}
 
 	void HandleResumeGameEvent() {
