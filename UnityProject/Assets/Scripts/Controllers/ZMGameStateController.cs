@@ -64,7 +64,7 @@ public class ZMGameStateController : MonoBehaviour {
 
 		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
 
-		ZMPauseMenuController.SelectOptionEvent += HandleSelectOptionEvent;
+		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
 		ZMTimedCounter.GameTimerEndedEvent += HandleGameTimerEndedEvent;
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 	}
@@ -161,7 +161,7 @@ public class ZMGameStateController : MonoBehaviour {
 	void HandleSelectQuitEvent ()
 	{
 		Time.timeScale = 1.0f;
-		Application.LoadLevel(1);
+		Application.LoadLevel(ZMSceneIndexList.INDEX_LOBBY);
 
 		if (QuitMatchEvent != null) {
 			QuitMatchEvent();

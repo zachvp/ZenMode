@@ -4,11 +4,11 @@ using InControl;
 
 public class ZMGameInputManager : MonoBehaviour {
 	public delegate void StartInputAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag); public static event StartInputAction StartInputEvent;
-	public delegate void MainInputAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag); public static event MainInputAction MainInputEvent;
+	public delegate void AnyButtonAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag); public static event AnyButtonAction AnyButtonEvent;
 
 	void OnDestroy() {
 		StartInputEvent = null;
-		MainInputEvent  = null;
+		AnyButtonEvent  = null;
 	}
 
 	void Update () {
@@ -23,11 +23,11 @@ public class ZMGameInputManager : MonoBehaviour {
 				}
 
 				// Broadcast A button input.
-				if (InputManager.Devices[i].Action1 && MainInputEvent != null) {
-					if (i == 0) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1); }
-					if (i == 1) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2); }
-					if (i == 2) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3); }
-					if (i == 3) { MainInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_4); }
+				if (InputManager.Devices[i].AnyButton && AnyButtonEvent != null) {
+					if (i == 0) { AnyButtonEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1); }
+					if (i == 1) { AnyButtonEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2); }
+					if (i == 2) { AnyButtonEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3); }
+					if (i == 3) { AnyButtonEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_4); }
 				}
 			}
 		}

@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using InControl;
 
-public class ZMPauseMenuController : MonoBehaviour {
+public class ZMMenuOptionController : MonoBehaviour {
 	public bool startActive = true;
 	public Text[] menuOptions;
 	public AudioClip[] _audioChoose;

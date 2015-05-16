@@ -28,8 +28,8 @@ public class ZMLobbyController : MonoBehaviour {
 		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
 
 		ZMGameInputManager.StartInputEvent		+= HandleStartInputEvent;
-		ZMGameInputManager.MainInputEvent 		+= HandleMainInputEvent;
-		ZMPauseMenuController.SelectOptionEvent += HandleSelectOptionEvent;
+		ZMGameInputManager.AnyButtonEvent 		+= HandleMainInputEvent;
+		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
 	}
 
 	void OnDestroy() {

@@ -30,7 +30,7 @@ namespace ZMPlayer {
 			_playerNumber = int.Parse (playerInfoString.Substring (playerInfoString.Length - 1)) - 1;
 		}
 
-		void FixedUpdate () {
+		void Update () {
 			// Handle horizontal movement.
 			if (InputManager.Devices != null) {
 				if (InputManager.Devices[_playerNumber].LeftStickX > 0.5f) {

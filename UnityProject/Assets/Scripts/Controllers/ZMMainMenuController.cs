@@ -1,23 +1,22 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class ZMMainMenuController : MonoBehaviour {
 	// delegates
 	public delegate void LoadGameAction(); public static event LoadGameAction LoadGameEvent;
 
-	// constants
-	private const int LOBBY_SCENE_INDEX = 2;
-	private const int HOW_TO_PLAY_SCENE_INDEX = 4;
-
 	// menu options
 	private const int START_OPTION		 = 0;
 	private const int HOW_TO_PLAY_OPTION = 1;
-	private const int QUIT_OPTION 		 = 2;
+	private const int CREDITS_OPTION	 = 2;
+	private const int QUIT_OPTION 		 = 3;
 
 	// Use this for initialization
 	void Awake () {
+		Screen.showCursor = false;
+
 		ZMGameInputManager.StartInputEvent	    += HandleStartInputEvent;
-		ZMPauseMenuController.SelectOptionEvent += HandleSelectOptionEvent;
+		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
 	}
 
 	void OnDestroy() {
@@ -31,7 +30,11 @@ public class ZMMainMenuController : MonoBehaviour {
 				break;
 			}
 			case HOW_TO_PLAY_OPTION : {
-				Application.LoadLevel (HOW_TO_PLAY_SCENE_INDEX);
+				Application.LoadLevel (ZMSceneIndexList.INDEX_HOW_TO_PLAY);
+				break;
+			}
+			case CREDITS_OPTION : {
+				Application.LoadLevel(ZMSceneIndexList.INDEX_CREDITS);
 				break;
 			}
 			case QUIT_OPTION : {
@@ -64,6 +67,6 @@ public class ZMMainMenuController : MonoBehaviour {
 	}
 
 	void LoadGame() {
-		Application.LoadLevel(LOBBY_SCENE_INDEX);
+		Application.LoadLevel(ZMSceneIndexList.INDEX_LOBBY);
 	}
 }
