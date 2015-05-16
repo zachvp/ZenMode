@@ -15,6 +15,10 @@ public class ZMLobbyController : MonoBehaviour {
 
 	private bool[] _joinedPlayers;
 
+	// pause menu options
+	private const int RESUME_OPTION = 0;
+	private const int QUIT_OPTION = 1;
+
 	void Awake() {
 		_currentJoinCount = 0;
 		_currentReadyCount = 0;
@@ -23,16 +27,29 @@ public class ZMLobbyController : MonoBehaviour {
 
 		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
 
-		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
-		ZMGameInputManager.MainInputEvent += HandleMainInputEvent;
-		ZMPauseMenuController.SelectResumeEvent += HandleSelectResumeEvent;
-		ZMPauseMenuController.SelectQuitEvent += HandleSelectQuitEvent;
+		ZMGameInputManager.StartInputEvent		+= HandleStartInputEvent;
+		ZMGameInputManager.MainInputEvent 		+= HandleMainInputEvent;
+		ZMPauseMenuController.SelectOptionEvent += HandleSelectOptionEvent;
 	}
 
 	void OnDestroy() {
 		PlayerJoinedEvent = null;
 		PauseGameEvent    = null;
 		PlayerReadyEvent  = null;
+	}
+
+	void HandleSelectOptionEvent(int optionIndex) {
+		switch(optionIndex) {
+			case RESUME_OPTION: {
+				HandleSelectResumeEvent();
+				break;
+			}
+			case QUIT_OPTION: {
+				HandleSelectQuitEvent();
+				break;
+			}
+			default: break;
+		}
 	}
 
 	void HandleSelectQuitEvent ()
@@ -58,6 +75,7 @@ public class ZMLobbyController : MonoBehaviour {
 
 	void HandleSelectResumeEvent ()
 	{
+		Time.timeScale = 1;
 		_paused = false;
 	}
 
@@ -70,6 +88,7 @@ public class ZMLobbyController : MonoBehaviour {
 				if (PauseGameEvent != null) {
 					PauseGameEvent();
 
+					Time.timeScale = 0;
 					_paused = true;
 				}
 			}

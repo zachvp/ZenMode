@@ -67,10 +67,6 @@ public class ZMPlayerController : MonoBehaviour
 	private const string kMethodNameEndLunge 	  			= "EndLunge";
 	private const string kGameStateControllerName 			= "GameController";
 	private const string kRespawnMethodName 	  			= "Respawn";
-	
-	// Debug.
-	private Color _initialColor;
-	private Sprite _baseSprite;
 
 	// Public references.
 	public GameObject _effectJumpObject;
@@ -105,8 +101,6 @@ public class ZMPlayerController : MonoBehaviour
 	void Awake()
 	{
 		_moveModState = MoveModState.NEUTRAL;
-		//_abilityState = AbilityState.NEUTRAL;
-		_initialColor = this.renderer.material.color;
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_animator = GetComponent<Animator>();
 		_controller = GetComponent<CharacterController2D>();
@@ -132,8 +126,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	void Start() 
 	{
-		_baseSprite = GetComponent<SpriteRenderer>().sprite;
-		kDeathStrings = new string[31];
+		kDeathStrings = new string[32];
 		kDeathStrings[0] = "OOOAHH";
 		kDeathStrings[1] = "WHOOOP";
 		kDeathStrings[2] = "AYYYEEH";
@@ -165,6 +158,7 @@ public class ZMPlayerController : MonoBehaviour
 		kDeathStrings[28] = "SWIFT";
 		kDeathStrings[29] = "WAHH";
 		kDeathStrings[30] = "OOOOHHHH";
+		kDeathStrings[31] = "POW!";
 	}
 
 	void FixedUpdate()
@@ -474,7 +468,7 @@ public class ZMPlayerController : MonoBehaviour
 				hit = CheckRight(2.0f, _controller.specialInteractibleMask);
 			}
 
-			if (hit != null && hit.collider != null) {
+			if (hit && hit.collider != null) {
 				if (hit.collider.CompareTag("Breakable")) {
 					hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
 				}

@@ -37,6 +37,12 @@ public class ZMGameStateController : MonoBehaviour {
 	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
 	public delegate void ResetGameAction(); public static event ResetGameAction ResetGameEvent;
 	public delegate void GameEndAction();   public static event GameEndAction GameEndEvent;
+	public delegate void QuitMatchAction(); public static event QuitMatchAction QuitMatchEvent;
+
+	// pause menu handling
+	private const int RESUME_OPTION  = 0;
+	private const int RESTART_OPTION = 1;
+	private const int QUIT_OPTION	 = 2;
 
 	// HACKS!
 	private string _victoryMessage;
@@ -58,9 +64,7 @@ public class ZMGameStateController : MonoBehaviour {
 
 		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
 
-		ZMPauseMenuController.SelectResumeEvent += HandleSelectResumeEvent;
-		ZMPauseMenuController.SelectRestartEvent += HandleSelectRestartEvent;
-		ZMPauseMenuController.SelectQuitEvent += HandleSelectQuitEvent;
+		ZMPauseMenuController.SelectOptionEvent += HandleSelectOptionEvent;
 		ZMTimedCounter.GameTimerEndedEvent += HandleGameTimerEndedEvent;
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 	}
@@ -109,6 +113,7 @@ public class ZMGameStateController : MonoBehaviour {
 		GameEndEvent	    = null;
 		ResetGameEvent 		= null;
 		ResumeGameEvent 	= null;
+		QuitMatchEvent		= null;
 	}
 
 	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
@@ -130,20 +135,42 @@ public class ZMGameStateController : MonoBehaviour {
 		_players.Remove(playerController);
 	}
 
-	void HandleSelectQuitEvent ()
-	{
-		Time.timeScale = 1.0f;
-		Application.LoadLevel(1);
-	}
-
-	void HandleSelectRestartEvent ()
-	{
-		_gameState =  GameState.RESET;
+	void HandleSelectOptionEvent(int optionIndex) {
+		switch(optionIndex) {
+			case RESUME_OPTION: {
+				HandleSelectResumeEvent();
+				break;
+			}
+			case RESTART_OPTION: {
+				HandleSelectRestartEvent();
+				break;
+			}
+			case QUIT_OPTION: {
+				HandleSelectQuitEvent();
+				break;
+			}
+			default: break;
+		}
 	}
 
 	void HandleSelectResumeEvent ()
 	{
 		_gameState =  GameState.RESUME;
+	}
+	
+	void HandleSelectQuitEvent ()
+	{
+		Time.timeScale = 1.0f;
+		Application.LoadLevel(1);
+
+		if (QuitMatchEvent != null) {
+			QuitMatchEvent();
+		}
+	}
+
+	void HandleSelectRestartEvent ()
+	{
+		_gameState =  GameState.RESET;
 	}
 
 	void HandleStartInputEvent (ZMPlayerInfo.PlayerTag playerTag)

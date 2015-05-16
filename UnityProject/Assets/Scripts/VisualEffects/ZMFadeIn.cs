@@ -5,6 +5,7 @@ using System.Collections;
 public class ZMFadeIn : MonoBehaviour {
 	public Image fadedImage;
 	public float interval = 0.2f;
+	public float transitionUpperLimit = 100.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -20,8 +21,8 @@ public class ZMFadeIn : MonoBehaviour {
 		newcolor.a += interval;
 		fadedImage.color += newcolor * Time.deltaTime;
 
-		if (fadedImage.color.a >= 255) {
-			Application.LoadLevel(1);
+		if (fadedImage.color.a >= transitionUpperLimit) {
+			Application.LoadLevel(Application.loadedLevel + 1);
 		}
 	}
 }

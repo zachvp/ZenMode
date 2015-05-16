@@ -32,8 +32,8 @@ public class ZMPlayerManager : MonoBehaviour {
 			case State.LOBBY: {
 				_state = State.STAGE;
 
-				ZMPauseMenuController.SelectQuitEvent += HandleSelectQuitEvent;
-				ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+				ZMGameStateController.QuitMatchEvent += HandleSelectQuitEvent;
+				ZMGameStateController.GameEndEvent   += HandleGameEndEvent;
 
 				break;
 			}
@@ -55,8 +55,8 @@ public class ZMPlayerManager : MonoBehaviour {
 		_state = State.NONE;
 
 		// unsubscribe events on quit since this object isn't destroyed
-		ZMLobbyController.PlayerReadyEvent -= HandlePlayerReadyEvent;
-		ZMPauseMenuController.SelectQuitEvent -= HandleSelectQuitEvent;
+		ZMLobbyController.PlayerReadyEvent   -= HandlePlayerReadyEvent;
+		ZMGameStateController.QuitMatchEvent -= HandleSelectQuitEvent;
 	}
 
 	void HandlePlayerReadyEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag) {

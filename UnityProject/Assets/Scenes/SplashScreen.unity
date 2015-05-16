@@ -257,6 +257,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadedImage: {fileID: 1421307802}
   interval: .100000001
+  transitionUpperLimit: 20
 --- !u!114 &1421307802
 MonoBehaviour:
   m_ObjectHideFlags: 0
