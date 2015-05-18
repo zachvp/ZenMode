@@ -4,8 +4,6 @@ using UnityEngine.UI;
 using ZMPlayer;
 
 public class ZMPedestalController : MonoBehaviour {
-	public enum MoveType { CYCLE, RANDOM };
-	public MoveType moveType;
 	public ParticleSystem zenAbsorbEffect;
 	public ParticleSystem zenPop;
 	public TextMesh timerText;
@@ -14,20 +12,10 @@ public class ZMPedestalController : MonoBehaviour {
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 
 	private enum ScoreState { SCORING_ENABLED, SCORING_DISABLED };
-	private enum MoveState  { NEUTRAL, MOVE, MOVING, AT_TARGET };
 	private int RESPAWN_TIME = 5;
 	private int currentTimer;
 	private float lingerAfterSpawnTime = 0.0f;
 	private ScoreState _scoreState;
-	private MoveState _moveState;
-	private Light _pedestalLight;
-
-	// movement
-	private List<Transform> _waypoints;
-	private int _waypointIndex;
-	private Vector3 _targetPosition;
-	private float _distanceFromStart;
-	private float _totalDistance;
 
 	// scaling
 	Vector3 _baseScale;
@@ -43,12 +31,11 @@ public class ZMPedestalController : MonoBehaviour {
 	public delegate void DeactivateAction(ZMPedestalController pedestalController); public static DeactivateAction DeactivateEvent;
 
 	void Awake() {
-		_waypoints = new List<Transform>();
 		_scoringAgents = new HashSet<ZMScoreController>();
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_baseScale = transform.localScale;
 
-		_moveState = MoveState.MOVE;
+		//_moveState = MoveState.MOVE;
 		// event handler subscriptions
 		ZMPlayerController.PlayerDeathEvent      += HandlePlayerDeathEvent;
 		ZMScoreController.UpdateScoreEvent       += HandleUpdateScoreEvent;
@@ -56,57 +43,16 @@ public class ZMPedestalController : MonoBehaviour {
 		ZMScoreController.StopScoreEvent   	     += HandleStopScoreEvent;
 		ZMScoreController.MinScoreReached	     += HandleMinScoreReached;
 		ZMGameStateController.SpawnObjectEvent   += HandleSpawnObjectEvent;
+
+		Disable();
 	}
 
 	void Start () {
-		_pedestalLight = gameObject.GetComponent<Light>();
 		currentTimer = RESPAWN_TIME;
 		timerText.text = currentTimer.ToString ();
-
-		foreach (GameObject waypointObject in GameObject.FindGameObjectsWithTag(kPedestalWaypointTag)) {
-			_waypoints.Add(waypointObject.transform);
-		}
-
-		// Type-specific actions
-		if (moveType == MoveType.RANDOM)
-			Disable();	
 	}
 
 	void FixedUpdate() {
-		if (_moveState == MoveState.MOVE) {
-			_distanceFromStart = 0.0f;
-			_targetPosition = _waypoints[_waypointIndex].position;
-			_totalDistance = (_targetPosition - gameObject.transform.position).magnitude;
-			
-			_moveState = MoveState.MOVING;
-			
-			// update waypoint index
-			if(moveType == MoveType.CYCLE) {
-				_waypointIndex += 1;
-				_waypointIndex %= _waypoints.Count;
-				
-			} else if (moveType == MoveType.RANDOM) {
-				_waypointIndex = Random.Range(0, _waypoints.Count);
-			}
-			
-		}
-
-		if (_moveState == MoveState.MOVING) {
-			_distanceFromStart += moveSpeed * Time.deltaTime;
-			float distanceRatio = _distanceFromStart / _totalDistance;
-
-			gameObject.transform.position = Vector3.Lerp(gameObject.transform.position,
-			                                             _targetPosition,
-			                                             distanceRatio);
-
-			float clampDistance = 4.0f;
-			if ((_targetPosition - gameObject.transform.position).sqrMagnitude < clampDistance * clampDistance) {
-				_moveState = MoveState.AT_TARGET;
-			}
-		} else if (_moveState == MoveState.AT_TARGET) {
-			_moveState = MoveState.MOVE;
-		}
-
 		if (IsEnabled()) {
 			Vector3 newScale = Vector3.Lerp(transform.localScale, _baseScale, 3.0f * Time.deltaTime);
 
@@ -159,8 +105,8 @@ public class ZMPedestalController : MonoBehaviour {
 			Invoke ("CountdownText", 1.0f);
 		}
 
-		if (_pedestalLight != null)
-			_pedestalLight.enabled = true;
+		if (light != null)
+			light.enabled = true;
 
 		// notify event handlers
 		if (ActivateEvent != null) {
@@ -174,8 +120,8 @@ public class ZMPedestalController : MonoBehaviour {
 		zenAbsorbEffect.Stop();
 		timerText.renderer.enabled = false;
 
-		if (_pedestalLight != null) {
-			_pedestalLight.enabled = false;
+		if (light != null) {
+			light.enabled = false;
 		}
 
 		if (DeactivateEvent != null) {
@@ -186,7 +132,6 @@ public class ZMPedestalController : MonoBehaviour {
 	private void MoveToLocation(Vector3 location) {
 		Vector3 newLocation = new Vector3(location.x, location.y, transform.position.z);
 
-		_moveState = MoveState.MOVE;
 		gameObject.transform.position = newLocation;
 	}
 
@@ -242,7 +187,6 @@ public class ZMPedestalController : MonoBehaviour {
 
 	void HandleSpawnObjectEvent(ZMGameStateController gameStateController, ZMPlayerController playerController) {
 		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-			_moveState = MoveState.MOVE;
 			Invoke(kDisableMethodName, lingerAfterSpawnTime);
 		}
 	}
