@@ -10,10 +10,7 @@ public class ZMLobbyRespawnController : MonoBehaviour {
 
 	void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
-		int index = 0;
-		if (playerController.PlayerInfo.playerTag.Equals(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2)) {
-			index = 1;
-		}
+		int index = (int) playerController.PlayerInfo.playerTag;
 
 		playerController.transform.position = spawnpoints[index].position;
 		playerController.EnablePlayer();

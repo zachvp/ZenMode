@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using InControl;
 
 namespace ZMPlayer {
 	public class ZMPlayerInputController : MonoBehaviour {
+
+		// Input control.
+		private bool _inputEnabled;
 
 		// Player info.
 		public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
@@ -10,75 +14,83 @@ namespace ZMPlayer {
 		private int _playerNumber;
 
 		// Delegates.
-		public delegate void MoveRightAction(ZMPlayerInputController playerInputController);
-		public static event MoveRightAction MoveRightEvent;
-		public delegate void MoveLeftAction(ZMPlayerInputController playerInputController);
-		public static event MoveRightAction MoveLeftEvent;
-		public delegate void NoMoveAction(ZMPlayerInputController playerInputController);
-		public static event NoMoveAction NoMoveEvent;
-		public delegate void JumpAction(ZMPlayerInputController playerInputController);
-		public static event JumpAction JumpEvent;
-		public delegate void AttackAction(ZMPlayerInputController playerInputController);
-		public static event AttackAction AttackEvent;
-		public delegate void PlungeAction(ZMPlayerInputController playerInputController);
-		public static event PlungeAction PlungeEvent;
-
-		// booleans to treat axes as buttons
-		private bool _attackPressed = false;
+		public delegate void MoveRightAction(ZMPlayerInputController playerInputController); 	public static event MoveRightAction MoveRightEvent;
+		public delegate void MoveLeftAction(ZMPlayerInputController playerInputController);		public static event MoveRightAction MoveLeftEvent;
+		public delegate void NoMoveAction(ZMPlayerInputController playerInputController);		public static event NoMoveAction NoMoveEvent;
+		public delegate void JumpAction(ZMPlayerInputController playerInputController);			public static event JumpAction JumpEvent;
+		public delegate void AttackAction(ZMPlayerInputController playerInputController); 		public static event AttackAction AttackEvent;
+		public delegate void PlungeAction(ZMPlayerInputController playerInputController);		public static event PlungeAction PlungeEvent;
 
 		void Awake () {
+			string playerInfoString;
+
+			_inputEnabled = true;
+
 			_playerInfo = GetComponent<ZMPlayerInfo> ();
-			string playerInfoString = _playerInfo.playerTag.ToString ();
-			_playerNumber = int.Parse(playerInfoString.Substring (playerInfoString.Length - 1));
+			playerInfoString = _playerInfo.playerTag.ToString ();
+			_playerNumber = int.Parse (playerInfoString.Substring (playerInfoString.Length - 1)) - 1;
+
+			ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
+			ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
+			ZMGameStateController.GameEndEvent += HandleGameEndEvent;
 		}
 
-		void FixedUpdate () {
+		void HandleGameEndEvent ()
+		{
+			_inputEnabled = false;
+		}
+
+		void HandleResumeGameEvent ()
+		{
+			_inputEnabled = true;
+		}
+
+		void HandlePauseGameEvent ()
+		{
+			_inputEnabled = false;
+		}
+
+		void Update () {
 			// Handle horizontal movement.
-			if (Input.GetAxis(PlayerControl ("RUN")) > 0.5f) {
-				if (MoveRightEvent != null) {
-					MoveRightEvent(this);
+			if (_inputEnabled) {
+				if (InputManager.Devices[_playerNumber].LeftStickX > 0.5f) {
+					if (MoveRightEvent != null) {
+						MoveRightEvent(this);
+					}
+				} else if (InputManager.Devices[_playerNumber].LeftStickX < -0.5f) {
+					if (MoveLeftEvent != null) {
+						MoveLeftEvent(this);
+					}
+				} else {
+					if (NoMoveEvent != null) {
+						NoMoveEvent(this);
+					}
 				}
-			} else if (Input.GetAxis(PlayerControl ("RUN")) < -0.5f) {
-				if (MoveLeftEvent != null) {
-					MoveLeftEvent(this);
-				}
-			} else {
-				if (NoMoveEvent != null) {
-					NoMoveEvent(this);
-				}
-			}
 
-			// Handle jumping.
-			if (Input.GetButtonDown(PlayerControl ("JUMP"))) {
-				if (JumpEvent != null) {
-					JumpEvent(this);
+				// Handle jumping.
+				if (InputManager.Devices[_playerNumber].Action1.WasPressed) {
+					if (JumpEvent != null) {
+						JumpEvent(this);
+						InputManager.Devices[_playerNumber].Vibrate(0.5f);
+					}
 				}
-			}
 
-			// Handle attacking.
-			if (Input.GetButtonDown (PlayerControl ("ATTACK"))) {
-				if (AttackEvent != null) {
-					AttackEvent(this);
-				}
-			} else if (Input.GetAxisRaw(PlayerControl ("ATTACK")) != 0.0f) {
-				if (!_attackPressed) {
-					_attackPressed = true;
-
+				// Handle attacking.
+				if (InputManager.Devices[_playerNumber].Action2.WasPressed || 
+				    InputManager.Devices[_playerNumber].LeftBumper.WasPressed || 
+				    InputManager.Devices[_playerNumber].RightBumper.WasPressed) {
 					if (AttackEvent != null) {
 						AttackEvent(this);
 					}
 				}
-			} else if (Input.GetAxisRaw(PlayerControl ("ATTACK")) == 0.0f) {
-				_attackPressed = false;
-			}
 
-			// Handle plunging.
-			if (_playerNumber == 1) {
-				// Debug.Log (Input.GetAxis (PlayerControl ("PLUNGE")));
-			}
-			if (Input.GetAxisRaw(PlayerControl ("PLUNGE")) > 0.0f) {
-				if (PlungeEvent != null) {
-					PlungeEvent(this);
+				// Handle plunging.
+				if (InputManager.Devices[_playerNumber].LeftTrigger.WasPressed ||
+				    InputManager.Devices[_playerNumber].RightTrigger.WasPressed ||
+				    InputManager.Devices[_playerNumber].Action3.WasPressed) {
+					if (PlungeEvent != null) {
+						PlungeEvent(this);
+					}
 				}
 			}
 		}
@@ -90,11 +102,6 @@ namespace ZMPlayer {
 			JumpEvent	   = null;
 			AttackEvent	   = null;
 			PlungeEvent    = null;
-		}
-
-		string PlayerControl (string control) {
-			string result = "P" + _playerNumber.ToString () + "_" + control;
-			return result;
 		}
 	}
 }

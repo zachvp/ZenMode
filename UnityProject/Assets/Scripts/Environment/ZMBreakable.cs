@@ -25,8 +25,8 @@ public class ZMBreakable : MonoBehaviour {
 
 	void StopGibs() {
 		destructionEffect.Stop();
-		gameObject.SetActive(false);
-		//Destroy(gameObject);
+		Destroy(destructionEffect.gameObject);
+		Destroy(gameObject, 0.2f);
 
 		_handlingCollision = false;
 	}

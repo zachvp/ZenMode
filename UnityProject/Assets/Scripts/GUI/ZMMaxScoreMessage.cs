@@ -13,6 +13,7 @@ public class ZMMaxScoreMessage : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 		_playerInfo = GetComponent<ZMPlayerInfo>();
+		text.gameObject.SetActive(false);
 		text.text = "";
 
 		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
@@ -20,14 +21,10 @@ public class ZMMaxScoreMessage : MonoBehaviour {
 
 	void HandleMaxScoreReachedEvent (ZMLobbyScoreController lobbyScoreController)
 	{
-		if (lobbyScoreController.GetComponent<ZMPlayerInfo>().playerTag.Equals(_playerInfo.playerTag)) {
+		if (lobbyScoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 			text.text = message;
+			text.gameObject.SetActive(true);
 			Destroy(slider);
 		}
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 }

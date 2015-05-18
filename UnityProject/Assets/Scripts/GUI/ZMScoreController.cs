@@ -6,8 +6,8 @@ using UnityEngine.UI;
 namespace ZMPlayer{
 	public class ZMScoreController : MonoBehaviour {
 		public Slider scoreBar;
-		private const float SCORE_RATE = 0.5f;
 
+		private const float SCORE_RATE = 0.5f;
 		private const float MAX_SCORE = 1000.0f;
 
 		// Events
@@ -92,11 +92,16 @@ namespace ZMPlayer{
 			if (IsAbleToScore()) {
 				if (_pointState != PointState.GAINING) {
 					_pointState = PointState.GAINING;
-					// scoreBar.SendMessage("VibrateStart");
+					if (CanScoreEvent != null) {
+						CanScoreEvent(this);
+					}
 				}
 			} else if (_pointState != PointState.NEUTRAL) {
 				_pointState = PointState.NEUTRAL;
-				// scoreBar.SendMessage("VibrateStop");
+
+				if (StopScoreEvent != null) {
+					StopScoreEvent(this);
+				}
 			}
 
 			// state handling
@@ -107,27 +112,18 @@ namespace ZMPlayer{
 					if ((soul.GetZen() - SCORE_RATE) > 0) {
 						AddToScore(SCORE_RATE);
 						soul.AddZen(-SCORE_RATE);
+						soul.SendMessage("SetPulsingOn");
 					} else if (soul.GetZen() > 0) {
 						AddToScore(soul.GetZen());
 						soul.SetZen(0);
-						//scoreBar.SendMessage("VibrateStop");
+						soul.SendMessage("SetPulsingOff");
 					}
-				}
-
-				if (CanScoreEvent != null) {
-					CanScoreEvent(this);
 				}
 			} else if (_pointState == PointState.LOSING) {
 				if (CanDrainEvent != null) {
 					CanDrainEvent(this);
 				}
 
-			} else if (_pointState == PointState.NEUTRAL) {
-				//scoreBar.SendMessage("VibrateStop");
-
-				if (StopScoreEvent != null) {
-					StopScoreEvent(this);
-				}
 			}
 
 			// player score checks
@@ -247,16 +243,15 @@ namespace ZMPlayer{
 		
 		private void RemoveSoul(ZMSoul soul) {
 			_drainingSouls.Remove(soul);
-
-			/*if (_drainingSouls.Count == 0) {
-				scoreBar.SendMessage("VibrateStop");
-			}*/
 		}
 
 		private void RemoveSoul(ZMPedestalController pedestalController) {
 			ZMSoul soul = pedestalController.GetComponent<ZMSoul>();
 
-			RemoveSoul(soul);
+			if (soul != null) {
+				soul.SendMessage("SetPulsingOff");
+				RemoveSoul(soul);
+			}
 		}
 
 		private void AddSoul(ZMSoul soul) {

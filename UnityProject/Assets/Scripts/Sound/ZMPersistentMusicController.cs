@@ -2,19 +2,19 @@
 using System.Collections;
 
 public class ZMPersistentMusicController : MonoBehaviour {
-	static bool AudioBegin = false; 
+	private static bool AudioBegin;
 	
 	void Awake()
 	{
 		if (!AudioBegin) {
 			audio.Play ();
-			DontDestroyOnLoad (gameObject);
 			AudioBegin = true;
-		} 
+			DontDestroyOnLoad (gameObject);
+		}
 	}
 	
 	void Update () {
-		if(Application.loadedLevelName == "PrototypeTest")
+		if (Application.loadedLevel == ZMSceneIndexList.INDEX_STAGE)
 		{
 			audio.Stop();
 			AudioBegin = false;

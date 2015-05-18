@@ -6,14 +6,27 @@ public class ZMSoul : MonoBehaviour {
 	private ZMScoreController _scoreController;
 
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
-	//private float _currentZen; public float CurrentZen { get { return _currentZen; } set { _currentZen = value; } }
 
 	public delegate void SoulDestroyedAction(ZMSoul soul); public static event SoulDestroyedAction SoulDestroyedEvent;
+
+	private bool _fadingIn;
 
 	void Awake () {
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
 		ZMScoreController.MinScoreReached += HandleMinScoreReached;
+		ZMScoreController.CanScoreEvent += HandleCanScoreEvent;
+		ZMScoreController.StopScoreEvent += HandleStopScoreEvent;
+	}
+
+	void HandleStopScoreEvent (ZMScoreController scoreController)
+	{
+		StopLoop();
+	}
+
+	void HandleCanScoreEvent (ZMScoreController scoreController)
+	{
+		PlayLoop();
 	}
 
 	void OnDestroy() {
@@ -41,6 +54,15 @@ public class ZMSoul : MonoBehaviour {
 		}
 	}
 
+	void Update() {
+		if (_fadingIn) {
+			if (audio.volume < 0.75f) { audio.volume += 0.02f; }
+		} else {
+			if (audio.volume > 0) { audio.volume -= 0.02f; }
+			else { audio.Stop(); }
+		}
+	}
+
 	public void AddZen(float amount) {
 		_scoreController.AddToScore(amount);
 	}
@@ -51,5 +73,16 @@ public class ZMSoul : MonoBehaviour {
 
 	public void SetZen(float amount) {
 		_scoreController.SetScore(amount);
+	}
+
+	private void PlayLoop() {
+		_fadingIn = true;
+
+		audio.volume = 0;
+		audio.Play();
+	}
+
+	private void StopLoop() {
+		_fadingIn = false;
 	}
 }

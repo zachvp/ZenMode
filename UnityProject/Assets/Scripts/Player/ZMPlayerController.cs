@@ -24,8 +24,8 @@ public class ZMPlayerController : MonoBehaviour
 	private float runSpeed = 0.0f;
 
 	// Additional constants.
+	public float RESPAWN_TIME = 5.0f;
 	private float TILE_SIZE = 28.0f;
-	private float RESPAWN_TIME = 5.0f;
 	private int FRAMES_PER_STEP = 30;
 
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
@@ -67,10 +67,6 @@ public class ZMPlayerController : MonoBehaviour
 	private const string kMethodNameEndLunge 	  			= "EndLunge";
 	private const string kGameStateControllerName 			= "GameController";
 	private const string kRespawnMethodName 	  			= "Respawn";
-	
-	// Debug.
-	private Color _initialColor;
-	private Sprite _baseSprite;
 
 	// Public references.
 	public GameObject _effectJumpObject;
@@ -105,8 +101,6 @@ public class ZMPlayerController : MonoBehaviour
 	void Awake()
 	{
 		_moveModState = MoveModState.NEUTRAL;
-		//_abilityState = AbilityState.NEUTRAL;
-		_initialColor = this.renderer.material.color;
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_animator = GetComponent<Animator>();
 		_controller = GetComponent<CharacterController2D>();
@@ -127,13 +121,12 @@ public class ZMPlayerController : MonoBehaviour
 		ZMScoreController.MinScoreReached += HandleMinScoreReached;
 
 		// Set original facing direction.
-		//SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
+		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
 	}
 
 	void Start() 
 	{
-		_baseSprite = GetComponent<SpriteRenderer>().sprite;
-		kDeathStrings = new string[31];
+		kDeathStrings = new string[32];
 		kDeathStrings[0] = "OOOAHH";
 		kDeathStrings[1] = "WHOOOP";
 		kDeathStrings[2] = "AYYYEEH";
@@ -165,6 +158,7 @@ public class ZMPlayerController : MonoBehaviour
 		kDeathStrings[28] = "SWIFT";
 		kDeathStrings[29] = "WAHH";
 		kDeathStrings[30] = "OOOOHHHH";
+		kDeathStrings[31] = "POW!";
 	}
 
 	void FixedUpdate()
@@ -381,19 +375,6 @@ public class ZMPlayerController : MonoBehaviour
 			}
 		}
 
-		// Handle material color.
-		if (IsAbleToKill()) {
-			this.renderer.material.color = Color.yellow;
-		} else if (_moveModState == MoveModState.DISABLED) {
-			this.renderer.material.color = Color.grey;
-		} else if (_moveModState == MoveModState.RESPAWN) {
-			this.renderer.material.color = Color.white;
-		} else if (_moveModState == MoveModState.PARRY_PLUNGE || _moveModState == MoveModState.PARRY_LUNGE) {
-			renderer.material.color = Color.magenta;
-		} else {
-			this.renderer.material.color = _initialColor;
-		}
-
 		// Update and apply velocity.
 		_velocity.x = runSpeed;
 		_velocity.y -= GRAVITY * Time.deltaTime;
@@ -476,7 +457,22 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void AttackEvent(ZMPlayerInputController inputController) {
 		if (inputController.PlayerInfo.Equals(_playerInfo) && !IsAttacking() && _moveModState != MoveModState.RESPAWN) {
+			RaycastHit2D hit;
+
 			_controlModState = ControlModState.ATTACK;
+
+			// hack for destroying a breakable when pressed up against it
+			if (_movementDirection == MovementDirectionState.FACING_LEFT) {
+				hit = CheckLeft(2.0f, _controller.specialInteractibleMask);
+			} else {
+				hit = CheckRight(2.0f, _controller.specialInteractibleMask);
+			}
+
+			if (hit && hit.collider != null) {
+				if (hit.collider.CompareTag("Breakable")) {
+					hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
+				}
+			}
 		}
 	}
 
@@ -662,13 +658,13 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void KillOpponent(ZMPlayerController playerController) 
 	{
-		// Notify event handlers of player's death
-		if (PlayerDeathEvent != null) {
-			PlayerDeathEvent(playerController);
-		}
-
-		if (playerController.IsAbleToDie())
+		if (playerController.IsAbleToDie()) {
 			playerController.KillSelf();
+
+			if (PlayerDeathEvent != null) {
+				PlayerDeathEvent(playerController);
+			}
+		}
 
 		ZMMetricsCollector collector = GetComponent<ZMMetricsCollector>();
 		if (collector != null) {
@@ -696,15 +692,13 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void Respawn() {
-		GetComponent<SpriteRenderer>().sprite = _baseSprite;
-		//light.enabled = true;
-		//_velocity.y = 100f;
+		light.enabled = true;
 		
-		//EnablePlayer();
+		EnablePlayer();
 
-		/*if (PlayerRespawnEvent != null) {
+		if (PlayerRespawnEvent != null) {
 			PlayerRespawnEvent(this);
-		}*/
+		}
 	}
 
 	private void Recoil()

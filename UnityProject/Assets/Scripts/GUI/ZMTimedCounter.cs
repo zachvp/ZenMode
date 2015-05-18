@@ -11,22 +11,39 @@ public class ZMTimedCounter : MonoBehaviour {
 	public float timeIncrement;
 	public bool shouldClearOnCompletion;
 	public bool start;
+	public bool juicy;
 	public Text counterUIText;
 	public string minMessage, maxMessage;
+	public AudioClip audioTick;
 
 	private const string kCountMethodName = "Count";
 	private int _value;
+
+	public delegate void GameTimerEndedAction(); public static event GameTimerEndedAction GameTimerEndedEvent;
 	
 	void Awake () {
 		_value = startValue;
+
+		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
+		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+	}
+
+	void HandleGameEndEvent ()
+	{
+		CancelInvoke(kCountMethodName);
+	}
+
+	void HandleStartGameEvent ()
+	{
+		BeginCount();
+	}
+
+	void OnDestroy() {
+		GameTimerEndedEvent = null;
 	}
 
 	void Start() {
 		UpdateText();
-
-		if (start) {
-			BeginCount();
-		}
 	}
 
 	void UpdateText() {
@@ -41,6 +58,16 @@ public class ZMTimedCounter : MonoBehaviour {
 			int seconds = Mathf.FloorToInt(_value - minutes * 60);
 
 			counterUIText.text =  string.Format("{0:0}:{1:00}", minutes, seconds); _value.ToString ();
+
+			if (juicy) {
+				if (_value <= 30) {
+					counterUIText.color = new Color(0.905f, 0.698f, 0.635f, 0.75f);
+					audio.PlayOneShot(audioTick, (_value <= 10 ? 1.0f : 0.25f));
+				} else {
+					counterUIText.color = new Color(1.000f, 1.000f, 1.000f, 0.75f);
+				}
+			}
+
 		}
 	}
 
@@ -54,9 +81,10 @@ public class ZMTimedCounter : MonoBehaviour {
 
 		if (_value == min || _value == max) {
 			CancelInvoke(kCountMethodName);
-			GameObject controllerObject = GameObject.Find("GameStateManager");
-			ZMGameStateController controller = controllerObject.GetComponent<ZMGameStateController>();
-			controller.CountdownEnded();
+
+			if (GameTimerEndedEvent != null) {
+				GameTimerEndedEvent();
+			}
 
 			if (shouldClearOnCompletion)
 				Invoke("ClearText", timeIncrement);
@@ -66,9 +94,8 @@ public class ZMTimedCounter : MonoBehaviour {
 	void ClearText() {
 		counterUIText.text = "";
 	}
-
-	// public facing methods
-	public void BeginCount() {
+	
+	private void BeginCount() {
 		UpdateText ();
 		StartCount ();
 	}

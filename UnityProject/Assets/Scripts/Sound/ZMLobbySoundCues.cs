@@ -8,7 +8,7 @@ public class ZMLobbySoundCues : MonoBehaviour {
 		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
 	}
 
-	void HandleMaxScoreReachedEvent (ZMLobbyScoreController lobbyScoreController)
+	void HandleMaxScoreReachedEvent (ZMLobbyScoreController waypointMovement)
 	{
 		audio.PlayOneShot(readyUpClip);
 	}

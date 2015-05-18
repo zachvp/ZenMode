@@ -5,11 +5,26 @@ public class ZMStageSoundCues : MonoBehaviour {
 	public AudioClip focusOnPlayer;
 	public AudioClip matchStart;
 	public AudioClip switchFocus;
+	public AudioClip battleIntro;
+
+	// constants
+	private const string kSwitchFocusMethodName		    = "SwitchFocus";
+	private const string kPlayMainBattleTrackMethodName = "PlayMainBattleTrack";
 
 	void Awake () {
-		ZMLobbyPedestalController.AtPathNodeEvent += HandleAtPathNodeEvent;
-		ZMLobbyPedestalController.FullPathCycleEvent  += HandleFullCycleEvent;
+		ZMWaypointMovement.AtPathNodeEvent += HandleAtPathNodeEvent;
+		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
+	}
+
+	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
+	{
+		if (waypointMovement.CompareTag("MainCamera")) {
+			// start the intro
+			audio.PlayOneShot(battleIntro);
+			Invoke(kPlayMainBattleTrackMethodName, battleIntro.length);
+		}
+
 	}
 
 	void HandleStartGameEvent ()
@@ -17,22 +32,18 @@ public class ZMStageSoundCues : MonoBehaviour {
 		audio.PlayOneShot(matchStart, 0.5f);
 	}
 
-	void HandleFullCycleEvent (ZMLobbyPedestalController lobbyPedestalController) {
-		audio.Play();
-		audio.loop = true;
-	}
-
-	void HandleAtPathNodeEvent (ZMLobbyPedestalController lobbyPedestalController) {
-		audio.PlayOneShot (switchFocus);
-		Invoke ("SwitchFocus", 0.4f);
+	void HandleAtPathNodeEvent (ZMWaypointMovement waypointMovement, int index) {
+		//audio.PlayOneShot (switchFocus);
+		if (waypointMovement.CompareTag("MainCamera"))
+			Invoke (kSwitchFocusMethodName, 0.1f);
 	}
 
 	void SwitchFocus() {
 		audio.PlayOneShot (focusOnPlayer);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+	private void PlayMainBattleTrack() {
+		audio.Play();
+		audio.loop = true;
 	}
 }

@@ -3,14 +3,14 @@ using System.Collections;
 
 public class ZMLoadResponder : MonoBehaviour {
 	void Awake () {
-		ZMPauseMenuController.SelectResumeEvent += HandleSelectResumeEvent;
+		ZMMainMenuController.LoadGameEvent += HandleLoadGameEvent;
 	}
 
 	void Start() {
 		gameObject.SetActive(false);
 	}
 
-	void HandleSelectResumeEvent ()
+	void HandleLoadGameEvent()
 	{
 		gameObject.SetActive(true);
 	}

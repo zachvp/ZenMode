@@ -3,35 +3,41 @@ using System.Collections;
 
 public class ZMCameraController : MonoBehaviour {
 	public float endZoom = 432;
-
+	public bool zoomAtStart;
+	public float zoomDelay = 6;
 	private float _zoomTargetSize;
 	private bool  _isZooming;
 	private float _baseSpeed = 3f;
 	private float _speed;
-
 	private float _totalDistance;
 	private int _zoomStep;
 	private int _zoomFrames;
-
-	private Vector3 _basePosition;
-
 	private bool _isShaking = false;
+	private ZMMovementBobbing _movementBobbing;
 
 	// Use this for initialization
 	void Awake () {
 		_speed = _baseSpeed;
-		
-		GetComponent<ZMMovementBobbing>().enabled = false;
 
 		ZMPlayerController.PlayerRecoilEvent 	 += HandlePlayerRecoilEvent;
 		ZMPlayerController.PlayerLandPlungeEvent += HandlePlayerLandPlungeEvent;
 		ZMPlayerController.PlayerDeathEvent 	 += HandlePlayerDeathEvent;
 
-		ZMLobbyPedestalController.AtPathEndEvent += HandleAtPathEndEvent;
+		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 
 		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
 		ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
 		ZMGameStateController.GameEndEvent   += HandleGameEndEvent;
+
+		_movementBobbing = GetComponent<ZMMovementBobbing>();
+	}
+
+	void Start() {
+		if (_movementBobbing != null)
+			_movementBobbing.enabled = false;
+
+		if (zoomAtStart)
+			Invoke("StartZoom", zoomDelay);
 	}
 
 	void HandleGameEndEvent ()
@@ -54,10 +60,12 @@ public class ZMCameraController : MonoBehaviour {
 		_speed = 1.0f;
 	}
 
-	void HandleAtPathEndEvent (ZMLobbyPedestalController lobbyPedestalController)
+	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
 	{
-		Zoom(endZoom);
-		_speed = 1.0f;
+		if (waypointMovement.name.Equals("Main Camera")) {
+			Zoom(endZoom);
+			_speed = 1.0f;
+		}
 	}
 
 	void HandlePlayerLandPlungeEvent ()
@@ -68,12 +76,6 @@ public class ZMCameraController : MonoBehaviour {
 	void HandlePlayerDeathEvent (ZMPlayerController controller)
 	{
 		Shake(25);
-		//_basePosition = transform.position;
-		//_speed = 10f;
-		//Zoom(200, controller.transform.position);
-		//Time.timeScale = 0.15f;
-
-		//Invoke("ResetZoom", 0.5f);
 	}
 
 	void Update() {
@@ -99,15 +101,16 @@ public class ZMCameraController : MonoBehaviour {
 	}
 	
 	void Shake(int frames) {
-		GetComponent<ZMMovementBobbing>().enabled = true;
+		if (_movementBobbing != null)
+			_movementBobbing.enabled = true;
 		_zoomStep = 0;
 		_zoomFrames = frames;
 		_isShaking = true;
-		//Invoke("StopShake", time);
 	}
 
 	void StopShake() {
-		GetComponent<ZMMovementBobbing>().enabled = false;
+		if (_movementBobbing != null)
+			_movementBobbing.enabled = false;
 		_isShaking = false;
 	}
 
@@ -126,8 +129,9 @@ public class ZMCameraController : MonoBehaviour {
 	}
 
 	void ResetZoom() {
-		Zoom (endZoom, _basePosition);
-		_speed = 10f;
-		//Time.timeScale = 1.0f;
+	}
+
+	void StartZoom() {
+		Zoom (200);
 	}
 }
