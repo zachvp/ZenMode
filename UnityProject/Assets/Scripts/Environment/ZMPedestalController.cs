@@ -18,7 +18,8 @@ public class ZMPedestalController : MonoBehaviour {
 	private ScoreState _scoreState;
 
 	// scaling
-	Vector3 _baseScale;
+	private Vector3 _baseScale;
+	private bool _shouldScale;
 
 	// references
 	private HashSet<ZMScoreController> _scoringAgents;
@@ -27,13 +28,13 @@ public class ZMPedestalController : MonoBehaviour {
 	private const string kDisableMethodName   = "Disable";
 
 	// delegates
-	public delegate void ActivateAction(ZMPedestalController pedestalController); public static ActivateAction ActivateEvent;
-	public delegate void DeactivateAction(ZMPedestalController pedestalController); public static DeactivateAction DeactivateEvent;
+	public delegate void ActivateAction(ZMPedestalController pedestalController); public static event ActivateAction ActivateEvent;
+	public delegate void DeactivateAction(ZMPedestalController pedestalController); public static event DeactivateAction DeactivateEvent;
 
 	void Awake() {
 		_scoringAgents = new HashSet<ZMScoreController>();
 		_playerInfo = GetComponent<ZMPlayerInfo>();
-		_baseScale = transform.localScale;
+		_baseScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
 
 		//_moveState = MoveState.MOVE;
 		// event handler subscriptions
@@ -53,16 +54,21 @@ public class ZMPedestalController : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		if (IsEnabled()) {
-			Vector3 newScale = Vector3.Lerp(transform.localScale, _baseScale, 3.0f * Time.deltaTime);
+		if (IsEnabled() && _shouldScale) {
+			Vector3 newScale = Vector3.Lerp(transform.localScale, _baseScale, 5.0f * Time.deltaTime);
 
 			transform.localScale = newScale;
+
+			if (Vector3.SqrMagnitude(transform.localScale - _baseScale) < 0.7f) {
+				SendMessage("Resume");
+				_shouldScale = false;
+			}
 		}
 	}
 
 	void OnDestroy() {
 		// unsubscribe all event listeners
-		ActivateEvent  = null;
+		ActivateEvent  	= null;
 		DeactivateEvent = null;
 	}
 
@@ -142,7 +148,9 @@ public class ZMPedestalController : MonoBehaviour {
 	void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
 		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			SendMessage("Stop");
 			transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+			_shouldScale = true;
 
 			MoveToLocation(playerController.transform.position);
 			Enable();

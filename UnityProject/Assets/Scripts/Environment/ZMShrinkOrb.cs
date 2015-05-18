@@ -14,12 +14,13 @@ public class ZMShrinkOrb : MonoBehaviour {
 	void HandleAtPathNodeEvent (ZMWaypointMovement waypointMovement, int index)
 	{
 		if (waypointMovement.name.Equals("Main Camera") && index - 1 == (int) _playerInfo.playerTag) {
+			SendMessage("Stop");
 			_shrinking = true;
 		}
 	}
 
 	void Update() {
-		if (_shrinking && Vector3.Magnitude(transform.localScale) > 0) {
+		if (_shrinking && Vector3.SqrMagnitude(transform.localScale) > 0) {
 			Vector3 newScale = transform.localScale;
 
 			newScale = Vector3.Lerp(newScale, Vector3.zero, _shrinkRate);
@@ -27,7 +28,7 @@ public class ZMShrinkOrb : MonoBehaviour {
 
 			transform.localScale = newScale;
 
-			if (Vector3.SqrMagnitude(transform.localScale) < 0.4) {
+			if (Vector3.SqrMagnitude(transform.localScale) <= 0.2) {
 				gameObject.SetActive(false);
 			}
 		}
