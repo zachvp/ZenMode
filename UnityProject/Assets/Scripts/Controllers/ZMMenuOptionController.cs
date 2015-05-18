@@ -90,7 +90,7 @@ public class ZMMenuOptionController : MonoBehaviour {
 
 		gameObject.SetActive(true);
 
-		Invoke("ShowMenuEnd", 2.0f);
+		Invoke("ShowMenuEnd", 3.0f);
 	}
 
 	void HandleMenuNavigationForward() {
