@@ -118,7 +118,7 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
 	{
-		if (waypointMovement.name.Equals("Main Camera"))
+		if (waypointMovement.CompareTag("MainCamera"))
 			_matchState = MatchState.BEGIN_COUNTDOWN;
 	}
 
@@ -347,7 +347,7 @@ public class ZMGameStateController : MonoBehaviour {
 		//outputText.text = "Match Ended!";
 		outputText.text = _victoryMessage;
 
-		PauseGame();
+		//PauseGame();
 		
 		if (GameEndEvent != null && !_firedGameEndEvent) {
 			_firedGameEndEvent = true;

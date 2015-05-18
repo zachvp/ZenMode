@@ -12,6 +12,8 @@ public class ZMMenuOptionController : MonoBehaviour {
 	private int  _selectedIndex;
 	private int  _optionsSize;
 
+	private bool _inputEnabled;
+
 	private bool _canCycleSelection;
 	private int _delayFrame = 0;
 	private const int _selectionDelay = 10;
@@ -26,10 +28,11 @@ public class ZMMenuOptionController : MonoBehaviour {
 		_baseColor 	   = menuOptions[0].color;
 		_selectedColor = new Color(255, 255, 255, 255);
 		_optionsSize = menuOptions.Length;
+		_inputEnabled = true;
 
 		ZMGameStateController.PauseGameEvent  += ShowMenu;
 		ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
-		ZMGameStateController.GameEndEvent 	  += ShowMenu;
+		ZMGameStateController.GameEndEvent 	  += HandleGameEndEvent;
 		ZMLobbyController.PauseGameEvent 	  += ShowMenu;
 
 		ToggleActive(startActive);
@@ -41,35 +44,37 @@ public class ZMMenuOptionController : MonoBehaviour {
 
 		ZMGameStateController.PauseGameEvent  -= ShowMenu;
 		ZMGameStateController.ResumeGameEvent -= HandleResumeGameEvent;
-		ZMGameStateController.GameEndEvent    -= ShowMenu;
+		ZMGameStateController.GameEndEvent    -= HandleGameEndEvent;
 		ZMLobbyController.PauseGameEvent 	  -= ShowMenu;
 	}
 
 	void Update() {
-		var inputDevice = InputManager.ActiveDevice;
+		if (_inputEnabled) {
+			var inputDevice = InputManager.ActiveDevice;
 
-		if (_canCycleSelection) {
-			if ((inputDevice.DPadDown || inputDevice.LeftStick.Y < -0.8f)) {
-				_canCycleSelection = false;
+			if (_canCycleSelection) {
+				if ((inputDevice.DPadDown || inputDevice.LeftStick.Y < -0.8f)) {
+					_canCycleSelection = false;
 
-				HandleMenuNavigationForward();
-			} else if ((inputDevice.DPadUp || inputDevice.LeftStick.Y > 0.8f)) {
-				_canCycleSelection = false;
+					HandleMenuNavigationForward();
+				} else if ((inputDevice.DPadUp || inputDevice.LeftStick.Y > 0.8f)) {
+					_canCycleSelection = false;
 
-				HandleMenuNavigationBackward();
+					HandleMenuNavigationBackward();
+				}
 			}
-		}
 
-		if (inputDevice.Action1 || inputDevice.MenuWasPressed) {
-			HandleMenuSelection();
-		}
+			if (inputDevice.Action1 || inputDevice.MenuWasPressed) {
+				HandleMenuSelection();
+			}
 
-		if (!_canCycleSelection) {
-			_delayFrame += 1;
+			if (!_canCycleSelection) {
+				_delayFrame += 1;
 
-			if (_delayFrame > _selectionDelay) {
-				CanCycleSelection();
-				_delayFrame = 0;
+				if (_delayFrame > _selectionDelay) {
+					CanCycleSelection();
+					_delayFrame = 0;
+				}
 			}
 		}
 	}
@@ -77,6 +82,15 @@ public class ZMMenuOptionController : MonoBehaviour {
 	void HandleResumeGameEvent() {
 		audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
 		ToggleActive(false);
+	}
+
+	void HandleGameEndEvent() {
+		_inputEnabled = false;
+		HideUI();
+
+		gameObject.SetActive(true);
+
+		Invoke("ShowMenuEnd", 2.0f);
 	}
 
 	void HandleMenuNavigationForward() {
@@ -126,12 +140,33 @@ public class ZMMenuOptionController : MonoBehaviour {
 		_canCycleSelection = true;
 	}
 
-	private void ShowMenu() {
+	private void HideUI() {
+		Color transparent = new Color(_baseColor.r, _baseColor.g, _baseColor.b, 0);
+
+		foreach (Text text in menuOptions) {
+			text.color = transparent;
+		}
+	}
+
+	private void ShowUI() {
+		foreach (Text text in menuOptions) {
+			text.color = _baseColor;
+		}
+	}
+
+	void ShowMenu() {
 		_selectedIndex = 0;
 		_canCycleSelection = true;
 
 		ToggleSelection(_selectedIndex, true);
 		ToggleActive(true);
 		UpdateUI();
+	}
+
+	void ShowMenuEnd() {
+		_inputEnabled = true;
+		ShowUI();
+
+		ShowMenu();
 	}
 }

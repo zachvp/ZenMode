@@ -5,6 +5,9 @@ using InControl;
 namespace ZMPlayer {
 	public class ZMPlayerInputController : MonoBehaviour {
 
+		// Input control.
+		private bool _inputEnabled;
+
 		// Player info.
 		public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 		private ZMPlayerInfo _playerInfo;	
@@ -19,14 +22,37 @@ namespace ZMPlayer {
 		public delegate void PlungeAction(ZMPlayerInputController playerInputController);		public static event PlungeAction PlungeEvent;
 
 		void Awake () {
+			string playerInfoString;
+
+			_inputEnabled = true;
+
 			_playerInfo = GetComponent<ZMPlayerInfo> ();
-			string playerInfoString = _playerInfo.playerTag.ToString ();
+			playerInfoString = _playerInfo.playerTag.ToString ();
 			_playerNumber = int.Parse (playerInfoString.Substring (playerInfoString.Length - 1)) - 1;
+
+			ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
+			ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
+			ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+		}
+
+		void HandleGameEndEvent ()
+		{
+			_inputEnabled = false;
+		}
+
+		void HandleResumeGameEvent ()
+		{
+			_inputEnabled = true;
+		}
+
+		void HandlePauseGameEvent ()
+		{
+			_inputEnabled = false;
 		}
 
 		void Update () {
 			// Handle horizontal movement.
-			if (InputManager.Devices != null) {
+			if (_inputEnabled) {
 				if (InputManager.Devices[_playerNumber].LeftStickX > 0.5f) {
 					if (MoveRightEvent != null) {
 						MoveRightEvent(this);

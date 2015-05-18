@@ -16,6 +16,10 @@ public class ZMAnalogMovement : MonoBehaviour {
 		_controlIndex = (int) _playerInfo.playerTag;
 
 		_deltaPos = transform.position;
+
+		if (_controlIndex >= InputManager.Devices.Count) {
+			enabled = false;
+		}
 	}
 	
 	// Update is called once per frame
