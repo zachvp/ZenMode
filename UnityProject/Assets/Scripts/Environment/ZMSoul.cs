@@ -21,16 +21,12 @@ public class ZMSoul : MonoBehaviour {
 
 	void HandleStopScoreEvent (ZMScoreController scoreController)
 	{
-		if (audio.isPlaying) {
-			StopLoop();
-		}
+		StopLoop();
 	}
 
 	void HandleCanScoreEvent (ZMScoreController scoreController)
 	{
-		if (!audio.isPlaying) {
-			PlayLoop();
-		}
+		PlayLoop();
 	}
 
 	void OnDestroy() {
@@ -60,13 +56,10 @@ public class ZMSoul : MonoBehaviour {
 
 	void Update() {
 		if (_fadingIn) {
-			if (audio.volume < 0.75f)
-				audio.volume += 0.02f;
+			if (audio.volume < 0.75f) { audio.volume += 0.02f; }
 		} else {
-			if (audio.volume > 0)
-				audio.volume -= 0.04f;
-			else
-				audio.Stop();
+			if (audio.volume > 0) { audio.volume -= 0.02f; }
+			else { audio.Stop(); }
 		}
 	}
 
