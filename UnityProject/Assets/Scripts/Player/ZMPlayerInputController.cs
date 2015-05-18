@@ -71,6 +71,7 @@ namespace ZMPlayer {
 				if (InputManager.Devices[_playerNumber].Action1.WasPressed) {
 					if (JumpEvent != null) {
 						JumpEvent(this);
+						InputManager.Devices[_playerNumber].Vibrate(0.5f);
 					}
 				}
 
