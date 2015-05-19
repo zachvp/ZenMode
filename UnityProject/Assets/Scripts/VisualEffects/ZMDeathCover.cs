@@ -4,10 +4,13 @@ using ZMPlayer;
 
 public class ZMDeathCover : MonoBehaviour {
 	ZMPlayerInfo _playerInfo;
+	SpriteRenderer _spriteRenderer;
+
 
 	// Use this for initialization
 	void Awake () {
 		_playerInfo = GetComponent<ZMPlayerInfo>();
+		_spriteRenderer = GetComponent<SpriteRenderer>();
 
 		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
 		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
@@ -16,19 +19,15 @@ public class ZMDeathCover : MonoBehaviour {
 	void HandlePlayerRespawnEvent (ZMPlayerController playerController)
 	{
 		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-			GetComponent<SpriteRenderer>().enabled = false;
+			_spriteRenderer.enabled = false;
 		}
 	}
 
 	void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
 		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-			GetComponent<SpriteRenderer>().enabled = true;
+			_spriteRenderer.enabled = true;
+			gameObject.SetActive(true);
 		}
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 }

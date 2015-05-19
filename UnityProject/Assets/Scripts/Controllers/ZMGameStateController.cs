@@ -202,7 +202,7 @@ public class ZMGameStateController : MonoBehaviour {
 			foreach(ZMScoreController scoreController in _scoreControllers) {
 				int scoreControllerIndex = (int) scoreController.PlayerInfo.playerTag;
 
-				if (scoreController.TotalScore > maxScoreCrown) {
+				if (scoreController.TotalScore >= maxScoreCrown) {
 					maxScoreCrown = scoreController.TotalScore;
 					maxScoreController = scoreController;
 				}
@@ -211,8 +211,9 @@ public class ZMGameStateController : MonoBehaviour {
 					crowns[scoreControllerIndex].SetActive(false);
 			}
 
-			if (maxScoreController != null)
+			if (maxScoreController != null) {
 				crowns[(int) maxScoreController.PlayerInfo.playerTag].SetActive(true);
+			}
 		}
 
 		if (_gameState == GameState.RESUME) {

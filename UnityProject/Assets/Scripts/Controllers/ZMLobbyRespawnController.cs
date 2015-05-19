@@ -12,6 +12,12 @@ public class ZMLobbyRespawnController : MonoBehaviour {
 	{
 		int index = (int) playerController.PlayerInfo.playerTag;
 
+		StartCoroutine(SpawnPlayer(index, playerController));
+	}
+
+	IEnumerator SpawnPlayer(int index, ZMPlayerController playerController) {
+		yield return new WaitForSeconds(1.5f);
+
 		playerController.transform.position = spawnpoints[index].position;
 		playerController.EnablePlayer();
 	}
