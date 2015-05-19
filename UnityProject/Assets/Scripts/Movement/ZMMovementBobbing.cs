@@ -12,7 +12,9 @@ public class ZMMovementBobbing : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 		_theta = 0;
+	}
 
+	void Start() {
 		_updatedPosition = _basePosition = transform.position;
 	}
 	
@@ -22,7 +24,7 @@ public class ZMMovementBobbing : MonoBehaviour {
 
 		transform.position = _updatedPosition;
 
-		_theta += speed;
+		_theta += speed * Time.deltaTime;
 		_theta %= 360;
 	}
 }

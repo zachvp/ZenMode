@@ -378,7 +378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amplitude: 4
-  speed: .0399999991
+  speed: 4
 --- !u!1 &568259841
 GameObject:
   m_ObjectHideFlags: 0

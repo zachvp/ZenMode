@@ -15,8 +15,11 @@ public class ZMGrowShrink : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		_baseScale = transform.localScale;
 		_enabled = startEnabled;
+	}
+
+	void Start() {
+		_baseScale = transform.localScale;
 	}
 	
 	// Update is called once per frame
