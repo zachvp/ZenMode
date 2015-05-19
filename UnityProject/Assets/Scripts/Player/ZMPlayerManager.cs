@@ -10,6 +10,9 @@ public class ZMPlayerManager : MonoBehaviour {
 	private static State _state;
 	private static int _numPlayers; public static int NumPlayers { get { return _numPlayers; } }
 	private bool[] _readiedPlayers;
+
+	// stats
+	private static int[] _playerKills; public static int[] PlayerKills { get { return _playerKills; } }
 	
 	void Awake () {
 		if (debug) {
@@ -21,12 +24,17 @@ public class ZMPlayerManager : MonoBehaviour {
 			_readiedPlayers = new bool[4];
 		}
 
+		if (_playerKills == null) {
+			_playerKills = new int[4];
+		}
+
 		switch(_state) {
 			case State.NONE:  {
 				_state = State.LOBBY;
 
 				_numPlayers = 0;
 				ZMLobbyController.PlayerReadyEvent += HandlePlayerReadyEvent;
+				ZMPlayerController.PlayerKillEvent += HandlePlayerKillEvent;
 				break;
 			}
 			case State.LOBBY: {
@@ -44,6 +52,13 @@ public class ZMPlayerManager : MonoBehaviour {
 
 
 		DontDestroyOnLoad(gameObject);
+	}
+
+	void HandlePlayerKillEvent (ZMPlayerController killer)
+	{
+		int killerIndex = (int) killer.PlayerInfo.playerTag;
+
+		_playerKills[killerIndex] += 1;
 	}
 
 	void HandleGameEndEvent ()

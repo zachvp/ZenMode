@@ -46,6 +46,8 @@ public class ZMGameStateController : MonoBehaviour {
 
 	// HACKS!
 	private string _victoryMessage;
+	private bool _lobbyDominator;
+	private int _dominatorIndex;
 
 	// Use this for initialization
 	void Awake () {
@@ -101,6 +103,32 @@ public class ZMGameStateController : MonoBehaviour {
 		
 		for (int i = 0; i < _playerCount; ++i) {
 			_players[i].gameObject.SetActive(true);
+		}
+
+		// enable the leading killing player's crown
+		int maxKills = 0;
+		int maxKillIndex = -1;
+
+		for (int i = 0; i < _playerCount; ++i) {
+			if (ZMPlayerManager.PlayerKills[i] > maxKills) {
+				maxKills = ZMPlayerManager.PlayerKills[i];
+				maxKillIndex = i;
+			}
+		}
+
+		foreach(ZMScoreController scoreController in _scoreControllers) {
+			int scoreControllerIndex = (int) scoreController.PlayerInfo.playerTag;
+			
+			if (crowns[scoreControllerIndex] != null)
+				crowns[scoreControllerIndex].SetActive(false);
+		}
+
+
+
+		if (maxKillIndex > -1 && crowns[maxKillIndex] != null) {
+			_lobbyDominator = true;
+			_dominatorIndex = maxKillIndex;
+			crowns[maxKillIndex].SetActive(true);
 		}
 
 		DisableGameObjects();
@@ -197,22 +225,34 @@ public class ZMGameStateController : MonoBehaviour {
 				Invoke("EndGame", END_GAME_DELAY);
 		} else {
 			float maxScoreCrown = 0;
+			float checkEquality = _scoreControllers[0].TotalScore;
+			bool scoresEqual = false;
+
+			for (int i = 1; i < _playerCount; ++i) {
+				if (_scoreControllers[i].TotalScore == checkEquality) {
+					scoresEqual = true;
+				}
+			}
+
 			ZMScoreController maxScoreController = null;
 			
 			foreach(ZMScoreController scoreController in _scoreControllers) {
 				int scoreControllerIndex = (int) scoreController.PlayerInfo.playerTag;
 
-				if (scoreController.TotalScore >= maxScoreCrown) {
+				if (scoreController.TotalScore > maxScoreCrown && !scoresEqual) {
+					_lobbyDominator = false;
 					maxScoreCrown = scoreController.TotalScore;
 					maxScoreController = scoreController;
 				}
 
-				if (crowns[scoreControllerIndex] != null)
+				if (crowns[scoreControllerIndex] != null && !_lobbyDominator)
 					crowns[scoreControllerIndex].SetActive(false);
 			}
 
-			if (maxScoreController != null) {
+			if (maxScoreController != null && !_lobbyDominator) {
 				crowns[(int) maxScoreController.PlayerInfo.playerTag].SetActive(true);
+			} else if (_lobbyDominator) {
+				crowns[_dominatorIndex].SetActive(true);
 			}
 		}
 

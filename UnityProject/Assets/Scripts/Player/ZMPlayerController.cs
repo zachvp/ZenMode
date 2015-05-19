@@ -92,6 +92,7 @@ public class ZMPlayerController : MonoBehaviour
 	
 
 	// Delegates
+	public delegate void PlayerKillAction(ZMPlayerController killer); public static event PlayerKillAction PlayerKillEvent;
 	public delegate void PlayerDeathAction(ZMPlayerController playerController); public static event PlayerDeathAction PlayerDeathEvent;
 	public delegate void PlayerRespawnAction(ZMPlayerController playerController); public static event PlayerRespawnAction PlayerRespawnEvent;
 	public delegate void PlayerEliminatedAction(ZMPlayerController playerController); public static event PlayerEliminatedAction PlayerEliminatedEvent;
@@ -416,6 +417,7 @@ public class ZMPlayerController : MonoBehaviour
 	void OnDestroy() {
 		ZMScoreController.MinScoreReached -= HandleMinScoreReached;
 
+		PlayerKillEvent		  = null;
 		PlayerDeathEvent   	  = null;
 		PlayerRespawnEvent 	  = null;
 		PlayerEliminatedEvent = null;
@@ -665,6 +667,10 @@ public class ZMPlayerController : MonoBehaviour
 	{
 		if (playerController.IsAbleToDie()) {
 			playerController.KillSelf();
+
+			if (PlayerKillEvent != null) {
+				PlayerKillEvent(this);
+			}
 
 			if (PlayerDeathEvent != null) {
 				PlayerDeathEvent(playerController);
