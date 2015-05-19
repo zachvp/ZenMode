@@ -15,8 +15,6 @@ public class ZMAnalogMovement : MonoBehaviour {
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_controlIndex = (int) _playerInfo.playerTag;
 
-		_deltaPos = transform.position;
-
 		if (_controlIndex >= InputManager.Devices.Count) {
 			enabled = false;
 		}
