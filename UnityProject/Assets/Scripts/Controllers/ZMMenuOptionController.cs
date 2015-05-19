@@ -30,7 +30,7 @@ public class ZMMenuOptionController : MonoBehaviour {
 		_optionsSize = menuOptions.Length;
 		_inputEnabled = true;
 
-		ZMGameStateController.PauseGameEvent  += ShowMenu;
+		ZMGameStateController.PauseGameEvent  += HandlePauseGameEvent;
 		ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 		ZMGameStateController.GameEndEvent 	  += HandleGameEndEvent;
 		ZMLobbyController.PauseGameEvent 	  += ShowMenu;
@@ -79,12 +79,24 @@ public class ZMMenuOptionController : MonoBehaviour {
 		}
 	}
 
+	void HandlePauseGameEvent() {
+		ShowMenu();
+
+		if (name.Equals("PauseMenu-PostGame")) {
+			gameObject.SetActive(false);
+		}
+	}
+
 	void HandleResumeGameEvent() {
 		audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
 		ToggleActive(false);
 	}
 
 	void HandleGameEndEvent() {
+		if (name.Equals("PauseMenu-Game")) {
+			Destroy(gameObject);
+		}
+
 		_inputEnabled = false;
 		HideUI();
 

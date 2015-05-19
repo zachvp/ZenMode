@@ -40,9 +40,9 @@ public class ZMGameStateController : MonoBehaviour {
 	public delegate void QuitMatchAction(); public static event QuitMatchAction QuitMatchEvent;
 
 	// pause menu handling
-	private const int RESUME_OPTION  = 0;
-	private const int RESTART_OPTION = 1;
-	private const int QUIT_OPTION	 = 2;
+	private int RESUME_OPTION  = 0;
+	private int RESTART_OPTION = 1;
+	private int QUIT_OPTION	   = 2;
 
 	// HACKS!
 	private string _victoryMessage;
@@ -136,20 +136,12 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	void HandleSelectOptionEvent(int optionIndex) {
-		switch(optionIndex) {
-			case RESUME_OPTION: {
-				HandleSelectResumeEvent();
-				break;
-			}
-			case RESTART_OPTION: {
-				HandleSelectRestartEvent();
-				break;
-			}
-			case QUIT_OPTION: {
-				HandleSelectQuitEvent();
-				break;
-			}
-			default: break;
+		if (optionIndex == RESUME_OPTION) {
+			HandleSelectResumeEvent();
+		} else if (optionIndex == RESTART_OPTION) {
+			HandleSelectRestartEvent();
+		} else if (optionIndex == QUIT_OPTION) {
+			HandleSelectQuitEvent();
 		}
 	}
 
@@ -170,7 +162,7 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void HandleSelectRestartEvent ()
 	{
-		_gameState =  GameState.RESET;
+		ResetGame();
 	}
 
 	void HandleStartInputEvent (ZMPlayerInfo.PlayerTag playerTag)
@@ -341,19 +333,22 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	void EndGame() {
-		if (outputText == null)
-			return;
-		
-		//outputText.text = "Match Ended!";
 		outputText.text = _victoryMessage;
 
-		//PauseGame();
+		DisableGameObjects();
+
+		// Vulgar hacks
+		RESUME_OPTION  = -1;
+		RESTART_OPTION = 0;
+		QUIT_OPTION    = 1;
 		
 		if (GameEndEvent != null && !_firedGameEndEvent) {
 			_firedGameEndEvent = true;
 			
 			GameEndEvent();
 		}
+
+		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
 	}
 
 	// Event handlers
