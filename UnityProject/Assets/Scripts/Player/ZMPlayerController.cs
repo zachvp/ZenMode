@@ -301,7 +301,7 @@ public class ZMPlayerController : MonoBehaviour
 			_moveModState = _controller.isGrounded ? MoveModState.LUNGING_GROUND : MoveModState.LUNGING_AIR;
 
 			RaycastHit2D checkPlayer;
-			if (_movementDirection == MovementDirectionState.FACING_RIGHT && !_checkTouchingRight) {
+			if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
 				if (checkPlayer = CheckRight(145f, _controller.specialInteractibleMask)) {
 					if (checkPlayer.collider.CompareTag(kPlayerTag) && !_playerInPath) {
 						_playerInPath = true;
@@ -309,7 +309,7 @@ public class ZMPlayerController : MonoBehaviour
 				}
 
 				LungeRight();
-			} else if (_movementDirection == MovementDirectionState.FACING_LEFT && !_checkTouchingLeft) {
+			} else if (_movementDirection == MovementDirectionState.FACING_LEFT) {
 				if (checkPlayer = CheckLeft(145f, _controller.specialInteractibleMask)) {
 					if (checkPlayer.collider.CompareTag(kPlayerTag) && !_playerInPath) {
 						_playerInPath = true;
@@ -384,7 +384,12 @@ public class ZMPlayerController : MonoBehaviour
 		_controller.move( _velocity * Time.deltaTime );
 
 		// Update animation states.
-		_animator.SetBool ("isRunning", (_controlMoveState == ControlMoveState.MOVING));
+		if (_movementDirection == MovementDirectionState.FACING_LEFT) {
+			_animator.SetBool ("isRunning", (_controlMoveState == ControlMoveState.MOVING && !CheckLeft(2.0f, _controller.platformMask)));
+		} else {
+			_animator.SetBool ("isRunning", (_controlMoveState == ControlMoveState.MOVING && !CheckRight(2.0f, _controller.platformMask)));
+		}
+
 		
 		bool isSkidding = ((_movementDirection == MovementDirectionState.FACING_LEFT && _velocity.x > 0) ||
 		                   (_movementDirection == MovementDirectionState.FACING_RIGHT && _velocity.x < 0));
