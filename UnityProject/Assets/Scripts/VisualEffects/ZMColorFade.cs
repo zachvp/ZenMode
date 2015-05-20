@@ -22,6 +22,7 @@ public class ZMColorFade : MonoBehaviour {
 
 		ZMScoreController.CanScoreEvent += HandleCanScoreEvent;
 		ZMScoreController.StopScoreEvent += HandleStopScoreEvent;
+		ZMScoreController.MinScoreReached += HandleMinScoreReached;
 	}
 
 	void HandleStopScoreEvent (ZMPlayer.ZMScoreController scoreController)
@@ -35,6 +36,13 @@ public class ZMColorFade : MonoBehaviour {
 	{
 		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 			_fadingIn = true;
+		}
+	}
+
+	void HandleMinScoreReached (ZMPlayer.ZMScoreController scoreController)
+	{
+		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			_image.enabled = false;
 		}
 	}
 	

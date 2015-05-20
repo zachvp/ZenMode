@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using ZMPlayer;
 
 public class ZMFadeIn : MonoBehaviour {
 	public Image fadedImage;

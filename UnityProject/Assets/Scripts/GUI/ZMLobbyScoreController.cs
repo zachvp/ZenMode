@@ -51,6 +51,8 @@ public class ZMLobbyScoreController : MonoBehaviour {
 				_pedestalController = controller;
 			}
 		}
+
+		scoreBar.handleRect = null;
 	}
 
 	void OnDestroy() {
