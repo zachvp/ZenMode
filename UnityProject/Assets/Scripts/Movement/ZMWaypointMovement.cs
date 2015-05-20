@@ -34,15 +34,11 @@ public class ZMWaypointMovement : MonoBehaviour {
 		} else {
 			Stop();
 		}
-
-		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
 	}
 
 	void OnDestroy() {
 		AtPathNodeEvent    = null;
 		AtPathEndEvent 	   = null;
-		
-		ZMGameStateController.StartGameEvent -= HandleStartGameEvent;
 	}
 	
 	// Update is called once per frame
@@ -103,13 +99,5 @@ public class ZMWaypointMovement : MonoBehaviour {
 	void Move() {
 		_waypointIndex = 0;
 		_moveState = MoveState.MOVE;
-	}
-
-	// event handlers	
-	private void HandleStartGameEvent ()
-	{
-		// cut to the last waypoint
-		if (_waypointIndex <= _waypointSize)
-			Move(waypoints.GetLength(0) - 1);
 	}
 }

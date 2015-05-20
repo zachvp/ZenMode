@@ -4,6 +4,7 @@ using ZMPlayer;
 
 public class ZMAnalogMovement : MonoBehaviour {
 	public float _movementSpeed = 100;
+	public float bounce = 60;
 
 	private Vector3 _deltaPos;
 	private Vector3 _forward;
@@ -41,9 +42,9 @@ public class ZMAnalogMovement : MonoBehaviour {
 		if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Barrier"))) {
 			Vector2 bounceVector = new Vector2(_forward.x, _forward.y);;
 
-			bounceVector *= -1 * 600;
+			bounceVector *= -bounce * _movementSpeed;
 
-			rigidbody2D.velocity = bounceVector;
+			rigidbody2D.AddForce(bounceVector);
 			_shouldBounce = true;
 			Invoke("CancelBounce", 0.2f);
 		}
