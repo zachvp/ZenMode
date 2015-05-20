@@ -6,7 +6,6 @@ using ZMPlayer;
 
 public class ZMGameStateController : MonoBehaviour {
 	public Text outputText;
-	public GameObject[] crowns;
 	private int _playerCount;
 
 	private enum GameState { BEGIN, NEUTRAL, PAUSE, PAUSED, RESUME, RESET }
@@ -20,7 +19,7 @@ public class ZMGameStateController : MonoBehaviour {
 	private int _pausedPlayer;
 	private Queue<ZMPlayerController> _objectsToSpawn;
 	private List<ZMPlayerController> _players;
-	private List<ZMScoreController> _scoreControllers;
+	private List<ZMScoreController> _scoreControllers; public List<ZMScoreController> ScoreControllers { get { return _scoreControllers; } }
 	private bool _firedGameEndEvent;
 
 	// constants
@@ -46,8 +45,6 @@ public class ZMGameStateController : MonoBehaviour {
 
 	// HACKS!
 	private string _victoryMessage;
-	private bool _lobbyDominator;
-	private int _dominatorIndex;
 
 	// Use this for initialization
 	void Awake () {
@@ -76,7 +73,7 @@ public class ZMGameStateController : MonoBehaviour {
 		
 		Time.timeScale = 1.0f;
 		
-		_playerCount = ZMPlayerManager.NumPlayers;
+		_playerCount = ZMPlayerManager.PlayerCount;
 		
 		foreach (GameObject spawnpointObject in GameObject.FindGameObjectsWithTag(kSpawnpointTag)) {
 			_spawnpoints.Add(spawnpointObject.transform);
@@ -103,32 +100,6 @@ public class ZMGameStateController : MonoBehaviour {
 		
 		for (int i = 0; i < _playerCount; ++i) {
 			_players[i].gameObject.SetActive(true);
-		}
-
-		// enable the leading killing player's crown
-		int maxKills = 0;
-		int maxKillIndex = -1;
-
-		for (int i = 0; i < _playerCount; ++i) {
-			if (ZMPlayerManager.PlayerKills[i] > maxKills) {
-				maxKills = ZMPlayerManager.PlayerKills[i];
-				maxKillIndex = i;
-			}
-		}
-
-		foreach(ZMScoreController scoreController in _scoreControllers) {
-			int scoreControllerIndex = (int) scoreController.PlayerInfo.playerTag;
-			
-			if (crowns[scoreControllerIndex] != null)
-				crowns[scoreControllerIndex].SetActive(false);
-		}
-
-
-
-		if (maxKillIndex > -1 && crowns[maxKillIndex] != null) {
-			_lobbyDominator = true;
-			_dominatorIndex = maxKillIndex;
-			crowns[maxKillIndex].SetActive(true);
 		}
 
 		DisableGameObjects();
@@ -223,37 +194,6 @@ public class ZMGameStateController : MonoBehaviour {
 
 			if (!IsInvoking("EndGame"))
 				Invoke("EndGame", END_GAME_DELAY);
-		} else {
-			float maxScoreCrown = 0;
-			float checkEquality = _scoreControllers[0].TotalScore;
-			bool scoresEqual = false;
-
-			for (int i = 1; i < _playerCount; ++i) {
-				if (_scoreControllers[i].TotalScore == checkEquality) {
-					scoresEqual = true;
-				}
-			}
-
-			ZMScoreController maxScoreController = null;
-			
-			foreach(ZMScoreController scoreController in _scoreControllers) {
-				int scoreControllerIndex = (int) scoreController.PlayerInfo.playerTag;
-
-				if (scoreController.TotalScore > maxScoreCrown && !scoresEqual) {
-					_lobbyDominator = false;
-					maxScoreCrown = scoreController.TotalScore;
-					maxScoreController = scoreController;
-				}
-
-				if (crowns[scoreControllerIndex] != null && !_lobbyDominator)
-					crowns[scoreControllerIndex].SetActive(false);
-			}
-
-			if (maxScoreController != null && !_lobbyDominator) {
-				crowns[(int) maxScoreController.PlayerInfo.playerTag].SetActive(true);
-			} else if (_lobbyDominator) {
-				crowns[_dominatorIndex].SetActive(true);
-			}
 		}
 
 		if (_gameState == GameState.RESUME) {

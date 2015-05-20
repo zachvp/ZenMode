@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class ZMScoreLayoutController : MonoBehaviour {
@@ -25,7 +25,7 @@ public class ZMScoreLayoutController : MonoBehaviour {
 	}
 
 	void Start() {
-		_playerCount = ZMPlayerManager.NumPlayers;
+		_playerCount = ZMPlayerManager.PlayerCount;
 
 		for (int i = 0; i < _playerCount; ++i) {
 			_scoreTransforms.Add(null);

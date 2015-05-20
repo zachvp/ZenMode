@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -84,7 +84,7 @@ namespace ZMPlayer{
 			scoreBar.maxValue = MAX_SCORE;
 
 			// xD
-			SetScore (MAX_SCORE / ZMPlayerManager.NumPlayers);
+			SetScore (MAX_SCORE / ZMPlayerManager.PlayerCount);
 		}
 
 		void FixedUpdate() {

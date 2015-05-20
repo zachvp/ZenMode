@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using ZMPlayer;
 
 public class ZMPlayerCreateReaction : MonoBehaviour {
@@ -9,7 +9,7 @@ public class ZMPlayerCreateReaction : MonoBehaviour {
 	}
 
 	void Start() {
-		if ((int) _playerInfo.playerTag > ZMPlayerManager.NumPlayers - 1) {
+		if ((int) _playerInfo.playerTag > ZMPlayerManager.PlayerCount - 1) {
 			if (CompareTag("CameraFocus"))
 				Destroy(gameObject);
 			else

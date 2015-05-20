@@ -39,7 +39,8 @@ public class ZMAnalogMovement : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D collider) {
 		if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Barrier"))) {
-			Vector2 bounceVector = new Vector2(_forward.x, _forward.y);
+			Vector2 bounceVector = new Vector2(_forward.x, _forward.y);;
+
 			bounceVector *= -1 * 600;
 
 			rigidbody2D.velocity = bounceVector;
