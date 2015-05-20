@@ -65,6 +65,7 @@ public class ZMMenuOptionController : MonoBehaviour {
 			}
 
 			if (inputDevice.Action1 || inputDevice.MenuWasPressed) {
+				audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
 				HandleMenuSelection();
 			}
 
@@ -88,7 +89,6 @@ public class ZMMenuOptionController : MonoBehaviour {
 	}
 
 	void HandleResumeGameEvent() {
-		audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
 		ToggleActive(false);
 	}
 

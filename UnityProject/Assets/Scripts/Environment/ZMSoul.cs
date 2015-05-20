@@ -10,6 +10,7 @@ public class ZMSoul : MonoBehaviour {
 	public delegate void SoulDestroyedAction(ZMSoul soul); public static event SoulDestroyedAction SoulDestroyedEvent;
 
 	private bool _fadingIn;
+	private bool _playingSound;
 
 	void Awake () {
 		_playerInfo = GetComponent<ZMPlayerInfo>();
@@ -17,6 +18,26 @@ public class ZMSoul : MonoBehaviour {
 		ZMScoreController.MinScoreReached += HandleMinScoreReached;
 		ZMScoreController.CanScoreEvent += HandleCanScoreEvent;
 		ZMScoreController.StopScoreEvent += HandleStopScoreEvent;
+		ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
+		ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
+	}
+
+	void HandleResumeGameEvent ()
+	{
+		if (_playingSound) {
+			PlayLoop();
+		}
+	}
+
+	void HandlePauseGameEvent ()
+	{
+		StopLoop();
+
+		if (audio.isPlaying) {
+			_playingSound = true;
+		} else {
+			_playingSound = false;
+		}
 	}
 
 	void HandleStopScoreEvent (ZMScoreController scoreController)
@@ -38,6 +59,7 @@ public class ZMSoul : MonoBehaviour {
 		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 			if (SoulDestroyedEvent != null) {
 				SoulDestroyedEvent(this);
+				audio.Stop();
 			}
 		}
 	}
@@ -84,5 +106,6 @@ public class ZMSoul : MonoBehaviour {
 
 	private void StopLoop() {
 		_fadingIn = false;
+		_playingSound = false;
 	}
 }
