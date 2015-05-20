@@ -22,8 +22,7 @@ public class ZMAnalogMovement : MonoBehaviour {
 			enabled = false;
 		}
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		if (!_shouldBounce) {
 			_deltaPos = transform.position;
@@ -48,7 +47,7 @@ public class ZMAnalogMovement : MonoBehaviour {
 			normal = surfaceNormalHack.normal;
 			reflection = rigidbody2D.velocity - 2 * normal * (Vector2.Dot(rigidbody2D.velocity, normal));
 
-			rigidbody2D.velocity = reflection * bounce;
+			rigidbody2D.velocity = Vector2.ClampMagnitude(reflection * bounce, _movementSpeed * 6);
 
 			_shouldBounce = true;
 			Invoke("CancelBounce", 0.2f);
