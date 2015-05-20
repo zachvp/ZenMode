@@ -12,6 +12,8 @@ public class ZMLobbyRespawnController : MonoBehaviour {
 	{
 		int index = (int) playerController.PlayerInfo.playerTag;
 
+		playerController.DisablePlayer();
+
 		StartCoroutine(SpawnPlayer(index, playerController));
 	}
 

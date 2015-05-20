@@ -34,12 +34,19 @@ public class ZMHandlePlayerJoin : MonoBehaviour {
 	}
 
 	void Enable() {
-		Image image = gameObject.GetComponent<Image>();
+		Image image = GetComponent<Image>();
+		Text text = GetComponent<Text>();
 
 		gameObject.SetActive(true);
 
 		if (image != null) {
 			image.enabled = true;
+		}
+
+		if (text != null) {
+			Color visible = new Color(text.color.r, text.color.g, text.color.b, 1);
+
+			text.color = visible;
 		}
 	}
 }

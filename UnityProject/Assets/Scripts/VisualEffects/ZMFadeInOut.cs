@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class ZMFadeInOut : MonoBehaviour {
 	public bool startVisible = true;
-	public float maxAlpha = 1;
-	public float minAlpha = 0;
+	[Range (0.001f, 1.0f)] public float maxAlpha = 1;
+	[Range (0.001f, 1.0f)] public float minAlpha = 0;
 	public float fadeSpeed = 0.2f;
 
 	private Color _fadeColor;
@@ -20,7 +19,7 @@ public class ZMFadeInOut : MonoBehaviour {
 		_image = GetComponent<Image>();
 
 		_currentFrame = 0;
-		_fadeFrame = 5;
+		_fadeFrame = 2;
 
 		_fadeColor = _image.color;
 		_fadeColor.a = startVisible ? 1.0f : 0.0f;
@@ -35,7 +34,7 @@ public class ZMFadeInOut : MonoBehaviour {
 		if (_fadingIn) {
 			if (_fadeColor.a < maxAlpha) {
 				if (_currentFrame > _fadeFrame) {
-					_fadeColor.a += fadeSpeed * Time.deltaTime;
+					_fadeColor.a += (fadeSpeed * Time.deltaTime) / 10.0f;
 					_image.color = _fadeColor;
 
 					_currentFrame = 0;
@@ -48,7 +47,7 @@ public class ZMFadeInOut : MonoBehaviour {
 		} else {
 			if (_fadeColor.a > minAlpha) {
 				if (_currentFrame > _fadeFrame) {
-					_fadeColor.a -= fadeSpeed * Time.deltaTime;
+					_fadeColor.a -= (fadeSpeed * Time.deltaTime) / 10.0f;
 					_image.color = _fadeColor;
 					
 					_currentFrame = 0;
