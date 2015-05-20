@@ -9,12 +9,6 @@ public class ZMShrinkOrb : MonoBehaviour {
 	void Awake () {
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 		ZMWaypointMovement.AtPathNodeEvent += HandleAtPathNodeEvent;
-		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
-	}
-
-	void HandleStartInputEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
-	{
-		gameObject.SetActive(false);
 	}
 
 	void HandleAtPathNodeEvent (ZMWaypointMovement waypointMovement, int index)

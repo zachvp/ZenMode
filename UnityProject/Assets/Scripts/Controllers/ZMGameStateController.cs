@@ -25,6 +25,8 @@ public class ZMGameStateController : MonoBehaviour {
 	// constants
 	private const string kSpawnpointTag = "Spawnpoint";
 	private const string kPlayerTag 	= "Player";
+	
+	private Vector3 outputTextPositionUpOffset = new Vector3 (0, 109, 0);
 
 	private const float END_GAME_DELAY = 1.0f;
 	private const int MAX_PLAYERS = 4;
@@ -166,12 +168,10 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void HandleStartInputEvent (ZMPlayerInfo.PlayerTag playerTag)
 	{
-		if (_matchState == MatchState.PRE_MATCH) {
-			_matchState = MatchState.BEGIN_COUNTDOWN;
-		} else if (_gameState == GameState.PAUSE || _gameState == GameState.PAUSED) {
+		if (_gameState == GameState.PAUSE || _gameState == GameState.PAUSED) {
 			_gameState =  GameState.RESUME;
-		} else {
-			_pausedPlayer = (int)playerTag;
+		} else if (_matchState != MatchState.PRE_MATCH) {
+			_pausedPlayer = (int) playerTag;
 			_gameState = GameState.PAUSE;
 		}
 	}
@@ -258,6 +258,7 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	private void PauseGame() {
+		outputText.rectTransform.position = outputTextPositionUpOffset;
 		DisableGameObjects();
 
 		Time.timeScale = 0.0f;
