@@ -542,7 +542,7 @@ public class ZMPlayerController : MonoBehaviour
 		if (collider.CompareTag ("Grass")) {
 			collider.GetComponent<ZMGrassController>().GrassEnter();
 			if (IsPerformingLunge() || IsPerformingPlunge()) {
-				collider.GetComponent<ZMGrassController>().CutGrass();
+				collider.GetComponent<ZMGrassController>().CutGrass(_playerInfo);
 			}
 		}
 	}
@@ -677,7 +677,7 @@ public class ZMPlayerController : MonoBehaviour
 			}
 
 			// add the stat
-			ZMStatTracker.Instance.AddKill(_playerInfo);
+			ZMStatTracker.Instance.Kills.Add(_playerInfo);
 		}
 
 		ZMMetricsCollector collector = GetComponent<ZMMetricsCollector>();
