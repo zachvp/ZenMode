@@ -127,7 +127,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	void Start() 
 	{
-		kDeathStrings = new string[32];
+		kDeathStrings = new string[33];
 		kDeathStrings[0] = "OOOAHH";
 		kDeathStrings[1] = "WHOOOP";
 		kDeathStrings[2] = "AYYYEEH";
@@ -160,6 +160,7 @@ public class ZMPlayerController : MonoBehaviour
 		kDeathStrings[29] = "WAHH";
 		kDeathStrings[30] = "OOOOHHHH";
 		kDeathStrings[31] = "POW!";
+		kDeathStrings[32] = "YAAAS";
 	}
 
 	void FixedUpdate()
