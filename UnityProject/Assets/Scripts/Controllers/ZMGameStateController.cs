@@ -315,11 +315,12 @@ public class ZMGameStateController : MonoBehaviour {
 	}
 
 	void EndGame() {
+		outputText.rectTransform.position = outputTextPositionUpOffset;
 		outputText.text = _victoryMessage;
 
 		DisableGameObjects();
 
-		// Vulgar hacks
+		// Vulgar HACKS
 		RESUME_OPTION  = -1;
 		RESTART_OPTION = 0;
 		QUIT_OPTION    = 1;
