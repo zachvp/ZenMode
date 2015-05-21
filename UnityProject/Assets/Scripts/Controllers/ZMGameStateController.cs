@@ -29,7 +29,6 @@ public class ZMGameStateController : MonoBehaviour {
 	private Vector3 outputTextPositionUpOffset = new Vector3 (0, 109, 0);
 
 	private const float END_GAME_DELAY = 1.0f;
-	private const int MAX_PLAYERS = 4;
 
 	// delegates
 	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, ZMPlayerController spawnObject); public static event SpawnObjectAction SpawnObjectEvent;
@@ -53,9 +52,9 @@ public class ZMGameStateController : MonoBehaviour {
 		_matchState = MatchState.PRE_MATCH;
 		_gameState  = GameState.NEUTRAL;
 		_spawnpoints = new List<Transform>();
-		_objectsToSpawn = new Queue<ZMPlayerController>(MAX_PLAYERS);
-		_players =  new List<ZMPlayerController>(MAX_PLAYERS);
-		_scoreControllers = new List<ZMScoreController>(MAX_PLAYERS);
+		_objectsToSpawn = new Queue<ZMPlayerController>(ZMPlayerManager.MAX_PLAYERS);
+		_players =  new List<ZMPlayerController>(ZMPlayerManager.MAX_PLAYERS);
+		_scoreControllers = new List<ZMScoreController>(ZMPlayerManager.MAX_PLAYERS);
 
 		// Add delegate handlers
 		ZMPlayerController.PlayerDeathEvent += RespawnObject;
@@ -154,11 +153,12 @@ public class ZMGameStateController : MonoBehaviour {
 	void HandleSelectQuitEvent ()
 	{
 		Time.timeScale = 1.0f;
-		Application.LoadLevel(ZMSceneIndexList.INDEX_LOBBY);
 
 		if (QuitMatchEvent != null) {
 			QuitMatchEvent();
 		}
+
+		Application.LoadLevel(ZMSceneIndexList.INDEX_LOBBY);
 	}
 
 	void HandleSelectRestartEvent ()

@@ -1,27 +1,25 @@
 ﻿using UnityEngine;
-using System.Collections;
+using ZMPlayer;
 
 public class ZMPlayerManager : MonoBehaviour {
 	public bool debug = false;
 	public int debugPlayerCount = 2;
 
-	private enum State { NONE, LOBBY, STAGE };
+	public const int MAX_PLAYERS = 4;
 
-	private static State _state;
+	private enum State { NONE, LOBBY, STAGE }; private static State _state;
 	private static int _playerCount; public static int PlayerCount { get { return _playerCount; } }
+	private static GameObject[] _players; public static GameObject[] Players { get { return _players; } }
+
 	private bool[] _readiedPlayers;
 
 	// stats
 	private static int[] _playerKills; public static int[] PlayerKills { get { return _playerKills; } }
 	
 	void Awake () {
-		if (_readiedPlayers == null) {
-			_readiedPlayers = new bool[4];
-		}
-
-		if (_playerKills == null) {
-			_playerKills = new int[4];
-		}
+		if (_readiedPlayers == null) { _readiedPlayers = new bool[MAX_PLAYERS]; }
+		if (_playerKills == null) { _playerKills = new int[MAX_PLAYERS]; }
+		if (_players == null) { _players = new GameObject[MAX_PLAYERS]; }
 
 		switch(_state) {
 			case State.NONE:  {
@@ -51,6 +49,16 @@ public class ZMPlayerManager : MonoBehaviour {
 		}
 
 		DontDestroyOnLoad(gameObject);
+	}
+
+	void Start() {
+		GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
+
+		for (int i = 0; i < MAX_PLAYERS; ++i) {
+			ZMPlayerInfo playerInfo = playerObjects[i].GetComponent<ZMPlayerInfo>();
+
+			_players[(int) playerInfo.playerTag] = playerObjects[i];
+		}
 	}
 
 	void HandlePlayerKillEvent (ZMPlayerController killer)

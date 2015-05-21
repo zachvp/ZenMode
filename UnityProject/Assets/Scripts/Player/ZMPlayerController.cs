@@ -675,6 +675,9 @@ public class ZMPlayerController : MonoBehaviour
 			if (PlayerDeathEvent != null) {
 				PlayerDeathEvent(playerController);
 			}
+
+			// add the stat
+			ZMStatTracker.Instance.AddKill(_playerInfo);
 		}
 
 		ZMMetricsCollector collector = GetComponent<ZMMetricsCollector>();
