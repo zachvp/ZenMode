@@ -52,7 +52,7 @@ namespace ZMPlayer {
 
 		void Update () {
 			// Handle horizontal movement.
-			if (_inputEnabled) {
+			//if (_inputEnabled) {
 				if (InputManager.Devices[_playerNumber].LeftStickX > 0.5f) {
 					if (MoveRightEvent != null) {
 						MoveRightEvent(this);
@@ -92,7 +92,7 @@ namespace ZMPlayer {
 						PlungeEvent(this);
 					}
 				}
-			}
+			//}
 		}
 
 		void OnDestroy() {

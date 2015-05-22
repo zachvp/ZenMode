@@ -3,36 +3,78 @@ using UnityEngine.UI;
 using ZMPlayer;
 
 public class ZMFadeIn : MonoBehaviour {
-	public Image fadedImage;
+	public enum FadeMode { FADE_IN, FADE_OUT }; public FadeMode fadeMode;
 	public float interval = 0.2f;
-	public float transitionUpperLimit = 100.0f;
+	public float fadeLimit = 100.0f;
+
+	// members
+	private bool _fading;
 
 	// delegates
-	public delegate void MaxFadeAction(); public static event MaxFadeAction MaxFadeEvent;
+	public delegate void FadeLimitAction(); public static event FadeLimitAction FadeLimitEvent;
 
-	// Use this for initialization
+	// references
+	private MaskableGraphic _maskableGraphic;
+
+	void Awake() {
+		Color baseColor;
+
+		_fading = true;
+		_maskableGraphic = GetComponent<MaskableGraphic>();
+
+		if (_maskableGraphic == null) {
+			Debug.Log(gameObject.name + ": No maskable graphic attached!");
+		}
+
+		baseColor = new Color(_maskableGraphic.color.r, _maskableGraphic.color.g, _maskableGraphic.color.b, 1);
+		_maskableGraphic.color = baseColor;
+	}
+
 	void Start () {
-		Color newcolor = fadedImage.color;
-		newcolor.a = 0;
+		Color newcolor = _maskableGraphic.color;
 
-		fadedImage.color = newcolor;
+		if (fadeMode == FadeMode.FADE_IN) { 
+			newcolor.a = 0;
+		}
+
+		_maskableGraphic.color = newcolor;
 	}
 
 	void OnDestroy() {
-		MaxFadeEvent = null;
+		FadeLimitEvent = null;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		Color newcolor = fadedImage.color;
+		Color newcolor = _maskableGraphic.color;
 
-		newcolor.a += interval;
-		fadedImage.color += newcolor * Time.deltaTime;
+		if (fadeMode == FadeMode.FADE_IN) {
+			newcolor.a += interval;
+			_maskableGraphic.color += newcolor * Time.deltaTime;
 
-		if (fadedImage.color.a >= transitionUpperLimit) {
-			if (MaxFadeEvent != null) {
-				MaxFadeEvent();
+			if (_maskableGraphic.color.a >= fadeLimit) {
+				_fading = false;
+
+				if (FadeLimitEvent != null) {
+					FadeLimitEvent();
+				}
 			}
+		} else {
+			newcolor.a -= interval * Time.deltaTime;
+			_maskableGraphic.color = newcolor ;
+			
+			if (_maskableGraphic.color.a <= fadeLimit) {
+				_fading = false;
+				Destroy(gameObject);
+
+				if (FadeLimitEvent != null) {
+					FadeLimitEvent();
+				}
+			}
+		}
+
+		if (!_fading) {
+			enabled = false;
 		}
 	}
 }
