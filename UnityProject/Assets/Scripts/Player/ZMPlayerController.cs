@@ -19,7 +19,8 @@ public class ZMPlayerController : MonoBehaviour
 	private float WALL_JUMP_KICK_SPEED = 500.0f;
 	private float EDGE_OFFSET = 16.0f;
 	private float AOE_RANGE = 32.0f;
-	private float PARRY_TIME = 0.30f;
+	private float PARRY_TIME_LUNGE = 0.30f;
+	private float PARRY_TIME = 0.5f;
 	private float PARRY_TIME_AIR = 0.10f;
 	private float runSpeed = 0.0f;
 
@@ -46,8 +47,8 @@ public class ZMPlayerController : MonoBehaviour
 	// Player states.
 	private enum MovementDirectionState { FACING_LEFT, FACING_RIGHT };
 	private enum ControlMoveState 		{ NEUTRAL, MOVING };
-	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACK, ATTACKING, WALL_JUMPING, PLUNGE, PLUNGING };
-	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING_AIR, LUNGING_GROUND, WALL_SLIDE, RECOIL, RECOILING, DISABLE, DISABLED, PARRY_LUNGE, PARRY_PLUNGE, RESPAWN, ELIMINATED };
+	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACK, ATTACKING, WALL_JUMPING, PLUNGE, PLUNGING, PARRY, PARRYING };
+	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING_AIR, LUNGING_GROUND, WALL_SLIDE, RECOIL, RECOILING, DISABLE, DISABLED, PARRY_FACING, PARRY_AOE, RESPAWN, ELIMINATED };
 	private enum AbilityState 			{ NEUTRAL, SHOOTING };
 
 	private ControlMoveState _controlMoveState;
@@ -65,6 +66,7 @@ public class ZMPlayerController : MonoBehaviour
 	// Methods.
 	private const string kMethodNameEnablePlayer  			= "EnablePlayer";
 	private const string kMethodNameEndLunge 	  			= "EndLunge";
+	private const string kEndParryMethodName				= "EndParry";
 	private const string kGameStateControllerName 			= "GameController";
 	private const string kRespawnMethodName 	  			= "Respawn";
 
@@ -99,12 +101,16 @@ public class ZMPlayerController : MonoBehaviour
 	public delegate void PlayerRecoilAction(); public static event PlayerRecoilAction PlayerRecoilEvent;
 	public delegate void PlayerLandPlungeAction(); public static event PlayerLandPlungeAction PlayerLandPlungeEvent;
 
+	// Debug
+	SpriteRenderer _spriteRenderer;
+
 	void Awake()
 	{
 		_moveModState = MoveModState.NEUTRAL;
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_animator = GetComponent<Animator>();
 		_controller = GetComponent<CharacterController2D>();
+		_spriteRenderer = GetComponent<SpriteRenderer>();
 		_canLunge = true;
 		_canWallJump = true;
 
@@ -257,8 +263,18 @@ public class ZMPlayerController : MonoBehaviour
 				audio.PlayOneShot(_audioPlunge[Random.Range (0, _audioPlunge.Length)]);
 				_moveModState = MoveModState.PLUNGE;
 			}
-		}
-		else if (IsTouchingEitherSide()) {
+		} else if (_controlModState == ControlModState.PARRY) {
+			// ZVP
+			_spriteRenderer.color = Color.yellow;
+			_controlModState = ControlModState.PARRYING;
+			_moveModState = MoveModState.PARRY_FACING;
+
+			_canLunge = false;
+			runSpeed = 0;
+			DisablePlayer();
+
+			Invoke(kEndParryMethodName, PARRY_TIME);
+		} else if (IsTouchingEitherSide()) {
 			if (!_controller.isGrounded && _moveModState == MoveModState.NEUTRAL) {
 				_moveModState = MoveModState.WALL_SLIDE;
 			}
@@ -293,11 +309,11 @@ public class ZMPlayerController : MonoBehaviour
 					}
 				}
 
-				_moveModState = MoveModState.PARRY_PLUNGE;
+				_moveModState = MoveModState.PARRY_AOE;
 				DisablePlayer();
 
-				Invoke(kMethodNameEnablePlayer, PARRY_TIME);
-				Invoke("ResetControlModState", PARRY_TIME + 0.02f);
+				Invoke(kMethodNameEnablePlayer, PARRY_TIME_LUNGE);
+				Invoke("ResetControlModState", PARRY_TIME_LUNGE + 0.02f);
 			}
 		} else if (_moveModState == MoveModState.LUNGE) {
 			_moveModState = _controller.isGrounded ? MoveModState.LUNGING_GROUND : MoveModState.LUNGING_AIR;
@@ -401,7 +417,7 @@ public class ZMPlayerController : MonoBehaviour
 		_animator.SetBool ("isGrounded", _controller.isGrounded);
 		_animator.SetBool ("isPlunging", IsPerformingPlunge());
 		_animator.SetBool ("isLunging", IsPerformingLunge());
-		_animator.SetBool ("isParrying", _moveModState == MoveModState.PARRY_PLUNGE);
+		_animator.SetBool ("isParrying", _moveModState == MoveModState.PARRY_AOE);
 		_animator.SetBool ("isNeutral", _moveModState == MoveModState.NEUTRAL);
 		_animator.SetFloat ("velocityY", _velocity.y);
 	}
@@ -426,7 +442,7 @@ public class ZMPlayerController : MonoBehaviour
 		PlayerLandPlungeEvent = null;
 	}
 	
-	// Event handling
+	// Event handling - CCONTROL
 	private void MoveRightEvent (ZMPlayerInputController inputController) {
 		if (inputController.PlayerInfo.Equals(_playerInfo) && enabled) {
 			_controlMoveState = ControlMoveState.MOVING;
@@ -485,8 +501,12 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void PlungeEvent(ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsAttacking() && !_controller.isGrounded && _moveModState != MoveModState.RESPAWN) {
-			_controlModState = ControlModState.PLUNGE;
+		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsAttacking() && _moveModState != MoveModState.RESPAWN) {
+			if (!_controller.isGrounded) {
+				_controlModState = ControlModState.PLUNGE;
+			} else if (_velocity.x < RUN_SPEED_MAX && !IsParrying()) {
+				_controlModState = ControlModState.PARRY;
+			}
 		}
 	}
 
@@ -518,9 +538,9 @@ public class ZMPlayerController : MonoBehaviour
 								CancelInvoke(kMethodNameEndLunge);
 								_moveModState = MoveModState.RECOIL;
 							}
-						} else if (otherPlayer._moveModState == MoveModState.PARRY_LUNGE && IsOpposingDirection(otherPlayer)) {
+						} else if (otherPlayer._moveModState == MoveModState.PARRY_FACING && IsOpposingDirection(otherPlayer)) {
 							_moveModState = MoveModState.RECOIL;
-						} else if (otherPlayer._moveModState == MoveModState.PARRY_PLUNGE) {
+						} else if (otherPlayer._moveModState == MoveModState.PARRY_AOE) {
 							_moveModState = MoveModState.RECOIL;
 						} else {
 							_playerInPath = false;
@@ -753,14 +773,24 @@ public class ZMPlayerController : MonoBehaviour
 		runSpeed = 0;
 		_playerInPath = false;
 
-		float lagTime = (_moveModState == MoveModState.LUNGING_AIR ? PARRY_TIME_AIR : PARRY_TIME);
-		_moveModState = MoveModState.PARRY_LUNGE;
+		float lagTime = (_moveModState == MoveModState.LUNGING_AIR ? PARRY_TIME_AIR : PARRY_TIME_LUNGE);
+		_moveModState = MoveModState.PARRY_FACING;
 		Invoke(kMethodNameEnablePlayer, lagTime);
 
 		// Set a cooldown before we can lunge again.
 		Invoke ("LungeCooldown", lagTime);
 		_canLunge = false;
 		DisablePlayer();
+	}
+
+	private void EndParry() {
+		// ZVP
+		_moveModState = MoveModState.NEUTRAL;
+		_controlModState = ControlModState.NEUTRAL;
+		_spriteRenderer.color = Color.black;
+		_canLunge = true;
+
+		EnablePlayer();
 	}
 
 	private RaycastHit2D CheckLeft(float distance, LayerMask mask) {
@@ -831,6 +861,8 @@ public class ZMPlayerController : MonoBehaviour
 		return _moveModState == MoveModState.RECOIL || _moveModState == MoveModState.RECOILING;
 	}
 
+	private bool IsParrying() { return _moveModState == MoveModState.PARRY_FACING || _moveModState == MoveModState.PARRY_AOE; }
+
 	private bool IsAbleToKill() {
 		return IsPerformingLunge() || IsPerformingPlunge();
 	}
@@ -853,7 +885,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	private bool ShouldEnable() {
 		return !_controller.isGrounded && !IsPerformingPlunge() && !IsRecoiling() && !IsPerformingLunge()
-			   && _moveModState != MoveModState.PARRY_LUNGE && _moveModState != MoveModState.PARRY_PLUNGE;;
+			   && _moveModState != MoveModState.PARRY_FACING && _moveModState != MoveModState.PARRY_AOE;;
 	}
 
 	private bool ShouldRecoilWithPlayer(ZMPlayerController other) {
