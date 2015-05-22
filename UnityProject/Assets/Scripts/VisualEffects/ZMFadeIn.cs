@@ -4,7 +4,7 @@ using ZMPlayer;
 
 public class ZMFadeIn : MonoBehaviour {
 	public enum FadeMode { FADE_IN, FADE_OUT }; public FadeMode fadeMode;
-	public float interval = 0.2f;
+	public float interval = 1;
 	public float fadeLimit = 100.0f;
 
 	// members
