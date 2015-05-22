@@ -27,6 +27,7 @@ public class ZMPlayerManager : MonoBehaviour {
 
 				_playerCount = 0;
 				ZMLobbyController.PlayerReadyEvent += HandlePlayerReadyEvent;
+				ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
 				ZMPlayerController.PlayerKillEvent += HandlePlayerKillEvent;
 				break;
 			}
@@ -51,14 +52,13 @@ public class ZMPlayerManager : MonoBehaviour {
 		DontDestroyOnLoad(gameObject);
 	}
 
+	void HandlePlayerJoinedEvent (ZMPlayerInfo.PlayerTag playerTag)
+	{
+		FetchPlayers();
+	}
+
 	void Start() {
-		GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
-
-		for (int i = 0; i < MAX_PLAYERS; ++i) {
-			ZMPlayerInfo playerInfo = playerObjects[i].GetComponent<ZMPlayerInfo>();
-
-			_players[(int) playerInfo.playerTag] = playerObjects[i];
-		}
+		FetchPlayers();
 	}
 
 	void HandlePlayerKillEvent (ZMPlayerController killer)
@@ -83,5 +83,16 @@ public class ZMPlayerManager : MonoBehaviour {
 
 	void HandlePlayerReadyEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag) {
 		_playerCount += 1;
+	}
+
+	private void FetchPlayers() {
+		GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
+		
+		if (playerObjects.Length > 0) {
+			for (int i = 0; i < playerObjects.Length; ++i) {
+				ZMPlayerInfo playerInfo = playerObjects[i].GetComponent<ZMPlayerInfo>();
+				_players[(int) playerInfo.playerTag] = playerObjects[i];
+			}
+		}
 	}
 }

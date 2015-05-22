@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using ZMPlayer;
 
 public class ZMLobbyController : MonoBehaviour {
-	public delegate void PlayerJoinedAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag); public static event PlayerJoinedAction PlayerJoinedEvent;
-	public delegate void PlayerReadyAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag); public static event PlayerReadyAction PlayerReadyEvent;
+	public delegate void PlayerJoinedAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerJoinedAction PlayerJoinedEvent;
+	public delegate void PlayerReadyAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerReadyAction PlayerReadyEvent;
 	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
 	
 	private int _requiredPlayerCount;
