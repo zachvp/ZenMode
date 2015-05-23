@@ -32,7 +32,7 @@ public class ZMLobbyController : MonoBehaviour {
 		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
 
 		ZMGameInputManager.StartInputEvent		+= HandleStartInputEvent;
-		ZMGameInputManager.AnyButtonEvent 		+= HandleMainInputEvent;
+		ZMGameInputManager.AnyInputEvent 		+= HandleMainInputEvent;
 		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
 	}
 

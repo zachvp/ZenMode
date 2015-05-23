@@ -8,7 +8,7 @@ public class ZMPauseOutput : MonoBehaviour {
 	void Awake () {
 		text.enabled = false;
 
-		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
+		ZMLobbyController.PauseGameEvent += HandlePauseGameEvent;
 		ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
 	}
 
@@ -17,9 +17,9 @@ public class ZMPauseOutput : MonoBehaviour {
 		text.enabled = false;
 	}
 
-	void HandleStartInputEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
+	void HandlePauseGameEvent (int playerIndex)
 	{
-		text.text = "P" + ((int) playerTag + 1) + " PAUSED";
+		text.text = "P" + (playerIndex + 1) + " PAUSED";
 		text.enabled = true;
 	}
 }
