@@ -4,10 +4,6 @@ using InControl;
 
 namespace ZMPlayer {
 	public class ZMPlayerInputController : MonoBehaviour {
-
-		// Input control.
-		private bool _inputEnabled;
-
 		// Player info.
 		public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 		private ZMPlayerInfo _playerInfo;	
@@ -28,30 +24,21 @@ namespace ZMPlayer {
 			playerInfoString = _playerInfo.playerTag.ToString ();
 			_playerNumber = int.Parse (playerInfoString.Substring (playerInfoString.Length - 1)) - 1;
 
-			ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
-			ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
-			ZMGameStateController.GameEndEvent += HandleGameEndEvent;
-			ZMGameStateController.QuitMatchEvent += HandleQuitMatchEvent;
+			if (Application.loadedLevel > 1) {
+				ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
+				ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
+				ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+				ZMGameStateController.QuitMatchEvent += HandleQuitMatchEvent;
+			}
 		}
 
-		void HandleQuitMatchEvent ()
-		{
-			enabled = true;
-		}
-
-		void HandleGameEndEvent ()
-		{
-			enabled = false;
-		}
-
-		void HandleResumeGameEvent ()
-		{
-			enabled = true;
-		}
-
-		void HandlePauseGameEvent ()
-		{
-			enabled = false;
+		void OnDestroy() {
+			MoveRightEvent = null;
+			MoveLeftEvent  = null;
+			NoMoveEvent	   = null;
+			JumpEvent	   = null;
+			AttackEvent	   = null;
+			PlungeEvent    = null;
 		}
 
 		void Update () {
@@ -97,13 +84,24 @@ namespace ZMPlayer {
 			}
 		}
 
-		void OnDestroy() {
-			MoveRightEvent = null;
-			MoveLeftEvent  = null;
-			NoMoveEvent	   = null;
-			JumpEvent	   = null;
-			AttackEvent	   = null;
-			PlungeEvent    = null;
+		void HandleQuitMatchEvent ()
+		{
+			enabled = true;
+		}
+		
+		void HandleGameEndEvent ()
+		{
+			enabled = false;
+		}
+		
+		void HandleResumeGameEvent ()
+		{
+			enabled = true;
+		}
+		
+		void HandlePauseGameEvent ()
+		{
+			enabled = false;
 		}
 	}
 }

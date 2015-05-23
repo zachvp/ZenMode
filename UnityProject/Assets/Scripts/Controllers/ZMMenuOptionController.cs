@@ -30,10 +30,13 @@ public class ZMMenuOptionController : MonoBehaviour {
 		_optionsSize = menuOptions.Length;
 		_inputEnabled = true;
 
-		ZMGameStateController.PauseGameEvent  += HandlePauseGameEvent;
-		ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
-		ZMGameStateController.GameEndEvent 	  += HandleGameEndEvent;
-		ZMLobbyController.PauseGameEvent 	  += ShowMenu;
+		if (Application.loadedLevel > 1) {
+			ZMGameStateController.PauseGameEvent  += HandlePauseGameEvent;
+			ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
+			ZMGameStateController.GameEndEvent 	  += HandleGameEndEvent;
+		} else if (Application.loadedLevel == 1) {
+			ZMLobbyController.PauseGameEvent 	  += ShowMenu;
+		}
 
 		ToggleActive(startActive);
 		UpdateUI();
@@ -45,7 +48,6 @@ public class ZMMenuOptionController : MonoBehaviour {
 		ZMGameStateController.PauseGameEvent  -= ShowMenu;
 		ZMGameStateController.ResumeGameEvent -= HandleResumeGameEvent;
 		ZMGameStateController.GameEndEvent    -= HandleGameEndEvent;
-		ZMLobbyController.PauseGameEvent 	  -= ShowMenu;
 	}
 
 	void Update() {

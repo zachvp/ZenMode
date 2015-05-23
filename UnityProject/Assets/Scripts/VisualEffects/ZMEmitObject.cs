@@ -26,4 +26,8 @@ public class ZMEmitObject : MonoBehaviour {
 
 		_currentFrame += 1;
 	}
+
+	void OnDestroy() {
+		Resources.UnloadUnusedAssets();
+	}
 }
