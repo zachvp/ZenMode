@@ -24,8 +24,6 @@ namespace ZMPlayer {
 		void Awake () {
 			string playerInfoString;
 
-			_inputEnabled = true;
-
 			_playerInfo = GetComponent<ZMPlayerInfo> ();
 			playerInfoString = _playerInfo.playerTag.ToString ();
 			_playerNumber = int.Parse (playerInfoString.Substring (playerInfoString.Length - 1)) - 1;
@@ -33,66 +31,70 @@ namespace ZMPlayer {
 			ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
 			ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 			ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+			ZMGameStateController.QuitMatchEvent += HandleQuitMatchEvent;
+		}
+
+		void HandleQuitMatchEvent ()
+		{
+			enabled = true;
 		}
 
 		void HandleGameEndEvent ()
 		{
-			_inputEnabled = false;
+			enabled = false;
 		}
 
 		void HandleResumeGameEvent ()
 		{
-			_inputEnabled = true;
+			enabled = true;
 		}
 
 		void HandlePauseGameEvent ()
 		{
-			_inputEnabled = false;
+			enabled = false;
 		}
 
 		void Update () {
 			// Handle horizontal movement.
-			//if (_inputEnabled) {
-				if (InputManager.Devices[_playerNumber].LeftStickX > 0.5f) {
-					if (MoveRightEvent != null) {
-						MoveRightEvent(this);
-					}
-				} else if (InputManager.Devices[_playerNumber].LeftStickX < -0.5f) {
-					if (MoveLeftEvent != null) {
-						MoveLeftEvent(this);
-					}
-				} else {
-					if (NoMoveEvent != null) {
-						NoMoveEvent(this);
-					}
+			if (InputManager.Devices[_playerNumber].LeftStickX > 0.5f) {
+				if (MoveRightEvent != null) {
+					MoveRightEvent(this);
 				}
+			} else if (InputManager.Devices[_playerNumber].LeftStickX < -0.5f) {
+				if (MoveLeftEvent != null) {
+					MoveLeftEvent(this);
+				}
+			} else {
+				if (NoMoveEvent != null) {
+					NoMoveEvent(this);
+				}
+			}
 
-				// Handle jumping.
-				if (InputManager.Devices[_playerNumber].Action1.WasPressed) {
-					if (JumpEvent != null) {
-						JumpEvent(this);
-						InputManager.Devices[_playerNumber].Vibrate(0.5f);
-					}
+			// Handle jumping.
+			if (InputManager.Devices[_playerNumber].Action1.WasPressed) {
+				if (JumpEvent != null) {
+					JumpEvent(this);
+					InputManager.Devices[_playerNumber].Vibrate(0.5f);
 				}
+			}
 
-				// Handle attacking.
-				if (InputManager.Devices[_playerNumber].Action2.WasPressed || 
-				    InputManager.Devices[_playerNumber].LeftBumper.WasPressed || 
-				    InputManager.Devices[_playerNumber].RightBumper.WasPressed) {
-					if (AttackEvent != null) {
-						AttackEvent(this);
-					}
+			// Handle attacking.
+			if (InputManager.Devices[_playerNumber].Action2.WasPressed || 
+			    InputManager.Devices[_playerNumber].LeftBumper.WasPressed || 
+			    InputManager.Devices[_playerNumber].RightBumper.WasPressed) {
+				if (AttackEvent != null) {
+					AttackEvent(this);
 				}
+			}
 
-				// Handle plunging.
-				if (InputManager.Devices[_playerNumber].LeftTrigger.WasPressed ||
-				    InputManager.Devices[_playerNumber].RightTrigger.WasPressed ||
-				    InputManager.Devices[_playerNumber].Action3.WasPressed) {
-					if (PlungeEvent != null) {
-						PlungeEvent(this);
-					}
+			// Handle plunging.
+			if (InputManager.Devices[_playerNumber].LeftTrigger.WasPressed ||
+			    InputManager.Devices[_playerNumber].RightTrigger.WasPressed ||
+			    InputManager.Devices[_playerNumber].Action3.WasPressed) {
+				if (PlungeEvent != null) {
+					PlungeEvent(this);
 				}
-			//}
+			}
 		}
 
 		void OnDestroy() {

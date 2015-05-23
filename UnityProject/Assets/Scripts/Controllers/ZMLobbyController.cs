@@ -39,6 +39,8 @@ public class ZMLobbyController : MonoBehaviour {
 	}
 
 	void HandleSelectOptionEvent(int optionIndex) {
+		Time.timeScale = 1;
+
 		switch(optionIndex) {
 			case RESUME_OPTION: {
 				HandleSelectResumeEvent();
@@ -54,7 +56,7 @@ public class ZMLobbyController : MonoBehaviour {
 
 	void HandleSelectQuitEvent ()
 	{
-		Application.LoadLevel(1);
+		Application.LoadLevel(0);
 	}
 
 	void HandleMainInputEvent (ZMPlayerInfo.PlayerTag playerTag)
@@ -75,7 +77,6 @@ public class ZMLobbyController : MonoBehaviour {
 
 	void HandleSelectResumeEvent ()
 	{
-		Time.timeScale = 1;
 		_paused = false;
 	}
 
