@@ -19,7 +19,7 @@ public class ZMGrowShrink : MonoBehaviour {
 	}
 
 	void Start() {
-		_baseScale = transform.localScale;
+		_baseScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
 	}
 	
 	// Update is called once per frame
