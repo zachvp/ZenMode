@@ -98,7 +98,7 @@ public class ZMPlayerController : MonoBehaviour
 	public delegate void PlayerDeathAction(ZMPlayerController playerController); public static event PlayerDeathAction PlayerDeathEvent;
 	public delegate void PlayerRespawnAction(ZMPlayerController playerController); public static event PlayerRespawnAction PlayerRespawnEvent;
 //	public delegate void PlayerEliminatedAction(ZMPlayerController playerController); public static event PlayerEliminatedAction PlayerEliminatedEvent;
-	public delegate void PlayerRecoilAction(); public static event PlayerRecoilAction PlayerRecoilEvent;
+	public delegate void PlayerRecoilAction(ZMPlayerController playerController); public static event PlayerRecoilAction PlayerRecoilEvent;
 	public delegate void PlayerLandPlungeAction(); public static event PlayerLandPlungeAction PlayerLandPlungeEvent;
 
 	// Debug
@@ -346,10 +346,6 @@ public class ZMPlayerController : MonoBehaviour
 			audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 			Instantiate(_effectClashObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 			_moveModState = MoveModState.RECOILING;
-
-			if (PlayerRecoilEvent != null) {
-				PlayerRecoilEvent();
-			}
 
 			if (IsInvoking(kMethodNameEndLunge)) CancelInvoke(kMethodNameEndLunge);
 
@@ -746,13 +742,10 @@ public class ZMPlayerController : MonoBehaviour
 		} else if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
 			runSpeed = -recoilSpeed;
 		}
-	}
 
-	private void Recoil(MovementDirectionState direction)
-	{
-		float recoilSpeed = 700f;
-		_velocity.y = JUMP_HEIGHT / 2.0f;
-		runSpeed = recoilSpeed * (direction == MovementDirectionState.FACING_LEFT ? 1 : -1);
+		if (PlayerRecoilEvent != null) {
+			PlayerRecoilEvent(this);
+		}
 	}
 
 

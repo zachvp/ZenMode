@@ -9,6 +9,8 @@ namespace ZMPlayer {
 		private ZMPlayerInfo _playerInfo;	
 		private int _playerNumber;
 
+		private const float RECOIL_DISABLE_TIME = 1f;
+
 		// Delegates.
 		public delegate void MoveRightAction(ZMPlayerInputController playerInputController); 	public static event MoveRightAction MoveRightEvent;
 		public delegate void MoveLeftAction(ZMPlayerInputController playerInputController);		public static event MoveRightAction MoveLeftEvent;
@@ -29,6 +31,16 @@ namespace ZMPlayer {
 				ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 				ZMGameStateController.GameEndEvent += HandleGameEndEvent;
 				ZMGameStateController.QuitMatchEvent += HandleQuitMatchEvent;
+				ZMPlayerController.PlayerRecoilEvent += HandlePlayerRecoilEvent;
+			}
+		}
+
+		void HandlePlayerRecoilEvent (ZMPlayerController playerController)
+		{
+			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+				enabled = false;
+
+				Invoke("Enable", RECOIL_DISABLE_TIME);
 			}
 		}
 
@@ -102,6 +114,10 @@ namespace ZMPlayer {
 		void HandlePauseGameEvent ()
 		{
 			enabled = false;
+		}
+
+		void Enable() {
+			enabled = true;
 		}
 	}
 }
