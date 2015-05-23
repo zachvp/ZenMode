@@ -6,6 +6,7 @@ using UnityEngine.UI;
 namespace ZMPlayer{
 	public class ZMScoreController : MonoBehaviour {
 		public Slider scoreBar;
+		public GameObject zenTextEmitter;
 
 		private const float SCORE_RATE = 0.5f;
 		private const float MAX_SCORE = 1000.0f;
