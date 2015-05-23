@@ -10,6 +10,8 @@ GameObject:
   - 4: {fileID: 416154}
   - 114: {fileID: 11416146}
   - 114: {fileID: 11416154}
+  - 114: {fileID: 11468428}
+  - 114: {fileID: 11468426}
   m_Layer: 0
   m_Name: ZenTextEmitter
   m_TagString: Untagged
@@ -60,7 +62,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b42fb856883d49c597051cff695890f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  emitObject: {fileID: 165862, guid: c441f9a1e14f84c95add8857a86ad213, type: 2}
+  resourcePath: ZenGainText
+  color: {r: .269968241, g: .808823526, b: .0356833749, a: 1}
   interval: 10
 --- !u!114 &11416148
 MonoBehaviour:
@@ -128,6 +131,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parent: {fileID: 0}
   offset: {x: 16, y: 4, z: 0}
+--- !u!114 &11468426
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 116152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e950e28a513cd540881118fcdedf4f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTag: 0
+--- !u!114 &11468428
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 116152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46ded82070e0e4509bbd8c9ca2cffeef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeOnScore: 1
 --- !u!222 &22216154
 CanvasRenderer:
   m_ObjectHideFlags: 1
