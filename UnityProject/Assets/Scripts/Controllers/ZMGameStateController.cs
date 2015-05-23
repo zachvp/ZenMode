@@ -14,6 +14,8 @@ public class ZMGameStateController : MonoBehaviour {
 	private enum MatchState { PRE_MATCH, BEGIN_COUNTDOWN, MATCH, POST_MATCH };
 	private MatchState _matchState;
 
+	private int _winningPlayerIndex;
+
 	// references
 	private List<Transform> _spawnpoints;
 	private int _pausedPlayer;
@@ -226,6 +228,7 @@ public class ZMGameStateController : MonoBehaviour {
 
 	private void HandleMaxScoreReached(ZMScoreController scoreController) {
 		_matchState = MatchState.POST_MATCH;
+		_winningPlayerIndex = (int) scoreController.PlayerInfo.playerTag;
 	}
 
 	// Private methods
@@ -324,6 +327,12 @@ public class ZMGameStateController : MonoBehaviour {
 		RESUME_OPTION  = -1;
 		RESTART_OPTION = 0;
 		QUIT_OPTION    = 1;
+
+		for (int i = 0; i < _playerCount; ++i) {
+			if (i != _winningPlayerIndex) {
+				_players[i].gameObject.SetActive(false);
+			}
+		}
 		
 		if (GameEndEvent != null && !_firedGameEndEvent) {
 			_firedGameEndEvent = true;

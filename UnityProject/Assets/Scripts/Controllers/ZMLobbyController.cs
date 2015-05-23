@@ -5,20 +5,23 @@ using ZMPlayer;
 public class ZMLobbyController : MonoBehaviour {
 	public delegate void PlayerJoinedAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerJoinedAction PlayerJoinedEvent;
 	public delegate void PlayerReadyAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerReadyAction PlayerReadyEvent;
-	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
+	public delegate void PauseGameAction(int playerIndex); public static event PauseGameAction PauseGameEvent;
 	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
+	public delegate void DropOutAction(); public static event DropOutAction DropOutEvent;
 	
 	private int _requiredPlayerCount;
 	private int _currentJoinCount; // i.e. how many  have pressed a button to join
 	private int _currentReadyCount; // i.e. how many have actually readied up
 
 	private bool _paused;
+	int _playerPauseIndex;
 
 	private bool[] _joinedPlayers;
 
 	// pause menu options
-	private const int RESUME_OPTION = 0;
-	private const int QUIT_OPTION = 1;
+	private const int RESUME_OPTION   = 0;
+	private const int DROP_OUT_OPTION = 1;
+	private const int QUIT_OPTION 	  = 2;
 
 	void Awake() {
 		_currentJoinCount = 0;
@@ -38,6 +41,7 @@ public class ZMLobbyController : MonoBehaviour {
 		PauseGameEvent    = null;
 		PlayerReadyEvent  = null;
 		ResumeGameEvent	  = null;
+		DropOutEvent	  = null;
 	}
 
 	void HandleSelectOptionEvent(int optionIndex) {
@@ -46,6 +50,10 @@ public class ZMLobbyController : MonoBehaviour {
 		switch(optionIndex) {
 			case RESUME_OPTION: {
 				HandleSelectResumeEvent();
+				break;
+			}
+			case DROP_OUT_OPTION: {
+				HandleSelectDropOutEvent();
 				break;
 			}
 			case QUIT_OPTION: {
@@ -77,6 +85,12 @@ public class ZMLobbyController : MonoBehaviour {
 		}
 	}
 
+	void HandleSelectDropOutEvent() {
+		if (DropOutEvent != null) {
+			DropOutEvent();
+		}
+	}
+
 	void HandleSelectResumeEvent ()
 	{
 		_paused = false;
@@ -88,12 +102,12 @@ public class ZMLobbyController : MonoBehaviour {
 
 	void HandleStartInputEvent (ZMPlayerInfo.PlayerTag playerTag)
 	{
-		int playerIndex = (int) playerTag;
+		_playerPauseIndex = (int) playerTag;
 
-		if (_joinedPlayers[playerIndex]) {
+		if (_joinedPlayers[_playerPauseIndex]) {
 			if (!_paused) {
 				if (PauseGameEvent != null) {
-					PauseGameEvent();
+					PauseGameEvent(_playerPauseIndex);
 
 					Time.timeScale = 0;
 					_paused = true;

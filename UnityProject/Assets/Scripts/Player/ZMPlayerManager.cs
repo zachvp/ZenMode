@@ -29,6 +29,7 @@ public class ZMPlayerManager : MonoBehaviour {
 				ZMLobbyController.PlayerReadyEvent += HandlePlayerReadyEvent;
 				ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
 				ZMPlayerController.PlayerKillEvent += HandlePlayerKillEvent;
+				ZMLobbyController.DropOutEvent += HandleDropOutEvent;
 				break;
 			}
 			case State.LOBBY: {
@@ -50,6 +51,11 @@ public class ZMPlayerManager : MonoBehaviour {
 		}
 
 		DontDestroyOnLoad(gameObject);
+	}
+
+	void HandleDropOutEvent ()
+	{
+		_playerCount -= 1;
 	}
 
 	void HandlePlayerJoinedEvent (ZMPlayerInfo.PlayerTag playerTag)

@@ -32,7 +32,7 @@ public class ZMMenuOptionController : MonoBehaviour {
 			ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 			ZMGameStateController.GameEndEvent 	  += HandleGameEndEvent;
 		} else if (Application.loadedLevel == 1) {
-			ZMLobbyController.PauseGameEvent 	  += ShowMenu;
+			ZMLobbyController.PauseGameEvent 	  += HandlePauseGameLobbyEvent;
 		}
 
 		ToggleActive(startActive);
@@ -75,6 +75,10 @@ public class ZMMenuOptionController : MonoBehaviour {
 				_delayFrame = 0;
 			}
 		}
+	}
+
+	void HandlePauseGameLobbyEvent(int playerIndex) {
+		ShowMenu();
 	}
 
 	void HandlePauseGameEvent() {
