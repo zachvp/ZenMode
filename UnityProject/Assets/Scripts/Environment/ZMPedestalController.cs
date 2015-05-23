@@ -23,6 +23,7 @@ public class ZMPedestalController : MonoBehaviour {
 
 	// references
 	private HashSet<ZMScoreController> _scoringAgents;
+	private List<ParticleSystem> _zenPopSystems;
 
 	private const string kPedestalWaypointTag = "PedestalWaypoint";
 	private const string kDisableMethodName   = "Disable";
@@ -33,6 +34,7 @@ public class ZMPedestalController : MonoBehaviour {
 
 	void Awake() {
 		_scoringAgents = new HashSet<ZMScoreController>();
+		_zenPopSystems = new List<ParticleSystem>();
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_baseScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
 
@@ -148,6 +150,10 @@ public class ZMPedestalController : MonoBehaviour {
 	void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
 		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			ZMScoreController scoreController = playerController.GetComponent<ZMScoreController>();
+
+			if (scoreController.TotalScore <= 0) { return; }
+
 			SendMessage("Stop");
 			transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
 			_shouldScale = true;
@@ -164,15 +170,34 @@ public class ZMPedestalController : MonoBehaviour {
 	void HandleMinScoreReached (ZMScoreController scoreController)
 	{
 		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-			ZMScoreController.MinScoreReached -= HandleMinScoreReached;
+			//ZMScoreController.MinScoreReached -= HandleMinScoreReached;
 
 			zenPop.renderer.material.color = renderer.material.color;
-			zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
-			zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
-			zenPop = ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem;
 
-			gameObject.SetActive(false);
+			_zenPopSystems.Add(ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem);
+			_zenPopSystems.Add(ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem);
+			_zenPopSystems.Add(ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem);
+
+			Disable();
+			Invoke ("StopThePop", 0.08f);
+			//gameObject.SetActive(false);
 		}
+	}
+
+	void StopThePop() {
+		foreach (ParticleSystem system in _zenPopSystems) {
+			system.Stop();
+		}
+
+		Invoke ("ClearThePop", 2);
+	}
+
+	void ClearThePop() {
+		foreach (ParticleSystem system in _zenPopSystems) {
+			Destroy(system);
+		}
+
+		_zenPopSystems.Clear();
 	}
 
 	void HandleUpdateScoreEvent(ZMScoreController scoreController) {

@@ -36,6 +36,8 @@ public class ZMColorFade : MonoBehaviour {
 	{
 		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 			_fadingIn = true;
+
+			if (!_image.enabled) { _image.enabled = true; }
 		}
 	}
 

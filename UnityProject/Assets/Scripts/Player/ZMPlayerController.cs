@@ -97,7 +97,7 @@ public class ZMPlayerController : MonoBehaviour
 	public delegate void PlayerKillAction(ZMPlayerController killer); public static event PlayerKillAction PlayerKillEvent;
 	public delegate void PlayerDeathAction(ZMPlayerController playerController); public static event PlayerDeathAction PlayerDeathEvent;
 	public delegate void PlayerRespawnAction(ZMPlayerController playerController); public static event PlayerRespawnAction PlayerRespawnEvent;
-	public delegate void PlayerEliminatedAction(ZMPlayerController playerController); public static event PlayerEliminatedAction PlayerEliminatedEvent;
+//	public delegate void PlayerEliminatedAction(ZMPlayerController playerController); public static event PlayerEliminatedAction PlayerEliminatedEvent;
 	public delegate void PlayerRecoilAction(); public static event PlayerRecoilAction PlayerRecoilEvent;
 	public delegate void PlayerLandPlungeAction(); public static event PlayerLandPlungeAction PlayerLandPlungeEvent;
 
@@ -125,7 +125,7 @@ public class ZMPlayerController : MonoBehaviour
 		ZMPlayerInputController.AttackEvent	   += AttackEvent;
 		ZMPlayerInputController.PlungeEvent    += PlungeEvent;
 
-		ZMScoreController.MinScoreReached += HandleMinScoreReached;
+//		ZMScoreController.MinScoreReached += HandleMinScoreReached;
 
 		// Set original facing direction.
 		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
@@ -432,12 +432,12 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	void OnDestroy() {
-		ZMScoreController.MinScoreReached -= HandleMinScoreReached;
+		//ZMScoreController.MinScoreReached -= HandleMinScoreReached;
 
 		PlayerKillEvent		  = null;
 		PlayerDeathEvent   	  = null;
 		PlayerRespawnEvent 	  = null;
-		PlayerEliminatedEvent = null;
+//		PlayerEliminatedEvent = null;
 		PlayerRecoilEvent  	  = null;
 		PlayerLandPlungeEvent = null;
 	}
@@ -587,9 +587,9 @@ public class ZMPlayerController : MonoBehaviour
 
 			_moveModState = MoveModState.ELIMINATED;
 
-			if (PlayerEliminatedEvent != null) {
+			/*if (PlayerEliminatedEvent != null) {
 				PlayerEliminatedEvent(this);
-			}
+			}*/
 		}
 	}
 

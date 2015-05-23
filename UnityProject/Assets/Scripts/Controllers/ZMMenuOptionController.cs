@@ -12,8 +12,6 @@ public class ZMMenuOptionController : MonoBehaviour {
 	private int  _selectedIndex;
 	private int  _optionsSize;
 
-	private bool _inputEnabled;
-
 	private bool _canCycleSelection;
 	private int _delayFrame = 0;
 	private const int _selectionDelay = 10;
@@ -28,7 +26,6 @@ public class ZMMenuOptionController : MonoBehaviour {
 		_baseColor 	   = menuOptions[0].color;
 		_selectedColor = new Color(255, 255, 255, 255);
 		_optionsSize = menuOptions.Length;
-		_inputEnabled = true;
 
 		if (Application.loadedLevel > 1) {
 			ZMGameStateController.PauseGameEvent  += HandlePauseGameEvent;
@@ -51,33 +48,31 @@ public class ZMMenuOptionController : MonoBehaviour {
 	}
 
 	void Update() {
-		if (_inputEnabled) {
-			var inputDevice = InputManager.ActiveDevice;
+		var inputDevice = InputManager.ActiveDevice;
 
-			if (_canCycleSelection) {
-				if ((inputDevice.DPadDown || inputDevice.LeftStick.Y < -0.8f)) {
-					_canCycleSelection = false;
+		if (_canCycleSelection) {
+			if ((inputDevice.DPadDown || inputDevice.LeftStick.Y < -0.8f)) {
+				_canCycleSelection = false;
 
-					HandleMenuNavigationForward();
-				} else if ((inputDevice.DPadUp || inputDevice.LeftStick.Y > 0.8f)) {
-					_canCycleSelection = false;
+				HandleMenuNavigationForward();
+			} else if ((inputDevice.DPadUp || inputDevice.LeftStick.Y > 0.8f)) {
+				_canCycleSelection = false;
 
-					HandleMenuNavigationBackward();
-				}
+				HandleMenuNavigationBackward();
 			}
+		}
 
-			if (inputDevice.Action1 || inputDevice.MenuWasPressed) {
-				audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
-				HandleMenuSelection();
-			}
+		if (inputDevice.Action1 || inputDevice.MenuWasPressed) {
+			audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
+			HandleMenuSelection();
+		}
 
-			if (!_canCycleSelection) {
-				_delayFrame += 1;
+		if (!_canCycleSelection) {
+			_delayFrame += 1;
 
-				if (_delayFrame > _selectionDelay) {
-					CanCycleSelection();
-					_delayFrame = 0;
-				}
+			if (_delayFrame > _selectionDelay) {
+				CanCycleSelection();
+				_delayFrame = 0;
 			}
 		}
 	}
@@ -99,7 +94,7 @@ public class ZMMenuOptionController : MonoBehaviour {
 			Destroy(gameObject);
 		}
 
-		_inputEnabled = false;
+		enabled = false;
 		HideUI();
 
 		gameObject.SetActive(true);
@@ -147,6 +142,7 @@ public class ZMMenuOptionController : MonoBehaviour {
 	
 	private void ToggleActive(bool active) {
 		_active = active;
+		enabled = active;
 		gameObject.SetActive(_active);
 	}
 
@@ -178,7 +174,7 @@ public class ZMMenuOptionController : MonoBehaviour {
 	}
 
 	void ShowMenuEnd() {
-		_inputEnabled = true;
+		enabled = true;
 		ShowUI();
 
 		ShowMenu();

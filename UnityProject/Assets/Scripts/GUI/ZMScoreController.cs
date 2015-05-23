@@ -46,7 +46,7 @@ namespace ZMPlayer{
 		// States
 		private enum ZoneState   { INACTIVE, ACTIVE };
 		private enum TargetState { ALIVE, DEAD }
-		private enum GoalState   { NEUTRAL, MAX, MAXED, ELIMINATED }
+		private enum GoalState   { NEUTRAL, MAX, MAXED, MIN }
 		private enum PointState  { NEUTRAL, GAINING, LOSING };
 
 		private TargetState _targetState;
@@ -78,8 +78,6 @@ namespace ZMPlayer{
 			foreach (GameObject scoreObject in scoreObjects) {
 				_allScoreControllers.Add(scoreObject.GetComponent<ZMScoreController>());
 			}
-
-
 
 			scoreBar.handleRect = null;
 			scoreBar.maxValue = MAX_SCORE;
@@ -128,8 +126,8 @@ namespace ZMPlayer{
 			}
 
 			// player score checks
-			if (_totalScore <= 0 && _goalState != GoalState.ELIMINATED) {
-				_goalState = GoalState.ELIMINATED;
+			if (_totalScore <= 0 && _goalState != GoalState.MIN) {
+				_goalState = GoalState.MIN;
 
 				if (MinScoreReached != null) {
 					MinScoreReached(this);
