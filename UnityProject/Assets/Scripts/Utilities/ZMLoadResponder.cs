@@ -4,6 +4,8 @@ using System.Collections;
 public class ZMLoadResponder : MonoBehaviour {
 	void Awake () {
 		ZMMainMenuController.LoadGameEvent += HandleLoadGameEvent;
+
+		ZMGameStateController.ResetGameEvent += HandleResetGameEvent;
 		ZMGameStateController.QuitMatchEvent += HandleLoadGameEvent;
 	}
 
@@ -14,6 +16,11 @@ public class ZMLoadResponder : MonoBehaviour {
 	void OnDestroy() {
 		ZMMainMenuController.LoadGameEvent -= HandleLoadGameEvent;
 		ZMGameStateController.QuitMatchEvent -= HandleLoadGameEvent;
+	}
+
+	void HandleResetGameEvent ()
+	{
+		gameObject.SetActive(true);
 	}
 
 	void HandleLoadGameEvent()

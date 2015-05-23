@@ -77,7 +77,7 @@ public class ZMCrownManager : MonoBehaviour {
 		
 		if (maxScoreController != null && !_lobbyDominator) {
 			_crowns[(int) maxScoreController.PlayerInfo.playerTag].SetActive(true);
-		} else if (_lobbyDominator) {
+		} else if (_lobbyDominator && _dominatorIndex < _crowns.Length) {
 			_crowns[_dominatorIndex].SetActive(true);
 		}
 	}
