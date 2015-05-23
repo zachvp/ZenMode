@@ -475,11 +475,16 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
-	private void AttackEvent(ZMPlayerInputController inputController) {
+	private void AttackEvent(ZMPlayerInputController inputController, int direction) {
 		if (inputController.PlayerInfo.Equals(_playerInfo) && !IsAttacking() && _moveModState != MoveModState.RESPAWN) {
 			RaycastHit2D hit;
+			Vector2 forward = new Vector2(direction, 0);
 
 			_controlModState = ControlModState.ATTACK;
+
+			if (direction != 0) {
+				SetMovementDirection(direction == -1 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
+			}
 
 			// hack for destroying a breakable when pressed up against it
 			if (_movementDirection == MovementDirectionState.FACING_LEFT) {
@@ -488,11 +493,14 @@ public class ZMPlayerController : MonoBehaviour
 				hit = CheckRight(2.0f, _controller.specialInteractibleMask);
 			}
 
-			if (hit && hit.collider != null) {
+			if (hit && Vector3.Dot(hit.normal, forward) != 0 && hit.collider != null) {
 				if (hit.collider.CompareTag("Breakable")) {
 					hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
 				}
 			}
+
+			if (hit)
+				Debug.Log(Vector3.Dot(hit.normal, forward));
 		}
 	}
 
@@ -726,6 +734,7 @@ public class ZMPlayerController : MonoBehaviour
 		light.enabled = true;
 		
 		EnablePlayer();
+		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
 
 		if (PlayerRespawnEvent != null) {
 			PlayerRespawnEvent(this);

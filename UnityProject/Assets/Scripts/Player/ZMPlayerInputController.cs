@@ -12,12 +12,12 @@ namespace ZMPlayer {
 		private const float RECOIL_DISABLE_TIME = 1f;
 
 		// Delegates.
-		public delegate void MoveRightAction(ZMPlayerInputController playerInputController); 	public static event MoveRightAction MoveRightEvent;
-		public delegate void MoveLeftAction(ZMPlayerInputController playerInputController);		public static event MoveRightAction MoveLeftEvent;
-		public delegate void NoMoveAction(ZMPlayerInputController playerInputController);		public static event NoMoveAction NoMoveEvent;
-		public delegate void JumpAction(ZMPlayerInputController playerInputController);			public static event JumpAction JumpEvent;
-		public delegate void AttackAction(ZMPlayerInputController playerInputController); 		public static event AttackAction AttackEvent;
-		public delegate void PlungeAction(ZMPlayerInputController playerInputController);		public static event PlungeAction PlungeEvent;
+		public delegate void MoveRightAction(ZMPlayerInputController playerInputController); 				public static event MoveRightAction MoveRightEvent;
+		public delegate void MoveLeftAction(ZMPlayerInputController playerInputController);					public static event MoveRightAction MoveLeftEvent;
+		public delegate void NoMoveAction(ZMPlayerInputController playerInputController);					public static event NoMoveAction NoMoveEvent;
+		public delegate void JumpAction(ZMPlayerInputController playerInputController);						public static event JumpAction JumpEvent;
+		public delegate void AttackAction(ZMPlayerInputController playerInputController, int direction); 	public static event AttackAction AttackEvent;
+		public delegate void PlungeAction(ZMPlayerInputController playerInputController);					public static event PlungeAction PlungeEvent;
 
 		void Awake () {
 			string playerInfoString;
@@ -78,11 +78,21 @@ namespace ZMPlayer {
 			}
 
 			// Handle attacking.
-			if (InputManager.Devices[_playerNumber].Action2.WasPressed || 
-			    InputManager.Devices[_playerNumber].LeftBumper.WasPressed || 
-			    InputManager.Devices[_playerNumber].RightBumper.WasPressed) {
+			if (InputManager.Devices[_playerNumber].Action2.WasPressed) {
 				if (AttackEvent != null) {
-					AttackEvent(this);
+					AttackEvent(this, 0);
+				}
+			}
+
+			if (InputManager.Devices[_playerNumber].LeftBumper.WasPressed) {
+				if (AttackEvent != null) {
+					AttackEvent(this, -1);
+				}
+			}
+
+			if (InputManager.Devices[_playerNumber].RightBumper.WasPressed) {
+				if (AttackEvent != null) {
+					AttackEvent(this, 1);
 				}
 			}
 
