@@ -9,6 +9,7 @@ public class ZMAnalogMovement : MonoBehaviour {
 	private Vector3 _deltaPos;
 	private Vector3 _forward;
 	private bool _shouldBounce;
+	private float _slowFactor;
 
 	// references
 	private ZMPlayerInfo _playerInfo;
@@ -17,6 +18,7 @@ public class ZMAnalogMovement : MonoBehaviour {
 	void Awake () {
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_controlIndex = (int) _playerInfo.playerTag;
+		_slowFactor = 1;
 
 		if (_controlIndex >= InputManager.Devices.Count) {
 			enabled = false;
@@ -31,7 +33,7 @@ public class ZMAnalogMovement : MonoBehaviour {
 			_deltaPos.x += InputManager.Devices[_controlIndex].LeftStickX;
 			_deltaPos.y += InputManager.Devices[_controlIndex].LeftStickY;
 
-			_forward = _deltaPos - _forward;
+			_forward = (_deltaPos - _forward) * _slowFactor;
 
 			rigidbody2D.velocity = _forward * _movementSpeed;
 		}
@@ -51,6 +53,14 @@ public class ZMAnalogMovement : MonoBehaviour {
 
 			_shouldBounce = true;
 			Invoke("CancelBounce", 0.2f);
+		} else if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Ground"))) {
+			_slowFactor = 0.45f;
+		}
+	}
+
+	void OnTriggerExit2D(Collider2D collider) {
+		if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Ground"))) {
+			_slowFactor = 1f;
 		}
 	}
 

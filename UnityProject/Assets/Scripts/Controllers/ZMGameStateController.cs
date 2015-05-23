@@ -171,7 +171,7 @@ public class ZMGameStateController : MonoBehaviour {
 	void HandleStartInputEvent (ZMPlayerInfo.PlayerTag playerTag)
 	{
 		if (_gameState == GameState.PAUSE || _gameState == GameState.PAUSED) {
-			_gameState =  GameState.RESUME;
+			_gameState = GameState.RESUME;
 		} else if (_matchState != MatchState.PRE_MATCH) {
 			_pausedPlayer = (int) playerTag;
 			_gameState = GameState.PAUSE;
