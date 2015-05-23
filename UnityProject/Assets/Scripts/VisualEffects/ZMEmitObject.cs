@@ -3,21 +3,23 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class ZMEmitObject : MonoBehaviour {
-	public GameObject emitObject;
+	public string resourcePath;
 	public Color color;
 	public int interval = 10;
 
+	private GameObject _emitObject;
 	private int _currentFrame = 0;
 	
 	// Update is called once per frame
 	void Update () {
 		if (_currentFrame > interval) {
-			emitObject = GameObject.Instantiate(emitObject,
-			                        	  transform.position,
-			                         	  emitObject.transform.rotation) as GameObject;
+			GameObject resource = Resources.Load(resourcePath, typeof(GameObject)) as GameObject;
 
-			emitObject.GetComponent<Text>().color = color;
-			emitObject.transform.SetParent(transform);
+			_emitObject = GameObject.Instantiate(resource) as GameObject;
+
+			_emitObject.transform.position = transform.position;
+			_emitObject.GetComponent<Text>().color = color;
+			_emitObject.transform.SetParent(transform);
 
 			_currentFrame = 0;
 		}
