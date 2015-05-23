@@ -6,6 +6,7 @@ public class ZMLobbyController : MonoBehaviour {
 	public delegate void PlayerJoinedAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerJoinedAction PlayerJoinedEvent;
 	public delegate void PlayerReadyAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerReadyAction PlayerReadyEvent;
 	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
+	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
 	
 	private int _requiredPlayerCount;
 	private int _currentJoinCount; // i.e. how many  have pressed a button to join
@@ -36,6 +37,7 @@ public class ZMLobbyController : MonoBehaviour {
 		PlayerJoinedEvent = null;
 		PauseGameEvent    = null;
 		PlayerReadyEvent  = null;
+		ResumeGameEvent	  = null;
 	}
 
 	void HandleSelectOptionEvent(int optionIndex) {
@@ -78,6 +80,10 @@ public class ZMLobbyController : MonoBehaviour {
 	void HandleSelectResumeEvent ()
 	{
 		_paused = false;
+
+		if (ResumeGameEvent != null) {
+			ResumeGameEvent();
+		}
 	}
 
 	void HandleStartInputEvent (ZMPlayerInfo.PlayerTag playerTag)
