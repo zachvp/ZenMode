@@ -721,6 +721,9 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void Respawn() {
+		_controlModState = ControlModState.NEUTRAL;
+		_controlMoveState = ControlMoveState.NEUTRAL;
+
 		light.enabled = true;
 		
 		EnablePlayer();
