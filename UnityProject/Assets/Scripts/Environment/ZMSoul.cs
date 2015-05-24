@@ -20,6 +20,14 @@ public class ZMSoul : MonoBehaviour {
 		ZMScoreController.StopScoreEvent += HandleStopScoreEvent;
 		ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
 		ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
+		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+	}
+
+	void HandleGameEndEvent ()
+	{
+		enabled = false;
+
+		Invoke ("Deactivate", 0.2f);
 	}
 
 	void HandleResumeGameEvent ()
@@ -107,5 +115,9 @@ public class ZMSoul : MonoBehaviour {
 	private void StopLoop() {
 		_fadingIn = false;
 		_playingSound = false;
+	}
+
+	void Deactivate() {
+		gameObject.SetActive(false);
 	}
 }

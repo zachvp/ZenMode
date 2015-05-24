@@ -71,6 +71,13 @@ namespace ZMPlayer{
 			ZMSoul.SoulDestroyedEvent += HandleSoulDestroyedEvent;
 
 			ZMPedestalController.DeactivateEvent += HandlePedestalDeactivation;
+
+			ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+		}
+
+		void HandleGameEndEvent ()
+		{
+			enabled = false;
 		}
 
 		void Start () {

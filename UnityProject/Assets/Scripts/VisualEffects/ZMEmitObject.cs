@@ -9,7 +9,16 @@ public class ZMEmitObject : MonoBehaviour {
 
 	private GameObject _emitObject;
 	private int _currentFrame = 0;
-	
+
+	void Awake() {
+		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+	}
+
+	void HandleGameEndEvent ()
+	{
+		enabled = false;
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if (_currentFrame > interval) {

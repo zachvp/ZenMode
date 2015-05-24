@@ -11,19 +11,26 @@ public class ZMLightPulse : MonoBehaviour {
 
 	private bool _pulsing; public bool Pulsing { get { return _pulsing; } set { _pulsing = value; } }
 
-	// Use this for initialization
+	void Awake() {
+		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+	}
+
+	void HandleGameEndEvent ()
+	{
+		enabled = false;
+	}
+
+
 	void Start () {
 		_baseIntensity = light.intensity;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		//if (_pulsing) {
-			light.intensity = 6.0f + 3.0f * Mathf.Sin( _theta);
+		light.intensity = 6.0f + 3.0f * Mathf.Sin( _theta);
 
-			_theta += interval;
-			_theta %= 2 * Mathf.PI;
-		//}
+		_theta += interval;
+		_theta %= 2 * Mathf.PI;
 	}
 
 	void SetPulsingOn() {
