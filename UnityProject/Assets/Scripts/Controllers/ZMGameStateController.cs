@@ -319,6 +319,11 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void EndGame() {
 		outputText.rectTransform.position = outputTextPositionUpOffset;
+
+		if (ZMCrownManager.LeadingPlayerIndex < 0) {
+			_victoryMessage = "IT'S A DRAW!";
+		}
+
 		outputText.text = _victoryMessage;
 
 		DisableGameObjects();
@@ -329,7 +334,7 @@ public class ZMGameStateController : MonoBehaviour {
 		QUIT_OPTION    = 1;
 
 		for (int i = 0; i < _playerCount; ++i) {
-			if (i != _winningPlayerIndex) {
+			if (i != ZMCrownManager.LeadingPlayerIndex) {
 				_players[i].gameObject.SetActive(false);
 			}
 		}
