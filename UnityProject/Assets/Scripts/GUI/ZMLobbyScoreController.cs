@@ -13,6 +13,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	private float _currentScore;
 	private bool _pedestalActive;
 	private bool _readyFired;
+	private bool _targetAlive;
 	private ZMPlayer.ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 
 	// references
@@ -107,6 +108,8 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		if (_playerInfo.playerTag.Equals(playerTag)) {
 			gameObject.SetActive(true);
 			light.enabled = true;
+
+			GetComponent<ZMPlayerController>().EnablePlayer();
 		}
 	}
 }
