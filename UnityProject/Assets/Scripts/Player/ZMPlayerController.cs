@@ -179,13 +179,13 @@ public class ZMPlayerController : MonoBehaviour
 		_velocity = _controller.velocity;
 		
 		// Disable / enable player.
-		if (ShouldDisableWhenGrounded()) {
+		/*if (ShouldDisableWhenGrounded()) {
 			_moveModState = MoveModState.DISABLED;
 			DisablePlayer();
 			Invoke(kMethodNameEnablePlayer, 0.1f);
 		} else if (ShouldEnable()) {
 			EnablePlayer();
-		}
+		}*/
 		
 		// Check raycasts.
 		if (_controller.isGrounded) {
@@ -603,7 +603,6 @@ public class ZMPlayerController : MonoBehaviour
 		if (_moveModState == MoveModState.ELIMINATED) return;
 
 		_moveModState = MoveModState.NEUTRAL;
-		//_abilityState  = AbilityState.NEUTRAL;
 
 		_controller.enabled = true;
 		this.enabled = true;
@@ -703,15 +702,6 @@ public class ZMPlayerController : MonoBehaviour
 
 			// add the stat
 			ZMStatTracker.Instance.Kills.Add(_playerInfo);
-		}
-
-		ZMMetricsCollector collector = GetComponent<ZMMetricsCollector>();
-		if (collector != null) {
-			if (IsPerformingLunge()) {
-				collector.AddDeathData(0);
-			} else {
-				collector.AddDeathData(1);
-			}
 		}
 	}
 

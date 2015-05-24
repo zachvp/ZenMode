@@ -31,8 +31,9 @@ namespace ZMPlayer {
 				ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 				ZMGameStateController.GameEndEvent += HandleGameEndEvent;
 				ZMGameStateController.QuitMatchEvent += HandleQuitMatchEvent;
-				ZMPlayerController.PlayerRecoilEvent += HandlePlayerRecoilEvent;
 			}
+
+			ZMPlayerController.PlayerRecoilEvent += HandlePlayerRecoilEvent;
 		}
 
 		void HandlePlayerRecoilEvent (ZMPlayerController playerController)
