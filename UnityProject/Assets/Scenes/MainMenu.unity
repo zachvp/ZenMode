@@ -1003,6 +1003,10 @@ Prefab:
       propertyPath: logDebugInfo
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 136054, guid: 28fadbe8f7732004f90753243f7652ad, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 28fadbe8f7732004f90753243f7652ad, type: 2}
   m_RootGameObject: {fileID: 1403262297}
@@ -1023,7 +1027,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1403262298
 MonoBehaviour:
   m_ObjectHideFlags: 0

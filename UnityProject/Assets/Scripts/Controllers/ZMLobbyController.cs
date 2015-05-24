@@ -7,7 +7,7 @@ public class ZMLobbyController : MonoBehaviour {
 	public delegate void PlayerReadyAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerReadyAction PlayerReadyEvent;
 	public delegate void PauseGameAction(int playerIndex); public static event PauseGameAction PauseGameEvent;
 	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
-	public delegate void DropOutAction(); public static event DropOutAction DropOutEvent;
+	public delegate void DropOutAction(int playerIndex); public static event DropOutAction DropOutEvent;
 	
 	private int _requiredPlayerCount;
 	private int _currentJoinCount; // i.e. how many  have pressed a button to join
@@ -17,17 +17,19 @@ public class ZMLobbyController : MonoBehaviour {
 	int _playerPauseIndex;
 
 	private bool[] _joinedPlayers;
+	private bool[] _readyPlayers;
 
 	// pause menu options
 	private const int RESUME_OPTION   = 0;
-	private const int DROP_OUT_OPTION = 1;
-	private const int QUIT_OPTION 	  = 2;
+//	private const int DROP_OUT_OPTION = 1
+	private const int QUIT_OPTION 	  = 1;
 
 	void Awake() {
 		_currentJoinCount = 0;
 		_currentReadyCount = 0;
 		_paused = false;
-		_joinedPlayers = new bool[4];
+		_joinedPlayers = new bool[ZMPlayerManager.MAX_PLAYERS];
+		_readyPlayers = new bool[ZMPlayerManager.MAX_PLAYERS];
 
 		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
 
@@ -52,10 +54,10 @@ public class ZMLobbyController : MonoBehaviour {
 				HandleSelectResumeEvent();
 				break;
 			}
-			case DROP_OUT_OPTION: {
+			/*case DROP_OUT_OPTION: {
 				HandleSelectDropOutEvent();
 				break;
-			}
+			}*/
 			case QUIT_OPTION: {
 				HandleSelectQuitEvent();
 				break;
@@ -66,7 +68,7 @@ public class ZMLobbyController : MonoBehaviour {
 
 	void HandleSelectQuitEvent ()
 	{
-		Application.LoadLevel(0);
+		Application.LoadLevel(ZMSceneIndexList.INDEX_MAIN_MENU);
 	}
 
 	void HandleMainInputEvent (ZMPlayerInfo.PlayerTag playerTag)
@@ -86,8 +88,16 @@ public class ZMLobbyController : MonoBehaviour {
 	}
 
 	void HandleSelectDropOutEvent() {
+		_joinedPlayers[_playerPauseIndex] = false;
+		_currentJoinCount -= 1;
+
+		if (_readyPlayers[_playerPauseIndex]) {
+			_readyPlayers[_playerPauseIndex] = false;
+			_currentReadyCount -= 1;
+		}
+
 		if (DropOutEvent != null) {
-			DropOutEvent();
+			DropOutEvent(_playerPauseIndex);
 		}
 	}
 
@@ -102,15 +112,15 @@ public class ZMLobbyController : MonoBehaviour {
 
 	void HandleStartInputEvent (ZMPlayerInfo.PlayerTag playerTag)
 	{
-		_playerPauseIndex = (int) playerTag;
-
-		if (_joinedPlayers[_playerPauseIndex]) {
+		if (_joinedPlayers[(int) playerTag]) {
 			if (!_paused) {
+				Time.timeScale = 0;
+
+				_playerPauseIndex = (int) playerTag;
+				_paused = true;
+
 				if (PauseGameEvent != null) {
 					PauseGameEvent(_playerPauseIndex);
-
-					Time.timeScale = 0;
-					_paused = true;
 				}
 			}
 		}
@@ -118,6 +128,7 @@ public class ZMLobbyController : MonoBehaviour {
 
 	private void HandleMaxScoreReachedEvent(ZMLobbyScoreController scoreController) {
 		_currentReadyCount += 1;
+		_readyPlayers[(int) scoreController.PlayerInfo.playerTag] = true;
 
 		if (PlayerReadyEvent != null) {
 			PlayerReadyEvent(scoreController.PlayerInfo.playerTag);

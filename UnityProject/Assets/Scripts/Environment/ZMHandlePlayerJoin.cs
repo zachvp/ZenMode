@@ -13,6 +13,14 @@ public class ZMHandlePlayerJoin : MonoBehaviour {
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 
 		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
+		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
+	}
+
+	void HandleDropOutEvent (int playerIndex)
+	{
+		if (playerIndex == (int) _playerInfo.playerTag) {
+			_sent = false;
+		}
 	}
 
 	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)

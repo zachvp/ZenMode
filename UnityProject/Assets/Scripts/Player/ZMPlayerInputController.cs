@@ -26,7 +26,7 @@ namespace ZMPlayer {
 			playerInfoString = _playerInfo.playerTag.ToString ();
 			_playerNumber = int.Parse (playerInfoString.Substring (playerInfoString.Length - 1)) - 1;
 
-			if (Application.loadedLevel > 1) {
+			if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
 				ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
 				ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 				ZMGameStateController.GameEndEvent += HandleGameEndEvent;

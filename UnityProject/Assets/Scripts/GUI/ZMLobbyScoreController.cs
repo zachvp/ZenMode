@@ -17,6 +17,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 
 	// references
 	private ZMLobbyPedestalController _pedestalController;
+	private Vector3 _basePosition;
 
 	// Use this for initialization
 	void Awake () {
@@ -30,9 +31,19 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		scoreBar.gameObject.SetActive(false);
 
 		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
+		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
 		ZMLobbyPedestalController.ActivateEvent += HandleActivateEvent;
 
 		UpdateUI();
+	}
+
+	void HandleDropOutEvent (int playerIndex)
+	{
+		if (playerIndex == (int) _playerInfo.playerTag) {
+			transform.position = _basePosition;
+			gameObject.SetActive(false);
+			scoreBar.gameObject.SetActive(false);
+		}
 	}
 
 	void HandleActivateEvent (ZMLobbyPedestalController lobbyPedestalController)
@@ -44,6 +55,8 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	}
 
 	void Start() {
+		_basePosition = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
+
 		foreach (GameObject pedestal in GameObject.FindGameObjectsWithTag("Pedestal")) {
 			ZMLobbyPedestalController controller = pedestal.GetComponent<ZMLobbyPedestalController>();
 			

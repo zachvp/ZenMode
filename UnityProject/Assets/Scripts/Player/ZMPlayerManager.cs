@@ -53,7 +53,7 @@ public class ZMPlayerManager : MonoBehaviour {
 		DontDestroyOnLoad(gameObject);
 	}
 
-	void HandleDropOutEvent ()
+	void HandleDropOutEvent (int playerIndex)
 	{
 		_playerCount -= 1;
 	}

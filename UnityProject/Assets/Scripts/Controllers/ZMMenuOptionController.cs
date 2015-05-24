@@ -27,11 +27,11 @@ public class ZMMenuOptionController : MonoBehaviour {
 		_selectedColor = new Color(255, 255, 255, 255);
 		_optionsSize = menuOptions.Length;
 
-		if (Application.loadedLevel > 1) {
+		if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
 			ZMGameStateController.PauseGameEvent  += HandlePauseGameEvent;
 			ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 			ZMGameStateController.GameEndEvent 	  += HandleGameEndEvent;
-		} else if (Application.loadedLevel == 1) {
+		} else if (Application.loadedLevel == ZMSceneIndexList.INDEX_LOBBY) {
 			ZMLobbyController.PauseGameEvent 	  += HandlePauseGameLobbyEvent;
 		}
 

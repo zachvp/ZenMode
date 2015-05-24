@@ -10,6 +10,16 @@ public class ZMBreakable : MonoBehaviour {
 	void Awake() {
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 
+		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
+
+	}
+
+	void HandleDropOutEvent (int playerIndex)
+	{
+		if ((int) _playerInfo.playerTag == playerIndex) {
+			Debug.Log(_playerInfo.playerTag.ToString() + ": droppped out");
+			gameObject.SetActive(true);
+		}
 	}
 
 	public void HandleCollision(ZMPlayer.ZMPlayerInfo playerInfo) {
@@ -18,15 +28,13 @@ public class ZMBreakable : MonoBehaviour {
 				Break ();
 			}
 			_handlingCollision = true;
-			//renderer.enabled = false;
-			//collider2D.enabled = false;
 		}
 	}
 
 	void StopGibs() {
 		destructionEffect.Stop();
-		Destroy(destructionEffect);
-		Destroy(gameObject, 0.2f);
+		Destroy(destructionEffect.gameObject, 0.8f);
+		//Destroy(gameObject, 0.2f);
 
 		_handlingCollision = false;
 	}
