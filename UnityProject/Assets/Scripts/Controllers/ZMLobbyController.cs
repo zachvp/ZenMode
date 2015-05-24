@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using ZMPlayer;
 
 public class ZMLobbyController : MonoBehaviour {
+	public GameObject loadScreen;
+
 	public delegate void PlayerJoinedAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerJoinedAction PlayerJoinedEvent;
 	public delegate void PlayerReadyAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerReadyAction PlayerReadyEvent;
 	public delegate void PauseGameAction(int playerIndex); public static event PauseGameAction PauseGameEvent;
@@ -36,6 +38,10 @@ public class ZMLobbyController : MonoBehaviour {
 		ZMGameInputManager.StartInputEvent		+= HandleStartInputEvent;
 		ZMGameInputManager.AnyInputEvent 		+= HandleMainInputEvent;
 		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
+	}
+
+	void Start() {
+		loadScreen.SetActive(false);
 	}
 
 	void OnDestroy() {
@@ -135,8 +141,13 @@ public class ZMLobbyController : MonoBehaviour {
 		}
 
 		if(_currentReadyCount > 1 && _currentReadyCount == _requiredPlayerCount) {
-			Invoke("LoadLevel", 2.0f);
+			Invoke("LoadLevel", 1.0f);
+			Invoke("ShowLoadScreen", 0.5f);
 		}
+	}
+
+	void ShowLoadScreen() {
+		loadScreen.SetActive(true);
 	}
 
 	void LoadLevel() {
