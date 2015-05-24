@@ -445,7 +445,10 @@ public class ZMPlayerController : MonoBehaviour
 			if (_movementDirection == MovementDirectionState.FACING_LEFT) {
 				CheckSkidding ();
 			}
-			SetMovementDirection(MovementDirectionState.FACING_RIGHT);
+
+			if (!IsPerformingLunge()) {
+				SetMovementDirection(MovementDirectionState.FACING_RIGHT);
+			}
 		}
 	}
 
@@ -455,7 +458,10 @@ public class ZMPlayerController : MonoBehaviour
 			if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
 				CheckSkidding ();
 			}
-			SetMovementDirection(MovementDirectionState.FACING_LEFT);
+
+			if (!IsPerformingLunge()) {
+				SetMovementDirection(MovementDirectionState.FACING_LEFT);
+			}
 		}
 	}
 
