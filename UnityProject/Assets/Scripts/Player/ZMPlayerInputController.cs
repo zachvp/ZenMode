@@ -34,6 +34,8 @@ namespace ZMPlayer {
 			}
 
 			ZMPlayerController.PlayerRecoilEvent += HandlePlayerRecoilEvent;
+			ZMLobbyController.PauseGameEvent += HandlePauseGameEvent;
+			ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
 		}
 
 		void HandlePlayerRecoilEvent (ZMPlayerController playerController)
