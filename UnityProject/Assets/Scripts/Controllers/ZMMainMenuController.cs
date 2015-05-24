@@ -13,8 +13,6 @@ public class ZMMainMenuController : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		Screen.showCursor = false;
-
 		ZMGameInputManager.StartInputEvent	    += HandleStartInputEvent;
 		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
 	}
