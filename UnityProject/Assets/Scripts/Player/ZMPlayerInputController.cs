@@ -34,7 +34,7 @@ namespace ZMPlayer {
 			}
 
 			ZMPlayerController.PlayerRecoilEvent += HandlePlayerRecoilEvent;
-			ZMLobbyController.PauseGameEvent += HandlePauseGameEvent;
+			ZMLobbyController.PauseGameEvent += HandlePauseGameEventPlayer;
 			ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
 		}
 
@@ -125,6 +125,11 @@ namespace ZMPlayer {
 		}
 		
 		void HandlePauseGameEvent ()
+		{
+			enabled = false;
+		}
+
+		void HandlePauseGameEventPlayer(int playerIndex)
 		{
 			enabled = false;
 		}
