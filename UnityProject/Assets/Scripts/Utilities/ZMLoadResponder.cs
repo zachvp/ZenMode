@@ -5,8 +5,10 @@ public class ZMLoadResponder : MonoBehaviour {
 	void Awake () {
 		ZMMainMenuController.LoadGameEvent += HandleLoadGameEvent;
 
-		ZMGameStateController.ResetGameEvent += HandleResetGameEvent;
-		ZMGameStateController.QuitMatchEvent += HandleLoadGameEvent;
+		if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
+			ZMGameStateController.ResetGameEvent += HandleResetGameEvent;
+			ZMGameStateController.QuitMatchEvent += HandleLoadGameEvent;
+		}
 	}
 
 	void Start() {

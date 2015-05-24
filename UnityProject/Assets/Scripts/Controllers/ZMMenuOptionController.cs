@@ -62,7 +62,7 @@ public class ZMMenuOptionController : MonoBehaviour {
 			}
 		}
 
-		if (inputDevice.Action1 || inputDevice.MenuWasPressed) {
+		if (inputDevice.Action1 && _active) {
 			audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
 			HandleMenuSelection();
 		}
@@ -95,15 +95,16 @@ public class ZMMenuOptionController : MonoBehaviour {
 
 	void HandleGameEndEvent() {
 		if (name.Equals("PauseMenu-Game")) {
-			Destroy(gameObject);
+			gameObject.SetActive(false);
+//			Destroy(gameObject);
+		} else {
+			enabled = false;
+			HideUI();
+			
+			gameObject.SetActive(true);
+			
+			Invoke("ShowMenuEnd", 2.0f);
 		}
-
-		enabled = false;
-		HideUI();
-
-		gameObject.SetActive(true);
-
-		Invoke("ShowMenuEnd", 3.0f);
 	}
 
 	void HandleMenuNavigationForward() {

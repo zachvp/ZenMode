@@ -493,14 +493,11 @@ public class ZMPlayerController : MonoBehaviour
 				hit = CheckRight(2.0f, _controller.specialInteractibleMask);
 			}
 
-			if (hit && Vector3.Dot(hit.normal, forward) != 0 && hit.collider != null) {
+			if (hit && Mathf.Round(Vector3.Dot(hit.normal, forward)) != 0 && hit.collider != null) {
 				if (hit.collider.CompareTag("Breakable")) {
 					hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
 				}
 			}
-
-			if (hit)
-				Debug.Log(Vector3.Dot(hit.normal, forward));
 		}
 	}
 

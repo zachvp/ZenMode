@@ -341,8 +341,6 @@ public class ZMGameStateController : MonoBehaviour {
 		}
 
 		enabled = false;
-
-		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
 	}
 
 	// Event handlers
