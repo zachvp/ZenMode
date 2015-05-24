@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using ZMPlayer;
 
 public class ZMLobbyScoreController : MonoBehaviour {
 	public float maxScore = 100.0f;
@@ -14,7 +15,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	private bool _pedestalActive;
 	private bool _readyFired;
 	private bool _targetAlive;
-	private ZMPlayer.ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
+	private ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 
 	// references
 	private ZMLobbyPedestalController _pedestalController;
@@ -26,6 +27,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		_pedestalActive = false;
 		_readyFired = false;
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
+		_targetAlive = true;
 
 		gameObject.SetActive(false);
 		light.enabled = false;
@@ -34,8 +36,24 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
 		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
 		ZMLobbyPedestalController.ActivateEvent += HandleActivateEvent;
+		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
+		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
 
 		UpdateUI();
+	}
+
+	void HandlePlayerRespawnEvent (ZMPlayerController playerController)
+	{
+		if(playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			_targetAlive = true;
+		}
+	}
+
+	void HandlePlayerDeathEvent (ZMPlayerController playerController)
+	{
+		if(playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			_targetAlive = false;
+		}
 	}
 
 	void HandleDropOutEvent (int playerIndex)
@@ -76,7 +94,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	void OnTriggerStay2D(Collider2D collider) {
 		if (collider.gameObject.Equals(_pedestalController.gameObject)) {
 			if (_currentScore < maxScore) {
-				if (_pedestalActive)
+				if (_pedestalActive && _targetAlive)
 					AddToScore(scoreAmount);
 			} else if(!_readyFired) {
 				if (MaxScoreReachedEvent != null) {
