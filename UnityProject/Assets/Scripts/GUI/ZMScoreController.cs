@@ -90,7 +90,7 @@ namespace ZMPlayer{
 			scoreBar.maxValue = MAX_SCORE;
 
 			// xD
-			SetScore (MAX_SCORE / ZMPlayerManager.PlayerCount);
+			SetScore (ZMPlayerManager.PlayerCount > 2 ? MAX_SCORE / 2f : MAX_SCORE / ZMPlayerManager.PlayerCount);
 		}
 
 		void FixedUpdate() {
