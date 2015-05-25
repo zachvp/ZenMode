@@ -19,9 +19,12 @@ public class ZMPlayerController : MonoBehaviour
 	private float WALL_JUMP_KICK_SPEED = 500.0f;
 	private float EDGE_OFFSET = 16.0f;
 	private float AOE_RANGE = 32.0f;
+	private float RECOIL_STUN_TIME = 0.001f;
 	private float PARRY_TIME_LUNGE = 0.30f;
-	private float PARRY_TIME = 0.5f;
+	private float PARRY_TIME = 1f;
+	private float PARRY_STUN_WINDOW = 1f;
 	private float PARRY_TIME_AIR = 0.10f;
+	private float STUN_TIME = 3f;
 	private float runSpeed = 0.0f;
 
 	// Additional constants.
@@ -48,7 +51,7 @@ public class ZMPlayerController : MonoBehaviour
 	private enum MovementDirectionState { FACING_LEFT, FACING_RIGHT };
 	private enum ControlMoveState 		{ NEUTRAL, MOVING };
 	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACK, ATTACKING, WALL_JUMPING, PLUNGE, PLUNGING, PARRY, PARRYING };
-	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING_AIR, LUNGING_GROUND, WALL_SLIDE, RECOIL, RECOILING, DISABLE, DISABLED, PARRY_FACING, PARRY_AOE, RESPAWN, ELIMINATED };
+	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING_AIR, LUNGING_GROUND, WALL_SLIDE, RECOIL, RECOILING, STUN, STUNNED, DISABLE, DISABLED, PARRY_FACING, PARRY_AOE, RESPAWN, ELIMINATED };
 	private enum AbilityState 			{ NEUTRAL, SHOOTING };
 
 	private ControlMoveState _controlMoveState;
@@ -56,6 +59,7 @@ public class ZMPlayerController : MonoBehaviour
 	private MovementDirectionState _movementDirection;
 	private MoveModState _moveModState;
 	private bool _playerInPath;
+	private bool _canStun;
 
 	// Tags and layers.
 	private const string kPlayerTag						    = "Player";
@@ -98,11 +102,13 @@ public class ZMPlayerController : MonoBehaviour
 	public delegate void PlayerDeathAction(ZMPlayerController playerController); public static event PlayerDeathAction PlayerDeathEvent;
 	public delegate void PlayerRespawnAction(ZMPlayerController playerController); public static event PlayerRespawnAction PlayerRespawnEvent;
 	public delegate void PlayerEliminatedAction(ZMPlayerController playerController); public static event PlayerEliminatedAction PlayerEliminatedEvent;
-	public delegate void PlayerRecoilAction(ZMPlayerController playerController); public static event PlayerRecoilAction PlayerRecoilEvent;
+	public delegate void PlayerRecoilAction(ZMPlayerController playerController, float stunTime); public static event PlayerRecoilAction PlayerRecoilEvent;
+	public delegate void PlayerStunAction(ZMPlayerController playerController, float stunTime); public static event PlayerStunAction PlayerStunEvent;
 	public delegate void PlayerLandPlungeAction(); public static event PlayerLandPlungeAction PlayerLandPlungeEvent;
 
 	// Debug
 	SpriteRenderer _spriteRenderer;
+	Color _baseColor;
 
 	void Awake()
 	{
@@ -133,7 +139,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	void Start() 
 	{
-		kDeathStrings = new string[33];
+		kDeathStrings = new string[34];
 		kDeathStrings[0] = "OOOAHH";
 		kDeathStrings[1] = "WHOOOP";
 		kDeathStrings[2] = "AYYYEEH";
@@ -167,6 +173,9 @@ public class ZMPlayerController : MonoBehaviour
 		kDeathStrings[30] = "OOOOHHHH";
 		kDeathStrings[31] = "POW!";
 		kDeathStrings[32] = "YAAAS";
+		kDeathStrings[33] = "COWABUNGAA";
+
+		_baseColor = light.color;
 	}
 
 	void FixedUpdate()
@@ -177,15 +186,6 @@ public class ZMPlayerController : MonoBehaviour
 
 		// Update the velocity calculated from the controller.
 		_velocity = _controller.velocity;
-		
-		// Disable / enable player.
-		/*if (ShouldDisableWhenGrounded()) {
-			_moveModState = MoveModState.DISABLED;
-			DisablePlayer();
-			Invoke(kMethodNameEnablePlayer, 0.1f);
-		} else if (ShouldEnable()) {
-			EnablePlayer();
-		}*/
 		
 		// Check raycasts.
 		if (_controller.isGrounded) {
@@ -266,14 +266,17 @@ public class ZMPlayerController : MonoBehaviour
 		} else if (_controlModState == ControlModState.PARRY) {
 			// ZVP
 			_spriteRenderer.color = Color.yellow;
+			light.color = Color.white;
+
 			_controlModState = ControlModState.PARRYING;
 			_moveModState = MoveModState.PARRY_FACING;
+			_canStun = true;
 
 			_canLunge = false;
 			runSpeed = 0;
 			DisablePlayer();
 
-			Invoke(kEndParryMethodName, PARRY_TIME);
+			Invoke("EndStun", PARRY_STUN_WINDOW);
 		} else if (IsTouchingEitherSide()) {
 			if (!_controller.isGrounded && _moveModState == MoveModState.NEUTRAL) {
 				_moveModState = MoveModState.WALL_SLIDE;
@@ -350,11 +353,28 @@ public class ZMPlayerController : MonoBehaviour
 			if (IsInvoking(kMethodNameEndLunge)) CancelInvoke(kMethodNameEndLunge);
 
 			Recoil();
+
+			if (PlayerRecoilEvent != null) {
+				PlayerRecoilEvent(this, RECOIL_STUN_TIME);
+			}
 		} else if (_moveModState == MoveModState.RECOILING) {
 			_moveModState = MoveModState.NEUTRAL;
 			_controlModState = ControlModState.NEUTRAL;
+			_controlMoveState = ControlMoveState.NEUTRAL;
 
 			_playerInPath = false;
+		} else if (_moveModState == MoveModState.STUN) {
+			_moveModState = MoveModState.STUNNED;
+			_controlModState = ControlModState.NEUTRAL;
+			_controlMoveState = ControlMoveState.NEUTRAL;
+
+			if (IsInvoking(kMethodNameEndLunge)) CancelInvoke(kMethodNameEndLunge);
+
+			Recoil();
+
+			if (PlayerStunEvent != null) {
+				PlayerStunEvent(this, STUN_TIME);
+			}
 		} else if (_moveModState == MoveModState.WALL_SLIDE) {
 			// Wall slide.
 			if (_velocity.y < 1.0f &&  _controlMoveState == ControlMoveState.MOVING) {
@@ -435,6 +455,7 @@ public class ZMPlayerController : MonoBehaviour
 		PlayerRespawnEvent 	  = null;
 		PlayerEliminatedEvent = null;
 		PlayerRecoilEvent  	  = null;
+		PlayerStunEvent		  = null;
 		PlayerLandPlungeEvent = null;
 	}
 	
@@ -546,7 +567,12 @@ public class ZMPlayerController : MonoBehaviour
 								_moveModState = MoveModState.RECOIL;
 							}
 						} else if (otherPlayer._moveModState == MoveModState.PARRY_FACING && IsOpposingDirection(otherPlayer)) {
-							_moveModState = MoveModState.RECOIL;
+							if (otherPlayer._canStun) {
+								_moveModState = MoveModState.STUN;
+							} else {
+								_moveModState = MoveModState.RECOIL;
+							}
+
 						} else if (otherPlayer._moveModState == MoveModState.PARRY_AOE) {
 							_moveModState = MoveModState.RECOIL;
 						} else {
@@ -747,10 +773,6 @@ public class ZMPlayerController : MonoBehaviour
 		} else if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
 			runSpeed = -recoilSpeed;
 		}
-
-		if (PlayerRecoilEvent != null) {
-			PlayerRecoilEvent(this);
-		}
 	}
 
 
@@ -785,10 +807,20 @@ public class ZMPlayerController : MonoBehaviour
 		// ZVP
 		_moveModState = MoveModState.NEUTRAL;
 		_controlModState = ControlModState.NEUTRAL;
+
 		_spriteRenderer.color = Color.black;
+		light.color = _baseColor;
+
 		_canLunge = true;
 
 		EnablePlayer();
+	}
+
+	private void EndStun() {
+		_canStun = false;
+		_spriteRenderer.color = Color.magenta;
+
+		Invoke(kEndParryMethodName, PARRY_TIME);
 	}
 
 	private RaycastHit2D CheckLeft(float distance, LayerMask mask) {
