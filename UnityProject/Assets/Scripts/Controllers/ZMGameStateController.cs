@@ -6,6 +6,7 @@ using ZMPlayer;
 
 public class ZMGameStateController : MonoBehaviour {
 	public Text outputText;
+	public Text absorbText;
 	private int _playerCount;
 
 	private enum GameState { BEGIN, NEUTRAL, PAUSE, PAUSED, RESUME, RESET }
@@ -21,11 +22,11 @@ public class ZMGameStateController : MonoBehaviour {
 	private List<ZMPlayerController> _players;
 	private List<ZMScoreController> _scoreControllers; public List<ZMScoreController> ScoreControllers { get { return _scoreControllers; } }
 	private bool _firedGameEndEvent;
+	private bool _showAbsorbText = true;
 
 	// constants
 	private const string kSpawnpointTag = "Spawnpoint";
 	private const string kPlayerTag 	= "Player";
-	
 	private Vector3 outputTextPositionUpOffset = new Vector3 (0, 109, 0);
 
 	private const float END_GAME_DELAY = 1.0f;
@@ -58,19 +59,17 @@ public class ZMGameStateController : MonoBehaviour {
 
 		// Add delegate handlers
 		ZMPlayerController.PlayerDeathEvent += RespawnObject;
-//		ZMPlayerController.PlayerEliminatedEvent += HandlePlayerEliminatedEvent;
-
 		ZMScoreController.MaxScoreReached += HandleMaxScoreReached;
-
 		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
-
 		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
 		ZMTimedCounter.GameTimerEndedEvent += HandleGameTimerEndedEvent;
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
+		ZMPedestalController.ActivateEvent += HandleActivateEvent;
 	}
 
 	void Start() {
 		outputText.text = "";
+		absorbText.text = "";
 		
 		Time.timeScale = 1.0f;
 		
@@ -318,7 +317,7 @@ public class ZMGameStateController : MonoBehaviour {
 		outputText.rectTransform.position = outputTextPositionUpOffset;
 
 		if (ZMCrownManager.LeadingPlayerIndex < 0) {
-			_victoryMessage = "IT'S A DRAW!";
+			_victoryMessage = "DRAW!";
 		}
 
 		outputText.text = _victoryMessage;
@@ -350,6 +349,17 @@ public class ZMGameStateController : MonoBehaviour {
 		if (!_objectsToSpawn.Contains(playerController)) {
 			_objectsToSpawn.Enqueue(playerController);
 			Invoke("SpawnObject", 5.0f);
+
+			if (_showAbsorbText) {
+				_showAbsorbText = false;
+				absorbText.text = "ABSORB THEIR ZEN";
+			}
+		}
+	}
+
+	private void HandleActivateEvent(ZMPedestalController pedestalController) {
+		if (absorbText.text == "ABSORB THEIR ZEN") {
+			absorbText.text = "GOOD";
 		}
 	}
 }

@@ -15,6 +15,7 @@ public class ZMTimedCounter : MonoBehaviour {
 	public Text counterUIText;
 	public string minMessage, maxMessage;
 	public AudioClip audioTick;
+	public AudioClip audioComplete;
 
 	private const string kCountMethodName = "Count";
 	private int _value;
@@ -62,7 +63,7 @@ public class ZMTimedCounter : MonoBehaviour {
 			if (juicy) {
 				if (_value <= 30) {
 					counterUIText.color = new Color(0.905f, 0.698f, 0.635f, 0.75f);
-					audio.PlayOneShot(audioTick, (_value <= 10 ? 1.0f : 0.25f));
+					audio.PlayOneShot(audioTick, (_value <= 10 ? 1.5f : 0.66f));
 				} else {
 					counterUIText.color = new Color(1.000f, 1.000f, 1.000f, 0.75f);
 				}
@@ -86,8 +87,14 @@ public class ZMTimedCounter : MonoBehaviour {
 				GameTimerEndedEvent();
 			}
 
-			if (shouldClearOnCompletion)
+			if (shouldClearOnCompletion) {
 				Invoke("ClearText", timeIncrement);
+			}
+
+			if (_value == 0 && juicy) {
+				counterUIText.text = (maxMessage == null ? "" : maxMessage);
+				audio.PlayOneShot(audioComplete, 2.0f);
+			}
 		}
 	}
 

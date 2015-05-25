@@ -23,7 +23,7 @@ public class ZMGrassController : MonoBehaviour {
 		Destroy (gameObject, 1.0f);
 
 		// add to the stat tracker
-		ZMStatTracker.Instance.GrassCuts.Add (playerInfo);
+		//ZMStatTracker.Instance.GrassCuts.Add (playerInfo);
 	}
 
 	void Awake () {

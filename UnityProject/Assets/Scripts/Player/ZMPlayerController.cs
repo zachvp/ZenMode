@@ -133,7 +133,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	void Start() 
 	{
-		kDeathStrings = new string[33];
+		kDeathStrings = new string[38];
 		kDeathStrings[0] = "OOOAHH";
 		kDeathStrings[1] = "WHOOOP";
 		kDeathStrings[2] = "AYYYEEH";
@@ -164,9 +164,15 @@ public class ZMPlayerController : MonoBehaviour
 		kDeathStrings[27] = "ELEGANT";
 		kDeathStrings[28] = "SWIFT";
 		kDeathStrings[29] = "WAHH";
-		kDeathStrings[30] = "OOOOHHHH";
-		kDeathStrings[31] = "POW!";
-		kDeathStrings[32] = "YAAAS";
+		kDeathStrings[30] = "OOOOOOHH";
+		kDeathStrings[31] = "POOOOW";
+		kDeathStrings[32] = "YAAAAS";
+		kDeathStrings[33] = "SWOOOP";
+		kDeathStrings[34] = "LOLWUT";
+		kDeathStrings[35] = "SMOOTH";
+		kDeathStrings[36] = "YUUUUS";
+		kDeathStrings[37] = "YEESSS";
+		kDeathStrings[38] = "NOICE";
 	}
 
 	void FixedUpdate()
@@ -221,7 +227,7 @@ public class ZMPlayerController : MonoBehaviour
 				_framesUntilStep++;
 				if (_framesUntilStep >= FRAMES_PER_STEP) {
 					_framesUntilStep = 0;
-					audio.PlayOneShot(_audioStep[Random.Range (0, _audioStep.Length)], 0.1f);
+					audio.PlayOneShot(_audioStep[Random.Range (0, _audioStep.Length)], 0.25f);
 				}
 			}
 		}
@@ -610,9 +616,7 @@ public class ZMPlayerController : MonoBehaviour
 		_controller.enabled = true;
 		this.enabled = true;
 
-		// Play our unsheathing animation, and play a sound.
 		_animator.SetBool ("didBecomeActive", true);
-		// TODO: Add a sound here.
 	}
 
 	public void DisablePlayer() 
@@ -704,7 +708,7 @@ public class ZMPlayerController : MonoBehaviour
 			}
 
 			// add the stat
-			ZMStatTracker.Instance.Kills.Add(_playerInfo);
+			// ZMStatTracker.Instance.Kills.Add(_playerInfo);
 		}
 	}
 
