@@ -95,7 +95,7 @@ public class ZMCameraController : MonoBehaviour {
 		}
 	}
 
-	void HandlePlayerRecoilEvent (ZMPlayerController playerController)
+	void HandlePlayerRecoilEvent (ZMPlayerController playerController, float stunTime)
 	{
 		Shake(25);
 	}
