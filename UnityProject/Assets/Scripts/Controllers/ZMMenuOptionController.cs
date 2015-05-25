@@ -63,7 +63,6 @@ public class ZMMenuOptionController : MonoBehaviour {
 		}
 
 		if (inputDevice.Action1 && _active) {
-			audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
 			HandleMenuSelection();
 		}
 
@@ -96,7 +95,6 @@ public class ZMMenuOptionController : MonoBehaviour {
 	void HandleGameEndEvent() {
 		if (name.Equals("PauseMenu-Game")) {
 			gameObject.SetActive(false);
-//			Destroy(gameObject);
 		} else {
 			enabled = false;
 			HideUI();
@@ -126,6 +124,8 @@ public class ZMMenuOptionController : MonoBehaviour {
 	void HandleMenuSelection() {
 		if (SelectOptionEvent != null) {
 			SelectOptionEvent(_selectedIndex);
+			audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
+
 		}
 
 		ToggleActive(false);

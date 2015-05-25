@@ -268,7 +268,6 @@ public class ZMPlayerController : MonoBehaviour
 				_moveModState = MoveModState.PLUNGE;
 			}
 		} else if (_controlModState == ControlModState.PARRY) {
-			// ZVP
 			_spriteRenderer.color = Color.yellow;
 			light.color = Color.white;
 
@@ -276,11 +275,9 @@ public class ZMPlayerController : MonoBehaviour
 			_moveModState = MoveModState.PARRY_FACING;
 			_controlMoveState = ControlMoveState.NEUTRAL;
 			_canStun = true;
-
 			_canLunge = false;
 			runSpeed = 0;
-			DisablePlayer();
-
+			//DisablePlayer();
 			Invoke("EndStun", PARRY_STUN_WINDOW);
 		} else if (IsTouchingEitherSide()) {
 			if (!_controller.isGrounded && _moveModState == MoveModState.NEUTRAL) {
@@ -811,7 +808,6 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void EndParry() {
-		// ZVP
 		_moveModState = MoveModState.NEUTRAL;
 		_controlModState = ControlModState.NEUTRAL;
 
@@ -819,7 +815,6 @@ public class ZMPlayerController : MonoBehaviour
 		light.color = _baseColor;
 
 		_canLunge = true;
-
 		EnablePlayer();
 	}
 
