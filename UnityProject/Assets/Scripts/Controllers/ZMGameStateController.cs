@@ -58,7 +58,7 @@ public class ZMGameStateController : MonoBehaviour {
 
 		// Add delegate handlers
 		ZMPlayerController.PlayerDeathEvent += RespawnObject;
-//		ZMPlayerController.PlayerEliminatedEvent += HandlePlayerEliminatedEvent;
+		ZMPlayerController.PlayerEliminatedEvent += HandlePlayerEliminatedEvent;
 
 		ZMScoreController.MaxScoreReached += HandleMaxScoreReached;
 
