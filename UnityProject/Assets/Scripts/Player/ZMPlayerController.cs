@@ -270,6 +270,7 @@ public class ZMPlayerController : MonoBehaviour
 
 			_controlModState = ControlModState.PARRYING;
 			_moveModState = MoveModState.PARRY_FACING;
+			_controlMoveState = ControlMoveState.NEUTRAL;
 			_canStun = true;
 
 			_canLunge = false;
