@@ -18,6 +18,7 @@ namespace ZMPlayer {
 		public delegate void JumpAction(ZMPlayerInputController playerInputController);						public static event JumpAction JumpEvent;
 		public delegate void AttackAction(ZMPlayerInputController playerInputController, int direction); 	public static event AttackAction AttackEvent;
 		public delegate void PlungeAction(ZMPlayerInputController playerInputController);					public static event PlungeAction PlungeEvent;
+		public delegate void ParryAction(ZMPlayerInputController playerInputController);					public static event ParryAction ParryEvent;
 
 		void Awake () {
 			string playerInfoString;
@@ -66,6 +67,7 @@ namespace ZMPlayer {
 			JumpEvent	   = null;
 			AttackEvent	   = null;
 			PlungeEvent    = null;
+			ParryEvent     = null;
 		}
 
 		void Update () {
@@ -94,30 +96,23 @@ namespace ZMPlayer {
 				}
 
 				// Handle attacking.
-				if (InputManager.Devices[_playerNumber].Action2.WasPressed) {
-					if (AttackEvent != null) {
-						AttackEvent(this, 0);
+				if (InputManager.Devices[_playerNumber].Action2.WasPressed ||
+				    InputManager.Devices[_playerNumber].LeftBumper.WasPressed || 
+				    InputManager.Devices[_playerNumber].RightBumper.WasPressed) {
+					if (Mathf.Abs(InputManager.Devices[_playerNumber].LeftStickX) > 0.5f) {
+						if (AttackEvent != null) {
+							AttackEvent(this, 0);
+						}
 					}
-				}
-
-				if (InputManager.Devices[_playerNumber].LeftBumper.WasPressed) {
-					if (AttackEvent != null) {
-						AttackEvent(this, -1);
+					else if (InputManager.Devices[_playerNumber].LeftStickY < -0.5f) {
+						if (PlungeEvent != null) {
+							PlungeEvent(this);
+						}
 					}
-				}
-
-				if (InputManager.Devices[_playerNumber].RightBumper.WasPressed) {
-					if (AttackEvent != null) {
-						AttackEvent(this, 1);
-					}
-				}
-
-				// Handle plunging.
-				if (InputManager.Devices[_playerNumber].LeftTrigger.WasPressed ||
-				    InputManager.Devices[_playerNumber].RightTrigger.WasPressed ||
-				    InputManager.Devices[_playerNumber].Action3.WasPressed) {
-					if (PlungeEvent != null) {
-						PlungeEvent(this);
+					else {
+						if (ParryEvent != null) {
+							ParryEvent(this);
+						}
 					}
 				}
 			}

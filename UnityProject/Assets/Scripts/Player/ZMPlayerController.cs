@@ -130,7 +130,7 @@ public class ZMPlayerController : MonoBehaviour
 		ZMPlayerInputController.JumpEvent	   += JumpEvent;
 		ZMPlayerInputController.AttackEvent	   += AttackEvent;
 		ZMPlayerInputController.PlungeEvent    += PlungeEvent;
-
+		ZMPlayerInputController.ParryEvent     += ParryEvent;
 		ZMScoreController.MinScoreReached += HandleMinScoreReached;
 
 		// Set original facing direction.
@@ -139,7 +139,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	void Start() 
 	{
-		kDeathStrings = new string[38];
+		kDeathStrings = new string[39];
 		kDeathStrings[0] = "OOOAHH";
 		kDeathStrings[1] = "WHOOOP";
 		kDeathStrings[2] = "AYYYEEH";
@@ -537,9 +537,13 @@ public class ZMPlayerController : MonoBehaviour
 		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsAttacking() && _moveModState != MoveModState.RESPAWN) {
 			if (!_controller.isGrounded) {
 				_controlModState = ControlModState.PLUNGE;
-			} else if (_velocity.x < RUN_SPEED_MAX && !IsParrying()) {
-				_controlModState = ControlModState.PARRY;
-			}
+			} 
+		}
+	}
+
+	private void ParryEvent (ZMPlayerInputController inputController) {
+		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsParrying () && _moveModState != MoveModState.RESPAWN) {
+			_controlModState = ControlModState.PARRY;
 		}
 	}
 
@@ -894,7 +898,9 @@ public class ZMPlayerController : MonoBehaviour
 		return _moveModState == MoveModState.RECOIL || _moveModState == MoveModState.RECOILING;
 	}
 
-	private bool IsParrying() { return _moveModState == MoveModState.PARRY_FACING || _moveModState == MoveModState.PARRY_AOE; }
+	private bool IsParrying() { 
+		return _moveModState == MoveModState.PARRY_FACING || _moveModState == MoveModState.PARRY_AOE; 
+	}
 
 	private bool IsAbleToKill() {
 		return IsPerformingLunge() || IsPerformingPlunge();
