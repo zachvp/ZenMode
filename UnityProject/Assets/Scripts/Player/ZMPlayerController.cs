@@ -694,7 +694,7 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
-	private void KillSelf()
+	private void KillSelf(Vector2 opponentVelocity)
 	{
 		_moveModState = MoveModState.RESPAWN;
 		_controlModState = ControlModState.NEUTRAL;
@@ -709,7 +709,7 @@ public class ZMPlayerController : MonoBehaviour
 
 		// Set player states
 		_playerInPath = false;
-		runSpeed = 0f;
+		runSpeed = opponentVelocity.x;
 
 		Invoke(kRespawnMethodName, RESPAWN_TIME);
 
@@ -732,7 +732,9 @@ public class ZMPlayerController : MonoBehaviour
 	private void KillOpponent(ZMPlayerController playerController) 
 	{
 		if (playerController.IsAbleToDie()) {
-			playerController.KillSelf();
+			runSpeed *= -0.4f;
+
+			playerController.KillSelf(_velocity);
 
 			if (PlayerKillEvent != null) {
 				PlayerKillEvent(this);
