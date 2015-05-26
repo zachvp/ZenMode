@@ -222,7 +222,7 @@ public class ZMPlayerController : MonoBehaviour
 				}
 			}
 
-			if (_controller.isGrounded) {
+			if (_controller.isGrounded && Mathf.Abs(_velocity.x) > ACCELERATION) {
 				_framesUntilStep++;
 				if (_framesUntilStep >= FRAMES_PER_STEP) {
 					_framesUntilStep = 0;
