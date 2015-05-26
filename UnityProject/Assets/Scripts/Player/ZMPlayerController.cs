@@ -379,6 +379,8 @@ public class ZMPlayerController : MonoBehaviour
 
 			Recoil();
 
+			Invoke("ResetMoveModState", STUN_TIME);
+
 			if (PlayerStunEvent != null) {
 				PlayerStunEvent(this, STUN_TIME);
 			}
@@ -553,6 +555,8 @@ public class ZMPlayerController : MonoBehaviour
 	void ResetControlModState() {
 		_controlModState = ControlModState.NEUTRAL;
 	}
+
+	void ResetMoveModState() { _moveModState = MoveModState.NEUTRAL; }
 
 	void onControllerCollider( RaycastHit2D hit )
 	{
@@ -821,7 +825,7 @@ public class ZMPlayerController : MonoBehaviour
 		light.color = _baseColor;
 
 		_canLunge = true;
-		EnablePlayer();
+//		EnablePlayer();
 	}
 
 	private void EndStun() {
