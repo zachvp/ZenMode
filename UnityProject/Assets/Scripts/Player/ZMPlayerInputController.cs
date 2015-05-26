@@ -49,7 +49,7 @@ namespace ZMPlayer {
 			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 				SetEnabled(false);
 				
-				Invoke("Enable", 5f);
+				Invoke("Enable", Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY ? 5f : 0.75f);
 			}
 		}
 

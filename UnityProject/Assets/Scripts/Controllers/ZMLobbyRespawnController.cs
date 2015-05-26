@@ -10,8 +10,6 @@ public class ZMLobbyRespawnController : MonoBehaviour {
 
 	void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
-		playerController.DisablePlayer();
-
 		StartCoroutine(SpawnPlayer(playerController));
 	}
 
