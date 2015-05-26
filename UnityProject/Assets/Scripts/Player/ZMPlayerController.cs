@@ -727,7 +727,6 @@ public class ZMPlayerController : MonoBehaviour
 			StartCoroutine (ScaleTauntText (new Vector3 (1.5f, 1.5f, 1.5f), Vector3.one, 0.05f));
 			Invoke ("HideTauntText", 0.5f);
 		}
-//		DisablePlayer();
 	}
 
 	private void KillOpponent(ZMPlayerController playerController) 
