@@ -104,6 +104,7 @@ public class ZMPlayerController : MonoBehaviour
 	public delegate void PlayerEliminatedAction(ZMPlayerController playerController); public static event PlayerEliminatedAction PlayerEliminatedEvent;
 	public delegate void PlayerRecoilAction(ZMPlayerController playerController, float stunTime); public static event PlayerRecoilAction PlayerRecoilEvent;
 	public delegate void PlayerStunAction(ZMPlayerController playerController, float stunTime); public static event PlayerStunAction PlayerStunEvent;
+	public delegate void PlayerParryAction(ZMPlayerController playerController, float parryTime); public static event PlayerParryAction PlayerParryEvent;
 	public delegate void PlayerLandPlungeAction(); public static event PlayerLandPlungeAction PlayerLandPlungeEvent;
 
 	// Debug
@@ -279,6 +280,10 @@ public class ZMPlayerController : MonoBehaviour
 			runSpeed = 0;
 			//DisablePlayer();
 			Invoke("EndStun", PARRY_STUN_WINDOW);
+
+			if (PlayerParryEvent != null) {
+				PlayerParryEvent(this, PARRY_STUN_WINDOW + PARRY_TIME);
+			}
 		} else if (IsTouchingEitherSide()) {
 			if (!_controller.isGrounded && _moveModState == MoveModState.NEUTRAL) {
 				_moveModState = MoveModState.WALL_SLIDE;
@@ -458,6 +463,7 @@ public class ZMPlayerController : MonoBehaviour
 		PlayerEliminatedEvent = null;
 		PlayerRecoilEvent  	  = null;
 		PlayerStunEvent		  = null;
+		PlayerParryEvent	  = null;
 		PlayerLandPlungeEvent = null;
 	}
 	

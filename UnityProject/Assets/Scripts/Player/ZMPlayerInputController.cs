@@ -38,8 +38,18 @@ namespace ZMPlayer {
 
 			ZMPlayerController.PlayerRecoilEvent += HandlePlayerRecoilEvent;
 			ZMPlayerController.PlayerStunEvent += HandlePlayerStunEvent;
+			ZMPlayerController.PlayerParryEvent += HandlePlayerParryEvent;
 			ZMLobbyController.PauseGameEvent += HandlePauseGameEventPlayer;
 			ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
+		}
+
+		void HandlePlayerParryEvent (ZMPlayerController playerController, float parryTime)
+		{
+			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+				SetEnabled(false);
+				
+				Invoke("Enable", parryTime);
+			}
 		}
 
 		void HandlePlayerStunEvent (ZMPlayerController playerController, float stunTime)
