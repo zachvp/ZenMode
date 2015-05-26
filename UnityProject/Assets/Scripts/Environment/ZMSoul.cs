@@ -65,9 +65,10 @@ public class ZMSoul : MonoBehaviour {
 	void HandleMinScoreReached (ZMScoreController scoreController)
 	{
 		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			audio.Stop();
+
 			if (SoulDestroyedEvent != null) {
 				SoulDestroyedEvent(this);
-				audio.Stop();
 			}
 		}
 	}

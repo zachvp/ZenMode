@@ -9,11 +9,11 @@ public class ZMGameStateController : MonoBehaviour {
 	public Text absorbText;
 	private int _playerCount;
 
-	private enum GameState { BEGIN, NEUTRAL, PAUSE, PAUSED, RESUME, RESET }
-	GameState _gameState;
+	public enum GameState { BEGIN, NEUTRAL, PAUSE, PAUSED, RESUME, RESET };
+	private static GameState _gameState; public static GameState Game_State { get { return _gameState; } }
 
-	private enum MatchState { PRE_MATCH, BEGIN_COUNTDOWN, MATCH, POST_MATCH };
-	private MatchState _matchState;
+	public enum MatchState { PRE_MATCH, BEGIN_COUNTDOWN, MATCH, POST_MATCH };
+	private static MatchState _matchState; public static MatchState Match_State { get { return _matchState; } }
 
 	// references
 	private List<Transform> _spawnpoints;
@@ -330,7 +330,7 @@ public class ZMGameStateController : MonoBehaviour {
 		RESTART_OPTION = 0;
 		QUIT_OPTION    = 1;
 
-		for (int i = 0; i < _playerCount; ++i) {
+		for (int i = 0; i < _playerCount && i < _players.Count; ++i) {
 			if (i != ZMCrownManager.LeadingPlayerIndex) {
 				_players[i].gameObject.SetActive(false);
 			}

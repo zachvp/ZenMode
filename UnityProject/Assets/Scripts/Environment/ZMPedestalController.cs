@@ -38,7 +38,6 @@ public class ZMPedestalController : MonoBehaviour {
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_baseScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
 
-		//_moveState = MoveState.MOVE;
 		// event handler subscriptions
 		ZMPlayerController.PlayerDeathEvent      += HandlePlayerDeathEvent;
 		ZMScoreController.UpdateScoreEvent       += HandleUpdateScoreEvent;
@@ -72,25 +71,6 @@ public class ZMPedestalController : MonoBehaviour {
 		// unsubscribe all event listeners
 		ActivateEvent  	= null;
 		DeactivateEvent = null;
-	}
-
-	private void ToggleOn() {
-		Invoke("ToggleEnabled", 2.0f);
-	}
-
-	private void ToggleOff() {
-		Invoke("ToggleEnabled", 2.0f);
-	}
-
-	// private methods
-	private void ToggleEnabled() {
-		if (_scoreState == ScoreState.SCORING_ENABLED) {
-			Disable();
-			ToggleOn();
-		} else if (_scoreState == ScoreState.SCORING_DISABLED) {
-			Enable();
-			ToggleOff();
-		}
 	}
 
 	private void CountdownText() {
