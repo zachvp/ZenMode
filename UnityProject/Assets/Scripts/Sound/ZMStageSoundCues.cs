@@ -6,7 +6,7 @@ public class ZMStageSoundCues : MonoBehaviour {
 	public AudioClip matchStart;
 	public AudioClip switchFocus;
 	public AudioClip battleIntro;
-	public AudioClip zenPop;
+	public AudioClip[] zenPop;
 
 	// constants
 	private const string kSwitchFocusMethodName		    = "SwitchFocus";
@@ -21,7 +21,11 @@ public class ZMStageSoundCues : MonoBehaviour {
 
 	void HandleDeactivateEvent (ZMPedestalController pedestalController)
 	{
-		if (ZMGameStateController.Match_State == ZMGameStateController.MatchState.MATCH) { audio.PlayOneShot(zenPop); }
+		if (ZMGameStateController.Match_State == ZMGameStateController.MatchState.MATCH) { 
+			int index = Random.Range(0, zenPop.Length - 1);
+
+			audio.PlayOneShot(zenPop[index]);
+		}
 	}
 
 	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
