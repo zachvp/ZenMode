@@ -62,7 +62,8 @@ public class ZMScoreLayoutController : MonoBehaviour {
 			_scoreTransforms[1].localScale = new Vector3 (5.0f, 3.0f, 1.0f);
 			_scoreTransforms[1].anchoredPosition = new Vector2 (742, _paddingTop);
 
-			_scoreStatusTransforms[0].anchoredPosition = _positionSlot0 + new Vector2(_scoreStatusTransforms[0].rect.width * 1.5f, -_scoreStatusTransforms[0].rect.height * 0.7f);
+			_scoreStatusTransforms[0].anchoredPosition = _positionSlot0 + new Vector2(_scoreStatusTransforms[0].rect.width * 1.26f, -_scoreStatusTransforms[0].rect.height * 0.67f);
+			_scoreStatusTransforms[1].anchoredPosition = _positionSlot2 + new Vector2(_scoreStatusTransforms[1].rect.width * 1.4f, -_scoreStatusTransforms[1].rect.height * 0.67f);
 		}
 	}
 }
