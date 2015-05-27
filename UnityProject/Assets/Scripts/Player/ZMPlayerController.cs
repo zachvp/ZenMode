@@ -226,13 +226,6 @@ public class ZMPlayerController : MonoBehaviour
 				}
 			}
 
-			/*
-			if (Mathf.Abs(runSpeed) < Mathf.Abs (RUN_SPEED_MAX)) {
-				runSpeed = (_movementDirection == MovementDirectionState.FACING_LEFT ? Mathf.Abs(runSpeed) * -1 : Mathf.Abs(runSpeed));
-				runSpeed += ACCELERATION * (_movementDirection == MovementDirectionState.FACING_LEFT ? -1 : 1);
-			}
-			*/
-
 			if (_controller.isGrounded && Mathf.Abs(_velocity.x) > ACCELERATION) {
 				_framesUntilStep++;
 				if (_framesUntilStep >= FRAMES_PER_STEP) {
@@ -346,7 +339,6 @@ public class ZMPlayerController : MonoBehaviour
 						_playerInPath = true;
 					}
 				}
-
 				LungeRight();
 			} else if (_movementDirection == MovementDirectionState.FACING_LEFT) {
 				if (checkPlayer = CheckLeft(145f, _controller.specialInteractibleMask)) {
@@ -359,10 +351,26 @@ public class ZMPlayerController : MonoBehaviour
 			}
 
 			// End the lunge after a delay
-			if (IsInvoking(kMethodNameEndLunge)) CancelInvoke(kMethodNameEndLunge);
+			if (IsInvoking(kMethodNameEndLunge)) {
+				CancelInvoke(kMethodNameEndLunge);
+			}
 			Invoke (kMethodNameEndLunge, LUNGE_TIME);
 		}
 
+		if (CheckRight (4, _controller.platformMask) && (_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND)) {
+			audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
+			Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, 90.0f));
+			Instantiate(_effectPlungeObject, new Vector2(transform.position.x - 18, transform.position.y), rotation);
+			EndLunge ();
+		}
+		if (CheckLeft (4, _controller.platformMask) && (_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND)) {
+			audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
+			Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, 270.0f));
+			Instantiate(_effectPlungeObject, new Vector2(transform.position.x + 14, transform.position.y), rotation);
+			EndLunge ();
+		}
+
+		
 		if (_moveModState == MoveModState.RECOIL) {
 			audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 			Instantiate(_effectClashObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
