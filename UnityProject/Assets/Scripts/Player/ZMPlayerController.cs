@@ -789,7 +789,7 @@ public class ZMPlayerController : MonoBehaviour
 		light.enabled = true;
 		
 		EnablePlayer();
-		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
+		SetMovementDirection(transform.position.x < 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
 
 		if (PlayerRespawnEvent != null) {
 			PlayerRespawnEvent(this);
