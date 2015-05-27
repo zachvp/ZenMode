@@ -12,9 +12,9 @@ public class ZMPlayerController : MonoBehaviour
 	private float ACCELERATION = 30.0f;
 	private float FRICTION = 25.0f;
 	private float JUMP_HEIGHT = 800.0f;
-	private float PLUNGE_SPEED = 2200.0f;
-	private float LUNGE_SPEED = 1800.0f;
-	private float LUNGE_TIME = 0.14f;
+	private float PLUNGE_SPEED = 3000.0f;
+	private float LUNGE_SPEED = 2400.0f;
+	private float LUNGE_TIME = 0.1f;
 	private float WALL_SLIDE_SPEED = 80.0f;
 	private float WALL_JUMP_KICK_SPEED = 500.0f;
 	private float EDGE_OFFSET = 16.0f;
@@ -29,7 +29,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	// Additional constants.
 	public float RESPAWN_TIME = 5.0f;
-	private float TILE_SIZE = 28.0f;
+	private float TILE_SIZE = 2.0f;
 	private int FRAMES_PER_STEP = 30;
 
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
@@ -218,6 +218,7 @@ public class ZMPlayerController : MonoBehaviour
 
 		// Horizontal movement.
 		if (_controlMoveState == ControlMoveState.MOVING && !IsPerformingPlunge() && !IsRecoiling()) {
+
 			if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
 				if (runSpeed < RUN_SPEED_MAX) {
 					runSpeed += ACCELERATION;
@@ -227,6 +228,13 @@ public class ZMPlayerController : MonoBehaviour
 					runSpeed -= ACCELERATION;
 				}
 			}
+
+			/*
+			if (Mathf.Abs(runSpeed) < Mathf.Abs (RUN_SPEED_MAX)) {
+				runSpeed = (_movementDirection == MovementDirectionState.FACING_LEFT ? Mathf.Abs(runSpeed) * -1 : Mathf.Abs(runSpeed));
+				runSpeed += ACCELERATION * (_movementDirection == MovementDirectionState.FACING_LEFT ? -1 : 1);
+			}
+			*/
 
 			if (_controller.isGrounded && Mathf.Abs(_velocity.x) > ACCELERATION) {
 				_framesUntilStep++;
@@ -394,6 +402,9 @@ public class ZMPlayerController : MonoBehaviour
 			// Wall slide.
 			if (_velocity.y < 1.0f &&  _controlMoveState == ControlMoveState.MOVING) {
 				_velocity.y = -WALL_SLIDE_SPEED;
+				if (IsTouchingRightAndMovingRight() || IsTouchingLeftAndMovingLeft()) {
+					runSpeed = 0;
+				}
 			}
 			if (_controller.isGrounded || !IsTouchingEitherSide()) {
 				_moveModState = MoveModState.NEUTRAL;
@@ -693,9 +704,9 @@ public class ZMPlayerController : MonoBehaviour
 			Vector3 shiftedPos = transform.position;
 
 			if (CheckRight(2.0f, _controller.platformMask)) {
-				shiftedPos.x -= 8.0f;
+				shiftedPos.x -= 4.0f;
 			} else if (CheckLeft(2.0f, _controller.platformMask)) {
-				shiftedPos.x += 8.0f;
+				shiftedPos.x += 4.0f;
 			}
 
 			transform.position = shiftedPos;
