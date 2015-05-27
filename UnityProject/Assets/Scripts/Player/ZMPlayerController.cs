@@ -694,7 +694,12 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
-	private void KillSelf(Vector2 opponentVelocity)
+	private void AddVelocity(Vector2 velocity) {
+		runSpeed = velocity.x;
+		_velocity.y = velocity.y;
+	}
+
+	private void KillSelf()
 	{
 		_moveModState = MoveModState.RESPAWN;
 		_controlModState = ControlModState.NEUTRAL;
@@ -709,7 +714,6 @@ public class ZMPlayerController : MonoBehaviour
 
 		// Set player states
 		_playerInPath = false;
-		runSpeed = opponentVelocity.x;
 
 		Invoke(kRespawnMethodName, RESPAWN_TIME);
 
@@ -732,9 +736,7 @@ public class ZMPlayerController : MonoBehaviour
 	private void KillOpponent(ZMPlayerController playerController) 
 	{
 		if (playerController.IsAbleToDie()) {
-			runSpeed *= -0.4f;
-
-			playerController.KillSelf(_velocity);
+			playerController.KillSelf();
 
 			if (PlayerKillEvent != null) {
 				PlayerKillEvent(this);
@@ -747,6 +749,10 @@ public class ZMPlayerController : MonoBehaviour
 			// add the stat
 			// ZMStatTracker.Instance.Kills.Add(_playerInfo);
 		}
+
+		// apply "forces" to each of the players
+		runSpeed *= -0.4f;
+		playerController.AddVelocity(_velocity);
 	}
 
 	private IEnumerator ScaleTauntText(Vector3 start, Vector3 end, float totalTime) {
@@ -767,6 +773,7 @@ public class ZMPlayerController : MonoBehaviour
 	private void Respawn() {
 		_controlModState = ControlModState.NEUTRAL;
 		_controlMoveState = ControlMoveState.NEUTRAL;
+		runSpeed = 0;
 
 		light.enabled = true;
 		
