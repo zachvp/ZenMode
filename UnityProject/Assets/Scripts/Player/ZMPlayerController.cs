@@ -564,7 +564,7 @@ public class ZMPlayerController : MonoBehaviour
 		if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground")) {
 			if (Mathf.Abs(hit.normal.x) > 0)
 			if (_moveModState == MoveModState.RESPAWN) {
-				if (Mathf.Abs(runSpeed) > 0) {
+				if (Mathf.Abs(runSpeed) > FRICTION) {
 					runSpeed *= -0.5f;
 					audio.PlayOneShot(_audioBash[Random.Range(0, _audioBash.Length)], runSpeed / RUN_SPEED_MAX);
 				}

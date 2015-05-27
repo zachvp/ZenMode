@@ -44,42 +44,6 @@ namespace ZMPlayer {
 			ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
 		}
 
-		void HandlePlayerDeathEvent (ZMPlayerController playerController)
-		{
-			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-				SetEnabled(false);
-				
-				Invoke("Enable", Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY ? 5f : 0.75f);
-			}
-		}
-
-		void HandlePlayerParryEvent (ZMPlayerController playerController, float parryTime)
-		{
-			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-				SetEnabled(false);
-				
-				Invoke("Enable", parryTime);
-			}
-		}
-
-		void HandlePlayerStunEvent (ZMPlayerController playerController, float stunTime)
-		{
-			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-				SetEnabled(false);
-				
-				Invoke("Enable", stunTime);
-			}
-		}
-
-		void HandlePlayerRecoilEvent (ZMPlayerController playerController, float stunTime)
-		{
-			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-				SetEnabled(false);
-
-				Invoke("Enable", stunTime);
-			}
-		}
-
 		void OnDestroy() {
 			MoveRightEvent = null;
 			MoveLeftEvent  = null;
@@ -92,12 +56,14 @@ namespace ZMPlayer {
 
 		void Update () {
 			if (_inputEnabled) {
+				InputDevice inputDevice = InputManager.Devices[_playerNumber];
+
 				// Handle horizontal movement.
-				if (InputManager.Devices[_playerNumber].LeftStickX > 0.5f) {
+				if (inputDevice.LeftStickX > 0.5f) {
 					if (MoveRightEvent != null) {
 						MoveRightEvent(this);
 					}
-				} else if (InputManager.Devices[_playerNumber].LeftStickX < -0.5f) {
+				} else if (inputDevice.LeftStickX < -0.5f) {
 					if (MoveLeftEvent != null) {
 						MoveLeftEvent(this);
 					}
@@ -108,25 +74,23 @@ namespace ZMPlayer {
 				}
 
 				// Handle jumping.
-				if (InputManager.Devices[_playerNumber].Action1.WasPressed || 
-				    InputManager.Devices[_playerNumber].Action3.WasPressed || 
-				    InputManager.Devices[_playerNumber].Action4.WasPressed) {
+				if (inputDevice.Action1.WasPressed || inputDevice.Action3.WasPressed || inputDevice.Action4.WasPressed) {
 					if (JumpEvent != null) {
 						JumpEvent(this);
-						InputManager.Devices[_playerNumber].Vibrate(0.5f);
+						inputDevice.Vibrate(0.5f);
 					}
 				}
 
 				// Handle attacking.
-				if (InputManager.Devices[_playerNumber].Action2.WasPressed ||
-				    InputManager.Devices[_playerNumber].LeftBumper.WasPressed || 
-				    InputManager.Devices[_playerNumber].RightBumper.WasPressed) {
-					if (Mathf.Abs(InputManager.Devices[_playerNumber].LeftStickX) > 0.5f) {
+				if (inputDevice.Action2.WasPressed ||
+				    inputDevice.LeftBumper.WasPressed || inputDevice.RightBumper.WasPressed ||
+				    inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed) {
+					if (Mathf.Abs(inputDevice.LeftStickX) > 0.5f) {
 						if (AttackEvent != null) {
 							AttackEvent(this, 0);
 						}
 					}
-					else if (InputManager.Devices[_playerNumber].LeftStickY < -0.5f) {
+					else if (inputDevice.LeftStickY < -0.5f) {
 						if (PlungeEvent != null) {
 							PlungeEvent(this);
 						}
@@ -137,6 +101,42 @@ namespace ZMPlayer {
 						}
 					}
 				}
+			}
+		}
+
+		void HandlePlayerDeathEvent (ZMPlayerController playerController)
+		{
+			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+				SetEnabled(false);
+				
+				Invoke("Enable", Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY ? 5f : 0.75f);
+			}
+		}
+		
+		void HandlePlayerParryEvent (ZMPlayerController playerController, float parryTime)
+		{
+			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+				SetEnabled(false);
+				
+				Invoke("Enable", parryTime);
+			}
+		}
+		
+		void HandlePlayerStunEvent (ZMPlayerController playerController, float stunTime)
+		{
+			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+				SetEnabled(false);
+				
+				Invoke("Enable", stunTime);
+			}
+		}
+		
+		void HandlePlayerRecoilEvent (ZMPlayerController playerController, float stunTime)
+		{
+			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+				SetEnabled(false);
+				
+				Invoke("Enable", stunTime);
 			}
 		}
 
