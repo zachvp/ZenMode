@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace ZMPlayer{
 	public class ZMScoreController : MonoBehaviour {
 		public Slider scoreBar;
-		public GameObject zenTextEmitter;
+		public Text scoreStatus;
 
 		private const float SCORE_RATE = 0.5f;
 		private const float MAX_SCORE = 1000.0f;
@@ -135,6 +135,10 @@ namespace ZMPlayer{
 			// player score checks
 			if (_totalScore <= 0 && _goalState != GoalState.MIN) {
 				_goalState = GoalState.MIN;
+
+				if (scoreStatus != null) {
+					scoreStatus.text = "ELIMINATED!";
+				}
 
 				if (MinScoreReached != null) {
 					MinScoreReached(this);

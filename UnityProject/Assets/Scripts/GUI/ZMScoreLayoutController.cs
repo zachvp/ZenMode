@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class ZMScoreLayoutController : MonoBehaviour {
 	private List<RectTransform> _scoreTransforms;
+	private List<RectTransform> _scoreStatusTransforms;
 	private int _playerCount;
 
 	// constants
@@ -17,6 +18,7 @@ public class ZMScoreLayoutController : MonoBehaviour {
 
 	void Awake() {
 		_scoreTransforms = new List<RectTransform>();
+		_scoreStatusTransforms = new List<RectTransform>();
 
 		_positionSlot0 = new Vector2(32,  _paddingTop);
 		//_positionSlot1 = new Vector2(314, _paddingTop);
@@ -29,6 +31,7 @@ public class ZMScoreLayoutController : MonoBehaviour {
 
 		for (int i = 0; i < _playerCount; ++i) {
 			_scoreTransforms.Add(null);
+			_scoreStatusTransforms.Add(null);
 		}
 
 		foreach (GameObject item in GameObject.FindGameObjectsWithTag("ScoreGui")) {
@@ -38,6 +41,13 @@ public class ZMScoreLayoutController : MonoBehaviour {
 
 			if (index < _playerCount)
 				_scoreTransforms[index] = item.GetComponent<RectTransform>();
+		}
+
+		foreach (GameObject item in GameObject.FindGameObjectsWithTag("ScoreStatus")) {
+			int index = (int) item.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag;
+
+			if (index < _playerCount)
+				_scoreStatusTransforms[index] = item.GetComponent<RectTransform>();
 		}
 
 		for (int i = 0; i < _playerCount; ++i) {
@@ -51,8 +61,8 @@ public class ZMScoreLayoutController : MonoBehaviour {
 			_scoreTransforms[0].localScale = new Vector3 (5.0f, 3.0f, 1.0f);
 			_scoreTransforms[1].localScale = new Vector3 (5.0f, 3.0f, 1.0f);
 			_scoreTransforms[1].anchoredPosition = new Vector2 (742, _paddingTop);
-		} else {
 
+			_scoreStatusTransforms[0].anchoredPosition = _positionSlot0 + new Vector2(_scoreStatusTransforms[0].rect.width * 1.5f, -_scoreStatusTransforms[0].rect.height * 0.7f);
 		}
 	}
 }
