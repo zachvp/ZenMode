@@ -95,6 +95,7 @@ public class ZMPlayerController : MonoBehaviour
 	public AudioClip[] _audioLunge;
 	public AudioClip[] _audioPlunge;
 	public AudioClip _audioRecoil;
+	public AudioClip[] _audioBash;
 	
 
 	// Delegates
@@ -560,6 +561,16 @@ public class ZMPlayerController : MonoBehaviour
 
 	void onControllerCollider( RaycastHit2D hit )
 	{
+		if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground")) {
+			if (Mathf.Abs(hit.normal.x) > 0)
+			if (_moveModState == MoveModState.RESPAWN) {
+				if (Mathf.Abs(runSpeed) > 0) {
+					runSpeed *= -0.5f;
+					audio.PlayOneShot(_audioBash[Random.Range(0, _audioBash.Length)], runSpeed / RUN_SPEED_MAX);
+				}
+			}
+		}
+
 		if (hit.collider.gameObject.layer == LayerMask.NameToLayer(kSpecialInteractiblesLayerMaskName)) {
 			if (hit.normal.y == 1.0f) {
 				if (hit.collider.CompareTag(kPlayerTag)) {
