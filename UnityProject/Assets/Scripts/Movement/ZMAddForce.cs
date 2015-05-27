@@ -3,6 +3,7 @@
 public class ZMAddForce : MonoBehaviour {
 	public Vector2 force;
 	public float torque;
+	private Color _particleColor = Color.red; public Color ParticleColor { get { return _particleColor; } set { _particleColor = value; } }
 
 	private ParticleSystem _familyParticleSystem;
 	private float _sprayRate;
@@ -23,6 +24,7 @@ public class ZMAddForce : MonoBehaviour {
 		}
 
 		_sprayRate = BaseEmissionRate;
+		_familyParticleSystem.renderer.material.color = _particleColor;
 	}
 
 	void Update() {

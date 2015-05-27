@@ -183,7 +183,10 @@ public class ZMPlayerController : MonoBehaviour
 		kDeathStrings[36] = "YUUUUS";
 		kDeathStrings[37] = "YEESSS";
 		kDeathStrings[38] = "NOICE";
+
 		_baseColor = light.color;
+		_goreEmitter.renderer.material.color = _baseColor;
+		_goreEmitter.startColor = _baseColor;
 	}
 
 	void FixedUpdate()
@@ -727,6 +730,7 @@ public class ZMPlayerController : MonoBehaviour
 		_spriteRenderer.enabled = false;
 		_bodyUpperHalf = GameObject.Instantiate(_bodyUpperHalf) as GameObject;
 		_bodyUpperHalf.transform.position = transform.position;
+		_bodyUpperHalf.GetComponent<ZMAddForce>().ParticleColor = light.color;
 //		_bodyUpperHalf.transform.SetParent(transform);
 //		_bodyUpperHalf.SetActive(true);
 
