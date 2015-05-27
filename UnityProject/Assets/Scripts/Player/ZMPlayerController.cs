@@ -96,7 +96,9 @@ public class ZMPlayerController : MonoBehaviour
 	public AudioClip[] _audioPlunge;
 	public AudioClip _audioRecoil;
 	public AudioClip[] _audioBash;
-	
+
+	// DISMEMBERMENT!
+	public GameObject _bodyUpperHalf;
 
 	// Delegates
 	public delegate void PlayerKillAction(ZMPlayerController killer); public static event PlayerKillAction PlayerKillEvent;
@@ -722,6 +724,11 @@ public class ZMPlayerController : MonoBehaviour
 		// Handle death visuals here
 		this.renderer.material.color = Color.red;
 		light.enabled = false;
+		_spriteRenderer.enabled = false;
+		_bodyUpperHalf = GameObject.Instantiate(_bodyUpperHalf) as GameObject;
+		_bodyUpperHalf.transform.position = transform.position;
+//		_bodyUpperHalf.transform.SetParent(transform);
+//		_bodyUpperHalf.SetActive(true);
 
 		// Set player states
 		_playerInPath = false;
@@ -762,8 +769,8 @@ public class ZMPlayerController : MonoBehaviour
 		}
 
 		// apply "forces" to each of the players
-		runSpeed *= -0.4f;
-		playerController.AddVelocity(_velocity);
+//		runSpeed *= -0.4f;
+		//playerController.AddVelocity(_velocity);
 	}
 
 	private IEnumerator ScaleTauntText(Vector3 start, Vector3 end, float totalTime) {
@@ -786,6 +793,9 @@ public class ZMPlayerController : MonoBehaviour
 		_controlMoveState = ControlMoveState.NEUTRAL;
 		runSpeed = 0;
 
+		_spriteRenderer.enabled = true;
+//		_bodyUpperHalf.transform.position = new Vector3(3, 0, 0);
+//		_bodyUpperHalf.SetActive(false);
 		light.enabled = true;
 		
 		EnablePlayer();
