@@ -565,7 +565,7 @@ public class ZMPlayerController : MonoBehaviour
 			if (Mathf.Abs(hit.normal.x) > 0)
 			if (_moveModState == MoveModState.RESPAWN) {
 				if (Mathf.Abs(runSpeed) > FRICTION) {
-					runSpeed *= -0.5f;
+					runSpeed *= -0.9f;
 					audio.PlayOneShot(_audioBash[Random.Range(0, _audioBash.Length)], runSpeed / RUN_SPEED_MAX);
 				}
 			}
@@ -707,7 +707,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void AddVelocity(Vector2 velocity) {
 		runSpeed = velocity.x;
-		_velocity.y = velocity.y;
+		_velocity.y = 700; //velocity.y;
 	}
 
 	private void KillSelf()

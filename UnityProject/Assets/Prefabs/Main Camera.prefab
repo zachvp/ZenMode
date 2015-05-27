@@ -12,6 +12,9 @@ GameObject:
   - 92: {fileID: 9209556}
   - 124: {fileID: 12409556}
   - 81: {fileID: 8129098}
+  - 114: {fileID: 11446436}
+  - 114: {fileID: 11446434}
+  - 114: {fileID: 11446432}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -77,6 +80,53 @@ Behaviour:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 109556}
   m_Enabled: 1
+--- !u!114 &11446432
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 109556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af39d403503022443a9a6ccd5e5f52b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waypoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  moveSpeed: 90
+  moveAtStart: 1
+  startMoveDelay: 2
+--- !u!114 &11446434
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 109556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d1c901bda2caaa49ab24bbe630002d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  endZoom: 432
+  zoomAtStart: 1
+  zoomDelay: 1
+--- !u!114 &11446436
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 109556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11d3c86a12df9824187f8d03cbe559c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amplitude: 4
+  speed: 128
 --- !u!124 &12409556
 Behaviour:
   m_ObjectHideFlags: 1
