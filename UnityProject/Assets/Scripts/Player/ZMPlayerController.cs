@@ -292,11 +292,15 @@ public class ZMPlayerController : MonoBehaviour
 			_canStun = true;
 			_canLunge = false;
 			runSpeed = 0;
-			//DisablePlayer();
-			Invoke("EndStun", PARRY_STUN_WINDOW);
 
-			if (PlayerParryEvent != null) {
-				PlayerParryEvent(this, PARRY_STUN_WINDOW + PARRY_TIME);
+			if (_controller.isGrounded) {
+				Invoke("EndStunBeginParry", PARRY_STUN_WINDOW);
+
+				if (PlayerParryEvent != null) {
+					PlayerParryEvent(this, PARRY_STUN_WINDOW + PARRY_TIME);
+				}
+			} else {
+				Invoke("EndStun", PARRY_STUN_WINDOW);
 			}
 		} else if (IsTouchingEitherSide()) {
 			if (!_controller.isGrounded && _moveModState == MoveModState.NEUTRAL) {
@@ -388,6 +392,8 @@ public class ZMPlayerController : MonoBehaviour
 			_moveModState = MoveModState.STUNNED;
 			_controlModState = ControlModState.NEUTRAL;
 			_controlMoveState = ControlMoveState.NEUTRAL;
+
+			audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 
 			if (IsInvoking(kMethodNameEndLunge)) CancelInvoke(kMethodNameEndLunge);
 
@@ -614,6 +620,8 @@ public class ZMPlayerController : MonoBehaviour
 								_moveModState = MoveModState.STUN;
 							} else {
 								_moveModState = MoveModState.RECOIL;
+
+								audio.PlayOneShot(_audioRecoil);
 							}
 
 						} else if (otherPlayer._moveModState == MoveModState.PARRY_AOE) {
@@ -742,8 +750,6 @@ public class ZMPlayerController : MonoBehaviour
 		_bodyUpperHalf = GameObject.Instantiate(_bodyUpperHalf) as GameObject;
 		_bodyUpperHalf.transform.position = transform.position;
 		_bodyUpperHalf.GetComponent<ZMAddForce>().ParticleColor = light.color;
-//		_bodyUpperHalf.transform.SetParent(transform);
-//		_bodyUpperHalf.SetActive(true);
 
 		// Set player states
 		_playerInPath = false;
@@ -872,11 +878,18 @@ public class ZMPlayerController : MonoBehaviour
 //		EnablePlayer();
 	}
 
-	private void EndStun() {
+	private void EndStunBeginParry() {
 		_canStun = false;
 		_spriteRenderer.color = Color.magenta;
 
 		Invoke(kEndParryMethodName, PARRY_TIME);
+	}
+
+	private void EndStun() {
+		_canStun = false;
+		_spriteRenderer.color = Color.magenta;
+
+		EndParry();
 	}
 
 	private RaycastHit2D CheckLeft(float distance, LayerMask mask) {
