@@ -21,10 +21,10 @@ public class ZMPlayerController : MonoBehaviour
 	private float AOE_RANGE = 32.0f;
 	private float RECOIL_STUN_TIME = 0.001f;
 	private float PARRY_TIME_LUNGE = 0.30f;
-	private float PARRY_TIME = 1f;
-	private float PARRY_STUN_WINDOW = 1f;
+	private float PARRY_TIME = 0.5f;
+	private float PARRY_STUN_WINDOW = 0.25f;
 	private float PARRY_TIME_AIR = 0.10f;
-	private float STUN_TIME = 3f;
+	private float STUN_TIME = 0.6f;
 	private float runSpeed = 0.0f;
 
 	// Additional constants.
@@ -43,6 +43,7 @@ public class ZMPlayerController : MonoBehaviour
 	private string[] kDeathStrings;
 	private bool _canLunge;
 	private bool _canWallJump;
+	private bool _canAirParry;
 
 	// Speeds of two players before recoil.
 	private Vector2 _collisionVelocities;
@@ -214,6 +215,9 @@ public class ZMPlayerController : MonoBehaviour
 					PlayerLandPlungeEvent();
 				}
 			}
+
+			Debug.Log(gameObject.name + ": " + _moveModState);
+			_canAirParry = true;
 		}
 
 		// Horizontal movement.
@@ -299,8 +303,10 @@ public class ZMPlayerController : MonoBehaviour
 				if (PlayerParryEvent != null) {
 					PlayerParryEvent(this, PARRY_STUN_WINDOW + PARRY_TIME);
 				}
-			} else {
+			} else if (_canAirParry){
+				Debug.Log(gameObject.name + "Air Parry");
 				Invoke("EndStun", PARRY_STUN_WINDOW);
+				_canAirParry = false;
 			}
 		} else if (IsTouchingEitherSide()) {
 			if (!_controller.isGrounded && _moveModState == MoveModState.NEUTRAL) {
@@ -570,7 +576,7 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void ParryEvent (ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsParrying () && _moveModState != MoveModState.RESPAWN) {
+		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsParrying () && _moveModState != MoveModState.RESPAWN && _canAirParry) {
 			_controlModState = ControlModState.PARRY;
 		}
 	}
@@ -887,7 +893,6 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void EndStun() {
 		_canStun = false;
-		_spriteRenderer.color = Color.magenta;
 
 		EndParry();
 	}
