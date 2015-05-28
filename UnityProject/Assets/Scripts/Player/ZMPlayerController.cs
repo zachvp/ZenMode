@@ -100,6 +100,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	// DISMEMBERMENT!
 	public GameObject _bodyUpperHalf;
+	public GameObject _bodyLowerHalf;
 
 	// Delegates
 	public delegate void PlayerKillAction(ZMPlayerController killer); public static event PlayerKillAction PlayerKillEvent;
@@ -216,7 +217,6 @@ public class ZMPlayerController : MonoBehaviour
 				}
 			}
 
-			Debug.Log(gameObject.name + ": " + _moveModState);
 			_canAirParry = true;
 		}
 
@@ -753,9 +753,14 @@ public class ZMPlayerController : MonoBehaviour
 		this.renderer.material.color = Color.red;
 		light.enabled = false;
 		_spriteRenderer.enabled = false;
+
 		_bodyUpperHalf = GameObject.Instantiate(_bodyUpperHalf) as GameObject;
 		_bodyUpperHalf.transform.position = transform.position;
 		_bodyUpperHalf.GetComponent<ZMAddForce>().ParticleColor = light.color;
+
+		_bodyLowerHalf = GameObject.Instantiate(_bodyLowerHalf) as GameObject;
+		_bodyLowerHalf.transform.position = transform.position;
+		_bodyLowerHalf.GetComponent<ZMAddForce>().ParticleColor = light.color;
 
 		// Set player states
 		_playerInPath = false;
@@ -821,8 +826,6 @@ public class ZMPlayerController : MonoBehaviour
 		runSpeed = 0;
 
 		_spriteRenderer.enabled = true;
-//		_bodyUpperHalf.transform.position = new Vector3(3, 0, 0);
-//		_bodyUpperHalf.SetActive(false);
 		light.enabled = true;
 		
 		EnablePlayer();
