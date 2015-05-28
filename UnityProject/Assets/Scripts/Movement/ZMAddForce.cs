@@ -31,6 +31,13 @@ public class ZMAddForce : MonoBehaviour {
 		if (_sprayRate > MIN_SPRAY_RATE) {
 			_sprayRate -= DISSAPATE_RATE * Time.deltaTime;
 			_familyParticleSystem.emissionRate = _sprayRate;
+
+			_familyParticleSystem.renderer.material.color = _particleColor;
+			_familyParticleSystem.startColor = _particleColor;
 		}
+	}
+
+	public void AddForce(Vector2 force) {
+		rigidbody2D.AddForce(force);
 	}
 }
