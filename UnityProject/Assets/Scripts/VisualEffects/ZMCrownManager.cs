@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using ZMPlayer;
+using UnityEngine.UI;
 
 public class ZMCrownManager : MonoBehaviour {
 	private bool _lobbyDominator;
@@ -19,14 +20,11 @@ public class ZMCrownManager : MonoBehaviour {
 		// get ref to GameStateController
 		_gameStateController = GameObject.FindGameObjectWithTag("GameController").GetComponent<ZMGameStateController>();
 
-		// find, store, and deactivate all the crowns
+		// find and store all the crowns
 		GameObject[] crownObjects = GameObject.FindGameObjectsWithTag("Crown");
 
 		foreach (GameObject crown in crownObjects) {
 			int crownIndex = (int) crown.GetComponent<ZMPlayerInfo>().playerTag;
-
-			crown.gameObject.SetActive(false);
-
 			if (crownIndex < ZMPlayerManager.PlayerCount) {
 				_crowns[crownIndex] = crown;
 			}
@@ -46,7 +44,7 @@ public class ZMCrownManager : MonoBehaviour {
 		if (maxKillIndex > -1 && _crowns[maxKillIndex] != null) {
 			_lobbyDominator = true;
 			_dominatorIndex = maxKillIndex;
-			_crowns[maxKillIndex].SetActive(true);
+			_crowns[maxKillIndex].GetComponent<Text>().color = Color.yellow;
 		}
 	}
 	
@@ -76,13 +74,13 @@ public class ZMCrownManager : MonoBehaviour {
 			}
 			
 			if (_crowns[i] != null && !_lobbyDominator)
-				_crowns[i].SetActive(false);
+				_crowns[i].GetComponent<Text>().color = Color.white;
 		}
 		
 		if (maxScoreController != null && !_lobbyDominator) {
-			_crowns[(int) maxScoreController.PlayerInfo.playerTag].SetActive(true);
+			_crowns[(int) maxScoreController.PlayerInfo.playerTag].GetComponent<Text>().color = Color.yellow;
 		} else if (_lobbyDominator && _dominatorIndex < _crowns.Length) {
-			_crowns[_dominatorIndex].SetActive(true);
+			_crowns[_dominatorIndex].GetComponent<Text>().color = Color.yellow;
 		}
 	}
 }
