@@ -95,12 +95,17 @@ public class ZMPlayerController : MonoBehaviour
 	public AudioClip[] _audioSword;
 	public AudioClip[] _audioLunge;
 	public AudioClip[] _audioPlunge;
-	public AudioClip _audioRecoil;
 	public AudioClip[] _audioBash;
+	public AudioClip _audioRecoil;
+	public AudioClip _audioParry;
 
 	// DISMEMBERMENT!
 	public GameObject _bodyUpperHalf;
 	public GameObject _bodyLowerHalf;
+
+	// Materials
+	private Material _materialDefault;
+	public Material _materialFlash;
 
 	// Delegates
 	public delegate void PlayerKillAction(ZMPlayerController killer); public static event PlayerKillAction PlayerKillEvent;
@@ -189,6 +194,8 @@ public class ZMPlayerController : MonoBehaviour
 		_baseColor = light.color;
 		_goreEmitter.renderer.material.color = _baseColor;
 		_goreEmitter.startColor = _baseColor;
+
+		_materialDefault = renderer.material;
 	}
 
 	void FixedUpdate()
@@ -280,15 +287,15 @@ public class ZMPlayerController : MonoBehaviour
 				_moveModState = MoveModState.PLUNGE;
 			}
 		} else if (_controlModState == ControlModState.PARRY) {
-			_spriteRenderer.color = Color.yellow;
-			light.color = Color.white;
-
 			_controlModState = ControlModState.PARRYING;
 			_moveModState = MoveModState.PARRY_FACING;
-			_controlMoveState = ControlMoveState.NEUTRAL;
 			_canStun = true;
 			_canLunge = false;
-			runSpeed = 0;
+			GameObject effect = Instantiate(_effectClashObject, new Vector2(transform.position.x, transform.position.y), transform.rotation) as GameObject;
+			effect.transform.parent = transform;
+			effect.transform.localScale = new Vector3(0.66f, 0.66f, 1.0f);
+			renderer.material = _materialFlash;
+			audio.PlayOneShot(_audioParry);
 
 			if (_controller.isGrounded) {
 				Invoke("EndStunBeginParry", PARRY_STUN_WINDOW);
@@ -297,7 +304,6 @@ public class ZMPlayerController : MonoBehaviour
 					PlayerParryEvent(this, PARRY_STUN_WINDOW + PARRY_TIME);
 				}
 			} else if (_canAirParry){
-				Debug.Log(gameObject.name + "Air Parry");
 				Invoke("EndStun", PARRY_STUN_WINDOW);
 				_canAirParry = false;
 			}
@@ -406,13 +412,11 @@ public class ZMPlayerController : MonoBehaviour
 			_moveModState = MoveModState.STUNNED;
 			_controlModState = ControlModState.NEUTRAL;
 			_controlMoveState = ControlMoveState.NEUTRAL;
-
 			audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 
 			if (IsInvoking(kMethodNameEndLunge)) CancelInvoke(kMethodNameEndLunge);
 
 			Recoil();
-
 			Invoke("ResetMoveModState", STUN_TIME);
 
 			if (PlayerStunEvent != null) {
@@ -562,9 +566,9 @@ public class ZMPlayerController : MonoBehaviour
 
 			// hack for destroying a breakable when pressed up against it
 			if (_movementDirection == MovementDirectionState.FACING_LEFT) {
-				hit = CheckLeft(2.0f, _controller.specialInteractibleMask);
+				hit = CheckLeft(10.0f, _controller.specialInteractibleMask);
 			} else {
-				hit = CheckRight(2.0f, _controller.specialInteractibleMask);
+				hit = CheckRight(10.0f, _controller.specialInteractibleMask);
 			}
 
 			if (hit && Mathf.Round(Vector3.Dot(hit.normal, forward)) != 0 && hit.collider != null) {
@@ -632,12 +636,11 @@ public class ZMPlayerController : MonoBehaviour
 						} else if (otherPlayer._moveModState == MoveModState.PARRY_FACING && IsOpposingDirection(otherPlayer)) {
 							if (otherPlayer._canStun) {
 								_moveModState = MoveModState.STUN;
+								audio.PlayOneShot(_audioRecoil);
 							} else {
 								_moveModState = MoveModState.RECOIL;
-
-								audio.PlayOneShot(_audioRecoil);
+								audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 							}
-
 						} else if (otherPlayer._moveModState == MoveModState.PARRY_AOE) {
 							_moveModState = MoveModState.RECOIL;
 						} else {
@@ -887,24 +890,19 @@ public class ZMPlayerController : MonoBehaviour
 	private void EndParry() {
 		_moveModState = MoveModState.NEUTRAL;
 		_controlModState = ControlModState.NEUTRAL;
-
-		_spriteRenderer.color = Color.black;
-		light.color = _baseColor;
-
 		_canLunge = true;
-//		EnablePlayer();
+		this.light.color = _baseColor;
 	}
 
 	private void EndStunBeginParry() {
 		_canStun = false;
-		_spriteRenderer.color = Color.magenta;
-
+		renderer.material = _materialDefault;
 		Invoke(kEndParryMethodName, PARRY_TIME);
 	}
 
 	private void EndStun() {
 		_canStun = false;
-
+		renderer.material = _materialDefault;
 		EndParry();
 	}
 
@@ -1001,8 +999,8 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private bool ShouldEnable() {
-		return !_controller.isGrounded && !IsPerformingPlunge() && !IsRecoiling() && !IsPerformingLunge()
-			   && _moveModState != MoveModState.PARRY_FACING && _moveModState != MoveModState.PARRY_AOE;;
+		return (!_controller.isGrounded && !IsPerformingPlunge () && !IsRecoiling () 
+			&& !IsPerformingLunge () && _moveModState != MoveModState.PARRY_AOE && _moveModState != MoveModState.STUNNED);
 	}
 
 	private bool ShouldRecoilWithPlayer(ZMPlayerController other) {

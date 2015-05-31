@@ -82,23 +82,23 @@ namespace ZMPlayer {
 				}
 
 				// Handle attacking.
-				if (inputDevice.Action2.WasPressed ||
-				    inputDevice.LeftBumper.WasPressed || inputDevice.RightBumper.WasPressed ||
-				    inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed) {
-					if (Mathf.Abs(inputDevice.LeftStickX) > 0.5f) {
+				if (inputDevice.Action2.WasPressed || inputDevice.LeftBumper.WasPressed || inputDevice.RightBumper.WasPressed) {
+					if (inputDevice.LeftStickY < -0.5f) {
+						if (PlungeEvent != null) {
+							PlungeEvent(this);
+						}
+					} 
+					else {
 						if (AttackEvent != null) {
 							AttackEvent(this, 0);
 						}
 					}
-					else if (inputDevice.LeftStickY < -0.5f) {
-						if (PlungeEvent != null) {
-							PlungeEvent(this);
-						}
-					}
-					else {
-						if (ParryEvent != null) {
-							ParryEvent(this);
-						}
+				}
+
+				// Handle parrying.
+				if (inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed) {
+					if (ParryEvent != null) {
+						ParryEvent(this);
 					}
 				}
 			}
@@ -126,7 +126,7 @@ namespace ZMPlayer {
 		{
 			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 				SetEnabled(false);
-				
+
 				Invoke("Enable", stunTime);
 			}
 		}

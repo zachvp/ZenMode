@@ -15,7 +15,6 @@ public class ZMTimedCounter : MonoBehaviour {
 	public Text counterUIText;
 	public string minMessage, maxMessage;
 	public AudioClip audioTick;
-	public AudioClip audioComplete;
 
 	private const string kCountMethodName = "Count";
 	private int _value;
@@ -93,7 +92,6 @@ public class ZMTimedCounter : MonoBehaviour {
 
 			if (_value == 0 && juicy) {
 				counterUIText.text = (maxMessage == null ? "" : maxMessage);
-				audio.PlayOneShot(audioComplete, 2.0f);
 			}
 		}
 	}
