@@ -46,12 +46,15 @@ public class ZMScoreLayoutController : MonoBehaviour {
 		foreach (GameObject item in GameObject.FindGameObjectsWithTag("ScoreStatus")) {
 			int index = (int) item.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag;
 
+			item.gameObject.SetActive(false);
+
 			if (index < _playerCount)
 				_scoreStatusTransforms[index] = item.GetComponent<RectTransform>();
 		}
 
 		for (int i = 0; i < _playerCount; ++i) {
 			_scoreTransforms[i].gameObject.SetActive(true);
+			_scoreStatusTransforms[i].gameObject.SetActive(true);
 		}
 
 		if (_playerCount <= 2) {
