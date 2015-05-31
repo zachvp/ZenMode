@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01a9e432cf4854880aedbe9a3a95de62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  force: {x: -80, y: 50}
+  force: {x: 0, y: 90}
   torque: 1000
 --- !u!198 &19836416
 ParticleSystem:
