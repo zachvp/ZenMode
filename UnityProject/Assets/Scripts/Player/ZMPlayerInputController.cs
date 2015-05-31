@@ -74,7 +74,9 @@ namespace ZMPlayer {
 				}
 
 				// Handle jumping.
-				if (inputDevice.Action1.WasPressed || inputDevice.Action3.WasPressed || inputDevice.Action4.WasPressed) {
+				if (inputDevice.Action1.WasPressed || 
+				    inputDevice.Action3.WasPressed || 
+				    inputDevice.Action4.WasPressed) {
 					if (JumpEvent != null) {
 						JumpEvent(this);
 						inputDevice.Vibrate(0.5f);
@@ -82,7 +84,11 @@ namespace ZMPlayer {
 				}
 
 				// Handle attacking.
-				if (inputDevice.Action2.WasPressed || inputDevice.LeftBumper.WasPressed || inputDevice.RightBumper.WasPressed) {
+				if (inputDevice.Action2.WasPressed || 
+				    inputDevice.LeftBumper.WasPressed || 
+				    inputDevice.RightBumper.WasPressed ||
+				    inputDevice.LeftTrigger.WasPressed || 
+				    inputDevice.RightTrigger.WasPressed) {
 					if (inputDevice.LeftStickY < -0.5f) {
 						if (PlungeEvent != null) {
 							PlungeEvent(this);
@@ -96,11 +102,13 @@ namespace ZMPlayer {
 				}
 
 				// Handle parrying.
+				/*
 				if (inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed) {
 					if (ParryEvent != null) {
 						ParryEvent(this);
 					}
 				}
+				*/
 			}
 		}
 

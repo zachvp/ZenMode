@@ -44,6 +44,7 @@ public class ZMPlayerController : MonoBehaviour
 	private bool _canLunge;
 	private bool _canWallJump;
 	private bool _canAirParry;
+	private bool _canAirLunge;
 
 	// Speeds of two players before recoil.
 	private Vector2 _collisionVelocities;
@@ -98,6 +99,7 @@ public class ZMPlayerController : MonoBehaviour
 	public AudioClip[] _audioBash;
 	public AudioClip _audioRecoil;
 	public AudioClip _audioParry;
+	public AudioClip _audioLungeFail;
 
 	// DISMEMBERMENT!
 	public GameObject _bodyUpperHalf;
@@ -130,6 +132,7 @@ public class ZMPlayerController : MonoBehaviour
 		_spriteRenderer = GetComponent<SpriteRenderer>();
 		_canLunge = true;
 		_canWallJump = true;
+		_canAirLunge = true;
 
 		_controller.onControllerCollidedEvent += onControllerCollider;
 		_controller.onTriggerEnterEvent += onTriggerEnterEvent;
@@ -225,6 +228,7 @@ public class ZMPlayerController : MonoBehaviour
 			}
 
 			_canAirParry = true;
+			_canAirLunge = true;
 		}
 
 		// Horizontal movement.
@@ -273,11 +277,19 @@ public class ZMPlayerController : MonoBehaviour
 			_controlModState = ControlModState.ATTACKING;
 			if (!IsPerformingLunge ()) {
 				if (_canLunge) {
-					audio.PlayOneShot(_audioLunge[Random.Range (0, _audioLunge.Length)]);
-					_moveModState = MoveModState.LUNGE;
+					if (_controller.isGrounded || (!_controller.isGrounded && _canAirLunge)) {
+						if (!_controller.isGrounded) {
+							_canAirLunge = false;
+						}
+						audio.PlayOneShot(_audioLunge[Random.Range (0, _audioLunge.Length)]);
+						_moveModState = MoveModState.LUNGE;
 
-					Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
-					Instantiate (_effectLungeObject, new Vector2 (transform.position.x - 3, transform.position.y - 10), rotation);
+						Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
+						Instantiate (_effectLungeObject, new Vector2 (transform.position.x - 3, transform.position.y - 10), rotation);
+					}
+					else if (!_controller.isGrounded && !_canAirLunge) {
+						audio.PlayOneShot(_audioLungeFail);
+					}
 				}
 			}
 		} else if (_controlModState == ControlModState.PLUNGE) {
@@ -446,6 +458,7 @@ public class ZMPlayerController : MonoBehaviour
 						Instantiate (_effectSkidObject, new Vector2 (transform.position.x + offset, transform.position.y - 20), rotation);
 						_moveModState = MoveModState.NEUTRAL;
 						_canWallJump = false;
+						_canAirLunge = true;
 						Invoke("WallJumpCooldown", 0.05f);
 
 						if (IsMovingLeft()) {
@@ -457,6 +470,17 @@ public class ZMPlayerController : MonoBehaviour
 					}
 				}
 			}
+		}
+
+		// Update visuals.
+		if (!_controller.isGrounded && !_canAirLunge) {
+			Color color = renderer.material.color;
+			color.a = 0.5f;
+			renderer.material.color = color;
+		} else {
+			Color color = renderer.material.color;
+			color.a = 1.0f;
+			renderer.material.color = color;
 		}
 
 		// Update and apply velocity.
