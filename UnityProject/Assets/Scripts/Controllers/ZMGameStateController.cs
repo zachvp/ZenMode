@@ -7,6 +7,8 @@ using ZMPlayer;
 public class ZMGameStateController : MonoBehaviour {
 	public Text outputText;
 	public Text absorbText;
+	public AudioClip audioComplete;
+
 	private int _playerCount;
 
 	public enum GameState { BEGIN, NEUTRAL, PAUSE, PAUSED, RESUME, RESET };
@@ -126,6 +128,7 @@ public class ZMGameStateController : MonoBehaviour {
 	{
 		if (_matchState != MatchState.POST_MATCH) {
 			_matchState = MatchState.POST_MATCH;
+			audio.PlayOneShot(audioComplete, 2.0f);
 			outputText.text = _victoryMessage;
 		}
 	}
@@ -226,6 +229,8 @@ public class ZMGameStateController : MonoBehaviour {
 
 	private void HandleMaxScoreReached(ZMScoreController scoreController) {
 		_matchState = MatchState.POST_MATCH;
+		audio.PlayOneShot(audioComplete, 2.0f);
+
 	}
 
 	// Private methods

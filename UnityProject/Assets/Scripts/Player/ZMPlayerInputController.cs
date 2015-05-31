@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using InControl;
 
@@ -74,7 +74,9 @@ namespace ZMPlayer {
 				}
 
 				// Handle jumping.
-				if (inputDevice.Action1.WasPressed || inputDevice.Action3.WasPressed || inputDevice.Action4.WasPressed) {
+				if (inputDevice.Action1.WasPressed || 
+				    inputDevice.Action3.WasPressed || 
+				    inputDevice.Action4.WasPressed) {
 					if (JumpEvent != null) {
 						JumpEvent(this);
 						inputDevice.Vibrate(0.5f);
@@ -85,27 +87,31 @@ namespace ZMPlayer {
 				if (inputDevice.Action2.WasPressed ||
 				    inputDevice.LeftBumper.WasPressed || inputDevice.RightBumper.WasPressed ||
 				    inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed) {
-					if (inputDevice.LeftStickX > 0.5f) {
+					if (Mathf.Abs(inputDevice.LeftStickX) > 0.5f) {
 						if (AttackEvent != null) {
-							AttackEvent(this, 1);
-						}
-					}
-					else if (inputDevice.LeftStickX < -0.5f) {
-						if (AttackEvent != null) {
-							AttackEvent(this, -1);
+							AttackEvent(this, 0);
 						}
 					}
 					else if (inputDevice.LeftStickY < -0.5f) {
 						if (PlungeEvent != null) {
 							PlungeEvent(this);
 						}
-					}
+					} 
 					else {
-						if (ParryEvent != null) {
-							ParryEvent(this);
+						if (AttackEvent != null) {
+							AttackEvent(this, 0);
 						}
 					}
 				}
+
+				// Handle parrying.
+				/*
+				if (inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed) {
+					if (ParryEvent != null) {
+						ParryEvent(this);
+					}
+				}
+				*/
 			}
 		}
 
@@ -131,7 +137,7 @@ namespace ZMPlayer {
 		{
 			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
 				SetEnabled(false);
-				
+
 				Invoke("Enable", stunTime);
 			}
 		}
