@@ -17,6 +17,14 @@ public class ZMCrownManager : MonoBehaviour {
 
 		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
 		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
+		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+	}
+
+	void HandleGameEndEvent ()
+	{
+		for (int i = 0; i < _crowns.Length; ++i) {
+			if (_crowns[i] != null) { _crowns[i].SetActive(false); }
+		}
 	}
 
 	void HandlePlayerRespawnEvent (ZMPlayerController playerController)
