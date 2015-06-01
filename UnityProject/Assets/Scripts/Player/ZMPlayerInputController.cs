@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using InControl;
 
@@ -84,12 +84,15 @@ namespace ZMPlayer {
 				}
 
 				// Handle attacking.
-				if (inputDevice.Action2.WasPressed || 
-				    inputDevice.LeftBumper.WasPressed || 
-				    inputDevice.RightBumper.WasPressed ||
-				    inputDevice.LeftTrigger.WasPressed || 
-				    inputDevice.RightTrigger.WasPressed) {
-					if (inputDevice.LeftStickY < -0.5f) {
+				if (inputDevice.Action2.WasPressed ||
+				    inputDevice.LeftBumper.WasPressed || inputDevice.RightBumper.WasPressed ||
+				    inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed) {
+					if (Mathf.Abs(inputDevice.LeftStickX) > 0.5f) {
+						if (AttackEvent != null) {
+							AttackEvent(this, 0);
+						}
+					}
+					else if (inputDevice.LeftStickY < -0.5f) {
 						if (PlungeEvent != null) {
 							PlungeEvent(this);
 						}

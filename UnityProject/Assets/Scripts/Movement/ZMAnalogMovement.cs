@@ -13,7 +13,8 @@ public class ZMAnalogMovement : MonoBehaviour {
 
 	// references
 	private ZMPlayerInfo _playerInfo;
-	private int _controlIndex;	
+	private int _controlIndex;
+	private Color _baseColor;
 
 	void Awake () {
 		_playerInfo = GetComponent<ZMPlayerInfo>();
@@ -23,6 +24,8 @@ public class ZMAnalogMovement : MonoBehaviour {
 		if (_controlIndex >= InputManager.Devices.Count) {
 			enabled = false;
 		}
+
+		_baseColor = renderer.material.color;
 	}
 
 	void Update () {
@@ -54,13 +57,18 @@ public class ZMAnalogMovement : MonoBehaviour {
 			_shouldBounce = true;
 			Invoke("CancelBounce", 0.2f);
 		} else if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Ground"))) {
-			_slowFactor = 0.45f;
+			Color faded = _baseColor;
+			faded.a = 0.3f;
+
+			_slowFactor = 0.4f;
+			renderer.material.color = faded;
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D collider) {
 		if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Ground"))) {
 			_slowFactor = 1f;
+			renderer.material.color = _baseColor;
 		}
 	}
 
