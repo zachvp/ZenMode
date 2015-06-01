@@ -12,7 +12,7 @@ GameObject:
   - 61: {fileID: 6136416}
   - 114: {fileID: 11436416}
   - 50: {fileID: 5036416}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PlayerHalfLower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29,7 +29,7 @@ GameObject:
   - 4: {fileID: 436416}
   - 198: {fileID: 19836416}
   - 199: {fileID: 19936416}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 136414}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -365, y: -86, z: 0}
+  m_LocalPosition: {x: 436, y: 240, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children:
   - {fileID: 436416}

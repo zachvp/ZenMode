@@ -102,8 +102,8 @@ public class ZMPlayerController : MonoBehaviour
 	public AudioClip _audioLungeFail;
 
 	// DISMEMBERMENT!
-	public GameObject _bodyUpperHalf;
-	public GameObject _bodyLowerHalf;
+	private string _bodyUpperHalfPath = "PlayerHalfUpper";
+	private string _bodyLowerHalfPath = "PlayerHalfLower";
 
 	// Materials
 	private Material _materialDefault;
@@ -539,6 +539,8 @@ public class ZMPlayerController : MonoBehaviour
 		PlayerStunEvent		  = null;
 		PlayerParryEvent	  = null;
 		PlayerLandPlungeEvent = null;
+
+		Resources.UnloadUnusedAssets();
 	}
 	
 	// Event handling - CCONTROL
@@ -796,8 +798,10 @@ public class ZMPlayerController : MonoBehaviour
 		_velocity.y = velocity.y;
 	}
 
-	private void KillSelf()
+	private void KillSelf(ZMPlayerController killer)
 	{
+		GameObject template, body;
+
 		_moveModState = MoveModState.RESPAWN;
 		_controlModState = ControlModState.NEUTRAL;
 		_controlMoveState = ControlMoveState.NEUTRAL;
@@ -810,17 +814,23 @@ public class ZMPlayerController : MonoBehaviour
 		light.enabled = false;
 		_spriteRenderer.enabled = false;
 
-		_bodyUpperHalf = GameObject.Instantiate(_bodyUpperHalf) as GameObject;
-		ZMAddForce upperBody = _bodyUpperHalf.GetComponent<ZMAddForce>();
-		_bodyUpperHalf.transform.position = transform.position;
-		upperBody.ParticleColor = light.color;
-		upperBody.AddForce(new Vector2(10 * runSpeed, -_velocity.y));
+		// load and instantiate the body's upper half
+		template = Resources.Load(_bodyUpperHalfPath, typeof(GameObject)) as GameObject;
+		body = GameObject.Instantiate(template) as GameObject;
+		body.transform.position = transform.position;
 
-		_bodyLowerHalf = GameObject.Instantiate(_bodyLowerHalf) as GameObject;
-		ZMAddForce lowerBody = _bodyLowerHalf.GetComponent<ZMAddForce>();
-		_bodyLowerHalf.transform.position = transform.position;
+		ZMAddForce upperBody = body.GetComponent<ZMAddForce>();
+		upperBody.ParticleColor = light.color;
+		upperBody.AddForce(new Vector2(killer.runSpeed / 4, 0));
+
+		// load and instantiate the body's lower half
+		template = Resources.Load(_bodyLowerHalfPath, typeof(GameObject)) as GameObject;
+		body = GameObject.Instantiate(template) as GameObject;
+		body.transform.position = transform.position;
+
+		ZMAddForce lowerBody = body.GetComponent<ZMAddForce>();
 		lowerBody.ParticleColor = light.color;
-		lowerBody.AddForce(new Vector2(runSpeed, -_velocity.y));
+		lowerBody.AddForce(new Vector2(killer.runSpeed / 8, 0));
 
 		// Set player states
 		_playerInPath = false;
@@ -846,7 +856,7 @@ public class ZMPlayerController : MonoBehaviour
 	private void KillOpponent(ZMPlayerController playerController) 
 	{
 		if (playerController.IsAbleToDie()) {
-			playerController.KillSelf();
+			playerController.KillSelf(this);
 
 			if (PlayerKillEvent != null) {
 				PlayerKillEvent(this);

@@ -15,11 +15,8 @@ public class ZMAddForce : MonoBehaviour {
 	private const float FADE_SPEED = 0.6f;
 
 	private static float BaseEmissionRate = 0;
-	private static int InstanceCount = 0;
 
 	void Start () {
-		InstanceCount += 1;
-
 		renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 1);
 
 		rigidbody2D.AddForce(force);
@@ -49,8 +46,7 @@ public class ZMAddForce : MonoBehaviour {
 		if (_despawning) {
 			renderer.material.color = Color.Lerp(renderer.material.color, Color.clear, FADE_SPEED * Time.deltaTime);
 
-			if (renderer.material.color.a < 0.05f && InstanceCount > 2) {
-				InstanceCount -= 1;
+			if (renderer.material.color.a < 0.05f) {
 				Destroy(gameObject);
 			}
 		}

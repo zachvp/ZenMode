@@ -12,8 +12,8 @@ GameObject:
   - 61: {fileID: 6179998}
   - 114: {fileID: 11479998}
   - 50: {fileID: 5079998}
-  m_Layer: 0
-  m_Name: PlayerHalf
+  m_Layer: 13
+  m_Name: PlayerHalfUpper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ GameObject:
   - 4: {fileID: 479998}
   - 198: {fileID: 19879998}
   - 199: {fileID: 19979998}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 179996}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 80.9000015, y: 5.5, z: 0}
+  m_LocalPosition: {x: 436, y: 240, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children:
   - {fileID: 479998}
