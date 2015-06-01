@@ -91,6 +91,12 @@ namespace ZMPlayer{
 
 			// xD
 			SetScore (ZMPlayerManager.PlayerCount > 2 ? MAX_SCORE / 2f : MAX_SCORE / ZMPlayerManager.PlayerCount);
+
+			if ((int) _playerInfo.playerTag >= ZMPlayerManager.PlayerCount) {
+				scoreStatus.gameObject.SetActive(false);
+			} else {
+				scoreStatus.text = "";
+			}
 		}
 
 		void FixedUpdate() {
