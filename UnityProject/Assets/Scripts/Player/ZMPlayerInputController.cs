@@ -87,9 +87,14 @@ namespace ZMPlayer {
 				if (inputDevice.Action2.WasPressed ||
 				    inputDevice.LeftBumper.WasPressed || inputDevice.RightBumper.WasPressed ||
 				    inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed) {
-					if (Mathf.Abs(inputDevice.LeftStickX) > 0.5f) {
+					if (inputDevice.LeftStickX > 0.5f) {
 						if (AttackEvent != null) {
-							AttackEvent(this, 0);
+							AttackEvent(this, 1);
+						}
+					}
+					else if (inputDevice.LeftStickX < -0.5f) {
+						if (AttackEvent != null) {
+							AttackEvent(this, -1);
 						}
 					}
 					else if (inputDevice.LeftStickY < -0.5f) {

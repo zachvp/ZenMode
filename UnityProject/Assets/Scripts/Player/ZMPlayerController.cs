@@ -217,6 +217,7 @@ public class ZMPlayerController : MonoBehaviour
 				audio.PlayOneShot(_audioLand[Random.Range (0, _audioLand.Length)], 0.5f);
 				Instantiate(_effectLandObject, new Vector2(transform.position.x - 3, transform.position.y - 8), transform.rotation);
 			}
+
 			_velocity.y = 0;
 
 			if (IsPerformingPlunge()) {
@@ -613,7 +614,17 @@ public class ZMPlayerController : MonoBehaviour
 		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsAttacking() && _moveModState != MoveModState.RESPAWN) {
 			if (!_controller.isGrounded) {
 				_controlModState = ControlModState.PLUNGE;
-			} 
+			} else {
+				RaycastHit2D hit = CheckBelow(2, _controller.specialInteractibleMask);
+
+				if (hit && hit.collider != null) {
+					Debug.Log(hit.collider.tag);
+					if (hit.collider.CompareTag("Breakable")) {
+						_controlModState = ControlModState.PLUNGE;
+						hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
+					}
+				}
+			}
 		}
 	}
 
@@ -648,6 +659,10 @@ public class ZMPlayerController : MonoBehaviour
 
 					if (IsPerformingPlunge()) {
 						KillOpponent (otherPlayer);
+					}
+				} else if (hit.collider.CompareTag("Breakable")) {
+					if (IsPerformingPlunge()) {
+						hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
 					}
 				}
 			}
@@ -778,7 +793,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void AddVelocity(Vector2 velocity) {
 		runSpeed = velocity.x;
-		_velocity.y = 700; //velocity.y;
+		_velocity.y = velocity.y;
 	}
 
 	private void KillSelf()
@@ -966,8 +981,12 @@ public class ZMPlayerController : MonoBehaviour
 		return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
 	}
 
+	private RaycastHit2D CheckBelow(float distance, LayerMask mask) {
+		return CheckBelow(Vector2.zero, distance, mask);
+	}
+
 	private RaycastHit2D CheckBelow(Vector2 offset, float distance, LayerMask mask) {
-		Vector2 rayOrigin = new Vector2(transform.position.x, transform.position.y - 32.0f);
+		Vector2 rayOrigin = new Vector2(transform.position.x, transform.position.y - 32.1f);
 		Vector2 rayDirection = new Vector2(1.0f, 0.0f);
 		
 		rayOrigin += offset;
