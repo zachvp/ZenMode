@@ -791,6 +791,9 @@ public class ZMPlayerController : MonoBehaviour
 		CancelInvoke(kMethodNameEnablePlayer);
 
 		// Handle death visuals here
+		float multiplier = 0.5f;
+		Color dark = new Color(light.color.r * multiplier, light.color.g * multiplier, light.color.b * multiplier);
+
 		this.renderer.material.color = Color.red;
 		light.enabled = false;
 		_spriteRenderer.enabled = false;
@@ -798,14 +801,16 @@ public class ZMPlayerController : MonoBehaviour
 		_bodyUpperHalf = GameObject.Instantiate(_bodyUpperHalf) as GameObject;
 		ZMAddForce upperBody = _bodyUpperHalf.GetComponent<ZMAddForce>();
 		_bodyUpperHalf.transform.position = transform.position;
-		upperBody.ParticleColor = light.color;
+		upperBody.ParticleColor = light.color - dark;
 		upperBody.AddForce(new Vector2(10 * runSpeed, -_velocity.y));
 
 		_bodyLowerHalf = GameObject.Instantiate(_bodyLowerHalf) as GameObject;
 		ZMAddForce lowerBody = _bodyLowerHalf.GetComponent<ZMAddForce>();
 		_bodyLowerHalf.transform.position = transform.position;
-		lowerBody.ParticleColor = light.color;
+		lowerBody.ParticleColor = light.color - dark;
 		lowerBody.AddForce(new Vector2(runSpeed, -_velocity.y));
+
+		Debug.Log((light.color - dark).ToString());
 
 		// Set player states
 		_playerInPath = false;
