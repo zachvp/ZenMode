@@ -9,7 +9,7 @@ public class ZMMenuOptionController : MonoBehaviour {
 	public AudioClip[] _audioHighlight;
 
 	private bool _active;
-	private int  _selectedIndex;
+	public int _selectedIndex = 1;
 	private int  _optionsSize;
 
 	private bool _canCycleSelection;
@@ -22,7 +22,6 @@ public class ZMMenuOptionController : MonoBehaviour {
 	public delegate void SelectOptionAction(int optionIndex);  public static event SelectOptionAction SelectOptionEvent;
 
 	void Awake() {
-		_selectedIndex = 0;
 		_baseColor 	   = menuOptions[0].color;
 		_selectedColor = new Color(255, 255, 255, 255);
 		_optionsSize = menuOptions.Length;
