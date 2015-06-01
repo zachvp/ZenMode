@@ -281,6 +281,7 @@ public class ZMPlayerController : MonoBehaviour
 		// Update movement and ability state.
 		if (_controlModState == ControlModState.ATTACK) {
 			_controlModState = ControlModState.ATTACKING;
+
 			if (!IsPerformingLunge ()) {
 				if (_canLunge) {
 					if (_controller.isGrounded || (!_controller.isGrounded && _canAirLunge)) {
@@ -376,6 +377,7 @@ public class ZMPlayerController : MonoBehaviour
 						_playerInPath = true;
 					}
 				}
+
 				LungeRight();
 			} else if (_movementDirection == MovementDirectionState.FACING_LEFT) {
 				if (checkPlayer = CheckLeft(145f, _controller.specialInteractibleMask)) {
@@ -592,6 +594,9 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void AttackEvent(ZMPlayerInputController inputController, int direction) {
+		Debug.Log("control " + _controlModState.ToString());
+		Debug.Log("move " + _moveModState.ToString());
+
 		if (inputController.PlayerInfo.Equals(_playerInfo) && !IsAttacking() && _moveModState != MoveModState.RESPAWN) {
 			RaycastHit2D hit;
 			Vector2 forward = new Vector2(direction, 0);
@@ -869,7 +874,7 @@ public class ZMPlayerController : MonoBehaviour
 			}
 
 			// add the stat
-			// ZMStatTracker.Instance.Kills.Add(_playerInfo);
+			ZMStatTracker.Instance.Kills.Add(_playerInfo);
 		}
 
 		// apply "forces" to each of the players
@@ -935,11 +940,14 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void EndLunge() {
+		Debug.Log("End lunge");
+
 		runSpeed = 0;
 		_playerInPath = false;
 
 		float lagTime = (_moveModState == MoveModState.LUNGING_AIR ? PARRY_TIME_AIR : PARRY_TIME_LUNGE);
 		_moveModState = MoveModState.PARRY_FACING;
+		_controlModState = ControlModState.NEUTRAL;
 		Invoke(kMethodNameEnablePlayer, lagTime);
 
 		// Set a cooldown before we can lunge again.

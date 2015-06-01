@@ -27,13 +27,14 @@ namespace ZMPlayer {
 			playerInfoString = _playerInfo.playerTag.ToString ();
 			_playerNumber = int.Parse (playerInfoString.Substring (playerInfoString.Length - 1)) - 1;
 
-			_inputEnabled = true;
-
 			if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
+				ZMGameStateController.StartGameEvent += HandleStartGameEvent;
 				ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
 				ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 				ZMGameStateController.GameEndEvent += HandleGameEndEvent;
 				ZMGameStateController.QuitMatchEvent += HandleQuitMatchEvent;
+			} else {
+				_inputEnabled = true;
 			}
 
 			ZMPlayerController.PlayerRecoilEvent += HandlePlayerRecoilEvent;
@@ -118,6 +119,11 @@ namespace ZMPlayer {
 				}
 				*/
 			}
+		}
+
+		void HandleStartGameEvent ()
+		{
+			SetEnabled(true);
 		}
 
 		void HandlePlayerDeathEvent (ZMPlayerController playerController)
