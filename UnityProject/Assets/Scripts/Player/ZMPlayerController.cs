@@ -388,17 +388,23 @@ public class ZMPlayerController : MonoBehaviour
 			Invoke (kMethodNameEndLunge, LUNGE_TIME);
 		}
 
-		if (CheckRight (4, _controller.platformMask) && (_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND)) {
-			audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
-			Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, 90.0f));
-			Instantiate(_effectPlungeObject, new Vector2(transform.position.x - 18, transform.position.y), rotation);
-			EndLunge ();
+		if (_movementDirection == MovementDirectionState.FACING_RIGHT && (_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND)) {
+			RaycastHit2D hit = CheckRight (4, _controller.platformMask);
+			if (hit && !hit.collider.CompareTag("Breakable")) {
+				audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
+				Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, 90.0f));
+				Instantiate(_effectPlungeObject, new Vector2(transform.position.x - 18, transform.position.y), rotation);
+				EndLunge ();
+			}
 		}
-		if (CheckLeft (4, _controller.platformMask) && (_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND)) {
-			audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
-			Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, 270.0f));
-			Instantiate(_effectPlungeObject, new Vector2(transform.position.x + 14, transform.position.y), rotation);
-			EndLunge ();
+		if (_movementDirection == MovementDirectionState.FACING_LEFT && (_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND)) {
+			RaycastHit2D hit = CheckLeft (4, _controller.platformMask);
+			if (hit && !hit.collider.CompareTag("Breakable")) {
+				audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
+				Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, 270.0f));
+				Instantiate(_effectPlungeObject, new Vector2(transform.position.x + 14, transform.position.y), rotation);
+				EndLunge ();
+			}
 		}
 
 		
