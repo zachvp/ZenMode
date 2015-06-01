@@ -12,7 +12,7 @@ public class ZMAddForce : MonoBehaviour {
 	private const float DISSAPATE_RATE = 20;
 	private const float MIN_SPRAY_RATE = 0;
 	private const float LIFETIME = 15f;
-	private const float FADE_SPEED = 0.4f;
+	private const float FADE_SPEED = 0.6f;
 
 	private static float BaseEmissionRate = 0;
 	private static int InstanceCount = 0;
