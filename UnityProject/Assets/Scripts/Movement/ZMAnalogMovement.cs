@@ -25,7 +25,7 @@ public class ZMAnalogMovement : MonoBehaviour {
 			enabled = false;
 		}
 
-		_baseColor = renderer.material.color;
+		if (renderer != null) { _baseColor = renderer.material.color; }
 	}
 
 	void Update () {
@@ -61,14 +61,16 @@ public class ZMAnalogMovement : MonoBehaviour {
 			faded.a = 0.3f;
 
 			_slowFactor = 0.4f;
-			renderer.material.color = faded;
+
+			if (renderer != null) { renderer.material.color = faded; }
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D collider) {
 		if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Ground"))) {
 			_slowFactor = 1f;
-			renderer.material.color = _baseColor;
+
+			if (renderer != null) { renderer.material.color = _baseColor; }
 		}
 	}
 
