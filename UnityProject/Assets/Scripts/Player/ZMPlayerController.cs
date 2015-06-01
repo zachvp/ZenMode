@@ -791,9 +791,6 @@ public class ZMPlayerController : MonoBehaviour
 		CancelInvoke(kMethodNameEnablePlayer);
 
 		// Handle death visuals here
-		float multiplier = 0.5f;
-		Color dark = new Color(light.color.r * multiplier, light.color.g * multiplier, light.color.b * multiplier);
-
 		this.renderer.material.color = Color.red;
 		light.enabled = false;
 		_spriteRenderer.enabled = false;

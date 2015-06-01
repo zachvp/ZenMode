@@ -49,8 +49,6 @@ public class ZMAddForce : MonoBehaviour {
 		if (_despawning) {
 			renderer.material.color = Color.Lerp(renderer.material.color, Color.clear, FADE_SPEED * Time.deltaTime);
 
-			Debug.Log(renderer.material.color.ToString());
-
 			if (renderer.material.color.a < 0.05f && InstanceCount > 2) {
 				InstanceCount -= 1;
 				Destroy(gameObject);
