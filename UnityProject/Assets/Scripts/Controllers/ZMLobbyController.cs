@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using ZMPlayer;
 
 public class ZMLobbyController : MonoBehaviour {
 	public GameObject loadScreen;
+	public Text message;
 
 	public delegate void PlayerJoinedAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerJoinedAction PlayerJoinedEvent;
 	public delegate void PlayerReadyAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerReadyAction PlayerReadyEvent;
@@ -33,10 +35,12 @@ public class ZMLobbyController : MonoBehaviour {
 		_joinedPlayers = new bool[ZMPlayerManager.MAX_PLAYERS];
 		_readyPlayers = new bool[ZMPlayerManager.MAX_PLAYERS];
 
+		message.text = "";
+
 		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
 
-		ZMGameInputManager.StartInputEvent		+= HandleStartInputEvent;
-		ZMGameInputManager.AnyInputEvent 		+= HandleMainInputEvent;
+		ZMGameInputManager.StartInputEvent		 += HandleStartInputEvent;
+		ZMGameInputManager.AnyInputEvent 		 += HandleMainInputEvent;
 		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
 	}
 
@@ -82,6 +86,13 @@ public class ZMLobbyController : MonoBehaviour {
 		int playerIndex = (int) playerTag;
 
 		if (!_joinedPlayers[playerIndex]) {
+			if (playerIndex > 0 && !_joinedPlayers[playerIndex - 1]) {
+				message.text = "Player " + playerIndex + " must join first!";
+				Invoke ("ClearMessage", 2f);
+
+				return;
+			}
+
 			_currentJoinCount += 1;
 			
 			if (PlayerJoinedEvent != null) {
@@ -152,5 +163,9 @@ public class ZMLobbyController : MonoBehaviour {
 
 	void LoadLevel() {
 		Application.LoadLevel(ZMSceneIndexList.INDEX_STAGE);
+	}
+
+	void ClearMessage() {
+		message.text = "";
 	}
 }
