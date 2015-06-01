@@ -43,7 +43,7 @@ public class ZMPlayerController : MonoBehaviour
 	private string[] kDeathStrings;
 	private bool _canLunge;
 	private bool _canWallJump;
-	private bool _canAirParry;
+//	private bool _canAirParry;
 	private bool _canAirLunge;
 
 	// Speeds of two players before recoil.
@@ -233,7 +233,7 @@ public class ZMPlayerController : MonoBehaviour
 				}
 			}
 
-			_canAirParry = true;
+//			_canAirParry = true;
 			_canAirLunge = true;
 		}
 
@@ -280,8 +280,6 @@ public class ZMPlayerController : MonoBehaviour
 
 		// Update movement and ability state.
 		if (_controlModState == ControlModState.ATTACK) {
-			_controlModState = ControlModState.ATTACKING;
-
 			if (!IsPerformingLunge ()) {
 				if (_canLunge) {
 					if (_controller.isGrounded || (!_controller.isGrounded && _canAirLunge)) {
@@ -289,6 +287,8 @@ public class ZMPlayerController : MonoBehaviour
 							_canAirLunge = false;
 						}
 						audio.PlayOneShot(_audioLunge[Random.Range (0, _audioLunge.Length)]);
+
+						_controlModState = ControlModState.ATTACKING;
 						_moveModState = MoveModState.LUNGE;
 
 						Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
@@ -322,9 +322,6 @@ public class ZMPlayerController : MonoBehaviour
 				if (PlayerParryEvent != null) {
 					PlayerParryEvent(this, PARRY_STUN_WINDOW + PARRY_TIME);
 				}
-			} else if (_canAirParry){
-				Invoke("EndStun", PARRY_STUN_WINDOW);
-				_canAirParry = false;
 			}
 		} else if (IsTouchingEitherSide()) {
 			if (!_controller.isGrounded && _moveModState == MoveModState.NEUTRAL) {
@@ -594,9 +591,6 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void AttackEvent(ZMPlayerInputController inputController, int direction) {
-		Debug.Log("control " + _controlModState.ToString());
-		Debug.Log("move " + _moveModState.ToString());
-
 		if (inputController.PlayerInfo.Equals(_playerInfo) && !IsAttacking() && _moveModState != MoveModState.RESPAWN) {
 			RaycastHit2D hit;
 			Vector2 forward = new Vector2(direction, 0);
@@ -640,7 +634,7 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void ParryEvent (ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsParrying () && _moveModState != MoveModState.RESPAWN && _canAirParry) {
+		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsParrying () && _moveModState != MoveModState.RESPAWN) {
 			_controlModState = ControlModState.PARRY;
 		}
 	}
@@ -940,8 +934,6 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void EndLunge() {
-		Debug.Log("End lunge");
-
 		runSpeed = 0;
 		_playerInPath = false;
 

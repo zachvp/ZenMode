@@ -14,6 +14,23 @@ public class ZMCrownManager : MonoBehaviour {
 
 	void Awake() {
 		_crowns = new GameObject[ZMPlayerManager.PlayerCount];
+
+		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
+		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
+	}
+
+	void HandlePlayerRespawnEvent (ZMPlayerController playerController)
+	{
+		int index = (int) playerController.PlayerInfo.playerTag;
+		
+		_crowns[index].SetActive(true);
+	}
+
+	void HandlePlayerDeathEvent (ZMPlayerController playerController)
+	{
+		int index = (int) playerController.PlayerInfo.playerTag;
+
+		_crowns[index].SetActive(false);
 	}
 	
 	void Start () {
