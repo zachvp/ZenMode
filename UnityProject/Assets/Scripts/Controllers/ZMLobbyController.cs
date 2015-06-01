@@ -88,6 +88,7 @@ public class ZMLobbyController : MonoBehaviour {
 		if (!_joinedPlayers[playerIndex]) {
 			if (playerIndex > 0 && !_joinedPlayers[playerIndex - 1]) {
 				message.text = "Player " + playerIndex + " must join first!";
+				if (IsInvoking("ClearMessage")) { CancelInvoke("ClearMessage"); }
 				Invoke ("ClearMessage", 2f);
 
 				return;
