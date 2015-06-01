@@ -625,7 +625,6 @@ public class ZMPlayerController : MonoBehaviour
 				RaycastHit2D hit = CheckBelow(2, _controller.specialInteractibleMask);
 
 				if (hit && hit.collider != null) {
-					Debug.Log(hit.collider.tag);
 					if (hit.collider.CompareTag("Breakable")) {
 						_controlModState = ControlModState.PLUNGE;
 						hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
