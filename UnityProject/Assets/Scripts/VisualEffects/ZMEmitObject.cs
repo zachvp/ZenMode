@@ -7,11 +7,13 @@ public class ZMEmitObject : MonoBehaviour {
 	public Color color;
 	public int interval = 10;
 
-	private GameObject _emitObject;
+	private GameObject _resource;
 	private int _currentFrame = 0;
 
 	void Awake() {
 		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+
+		_resource = Resources.Load(resourcePath, typeof(GameObject)) as GameObject;
 	}
 
 	void HandleGameEndEvent ()
@@ -22,13 +24,11 @@ public class ZMEmitObject : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (_currentFrame > interval) {
-			GameObject resource = Resources.Load(resourcePath, typeof(GameObject)) as GameObject;
+			GameObject emitObject = GameObject.Instantiate(_resource) as GameObject;
 
-			_emitObject = GameObject.Instantiate(resource) as GameObject;
-
-			_emitObject.transform.position = transform.position;
-			_emitObject.GetComponent<Text>().color = color;
-			_emitObject.transform.SetParent(transform);
+			emitObject.transform.position = transform.position;
+			emitObject.GetComponent<Text>().color = color;
+			emitObject.transform.SetParent(transform);
 
 			_currentFrame = 0;
 		}

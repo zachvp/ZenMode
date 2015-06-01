@@ -102,8 +102,9 @@ public class ZMPlayerController : MonoBehaviour
 	public AudioClip _audioLungeFail;
 
 	// DISMEMBERMENT!
-	private string _bodyUpperHalfPath = "PlayerHalfUpper";
-	private string _bodyLowerHalfPath = "PlayerHalfLower";
+	private const string kBodyUpperHalfPath = "PlayerHalfUpper";
+	private const string kBodyLowerHalfPath = "PlayerHalfLower";
+	private GameObject _lowerBodyTemplate, _upperBodyTemplate;
 
 	// Materials
 	private Material _materialDefault;
@@ -149,6 +150,10 @@ public class ZMPlayerController : MonoBehaviour
 
 		// Set original facing direction.
 		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
+
+		// load resources
+		_upperBodyTemplate = Resources.Load(kBodyUpperHalfPath, typeof(GameObject)) as GameObject;
+		_lowerBodyTemplate = Resources.Load(kBodyLowerHalfPath, typeof(GameObject)) as GameObject;
 	}
 
 	void Start() 
@@ -800,7 +805,7 @@ public class ZMPlayerController : MonoBehaviour
 
 	private void KillSelf(ZMPlayerController killer)
 	{
-		GameObject template, body;
+		GameObject body;
 
 		_moveModState = MoveModState.RESPAWN;
 		_controlModState = ControlModState.NEUTRAL;
@@ -815,22 +820,20 @@ public class ZMPlayerController : MonoBehaviour
 		_spriteRenderer.enabled = false;
 
 		// load and instantiate the body's upper half
-		template = Resources.Load(_bodyUpperHalfPath, typeof(GameObject)) as GameObject;
-		body = GameObject.Instantiate(template) as GameObject;
+		body = GameObject.Instantiate(_upperBodyTemplate) as GameObject;
 		body.transform.position = transform.position;
 
 		ZMAddForce upperBody = body.GetComponent<ZMAddForce>();
 		upperBody.ParticleColor = light.color;
-		upperBody.AddForce(new Vector2(killer.runSpeed / 4, 0));
+		upperBody.AddForce(new Vector2(killer.runSpeed / 13, 0));
 
 		// load and instantiate the body's lower half
-		template = Resources.Load(_bodyLowerHalfPath, typeof(GameObject)) as GameObject;
-		body = GameObject.Instantiate(template) as GameObject;
+		body = GameObject.Instantiate(_lowerBodyTemplate) as GameObject;
 		body.transform.position = transform.position;
 
 		ZMAddForce lowerBody = body.GetComponent<ZMAddForce>();
 		lowerBody.ParticleColor = light.color;
-		lowerBody.AddForce(new Vector2(killer.runSpeed / 8, 0));
+		lowerBody.AddForce(new Vector2(killer.runSpeed / 13, 0));
 
 		// Set player states
 		_playerInPath = false;
