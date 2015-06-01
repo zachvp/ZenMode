@@ -801,16 +801,14 @@ public class ZMPlayerController : MonoBehaviour
 		_bodyUpperHalf = GameObject.Instantiate(_bodyUpperHalf) as GameObject;
 		ZMAddForce upperBody = _bodyUpperHalf.GetComponent<ZMAddForce>();
 		_bodyUpperHalf.transform.position = transform.position;
-		upperBody.ParticleColor = light.color - dark;
+		upperBody.ParticleColor = light.color;
 		upperBody.AddForce(new Vector2(10 * runSpeed, -_velocity.y));
 
 		_bodyLowerHalf = GameObject.Instantiate(_bodyLowerHalf) as GameObject;
 		ZMAddForce lowerBody = _bodyLowerHalf.GetComponent<ZMAddForce>();
 		_bodyLowerHalf.transform.position = transform.position;
-		lowerBody.ParticleColor = light.color - dark;
+		lowerBody.ParticleColor = light.color;
 		lowerBody.AddForce(new Vector2(runSpeed, -_velocity.y));
-
-		Debug.Log((light.color - dark).ToString());
 
 		// Set player states
 		_playerInPath = false;

@@ -7,16 +7,20 @@ public class ZMAddForce : MonoBehaviour {
 
 	private ParticleSystem _familyParticleSystem;
 	private float _sprayRate;
+	private bool _despawning;
 
 	private const float DISSAPATE_RATE = 20;
-	private const float MIN_SPRAY_RATE = 2;
-	private const float LIFETIME = 3f;
+	private const float MIN_SPRAY_RATE = 0;
+	private const float LIFETIME = 15f;
+	private const float FADE_SPEED = 0.4f;
 
 	private static float BaseEmissionRate = 0;
 	private static int InstanceCount = 0;
 
 	void Start () {
 		InstanceCount += 1;
+
+		renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 1);
 
 		rigidbody2D.AddForce(force);
 		rigidbody2D.AddTorque(torque);
@@ -41,13 +45,21 @@ public class ZMAddForce : MonoBehaviour {
 			_familyParticleSystem.renderer.material.color = _particleColor;
 			_familyParticleSystem.startColor = _particleColor;
 		}
+
+		if (_despawning) {
+			renderer.material.color = Color.Lerp(renderer.material.color, Color.clear, FADE_SPEED * Time.deltaTime);
+
+			Debug.Log(renderer.material.color.ToString());
+
+			if (renderer.material.color.a < 0.05f && InstanceCount > 2) {
+				InstanceCount -= 1;
+				Destroy(gameObject);
+			}
+		}
 	}
 
 	void Despawn() {
-		if (InstanceCount > 0) {
-			InstanceCount -= 1;
-			Destroy(gameObject);
-		}
+		_despawning = true;
 	}
 
 	public void AddForce(Vector2 force) {
