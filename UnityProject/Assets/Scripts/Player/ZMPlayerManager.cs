@@ -15,6 +15,22 @@ public class ZMPlayerManager : MonoBehaviour {
 
 	// stats
 	private static int[] _playerKills; public static int[] PlayerKills { get { return _playerKills; } }
+
+	public static ZMPlayerManager Instance
+	{
+		get
+		{
+			// TODO: Should be assert.
+			if (_instance == null)
+			{
+				Debug.LogError("ZMPlayerManager: no instance exists in the scene.");
+			}
+
+			return _instance;
+		}
+	}
+
+	private static ZMPlayerManager _instance;
 	
 	void Awake () {
 		if (_readiedPlayers == null) { _readiedPlayers = new bool[MAX_PLAYERS]; }
@@ -22,7 +38,7 @@ public class ZMPlayerManager : MonoBehaviour {
 		if (_players == null) { _players = new GameObject[MAX_PLAYERS]; }
 
 		switch(_state) {
-			case State.NONE:  {
+			case State.NONE: {
 				_state = State.LOBBY;
 
 				_playerCount = 0;
@@ -45,12 +61,31 @@ public class ZMPlayerManager : MonoBehaviour {
 			}
 		}
 
-		if (debug) {
+		if (debug)
+		{
 			_state = State.STAGE;
 			_playerCount = debugPlayerCount;
 		}
 
+		// TODO: Should be assert.
+		if (_instance != null)
+		{
+			Debug.LogError("ZMPlayerManager: More than one error exists in the scene.");
+		}
+
+		_instance = this;
+
 		DontDestroyOnLoad(gameObject);
+	}
+
+	void Start()
+	{
+		FetchPlayers();
+	}
+
+	void OnDestroy()
+	{
+		_instance = null;
 	}
 
 	void HandleDropOutEvent (int playerIndex)
@@ -60,10 +95,6 @@ public class ZMPlayerManager : MonoBehaviour {
 
 	void HandlePlayerJoinedEvent (ZMPlayerInfo.PlayerTag playerTag)
 	{
-		FetchPlayers();
-	}
-
-	void Start() {
 		FetchPlayers();
 	}
 

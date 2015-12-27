@@ -21,9 +21,7 @@ public class ZMScoreLayoutController : MonoBehaviour {
 		_scoreStatusTransforms = new List<RectTransform>();
 
 		_positionSlot0 = new Vector2(32,  _paddingTop);
-		//_positionSlot1 = new Vector2(314, _paddingTop);
 	    _positionSlot2 = new Vector2(716, _paddingTop);
-		//_positionSlot3 = new Vector2(998, _paddingTop);
 	}
 
 	void Start() {
@@ -57,7 +55,13 @@ public class ZMScoreLayoutController : MonoBehaviour {
 			_scoreStatusTransforms[i].gameObject.SetActive(true);
 		}
 
-		if (_playerCount <= 2) {
+		if (_playerCount == 1)
+		{
+			_scoreTransforms[0].anchoredPosition = _positionSlot0;
+			_scoreTransforms[0].localScale = new Vector3 (5.0f, 3.0f, 1.0f);
+			_scoreStatusTransforms[0].anchoredPosition = _positionSlot0 + new Vector2(_scoreStatusTransforms[0].rect.width * 1.26f, -_scoreStatusTransforms[0].rect.height * 0.67f);
+		}
+		else if (_playerCount == 2) {
 			_scoreTransforms[0].anchoredPosition = _positionSlot0;
 			_scoreTransforms[1].anchoredPosition = _positionSlot2;
 

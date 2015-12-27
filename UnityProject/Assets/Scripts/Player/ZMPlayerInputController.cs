@@ -78,6 +78,7 @@ namespace ZMPlayer {
 				if (inputDevice.Action1.WasPressed || 
 				    inputDevice.Action3.WasPressed || 
 				    inputDevice.Action4.WasPressed) {
+
 					if (JumpEvent != null) {
 						JumpEvent(this);
 						inputDevice.Vibrate(0.5f);

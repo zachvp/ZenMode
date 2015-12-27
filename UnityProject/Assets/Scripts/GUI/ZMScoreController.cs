@@ -159,7 +159,7 @@ namespace ZMPlayer{
 			if (_goalState == GoalState.MAX) {
 				_goalState = GoalState.MAXED;
 
-				if (MaxScoreReached != null) {
+				if (MaxScoreReached != null && ZMPlayerManager.PlayerCount > 1) {
 					MaxScoreReached(this);
 				}
 			}
