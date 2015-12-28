@@ -35,6 +35,8 @@ public class ZMPlayerController : MonoBehaviour
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 	private CharacterController2D _controller;
 	private Animator _animator;
+	private ZMPlayerInputController _inputController;
+
 	private RaycastHit2D _lastControllerColliderHit;
 	private RaycastHit2D _checkTouchingLeft;
 	private RaycastHit2D _checkTouchingRight;
@@ -43,7 +45,6 @@ public class ZMPlayerController : MonoBehaviour
 	private string[] kDeathStrings;
 	private bool _canLunge;
 	private bool _canWallJump;
-//	private bool _canAirParry;
 	private bool _canAirLunge;
 
 	// Speeds of two players before recoil.
@@ -121,16 +122,19 @@ public class ZMPlayerController : MonoBehaviour
 	public delegate void PlayerLandPlungeAction(); public static event PlayerLandPlungeAction PlayerLandPlungeEvent;
 
 	// Debug
-	SpriteRenderer _spriteRenderer;
-	Color _baseColor;
+	private SpriteRenderer _spriteRenderer;
+	private Color _baseColor;
 
 	void Awake()
 	{
 		_moveModState = MoveModState.NEUTRAL;
+
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_animator = GetComponent<Animator>();
 		_controller = GetComponent<CharacterController2D>();
 		_spriteRenderer = GetComponent<SpriteRenderer>();
+		_inputController = GetComponent<ZMPlayerInputController>();
+
 		_canLunge = true;
 		_canWallJump = true;
 		_canAirLunge = true;
@@ -139,13 +143,14 @@ public class ZMPlayerController : MonoBehaviour
 		_controller.onTriggerEnterEvent += onTriggerEnterEvent;
 		_controller.onTriggerExitEvent += onTriggerExitEvent;
 
-		ZMPlayerInputController.MoveRightEvent += MoveRightEvent;
-		ZMPlayerInputController.MoveLeftEvent  += MoveLeftEvent;
-		ZMPlayerInputController.NoMoveEvent	   += NoMoveEvent;
-		ZMPlayerInputController.JumpEvent	   += JumpEvent;
-		ZMPlayerInputController.AttackEvent	   += AttackEvent;
-		ZMPlayerInputController.PlungeEvent    += PlungeEvent;
-		ZMPlayerInputController.ParryEvent     += ParryEvent;
+		_inputController.OnMoveRightEvent += MoveRightEvent;
+		_inputController.OnMoveLeftEvent  += MoveLeftEvent;
+		_inputController.OnNoMoveEvent	  += NoMoveEvent;
+		_inputController.OnJumpEvent	  += JumpEvent;
+		_inputController.OnAttackEvent    += AttackEvent;
+		_inputController.OnPlungeEvent    += PlungeEvent;
+		_inputController.OnParryEvent     += ParryEvent;
+
 		ZMScoreController.MinScoreReached += HandleMinScoreReached;
 
 		// Set original facing direction.
@@ -549,7 +554,7 @@ public class ZMPlayerController : MonoBehaviour
 	
 	// Event handling - CCONTROL
 	private void MoveRightEvent (ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals(_playerInfo) && enabled) {
+		if (enabled) {
 			_controlMoveState = ControlMoveState.MOVING;
 			if (_movementDirection == MovementDirectionState.FACING_LEFT) {
 				CheckSkidding ();
@@ -562,7 +567,7 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void MoveLeftEvent(ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals(_playerInfo) && enabled) {
+		if (enabled) {
 			_controlMoveState = ControlMoveState.MOVING;
 			if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
 				CheckSkidding ();
@@ -575,25 +580,21 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void NoMoveEvent(ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals(_playerInfo)) {
-			_controlMoveState = ControlMoveState.NEUTRAL;
-		}
+		_controlMoveState = ControlMoveState.NEUTRAL;
 	}
 
 	private void JumpEvent(ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals(_playerInfo)) {
-			if (_controller.isGrounded && _controlModState != ControlModState.JUMPING) {
-				_controlModState = ControlModState.JUMPING;
-			} else if (IsTouchingEitherSide() && _canWallJump) {
-				_controlModState = ControlModState.WALL_JUMPING;
-			}
+		if (_controller.isGrounded && _controlModState != ControlModState.JUMPING) {
+			_controlModState = ControlModState.JUMPING;
+		} else if (IsTouchingEitherSide() && _canWallJump) {
+			_controlModState = ControlModState.WALL_JUMPING;
 		}
 	}
 
 	private void AttackEvent(ZMPlayerInputController inputController, int direction) {
-		if (inputController.PlayerInfo.Equals(_playerInfo) && !IsAttacking() && _moveModState != MoveModState.RESPAWN) {
+		if (!IsAttacking() && _moveModState != MoveModState.RESPAWN) {
 			RaycastHit2D hit;
-			Vector2 forward = new Vector2(direction, 0);
+			var forward = new Vector2(direction, 0);
 
 			_controlModState = ControlModState.ATTACK;
 
@@ -617,7 +618,7 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void PlungeEvent(ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsAttacking() && _moveModState != MoveModState.RESPAWN) {
+		if (!IsAttacking() && _moveModState != MoveModState.RESPAWN) {
 			if (!_controller.isGrounded) {
 				_controlModState = ControlModState.PLUNGE;
 			} else {
@@ -634,7 +635,7 @@ public class ZMPlayerController : MonoBehaviour
 	}
 
 	private void ParryEvent (ZMPlayerInputController inputController) {
-		if (inputController.PlayerInfo.Equals (_playerInfo) && !IsParrying () && _moveModState != MoveModState.RESPAWN) {
+		if (!IsParrying () && _moveModState != MoveModState.RESPAWN) {
 			_controlModState = ControlModState.PARRY;
 		}
 	}

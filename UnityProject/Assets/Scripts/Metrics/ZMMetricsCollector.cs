@@ -27,11 +27,6 @@ public class ZMMetricsCollector : MonoBehaviour {
 	public delegate void MetricsAddPositionAction(int player, Vector3 position);
 	public static MetricsAddPositionAction MetricsAddPositionEvent;
 
-
-	void Awake() {
-		ZMPlayerInputController.JumpEvent += AddJumpData;
-	}
-
 	// Use this for initialization
 	void Start () {
 		InvokeRepeating("AddPosition", 0.001f, kAddPositionInterval);

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using InControl;
+using Notifications;
 
 namespace ZMPlayer {
 	public class ZMPlayerInputController : MonoBehaviour {
@@ -12,13 +13,13 @@ namespace ZMPlayer {
 		private bool _inputEnabled;
 
 		// Delegates.
-		public delegate void MoveRightAction(ZMPlayerInputController playerInputController); 				public static event MoveRightAction MoveRightEvent;
-		public delegate void MoveLeftAction(ZMPlayerInputController playerInputController);					public static event MoveRightAction MoveLeftEvent;
-		public delegate void NoMoveAction(ZMPlayerInputController playerInputController);					public static event NoMoveAction NoMoveEvent;
-		public delegate void JumpAction(ZMPlayerInputController playerInputController);						public static event JumpAction JumpEvent;
-		public delegate void AttackAction(ZMPlayerInputController playerInputController, int direction); 	public static event AttackAction AttackEvent;
-		public delegate void PlungeAction(ZMPlayerInputController playerInputController);					public static event PlungeAction PlungeEvent;
-		public delegate void ParryAction(ZMPlayerInputController playerInputController);					public static event ParryAction ParryEvent;
+		public EventHandler<ZMPlayerInputController> OnMoveRightEvent;
+		public EventHandler<ZMPlayerInputController> OnMoveLeftEvent;
+		public EventHandler<ZMPlayerInputController> OnNoMoveEvent;
+		public EventHandler<ZMPlayerInputController> OnJumpEvent;
+		public EventHandler<ZMPlayerInputController, int> OnAttackEvent;
+		public EventHandler<ZMPlayerInputController> OnPlungeEvent;
+		public EventHandler<ZMPlayerInputController> OnParryEvent;
 
 		void Awake () {
 			string playerInfoString;
@@ -41,18 +42,9 @@ namespace ZMPlayer {
 			ZMPlayerController.PlayerStunEvent += HandlePlayerStunEvent;
 			ZMPlayerController.PlayerParryEvent += HandlePlayerParryEvent;
 			ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
+
 			ZMLobbyController.PauseGameEvent += HandlePauseGameEventPlayer;
 			ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
-		}
-
-		void OnDestroy() {
-			MoveRightEvent = null;
-			MoveLeftEvent  = null;
-			NoMoveEvent	   = null;
-			JumpEvent	   = null;
-			AttackEvent	   = null;
-			PlungeEvent    = null;
-			ParryEvent     = null;
 		}
 
 		void Update () {
@@ -61,16 +53,16 @@ namespace ZMPlayer {
 
 				// Handle horizontal movement.
 				if (inputDevice.LeftStickX > 0.5f) {
-					if (MoveRightEvent != null) {
-						MoveRightEvent(this);
+					if (OnMoveRightEvent != null) {
+						OnMoveRightEvent(this);
 					}
 				} else if (inputDevice.LeftStickX < -0.5f) {
-					if (MoveLeftEvent != null) {
-						MoveLeftEvent(this);
+					if (OnMoveLeftEvent != null) {
+						OnMoveLeftEvent(this);
 					}
 				} else {
-					if (NoMoveEvent != null) {
-						NoMoveEvent(this);
+					if (OnNoMoveEvent != null) {
+						OnNoMoveEvent(this);
 					}
 				}
 
@@ -79,8 +71,8 @@ namespace ZMPlayer {
 				    inputDevice.Action3.WasPressed || 
 				    inputDevice.Action4.WasPressed) {
 
-					if (JumpEvent != null) {
-						JumpEvent(this);
+					if (OnJumpEvent != null) {
+						OnJumpEvent(this);
 						inputDevice.Vibrate(0.5f);
 					}
 				}
@@ -90,23 +82,23 @@ namespace ZMPlayer {
 				    inputDevice.LeftBumper.WasPressed || inputDevice.RightBumper.WasPressed ||
 				    inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed) {
 					if (inputDevice.LeftStickX > 0.5f) {
-						if (AttackEvent != null) {
-							AttackEvent(this, 1);
+						if (OnAttackEvent != null) {
+							OnAttackEvent(this, 1);
 						}
 					}
 					else if (inputDevice.LeftStickX < -0.5f) {
-						if (AttackEvent != null) {
-							AttackEvent(this, -1);
+						if (OnAttackEvent != null) {
+							OnAttackEvent(this, -1);
 						}
 					}
 					else if (inputDevice.LeftStickY < -0.5f) {
-						if (PlungeEvent != null) {
-							PlungeEvent(this);
+						if (OnPlungeEvent != null) {
+							OnPlungeEvent(this);
 						}
 					} 
 					else {
-						if (AttackEvent != null) {
-							AttackEvent(this, 0);
+						if (OnAttackEvent != null) {
+							OnAttackEvent(this, 0);
 						}
 					}
 				}
