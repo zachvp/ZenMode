@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using ZMPlayer;
+using Notifications;
 
 public class ZMPlayerController : MonoBehaviour
 {
@@ -112,14 +113,14 @@ public class ZMPlayerController : MonoBehaviour
 	public Material _materialFlash;
 
 	// Delegates
-	public delegate void PlayerKillAction(ZMPlayerController killer); public static event PlayerKillAction PlayerKillEvent;
-	public delegate void PlayerDeathAction(ZMPlayerController playerController); public static event PlayerDeathAction PlayerDeathEvent;
-	public delegate void PlayerRespawnAction(ZMPlayerController playerController); public static event PlayerRespawnAction PlayerRespawnEvent;
-	public delegate void PlayerEliminatedAction(ZMPlayerController playerController); public static event PlayerEliminatedAction PlayerEliminatedEvent;
-	public delegate void PlayerRecoilAction(ZMPlayerController playerController, float stunTime); public static event PlayerRecoilAction PlayerRecoilEvent;
-	public delegate void PlayerStunAction(ZMPlayerController playerController, float stunTime); public static event PlayerStunAction PlayerStunEvent;
-	public delegate void PlayerParryAction(ZMPlayerController playerController, float parryTime); public static event PlayerParryAction PlayerParryEvent;
-	public delegate void PlayerLandPlungeAction(); public static event PlayerLandPlungeAction PlayerLandPlungeEvent;
+	public static EventHandler<ZMPlayerController> PlayerKillEvent;
+	public static EventHandler<ZMPlayerController> PlayerDeathEvent;
+	public static EventHandler<ZMPlayerController> PlayerRespawnEvent;
+	public static EventHandler<ZMPlayerController> PlayerEliminatedEvent;
+	public static EventHandler<ZMPlayerController, float> PlayerRecoilEvent;
+	public static EventHandler<ZMPlayerController, float> PlayerStunEvent;
+	public static EventHandler<ZMPlayerController, float> PlayerParryEvent;
+	public static EventHandler PlayerLandPlungeEvent;
 
 	// Debug
 	private SpriteRenderer _spriteRenderer;
@@ -129,11 +130,7 @@ public class ZMPlayerController : MonoBehaviour
 	{
 		_moveModState = MoveModState.NEUTRAL;
 
-		_playerInfo = GetComponent<ZMPlayerInfo>();
-		_animator = GetComponent<Animator>();
-		_controller = GetComponent<CharacterController2D>();
-		_spriteRenderer = GetComponent<SpriteRenderer>();
-		_inputController = GetComponent<ZMPlayerInputController>();
+		GetComponentReferences();
 
 		_canLunge = true;
 		_canWallJump = true;
@@ -143,13 +140,7 @@ public class ZMPlayerController : MonoBehaviour
 		_controller.onTriggerEnterEvent += onTriggerEnterEvent;
 		_controller.onTriggerExitEvent += onTriggerExitEvent;
 
-		_inputController.OnMoveRightEvent += MoveRightEvent;
-		_inputController.OnMoveLeftEvent  += MoveLeftEvent;
-		_inputController.OnNoMoveEvent	  += NoMoveEvent;
-		_inputController.OnJumpEvent	  += JumpEvent;
-		_inputController.OnAttackEvent    += AttackEvent;
-		_inputController.OnPlungeEvent    += PlungeEvent;
-		_inputController.OnParryEvent     += ParryEvent;
+		AcceptInputEvents();
 
 		ZMScoreController.MinScoreReached += HandleMinScoreReached;
 
@@ -238,7 +229,6 @@ public class ZMPlayerController : MonoBehaviour
 				}
 			}
 
-//			_canAirParry = true;
 			_canAirLunge = true;
 		}
 
@@ -551,9 +541,41 @@ public class ZMPlayerController : MonoBehaviour
 
 		Resources.UnloadUnusedAssets();
 	}
+
+	// Setup.
+	private void AcceptInputEvents()
+	{
+		_inputController.OnMoveRightEvent += MoveRightEvent;
+		_inputController.OnMoveLeftEvent  += MoveLeftEvent;
+		_inputController.OnNoMoveEvent	  += NoMoveEvent;
+		_inputController.OnJumpEvent	  += JumpEvent;
+		_inputController.OnAttackEvent    += AttackEvent;
+		_inputController.OnPlungeEvent    += PlungeEvent;
+		_inputController.OnParryEvent     += ParryEvent;
+	}
+	
+	private void ClearInputEvents()
+	{
+		_inputController.OnMoveRightEvent -= MoveRightEvent;
+		_inputController.OnMoveLeftEvent  -= MoveLeftEvent;
+		_inputController.OnNoMoveEvent	  -= NoMoveEvent;
+		_inputController.OnJumpEvent	  -= JumpEvent;
+		_inputController.OnAttackEvent    -= AttackEvent;
+		_inputController.OnPlungeEvent    -= PlungeEvent;
+		_inputController.OnParryEvent     -= ParryEvent;
+	}
+	
+	private void GetComponentReferences()
+	{
+		_playerInfo = GetComponent<ZMPlayerInfo>();
+		_animator = GetComponent<Animator>();
+		_controller = GetComponent<CharacterController2D>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _inputController = GetComponent<ZMPlayerInputController>();
+    }
 	
 	// Event handling - CCONTROL
-	private void MoveRightEvent (ZMPlayerInputController inputController) {
+	private void MoveRightEvent() {
 		if (enabled) {
 			_controlMoveState = ControlMoveState.MOVING;
 			if (_movementDirection == MovementDirectionState.FACING_LEFT) {
@@ -566,7 +588,7 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
-	private void MoveLeftEvent(ZMPlayerInputController inputController) {
+	private void MoveLeftEvent() {
 		if (enabled) {
 			_controlMoveState = ControlMoveState.MOVING;
 			if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
@@ -579,11 +601,11 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
-	private void NoMoveEvent(ZMPlayerInputController inputController) {
+	private void NoMoveEvent() {
 		_controlMoveState = ControlMoveState.NEUTRAL;
 	}
 
-	private void JumpEvent(ZMPlayerInputController inputController) {
+	private void JumpEvent() {
 		if (_controller.isGrounded && _controlModState != ControlModState.JUMPING) {
 			_controlModState = ControlModState.JUMPING;
 		} else if (IsTouchingEitherSide() && _canWallJump) {
@@ -591,7 +613,7 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
-	private void AttackEvent(ZMPlayerInputController inputController, int direction) {
+	private void AttackEvent(int direction) {
 		if (!IsAttacking() && _moveModState != MoveModState.RESPAWN) {
 			RaycastHit2D hit;
 			var forward = new Vector2(direction, 0);
@@ -617,7 +639,7 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
-	private void PlungeEvent(ZMPlayerInputController inputController) {
+	private void PlungeEvent() {
 		if (!IsAttacking() && _moveModState != MoveModState.RESPAWN) {
 			if (!_controller.isGrounded) {
 				_controlModState = ControlModState.PLUNGE;
@@ -634,7 +656,7 @@ public class ZMPlayerController : MonoBehaviour
 		}
 	}
 
-	private void ParryEvent (ZMPlayerInputController inputController) {
+	private void ParryEvent () {
 		if (!IsParrying () && _moveModState != MoveModState.RESPAWN) {
 			_controlModState = ControlModState.PARRY;
 		}
@@ -837,6 +859,7 @@ public class ZMPlayerController : MonoBehaviour
 		// Set player states
 		_playerInPath = false;
 
+		DisableInputWithCallbackDelay(Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY ? RESPAWN_TIME : 0.75f);
 		Invoke(kRespawnMethodName, RESPAWN_TIME);
 
 		audio.PlayOneShot(_audioGore[Random.Range (0, _audioGore.Length)]);
@@ -875,6 +898,12 @@ public class ZMPlayerController : MonoBehaviour
 		// apply "forces" to each of the players
 //		runSpeed *= -0.4f;
 		//playerController.AddVelocity(_velocity);
+	}
+
+	private void DisableInputWithCallbackDelay(float delay)
+	{
+		ClearInputEvents();
+        Invoke ("AcceptInputEvents", delay);
 	}
 
 	private IEnumerator ScaleTauntText(Vector3 start, Vector3 end, float totalTime) {

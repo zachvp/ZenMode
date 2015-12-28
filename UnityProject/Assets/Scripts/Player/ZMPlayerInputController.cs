@@ -3,25 +3,34 @@ using System.Collections.Generic;
 using InControl;
 using Notifications;
 
-namespace ZMPlayer {
-	public class ZMPlayerInputController : MonoBehaviour {
+namespace ZMPlayer
+{
+	public class ZMPlayerInputController : MonoBehaviour
+	{
 		// Player info.
 		public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
-		private ZMPlayerInfo _playerInfo;	
+		private ZMPlayerInfo _playerInfo;
+
 		private int _playerNumber;
 
 		private bool _inputEnabled;
 
-		// Delegates.
-		public EventHandler<ZMPlayerInputController> OnMoveRightEvent;
-		public EventHandler<ZMPlayerInputController> OnMoveLeftEvent;
-		public EventHandler<ZMPlayerInputController> OnNoMoveEvent;
-		public EventHandler<ZMPlayerInputController> OnJumpEvent;
-		public EventHandler<ZMPlayerInputController, int> OnAttackEvent;
-		public EventHandler<ZMPlayerInputController> OnPlungeEvent;
-		public EventHandler<ZMPlayerInputController> OnParryEvent;
+		private Vector2 _movement;
 
-		void Awake () {
+		// Delegates.
+		public EventHandler OnMoveRightEvent;
+		public EventHandler OnMoveLeftEvent;
+		public EventHandler OnNoMoveEvent;
+		public EventHandler OnJumpEvent;
+		public EventHandler OnPlungeEvent;
+		public EventHandler OnParryEvent;
+
+		public EventHandler<int> OnAttackEvent;
+
+		private const float DOT_THRESHOLD = 0.75f;
+
+		void Awake()
+		{
 			string playerInfoString;
 
 			_playerInfo = GetComponent<ZMPlayerInfo> ();
@@ -41,91 +50,165 @@ namespace ZMPlayer {
 			ZMPlayerController.PlayerRecoilEvent += HandlePlayerRecoilEvent;
 			ZMPlayerController.PlayerStunEvent += HandlePlayerStunEvent;
 			ZMPlayerController.PlayerParryEvent += HandlePlayerParryEvent;
-			ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
 
 			ZMLobbyController.PauseGameEvent += HandlePauseGameEventPlayer;
 			ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
+
+			AcceptGamepadEvents();
+			AcceptKeyboardEvents();
 		}
 
-		void Update () {
-			if (_inputEnabled) {
-				InputDevice inputDevice = InputManager.Devices[_playerNumber];
+		void Update()
+		{
+			var dotX = Vector2.Dot(_movement, Vector2.right);
 
-				// Handle horizontal movement.
-				if (inputDevice.LeftStickX > 0.5f) {
-					if (OnMoveRightEvent != null) {
-						OnMoveRightEvent(this);
-					}
-				} else if (inputDevice.LeftStickX < -0.5f) {
-					if (OnMoveLeftEvent != null) {
-						OnMoveLeftEvent(this);
-					}
-				} else {
-					if (OnNoMoveEvent != null) {
-						OnNoMoveEvent(this);
-					}
-				}
-
-				// Handle jumping.
-				if (inputDevice.Action1.WasPressed || 
-				    inputDevice.Action3.WasPressed || 
-				    inputDevice.Action4.WasPressed) {
-
-					if (OnJumpEvent != null) {
-						OnJumpEvent(this);
-						inputDevice.Vibrate(0.5f);
-					}
-				}
-
-				// Handle attacking.
-				if (inputDevice.Action2.WasPressed ||
-				    inputDevice.LeftBumper.WasPressed || inputDevice.RightBumper.WasPressed ||
-				    inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed) {
-					if (inputDevice.LeftStickX > 0.5f) {
-						if (OnAttackEvent != null) {
-							OnAttackEvent(this, 1);
-						}
-					}
-					else if (inputDevice.LeftStickX < -0.5f) {
-						if (OnAttackEvent != null) {
-							OnAttackEvent(this, -1);
-						}
-					}
-					else if (inputDevice.LeftStickY < -0.5f) {
-						if (OnPlungeEvent != null) {
-							OnPlungeEvent(this);
-						}
-					} 
-					else {
-						if (OnAttackEvent != null) {
-							OnAttackEvent(this, 0);
-						}
-					}
-				}
-
-				// Handle parrying.
-				/*
-				if (inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed) {
-					if (ParryEvent != null) {
-						ParryEvent(this);
-					}
-				}
-				*/
+			// Handle horizontal movement.
+			if (dotX > DOT_THRESHOLD)
+			{
+				Notifier.SendEventNotification(OnMoveRightEvent);
+			}
+			else if (dotX < -DOT_THRESHOLD)
+			{
+				Notifier.SendEventNotification(OnMoveLeftEvent);
+			}
+			else
+			{
+				Notifier.SendEventNotification(OnNoMoveEvent);
 			}
 		}
 
-		void HandleStartGameEvent ()
+		// Initialization.
+		private void AcceptGamepadEvents()
+		{
+			var inputManager = ZMInputManager.Instance;
+
+			inputManager.OnAction1 += HandleOnJump;
+			inputManager.OnAction3 += HandleOnJump;
+			inputManager.OnAction4 += HandleOnJump;
+
+			inputManager.OnAction2 	    += HandleOnAttack;
+			inputManager.OnLeftBumper   += HandleOnAttack;
+			inputManager.OnLeftTrigger  += HandleOnAttack;
+			inputManager.OnRightBumper  += HandleOnAttack;
+			inputManager.OnRightTrigger += HandleOnAttack;
+
+			inputManager.OnLeftAnalogStickMove += HandleOnMove;
+		}
+
+		private void AcceptKeyboardEvents()
+		{
+			var inputManager = ZMInputManager.Instance;
+
+			inputManager.OnWKey += HandleOnJump;
+			inputManager.OnAKey += HandleOnMoveLeft;
+			inputManager.OnDKey += HandleOnMoveRight;
+
+			inputManager.OnSKey += HandleOnMoveDown;
+			inputManager.OnSKey += HandleOnAttack;
+			inputManager.OnEKey += HandleOnAttack;
+			inputManager.OnQKey += HandleOnAttack;
+		}
+
+		// Handlers.
+		private void HandleOnJump(ZMInput input)
+		{
+			if (IsCorrectInputControl(input))
+			{
+				if (input.Pressed)
+				{
+					Notifier.SendEventNotification(OnJumpEvent);
+				}
+			}
+		}
+
+		private void HandleOnAttack(ZMInput input)
+		{
+			if (IsCorrectInputControl(input))
+			{
+				if (input.Pressed)
+				{
+					var dotX = Vector2.Dot(_movement, Vector2.right);
+					var dotY = Vector2.Dot(_movement, Vector2.up);
+
+					if (dotY < -DOT_THRESHOLD)      { Notifier.SendEventNotification(OnPlungeEvent); }
+					else if (dotX > DOT_THRESHOLD)  { Notifier.SendEventNotification(OnAttackEvent, 1); }
+					else if (dotX < -DOT_THRESHOLD) { Notifier.SendEventNotification(OnAttackEvent, -1); }
+					else 							{ Notifier.SendEventNotification(OnAttackEvent, 0); }
+				}
+			}
+		}
+
+		private void HandleOnMove(ZMInput input, Vector2 amount)
+		{
+			if (IsCorrectInputControl(input))
+			{
+				_movement = amount;
+			}
+		}
+
+		private void HandleOnMoveLeft(ZMInput input)
+		{
+			if (IsCorrectInputControl(input))
+			{
+				if (input.Pressed)
+				{
+					_movement.x = -1.0f;
+				}
+				else if (input.Released)
+				{
+					_movement.x = 0.0f;
+				}
+			}
+		}
+
+		private void HandleOnMoveRight(ZMInput input)
+		{
+			if (IsCorrectInputControl(input))
+			{
+				if (input.Pressed)
+				{
+					_movement.x = 1.0f;
+				}
+				else if (input.Released)
+				{
+					_movement.x = 0.0f;
+				}
+			}
+		}
+
+		private void HandleOnMoveUp(ZMInput input)
+		{
+			if (IsCorrectInputControl(input))
+			{
+				if (input.Pressed)
+				{
+					_movement.y = 1.0f;
+				}
+				else if (input.Released)
+				{
+					_movement.y = 0.0f;
+				}
+			}
+		}
+
+		private void HandleOnMoveDown(ZMInput input)
+		{
+			if (IsCorrectInputControl(input))
+			{
+				if (input.Pressed)
+				{
+					_movement.y = -1.0f;
+				}
+				else if (input.Released)
+				{
+					_movement.y = 0.0f;
+				}
+			}
+		}
+
+		void HandleStartGameEvent()
 		{
 			SetEnabled(true);
-		}
-
-		void HandlePlayerDeathEvent (ZMPlayerController playerController)
-		{
-			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-				SetEnabled(false);
-				
-				Invoke("Enable", Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY ? 5f : 0.75f);
-			}
 		}
 		
 		void HandlePlayerParryEvent (ZMPlayerController playerController, float parryTime)
@@ -186,6 +269,11 @@ namespace ZMPlayer {
 
 		private void SetEnabled(bool value) {
 			_inputEnabled = value;
+		}
+
+		private bool IsCorrectInputControl(ZMInput input)
+		{
+			return input.ID == -1 || input.ID == _playerNumber;
 		}
 	}
 }
