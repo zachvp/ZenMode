@@ -1,11 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
-using InControl;
 using Notifications;
 
 namespace ZMPlayer
 {
-	public class ZMPlayerInputController : MonoBehaviour
+	public class ZMPlayerInputController : ZMDirectionalInput
 	{
 		// Player info.
 		public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
@@ -14,8 +13,6 @@ namespace ZMPlayer
 		private int _playerNumber;
 
 		private bool _inputEnabled;
-
-		private Vector2 _movement;
 
 		// Delegates.
 		public EventHandler OnMoveRightEvent;
@@ -29,8 +26,10 @@ namespace ZMPlayer
 
 		private const float DOT_THRESHOLD = 0.75f;
 
-		void Awake()
+		protected override void Awake()
 		{
+			base.Awake();
+
 			_playerInfo = GetComponent<ZMPlayerInfo> ();
 			_playerNumber = (int) _playerInfo.playerTag;
 
@@ -46,9 +45,6 @@ namespace ZMPlayer
 
 			ZMLobbyController.PauseGameEvent += HandlePauseGameEventPlayer;
 			ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
-
-			AcceptGamepadEvents();
-			AcceptKeyboardEvents();
 		}
 
 		void Update()
@@ -71,8 +67,10 @@ namespace ZMPlayer
 		}
 
 		// Initialization.
-		private void AcceptGamepadEvents()
+		protected override void AcceptGamepadEvents()
 		{
+			base.AcceptGamepadEvents();
+
 			var inputManager = ZMInputManager.Instance;
 
 			inputManager.OnAction1 += HandleOnJump;
@@ -84,24 +82,16 @@ namespace ZMPlayer
 			inputManager.OnLeftTrigger  += HandleOnAttack;
 			inputManager.OnRightBumper  += HandleOnAttack;
 			inputManager.OnRightTrigger += HandleOnAttack;
-
-			inputManager.OnLeftAnalogStickMove += HandleOnMove;
 		}
 
-		private void AcceptKeyboardEvents()
+		protected override void AcceptKeyboardEvents()
 		{
+			base.AcceptKeyboardEvents();
+
 			var inputManager = ZMInputManager.Instance;
 
 			inputManager.OnWKey += HandleOnJump;
 			inputManager.OnUpArrowKey += HandleOnJump;
-
-			inputManager.OnAKey += HandleOnMoveLeft;
-			inputManager.OnDKey += HandleOnMoveRight;
-			inputManager.OnLeftArrowKey += HandleOnMoveLeft;
-			inputManager.OnRightArrowKey += HandleOnMoveRight;
-
-			inputManager.OnSKey += HandleOnMoveDown;
-			inputManager.OnDownArrowKey += HandleOnMoveDown;
 
 			inputManager.OnSKey += HandleOnAttack;
 			inputManager.OnEKey += HandleOnAttack;
@@ -136,74 +126,6 @@ namespace ZMPlayer
 					else if (dotX > DOT_THRESHOLD)  { Notifier.SendEventNotification(OnAttackEvent, 1); }
 					else if (dotX < -DOT_THRESHOLD) { Notifier.SendEventNotification(OnAttackEvent, -1); }
 					else 							{ Notifier.SendEventNotification(OnAttackEvent, 0); }
-				}
-			}
-		}
-
-		private void HandleOnMove(ZMInput input, Vector2 amount)
-		{
-			if (IsCorrectInputControl(input))
-			{
-				_movement = amount;
-			}
-		}
-
-		private void HandleOnMoveLeft(ZMInput input)
-		{
-			if (IsCorrectInputControl(input))
-			{
-				if (input.Pressed || input.Held)
-				{
-					_movement.x = -1.0f;
-				}
-				else if (input.Released)
-				{
-					_movement.x = 0.0f;
-				}
-			}
-		}
-
-		private void HandleOnMoveRight(ZMInput input)
-		{
-			if (IsCorrectInputControl(input))
-			{
-				if (input.Pressed || input.Held)
-				{
-					_movement.x = 1.0f;
-				}
-				else if (input.Released)
-				{
-					_movement.x = 0.0f;
-				}
-			}
-		}
-
-		private void HandleOnMoveUp(ZMInput input)
-		{
-			if (IsCorrectInputControl(input))
-			{
-				if (input.Pressed || input.Held)
-				{
-					_movement.y = 1.0f;
-				}
-				else if (input.Released)
-				{
-					_movement.y = 0.0f;
-				}
-			}
-		}
-
-		private void HandleOnMoveDown(ZMInput input)
-		{
-			if (IsCorrectInputControl(input))
-			{
-				if (input.Pressed || input.Held)
-				{
-					_movement.y = -1.0f;
-				}
-				else if (input.Released)
-				{
-					_movement.y = 0.0f;
 				}
 			}
 		}
@@ -246,7 +168,7 @@ namespace ZMPlayer
 			_inputEnabled = value;
 		}
 
-		private bool IsCorrectInputControl(ZMInput input)
+		protected override bool IsCorrectInputControl(ZMInput input)
 		{
 			return input.ID == -1 || input.ID == _playerNumber;
 		}

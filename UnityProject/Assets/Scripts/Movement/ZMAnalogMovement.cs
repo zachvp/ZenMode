@@ -1,40 +1,40 @@
 ﻿using UnityEngine;
-using InControl;
 using ZMPlayer;
 
-public class ZMAnalogMovement : MonoBehaviour {
+public class ZMAnalogMovement : ZMDirectionalInput
+{
 	public float _movementSpeed = 100;
 	[Range (0, 10)] public float bounce = 1;
 
 	private Vector3 _deltaPos;
 	private Vector3 _forward;
+	
 	private bool _shouldBounce;
 	private float _slowFactor;
 
-	// references
+	// References.
 	private ZMPlayerInfo _playerInfo;
-	private int _controlIndex;
+
 	private Color _baseColor;
 
-	void Awake () {
-		_playerInfo = GetComponent<ZMPlayerInfo>();
-		_controlIndex = (int) _playerInfo.playerTag;
-		_slowFactor = 1;
+	protected override void Awake()
+	{
+		base.Awake();
 
-		if (_controlIndex >= InputManager.Devices.Count) {
-			enabled = false;
-		}
+		_playerInfo = GetComponent<ZMPlayerInfo>();
+		_slowFactor = 1;
 
 		if (renderer != null) { _baseColor = renderer.material.color; }
 	}
 
-	void Update () {
-		if (!_shouldBounce) {
+	void Update()
+	{
+		if (!_shouldBounce)
+		{
 			_deltaPos = transform.position;
 			_forward =  new Vector3(_deltaPos.x, _deltaPos.y, _deltaPos.z);
 
-			_deltaPos.x += InputManager.Devices[_controlIndex].LeftStickX;
-			_deltaPos.y += InputManager.Devices[_controlIndex].LeftStickY;
+			_deltaPos += new Vector3 (_movement.x, _movement.y, 0.0f);
 
 			_forward = (_deltaPos - _forward) * _slowFactor;
 
@@ -42,8 +42,10 @@ public class ZMAnalogMovement : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerEnter2D(Collider2D collider) {
-		if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Barrier"))) {
+	void OnTriggerEnter2D(Collider2D collider)
+	{
+		if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Barrier")))
+		{
 			ZMSurfaceNormalHack surfaceNormalHack;
 			Vector2 reflection;
 			Vector2 normal;
@@ -56,7 +58,9 @@ public class ZMAnalogMovement : MonoBehaviour {
 
 			_shouldBounce = true;
 			Invoke("CancelBounce", 0.2f);
-		} else if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Ground"))) {
+		}
+		else if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Ground")))
+		{
 			Color faded = _baseColor;
 			faded.a = 0.3f;
 
@@ -66,15 +70,23 @@ public class ZMAnalogMovement : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerExit2D(Collider2D collider) {
-		if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Ground"))) {
+	void OnTriggerExit2D(Collider2D collider)
+	{
+		if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Ground")))
+		{
 			_slowFactor = 1f;
 
 			if (renderer != null) { renderer.material.color = _baseColor; }
 		}
 	}
 
-	void CancelBounce() {
+	protected override bool IsCorrectInputControl(ZMInput input)
+	{
+		return (int) _playerInfo.playerTag == input.ID;
+	}
+
+	private void CancelBounce()
+	{
 		_shouldBounce = false;
 	}
 }
