@@ -29,11 +29,6 @@ public class ZMInputManager : MonoBehaviour
 	public EventHandler<ZMInput> OnAnyButton;
 
 	// Keyboard events.
-	public EventHandler<ZMInput> OnLeftArrowKey;
-	public EventHandler<ZMInput> OnRightArrowKey;
-	public EventHandler<ZMInput> OnUpArrowKey;
-	public EventHandler<ZMInput> OnDownArrowKey;
-
 	public EventHandler<ZMInput> OnWKey;
 	public EventHandler<ZMInput> OnAKey;
 	public EventHandler<ZMInput> OnSKey;
@@ -43,13 +38,21 @@ public class ZMInputManager : MonoBehaviour
 	public EventHandler<ZMInput> OnQKey;
 	public EventHandler<ZMInput> OnRKey;
 
+	public EventHandler<ZMInput> OnLeftArrowKey;
+	public EventHandler<ZMInput> OnRightArrowKey;
+	public EventHandler<ZMInput> OnUpArrowKey;
+	public EventHandler<ZMInput> OnDownArrowKey;
+
 	public EventHandler<ZMInput> OnSpacebarKey;
+	public EventHandler<ZMInput> OnRightShiftKey;
 	public EventHandler<ZMInput> OnReturnKey;
 	public EventHandler<ZMInput> OnEscapeKey;
 
+	public EventHandler<ZMInput> OnSlashKey;
+
 	// Defines the method type for all keyboard handling.
 	private delegate bool KeyAction(KeyCode code);
-
+	
 	public static ZMInputManager Instance
 	{
 		get
@@ -97,18 +100,6 @@ public class ZMInputManager : MonoBehaviour
 		_instance = null;
 	}
 
-	private ZMInput.State GetStateForControl(InputControl control)
-	{
-		if (control.WasPressed) { return ZMInput.State.PRESSED; }
-		else if (control.WasReleased) { return ZMInput.State.RELEASED; }
-		else { return (ZMInput.State) (-1); }
-	}
-
-	private ZMInput GetInputForControl(InputControl control, int controlIndex)
-	{
-		return new ZMInput(GetStateForControl(control), controlIndex);
-	}
-
 	private void BroadcastDigitalGamepadEvents(InputDevice device, int controlIndex)
 	{
 		var startInput = new ZMInput(device.MenuWasPressed, controlIndex);
@@ -146,22 +137,53 @@ public class ZMInputManager : MonoBehaviour
 	{
 		// Use garbage value of -1 as ID since we can't associate keys with a particular player right now.
 		// TODO: Lookup a Keycode->PlayerID mapping.
-		var input = new ZMInput(state, 1);
+		if (action(KeyCode.LeftArrow))  { Notifier.SendEventNotification(OnLeftArrowKey, GetInputForKeyCode(KeyCode.LeftArrow, state)); }
+		if (action(KeyCode.RightArrow)) { Notifier.SendEventNotification(OnRightArrowKey, GetInputForKeyCode(KeyCode.RightArrow, state)); }
+		if (action(KeyCode.UpArrow))    { Notifier.SendEventNotification(OnUpArrowKey, GetInputForKeyCode(KeyCode.UpArrow, state)); }
+		if (action(KeyCode.DownArrow))  { Notifier.SendEventNotification(OnDownArrowKey, GetInputForKeyCode(KeyCode.DownArrow, state)); }
 
-		if (action(KeyCode.LeftArrow))  { Notifier.SendEventNotification(OnLeftArrowKey, input); }
-		if (action(KeyCode.RightArrow)) { Notifier.SendEventNotification(OnRightArrowKey, input); }
-		if (action(KeyCode.UpArrow))    { Notifier.SendEventNotification(OnUpArrowKey, input); }
-		if (action(KeyCode.DownArrow))  { Notifier.SendEventNotification(OnDownArrowKey, input); }
+		if (action(KeyCode.W)) { Notifier.SendEventNotification(OnWKey, GetInputForKeyCode(KeyCode.W, state)); }
+		if (action(KeyCode.A)) { Notifier.SendEventNotification(OnAKey, GetInputForKeyCode(KeyCode.A, state)); }
+		if (action(KeyCode.S)) { Notifier.SendEventNotification(OnSKey, GetInputForKeyCode(KeyCode.S, state)); }
+		if (action(KeyCode.D)) { Notifier.SendEventNotification(OnDKey, GetInputForKeyCode(KeyCode.D, state)); }
+		if (action(KeyCode.E)) { Notifier.SendEventNotification(OnEKey, GetInputForKeyCode(KeyCode.E, state)); }
+		if (action(KeyCode.Q)) { Notifier.SendEventNotification(OnQKey, GetInputForKeyCode(KeyCode.Q, state)); }
+		if (action(KeyCode.R)) { Notifier.SendEventNotification(OnRKey, GetInputForKeyCode(KeyCode.R, state)); }
 
-		if (action(KeyCode.W)) { Notifier.SendEventNotification(OnWKey, input); }
-		if (action(KeyCode.A)) { Notifier.SendEventNotification(OnAKey, input); }
-		if (action(KeyCode.S)) { Notifier.SendEventNotification(OnSKey, input); }
-		if (action(KeyCode.D)) { Notifier.SendEventNotification(OnDKey, input); }
-		if (action(KeyCode.E)) { Notifier.SendEventNotification(OnEKey, input); }
+		if (action(KeyCode.Space))  	 { Notifier.SendEventNotification(OnSpacebarKey, GetInputForKeyCode(KeyCode.Space, state)); }
+		if (action(KeyCode.RightShift))  { Notifier.SendEventNotification(OnRightShiftKey, GetInputForKeyCode(KeyCode.RightShift, state)); }
+		if (action(KeyCode.Return)) 	 { Notifier.SendEventNotification(OnReturnKey, GetInputForKeyCode(KeyCode.Return, state)); }
+		if (action(KeyCode.Escape)) 	 { Notifier.SendEventNotification(OnEscapeKey, GetInputForKeyCode(KeyCode.Escape, state)); }
 
-		if (action(KeyCode.Space))  { Notifier.SendEventNotification(OnSpacebarKey, input); }
-		if (action(KeyCode.Return)) { Notifier.SendEventNotification(OnReturnKey, input); }
-		if (action(KeyCode.Escape)) { Notifier.SendEventNotification(OnEscapeKey, input); }
+		if (action(KeyCode.Slash)) { Notifier.SendEventNotification(OnSlashKey, GetInputForKeyCode(KeyCode.Slash, state)); }
+	}
+
+	private int GetIDForKeyCode(KeyCode code)
+	{
+		for (int i = 0; i < ZMConfiguration.Configuration.KeyboardOwners.Length; ++i)
+		{
+			if (ZMConfiguration.Configuration.KeyboardOwners[i].Contains(code)) { return i; }
+		}
+
+		Debug.LogWarning("ZMInputManger: Unable to find owner of KeyCode " + code);
+		return -1;
+	}
+
+	private ZMInput.State GetStateForControl(InputControl control)
+	{
+		if (control.WasPressed) { return ZMInput.State.PRESSED; }
+		else if (control.WasReleased) { return ZMInput.State.RELEASED; }
+		else { return (ZMInput.State) (-1); }
+	}
+	
+	private ZMInput GetInputForControl(InputControl control, int controlIndex)
+	{
+		return new ZMInput(GetStateForControl(control), controlIndex);
+	}
+
+	private ZMInput GetInputForKeyCode(KeyCode code, ZMInput.State state)
+	{
+		return new ZMInput(state, GetIDForKeyCode(code));
 	}
 }
 

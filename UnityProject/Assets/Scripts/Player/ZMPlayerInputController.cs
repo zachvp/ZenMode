@@ -100,13 +100,22 @@ namespace ZMPlayer
 			var inputManager = ZMInputManager.Instance;
 
 			inputManager.OnWKey += HandleOnJump;
+			inputManager.OnUpArrowKey += HandleOnJump;
+
 			inputManager.OnAKey += HandleOnMoveLeft;
 			inputManager.OnDKey += HandleOnMoveRight;
+			inputManager.OnLeftArrowKey += HandleOnMoveLeft;
+			inputManager.OnRightArrowKey += HandleOnMoveRight;
 
 			inputManager.OnSKey += HandleOnMoveDown;
+			inputManager.OnDownArrowKey += HandleOnMoveDown;
+
 			inputManager.OnSKey += HandleOnAttack;
 			inputManager.OnEKey += HandleOnAttack;
 			inputManager.OnQKey += HandleOnAttack;
+			inputManager.OnDownArrowKey += HandleOnAttack;
+			inputManager.OnRightShiftKey += HandleOnAttack;
+			inputManager.OnSlashKey += HandleOnAttack;
 		}
 
 		// Handlers.
@@ -150,7 +159,7 @@ namespace ZMPlayer
 		{
 			if (IsCorrectInputControl(input))
 			{
-				if (input.Pressed)
+				if (input.Pressed || input.Held)
 				{
 					_movement.x = -1.0f;
 				}
@@ -165,7 +174,7 @@ namespace ZMPlayer
 		{
 			if (IsCorrectInputControl(input))
 			{
-				if (input.Pressed)
+				if (input.Pressed || input.Held)
 				{
 					_movement.x = 1.0f;
 				}
@@ -180,7 +189,7 @@ namespace ZMPlayer
 		{
 			if (IsCorrectInputControl(input))
 			{
-				if (input.Pressed)
+				if (input.Pressed || input.Held)
 				{
 					_movement.y = 1.0f;
 				}
@@ -195,7 +204,7 @@ namespace ZMPlayer
 		{
 			if (IsCorrectInputControl(input))
 			{
-				if (input.Pressed)
+				if (input.Pressed || input.Held)
 				{
 					_movement.y = -1.0f;
 				}
