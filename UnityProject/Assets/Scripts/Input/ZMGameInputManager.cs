@@ -1,39 +1,56 @@
 ﻿using UnityEngine;
 using System.Collections;
 using InControl;
+using Notifications;
+using ZMPlayer;
 
-public class ZMGameInputManager : MonoBehaviour {
-	public delegate void StartInputAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag); public static event StartInputAction StartInputEvent;
-	public delegate void AnyButtonAction(ZMPlayer.ZMPlayerInfo.PlayerTag playerTag); public static event AnyButtonAction AnyInputEvent;
+public class ZMGameInputManager : MonoBehaviour
+{
+	public static EventHandler<int> StartInputEvent;
+	public static EventHandler<int> AnyInputEvent;
 
-	void OnDestroy() {
+	void Awake()
+	{
+		AcceptInputEvents();
+	}
+
+	void OnDestroy()
+	{
 		StartInputEvent = null;
 		AnyInputEvent  = null;
 	}
 
-	void Update () {
-		if (InputManager.Devices != null) {
-			for (int i = 0; i < InputManager.Devices.Count; i++) {
-				// Broadcast start input.
-				if (InputManager.Devices[i].MenuWasPressed && StartInputEvent != null) {
-					if (i == 0) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1); }
-					if (i == 1) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2); }
-					if (i == 2) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3); }
-					if (i == 3) { StartInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_4); }
-				}
+	private void AcceptInputEvents()
+	{
+		ZMInputManager.Instance.OnStartButton += HandleOnStartButton;
+		ZMInputManager.Instance.OnEscapeKey   += HandleOnStartButton;
+		ZMInputManager.Instance.OnReturnKey   += HandleOnStartButton;
+		
+		ZMInputManager.Instance.OnAnyButton   += HandleOnAnyButton;
+	}
+	
+	private void ClearInputEvents()
+	{
+		ZMInputManager.Instance.OnStartButton -= HandleOnStartButton;
+		ZMInputManager.Instance.OnEscapeKey   -= HandleOnStartButton;
+		ZMInputManager.Instance.OnReturnKey   -= HandleOnStartButton;
+		
+		ZMInputManager.Instance.OnAnyButton   -= HandleOnAnyButton;
+	}
 
-				// Broadcast A button input.
-				if (AnyInputEvent != null) {
-					InputDevice device = InputManager.Devices[i];
+	private void HandleOnStartButton(ZMInput input)
+	{
+		if (input.Pressed)
+		{
+			Notifier.SendEventNotification(StartInputEvent, input.ID);
+		}
+	}
 
-					if (device.AnyButton || device.MenuWasPressed || device.LeftBumper || device.RightBumper || device.LeftTrigger || device.RightTrigger) {
-						if (i == 0) { AnyInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_1); }
-						if (i == 1) { AnyInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_2); }
-						if (i == 2) { AnyInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_3); }
-						if (i == 3) { AnyInputEvent(ZMPlayer.ZMPlayerInfo.PlayerTag.PLAYER_4); }
-					}
-				}
-			}
+	private void HandleOnAnyButton(ZMInput input)
+	{
+		if (input.Pressed)
+		{
+			Notifier.SendEventNotification(AnyInputEvent, input.ID);
 		}
 	}
 }

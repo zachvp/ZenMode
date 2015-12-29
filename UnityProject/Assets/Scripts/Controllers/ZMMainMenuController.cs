@@ -13,7 +13,7 @@ public class ZMMainMenuController : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		ZMGameInputManager.StartInputEvent	    += HandleStartInputEvent;
+		ZMGameInputManager.StartInputEvent	     += HandleStartInputEvent;
 		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
 	}
 
@@ -46,20 +46,22 @@ public class ZMMainMenuController : MonoBehaviour {
 		}
 	}
 
-	void QuitGame ()
+	void QuitGame()
 	{
 		Application.Quit();
 	}
 
-	void HandleStartInputEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
+	void HandleStartInputEvent(int controlIndex)
 	{
 		BeginGame();
 	}
 
-	private void BeginGame() {
+	private void BeginGame()
+	{
 		Invoke("LoadGame", 0.5f);
 
-		if (LoadGameEvent != null) {
+		if (LoadGameEvent != null)
+		{
 			LoadGameEvent();
 		}
 	}

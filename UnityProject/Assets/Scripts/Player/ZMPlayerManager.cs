@@ -93,7 +93,7 @@ public class ZMPlayerManager : MonoBehaviour {
 		_playerCount -= 1;
 	}
 
-	void HandlePlayerJoinedEvent (ZMPlayerInfo.PlayerTag playerTag)
+	void HandlePlayerJoinedEvent (int controlIndex)
 	{
 		FetchPlayers();
 	}

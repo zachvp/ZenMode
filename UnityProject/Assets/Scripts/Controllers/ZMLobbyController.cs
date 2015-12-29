@@ -2,12 +2,14 @@
 using UnityEngine.UI;
 using System.Collections.Generic;
 using ZMPlayer;
+using Notifications;
 
 public class ZMLobbyController : MonoBehaviour {
 	public GameObject loadScreen;
 	public Text message;
 
-	public delegate void PlayerJoinedAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerJoinedAction PlayerJoinedEvent;
+	public static EventHandler<int> PlayerJoinedEvent;
+
 	public delegate void PlayerReadyAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerReadyAction PlayerReadyEvent;
 	public delegate void PauseGameAction(int playerIndex); public static event PauseGameAction PauseGameEvent;
 	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
@@ -81,13 +83,13 @@ public class ZMLobbyController : MonoBehaviour {
 		Application.LoadLevel(ZMSceneIndexList.INDEX_MAIN_MENU);
 	}
 
-	void HandleMainInputEvent (ZMPlayerInfo.PlayerTag playerTag)
+	void HandleMainInputEvent (int controlIndex)
 	{
-		int playerIndex = (int) playerTag;
-
-		if (!_joinedPlayers[playerIndex]) {
-			if (playerIndex > 0 && !_joinedPlayers[playerIndex - 1]) {
-				message.text = "Player " + playerIndex + " must join first!";
+		if (!_joinedPlayers[controlIndex])
+		{
+			if (controlIndex > 0 && !_joinedPlayers[controlIndex - 1])
+			{
+				message.text = "Player " + controlIndex + " must join first!";
 				if (IsInvoking("ClearMessage")) { CancelInvoke("ClearMessage"); }
 				Invoke ("ClearMessage", 2f);
 
@@ -95,13 +97,11 @@ public class ZMLobbyController : MonoBehaviour {
 			}
 
 			_currentJoinCount += 1;
-			
-			if (PlayerJoinedEvent != null) {
-				PlayerJoinedEvent(playerTag);
-			}
+
+			Notifier.SendEventNotification(PlayerJoinedEvent, controlIndex);
 
 			_requiredPlayerCount += 1;
-			_joinedPlayers[playerIndex] = true;
+			_joinedPlayers[controlIndex] = true;
 		}
 	}
 
@@ -128,13 +128,14 @@ public class ZMLobbyController : MonoBehaviour {
 		}
 	}
 
-	void HandleStartInputEvent (ZMPlayerInfo.PlayerTag playerTag)
+	void HandleStartInputEvent (int controlID)
 	{
-		if (_joinedPlayers[(int) playerTag]) {
+		if (_joinedPlayers[controlID])
+		{
 			if (!_paused) {
 				Time.timeScale = 0;
 
-				_playerPauseIndex = (int) playerTag;
+				_playerPauseIndex = controlID;
 				_paused = true;
 
 				if (PauseGameEvent != null) {

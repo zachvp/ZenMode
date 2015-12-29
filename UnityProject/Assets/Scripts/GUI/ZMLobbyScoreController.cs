@@ -121,9 +121,10 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		scoreBar.value = normalizedScore; 
 	}
 
-	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
+	void HandlePlayerJoinedEvent(int controlIndex)
 	{
-		if (_playerInfo.playerTag.Equals(playerTag)) {
+		if ((int) _playerInfo.playerTag == controlIndex)
+		{
 			gameObject.SetActive(true);
 			light.enabled = true;
 

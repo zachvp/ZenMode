@@ -113,7 +113,13 @@ public class ZMInputManager : MonoBehaviour
 
 		Notifier.SendEventNotification(OnLeftAnalogStickButton, GetInputForControl(device.LeftStickButton, controlIndex));
 		Notifier.SendEventNotification(OnRightAnalogStickButton, GetInputForControl(device.RightStickButton, controlIndex));
+
 		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.AnyButton, controlIndex));
+		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.LeftBumper, controlIndex));
+		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.LeftTrigger, controlIndex));
+		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.RightBumper, controlIndex));
+		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.RightTrigger, controlIndex));
+		Notifier.SendEventNotification(OnAnyButton, startInput);
 
 		Notifier.SendEventNotification(OnStartButton, startInput);
 	}

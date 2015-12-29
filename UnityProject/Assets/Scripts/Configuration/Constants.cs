@@ -8,6 +8,12 @@ namespace ZMConfiguration
 		public const int MAX_PLAYERS = 4;
 	}
 
+	public static class Tags
+	{
+		public const string kSpawnpointTag = "Spawnpoint";
+		public const string kPlayerTag 	= "Player";
+	}
+
 	public static class Configuration
 	{
 		// Stores the keys that belong to player 0, player 1, etc...

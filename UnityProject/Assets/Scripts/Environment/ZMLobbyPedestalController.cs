@@ -31,9 +31,10 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 		}
 	}
 
-	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
+	void HandlePlayerJoinedEvent(int controlIndex)
 	{
-		if (playerTag.Equals(_playerInfo.playerTag)) {
+		if ((int) _playerInfo.playerTag == controlIndex)
+		{
 			gameObject.SetActive(true);
 		}
 	}

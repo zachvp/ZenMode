@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using ZMPlayer;
+using Notifications;
+using ZMConfiguration;
 
 public class ZMGameStateController : MonoBehaviour {
 	public Text outputText;
@@ -11,7 +13,7 @@ public class ZMGameStateController : MonoBehaviour {
 
 	private int _playerCount;
 
-	public enum GameState { BEGIN, NEUTRAL, PAUSE, PAUSED, RESUME, RESET };
+	public enum GameState { NEUTRAL, BEGIN, PAUSE, PAUSED, RESUME, RESET };
 	private static GameState _gameState; public static GameState Game_State { get { return _gameState; } }
 
 	public enum MatchState { PRE_MATCH, BEGIN_COUNTDOWN, MATCH, POST_MATCH };
@@ -27,22 +29,21 @@ public class ZMGameStateController : MonoBehaviour {
 	private bool _showAbsorbText = true;
 
 	// constants
-	private const string kSpawnpointTag = "Spawnpoint";
-	private const string kPlayerTag 	= "Player";
 	private Vector3 outputTextPositionUpOffset = new Vector3 (0, 109, 0);
 
 	private const float END_GAME_DELAY = 1.0f;
 
 	// delegates
-	public delegate void SpawnObjectAction(ZMGameStateController gameStateController, ZMPlayerController spawnObject); public static event SpawnObjectAction SpawnObjectEvent;
-	public delegate void StartGameAction(); public static event StartGameAction StartGameEvent;
-	public delegate void PauseGameAction(); public static event PauseGameAction PauseGameEvent;
-	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
-	public delegate void ResetGameAction(); public static event ResetGameAction ResetGameEvent;
-	public delegate void GameEndAction();   public static event GameEndAction GameEndEvent;
-	public delegate void QuitMatchAction(); public static event QuitMatchAction QuitMatchEvent;
+	public static EventHandler<ZMGameStateController, ZMPlayerController> SpawnObjectEvent;
 
-	// pause menu handling
+	public static EventHandler StartGameEvent;
+	public static EventHandler PauseGameEvent;
+	public static EventHandler ResumeGameEvent;
+	public static EventHandler ResetGameEvent;
+	public static EventHandler GameEndEvent;
+	public static EventHandler QuitMatchEvent;
+
+	// Pause menu handling
 	private int RESUME_OPTION  = 0;
 	private int RESTART_OPTION = 1;
 	private int QUIT_OPTION	   = 2;
@@ -50,10 +51,8 @@ public class ZMGameStateController : MonoBehaviour {
 	// HACKS!
 	private string _victoryMessage;
 
-	// Use this for initialization
-	void Awake () {
-		_matchState = MatchState.PRE_MATCH;
-		_gameState  = GameState.NEUTRAL;
+	void Awake()
+	{
 		_spawnpoints = new List<Transform>();
 		_objectsToSpawn = new Queue<ZMPlayerController>(ZMPlayerManager.MAX_PLAYERS);
 		_players =  new List<ZMPlayerController>(ZMPlayerManager.MAX_PLAYERS);
@@ -62,15 +61,22 @@ public class ZMGameStateController : MonoBehaviour {
 		// Add delegate handlers
 		ZMPlayerController.PlayerDeathEvent += RespawnObject;
 		ZMPlayerController.PlayerEliminatedEvent += HandlePlayerEliminatedEvent;
+
 		ZMScoreController.MaxScoreReached += HandleMaxScoreReached;
+
 		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
+
 		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
+
 		ZMTimedCounter.GameTimerEndedEvent += HandleGameTimerEndedEvent;
+
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
+
 		ZMPedestalController.ActivateEvent += HandleActivateEvent;
 	}
 
-	void Start() {
+	void Start()
+	{
 		outputText.text = "";
 		absorbText.text = "";
 		
@@ -78,16 +84,19 @@ public class ZMGameStateController : MonoBehaviour {
 		
 		_playerCount = ZMPlayerManager.PlayerCount;
 		
-		foreach (GameObject spawnpointObject in GameObject.FindGameObjectsWithTag(kSpawnpointTag)) {
+		foreach (GameObject spawnpointObject in GameObject.FindGameObjectsWithTag(Tags.kSpawnpointTag))
+		{
 			_spawnpoints.Add(spawnpointObject.transform);
 		}
 		
-		for (int i = 0; i < _playerCount; ++i) {
+		for (int i = 0; i < _playerCount; ++i)
+		{
 			_players.Add(null);
 			_scoreControllers.Add(null);
 		}
 		
-		foreach (GameObject player in GameObject.FindGameObjectsWithTag(kPlayerTag)) {
+		foreach (GameObject player in GameObject.FindGameObjectsWithTag(Tags.kPlayerTag))
+		{
 			ZMPlayerController playerController = player.GetComponent<ZMPlayerController>();
 			ZMScoreController scoreController = player.GetComponent<ZMScoreController>();
 			
@@ -95,20 +104,21 @@ public class ZMGameStateController : MonoBehaviour {
 			
 			playerController.gameObject.SetActive(false);
 			
-			if (index < _playerCount) {
+			if (index < _playerCount)
+			{
 				_players[index] = playerController;
 				_scoreControllers[index] = scoreController;
 			}
 		}
 		
-		for (int i = 0; i < _playerCount; ++i) {
+		for (int i = 0; i < _playerCount; ++i)
+		{
 			_players[i].gameObject.SetActive(true);
 		}
-
-		DisableGameObjects();
 	}
 	
-	void OnDestroy() {
+	void OnDestroy()
+	{
 		SpawnObjectEvent    = null;
 		StartGameEvent      = null;
 		PauseGameEvent	    = null;
@@ -124,9 +134,10 @@ public class ZMGameStateController : MonoBehaviour {
 			_matchState = MatchState.BEGIN_COUNTDOWN;
 	}
 
-	void HandleGameTimerEndedEvent ()
+	void HandleGameTimerEndedEvent()
 	{
-		if (_matchState != MatchState.POST_MATCH) {
+		if (_matchState != MatchState.POST_MATCH)
+		{
 			_matchState = MatchState.POST_MATCH;
 			audio.PlayOneShot(audioComplete, 2.0f);
 			outputText.text = _victoryMessage;
@@ -138,86 +149,91 @@ public class ZMGameStateController : MonoBehaviour {
 		_players.Remove(playerController);
 	}
 
-	void HandleSelectOptionEvent(int optionIndex) {
-		if (optionIndex == RESUME_OPTION) {
-			HandleSelectResumeEvent();
-		} else if (optionIndex == RESTART_OPTION) {
-			HandleSelectRestartEvent();
-		} else if (optionIndex == QUIT_OPTION) {
-			HandleSelectQuitEvent();
-		}
+	void HandleSelectOptionEvent(int optionIndex)
+	{
+		if (optionIndex == RESUME_OPTION) 		{ HandleSelectResumeEvent(); }
+		else if (optionIndex == RESTART_OPTION) { HandleSelectRestartEvent(); }
+		else if (optionIndex == QUIT_OPTION) 	{ HandleSelectQuitEvent(); }
 	}
 
-	void HandleSelectResumeEvent ()
+	void HandleSelectResumeEvent()
 	{
 		_gameState =  GameState.RESUME;
 	}
 	
-	void HandleSelectQuitEvent ()
+	void HandleSelectQuitEvent()
 	{
 		Time.timeScale = 1.0f;
 
-		if (QuitMatchEvent != null) {
-			QuitMatchEvent();
-		}
+		Notifier.SendEventNotification(QuitMatchEvent);
 
 		Application.LoadLevel(ZMSceneIndexList.INDEX_LOBBY);
 	}
 
-	void HandleSelectRestartEvent ()
+	void HandleSelectRestartEvent()
 	{
 		ResetGame();
 	}
 
-	void HandleStartInputEvent (ZMPlayerInfo.PlayerTag playerTag)
+	void HandleStartInputEvent(int controlID)
 	{
-		if (_gameState == GameState.PAUSE || _gameState == GameState.PAUSED) {
+		if (_gameState == GameState.PAUSE || _gameState == GameState.PAUSED)
+		{
 			_gameState = GameState.RESUME;
-		} else if (_matchState != MatchState.PRE_MATCH) {
-			_pausedPlayer = (int) playerTag;
+		}
+		else if (_matchState != MatchState.PRE_MATCH)
+		{
+			_pausedPlayer = controlID;
 			_gameState = GameState.PAUSE;
 		}
 	}
 
 	void Update() {
 		/** State check **/
-		if (_matchState == MatchState.PRE_MATCH) {
+		if (_matchState == MatchState.PRE_MATCH)
+		{
 			outputText.text = "Get Ready";
-		} else if (_matchState == MatchState.BEGIN_COUNTDOWN) {
+		}
+		else if (_matchState == MatchState.BEGIN_COUNTDOWN)
+		{
 			BeginGame();
-		} else if (_matchState == MatchState.POST_MATCH) {
+		}
+		else if (_matchState == MatchState.POST_MATCH)
+		{
 			float maxScore = 0.0f;
 
-			foreach (ZMScoreController scoreController in _scoreControllers) {
-				if (scoreController.TotalScore > maxScore) {
+			foreach (ZMScoreController scoreController in _scoreControllers)
+			{
+				if (scoreController.TotalScore > maxScore)
+				{
 					maxScore = scoreController.TotalScore;
 					_victoryMessage =  "P" + (int) (scoreController.PlayerInfo.playerTag + 1) + " WINS!";
 				}
 			}
 
-			if (!IsInvoking("EndGame"))
-				Invoke("EndGame", END_GAME_DELAY);
+			if (!IsInvoking("EndGame")) { Invoke("EndGame", END_GAME_DELAY); }
 		}
 
-		if (_gameState == GameState.RESUME) {
-			if (_matchState != MatchState.POST_MATCH) {
+		if (_gameState == GameState.RESUME)
+		{
+			if (_matchState != MatchState.POST_MATCH)
+			{
 				_gameState = GameState.NEUTRAL;
 				outputText.text = "";
 
-				if (ResumeGameEvent != null) {
-					ResumeGameEvent();
-				}
+				Notifier.SendEventNotification(ResumeGameEvent);
 
 				ResumeGame();
 			}
-		} else if (_gameState == GameState.PAUSE) {
-			if (_matchState != MatchState.POST_MATCH && _matchState != MatchState.PRE_MATCH) {
+		}
+		else if (_gameState == GameState.PAUSE)
+		{
+			if (_matchState != MatchState.POST_MATCH && _matchState != MatchState.PRE_MATCH)
+			{
 				_gameState = GameState.PAUSED;
 				outputText.text = "P" + (_pausedPlayer + 1).ToString() + " PAUSED";
 
-				if (PauseGameEvent != null) {
-					PauseGameEvent();
-				}
+				Notifier.SendEventNotification(PauseGameEvent);
 
 				PauseGame();
 			}
@@ -227,82 +243,88 @@ public class ZMGameStateController : MonoBehaviour {
 		}
 	}
 
-	private void HandleMaxScoreReached(ZMScoreController scoreController) {
+	private void HandleMaxScoreReached(ZMScoreController scoreController)
+	{
 		_matchState = MatchState.POST_MATCH;
 		audio.PlayOneShot(audioComplete, 2.0f);
-
 	}
 
 	// Private methods
-	private void DisableGameObjects() {
-		foreach (ZMPlayerController playerController in _players) {
-			if (playerController.gameObject != null) {
-				playerController.DisablePlayer();
-			}
+	private void DisableGameObjects()
+	{
+		foreach (ZMPlayerController playerController in _players)
+		{
+			if (playerController.gameObject != null) { playerController.DisablePlayer(); }
 		}
 	}
 
-	private void EnableGameObjects() {
-		foreach (ZMPlayerController playerController in _players) {
-			if (playerController.gameObject != null) {
-				playerController.EnablePlayer();
-			}
+	private void EnableGameObjects()
+	{
+		foreach (ZMPlayerController playerController in _players)
+		{
+			if (playerController.gameObject != null) { playerController.EnablePlayer(); }
 		}
 	}
 	
-	private void BeginGame() {
+	private void BeginGame()
+	{
 		outputText.text = "Begin!";
 		_matchState = MatchState.MATCH;
 		EnableGameObjects();
 		
-		if (StartGameEvent != null) {
-			StartGameEvent();
-		}
+		Notifier.SendEventNotification(StartGameEvent);
 
 		Invoke("ClearOutputText", 1.0f);
 	}
 
-	private void PauseGame() {
+	private void PauseGame()
+	{
 		outputText.rectTransform.position = outputTextPositionUpOffset;
-		DisableGameObjects();
 
 		Time.timeScale = 0.0f;
 	}
 
-	private void ResumeGame() {
+	private void ResumeGame()
+	{
 		EnableGameObjects();
 
 		Time.timeScale = 1.0f;
 	}
 
-	void ClearOutputText() {
+	void ClearOutputText()
+	{
 		outputText.text = "";
 	}
 
-	private void ResetGame() {
+	private void ResetGame()
+	{
 		Application.LoadLevel(Application.loadedLevelName);
 
-		if (ResetGameEvent != null) {
-			ResetGameEvent();
-		}
+		Notifier.SendEventNotification(ResetGameEvent);
 	}
 
-	private void SpawnObject() {
-		if (_matchState == MatchState.POST_MATCH) return;
+	private void SpawnObject()
+	{
+		if (_matchState == MatchState.POST_MATCH) { return; }
 
 		float maximumDistance = float.MinValue;
 		int targetIndex = 0;
 
-		for (int i = 0; i < _spawnpoints.Count; i++) {
+		for (int i = 0; i < _spawnpoints.Count; i++)
+		{
 			Transform point = _spawnpoints[i];
 			float distance = 0.0f;
-			foreach (ZMPlayerController player in _players) {
-				if (!player.IsDead()) {
+
+			foreach (ZMPlayerController player in _players)
+			{
+				if (!player.IsDead())
+				{
 					distance += Mathf.Abs (point.position.y - player.transform.position.y) + Mathf.Abs (point.position.x - player.transform.position.x);
 				}
 			}
 
-			if (distance > maximumDistance) {
+			if (distance > maximumDistance)
+			{
 				maximumDistance = distance;
 				targetIndex = i;
 			}
@@ -310,60 +332,63 @@ public class ZMGameStateController : MonoBehaviour {
 
 		ZMPlayerController spawnObject = _objectsToSpawn.Dequeue();
 
-		if (spawnObject != null && spawnObject) {
+		if (spawnObject != null && spawnObject)
+		{
 			spawnObject.transform.position = _spawnpoints[targetIndex].position;
 
-			if (SpawnObjectEvent != null) {
-				SpawnObjectEvent(this, spawnObject);
-			}
+			Notifier.SendEventNotification(SpawnObjectEvent, this, spawnObject);
 		}
 	}
 
-	void EndGame() {
+	void EndGame()
+	{
 		outputText.rectTransform.position = outputTextPositionUpOffset;
 
-		if (ZMCrownManager.LeadingPlayerIndex < 0) {
-			_victoryMessage = "DRAW!";
-		}
+		if (ZMCrownManager.LeadingPlayerIndex < 0) { _victoryMessage = "DRAW!"; }
 
 		outputText.text = _victoryMessage;
-
-		DisableGameObjects();
 
 		// Vulgar HACKS
 		RESUME_OPTION  = -1;
 		RESTART_OPTION = 0;
 		QUIT_OPTION    = 1;
 
-		for (int i = 0; i < _playerCount && i < _players.Count; ++i) {
-			if (i != ZMCrownManager.LeadingPlayerIndex) {
+		for (int i = 0; i < _playerCount && i < _players.Count; ++i)
+		{
+			if (i != ZMCrownManager.LeadingPlayerIndex)
+			{
 				_players[i].gameObject.SetActive(false);
 			}
 		}
 		
-		if (GameEndEvent != null && !_firedGameEndEvent) {
+		if (!_firedGameEndEvent)
+		{
 			_firedGameEndEvent = true;
 			
-			GameEndEvent();
+			Notifier.SendEventNotification(GameEndEvent);
 		}
 
 		enabled = false;
 	}
 
 	// Event handlers
-	private void RespawnObject(ZMPlayerController playerController) {
-		if (!_objectsToSpawn.Contains(playerController)) {
+	private void RespawnObject(ZMPlayerController playerController)
+	{
+		if (!_objectsToSpawn.Contains(playerController))
+		{
 			_objectsToSpawn.Enqueue(playerController);
 			Invoke("SpawnObject", 5.0f);
 
-			if (_showAbsorbText) {
+			if (_showAbsorbText)
+			{
 				_showAbsorbText = false;
 				absorbText.text = "ABSORB THEIR ZEN";
 			}
 		}
 	}
 
-	private void HandleActivateEvent(ZMPedestalController pedestalController) {
+	private void HandleActivateEvent(ZMPedestalController pedestalController)
+	{
 		if (absorbText.text == "ABSORB THEIR ZEN") {
 			absorbText.text = "GOOD";
 		}

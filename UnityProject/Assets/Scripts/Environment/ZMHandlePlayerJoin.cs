@@ -23,15 +23,20 @@ public class ZMHandlePlayerJoin : MonoBehaviour {
 		}
 	}
 
-	void HandlePlayerJoinedEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
+	void HandlePlayerJoinedEvent(int controlIndex)
 	{
-		if (playerTag.Equals(_playerInfo.playerTag)) {
-			if (sendOnce) {
-				if (!_sent) {
+		if ((int) _playerInfo.playerTag == controlIndex )
+		{
+			if (sendOnce)
+			{
+				if (!_sent)
+				{
 					SendMessage(methodAction);
 					_sent = true;
 				}
-			} else {
+			}
+			else
+			{
 				SendMessage(methodAction);
 			}
 		}
