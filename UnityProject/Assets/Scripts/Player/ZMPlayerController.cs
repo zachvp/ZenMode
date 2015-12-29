@@ -313,6 +313,7 @@ public class ZMPlayerController : MonoBehaviour
 
 			if (_controller.isGrounded) {
 				Invoke("EndStunBeginParry", PARRY_STUN_WINDOW);
+				DisableInputWithCallbackDelay(PARRY_STUN_WINDOW + PARRY_TIME);
 
 				if (PlayerParryEvent != null) {
 					PlayerParryEvent(this, PARRY_STUN_WINDOW + PARRY_TIME);
@@ -417,6 +418,8 @@ public class ZMPlayerController : MonoBehaviour
 
 			Recoil();
 
+			DisableInputWithCallbackDelay(RECOIL_STUN_TIME);
+
 			if (PlayerRecoilEvent != null) {
 				PlayerRecoilEvent(this, RECOIL_STUN_TIME);
 			}
@@ -436,6 +439,7 @@ public class ZMPlayerController : MonoBehaviour
 
 			Recoil();
 			Invoke("ResetMoveModState", STUN_TIME);
+			DisableInputWithCallbackDelay(STUN_TIME);
 
 			if (PlayerStunEvent != null) {
 				PlayerStunEvent(this, STUN_TIME);

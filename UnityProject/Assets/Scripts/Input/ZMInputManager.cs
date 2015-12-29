@@ -57,10 +57,7 @@ public class ZMInputManager : MonoBehaviour
 	{
 		get
 		{
-			if (_instance == null)
-			{
-				Debug.LogError("ZMInputManager: no instance exists in the scene.");
-			}
+			if (_instance == null) { Debug.LogError("ZMInputManager: no instance exists in the scene."); }
 			
 			return _instance;
 		}
@@ -135,8 +132,6 @@ public class ZMInputManager : MonoBehaviour
 
 	private void BroadcastKeyboardEvents(KeyAction action, ZMInput.State state)
 	{
-		// Use garbage value of -1 as ID since we can't associate keys with a particular player right now.
-		// TODO: Lookup a Keycode->PlayerID mapping.
 		if (action(KeyCode.LeftArrow))  { Notifier.SendEventNotification(OnLeftArrowKey, GetInputForKeyCode(KeyCode.LeftArrow, state)); }
 		if (action(KeyCode.RightArrow)) { Notifier.SendEventNotification(OnRightArrowKey, GetInputForKeyCode(KeyCode.RightArrow, state)); }
 		if (action(KeyCode.UpArrow))    { Notifier.SendEventNotification(OnUpArrowKey, GetInputForKeyCode(KeyCode.UpArrow, state)); }
@@ -150,10 +145,10 @@ public class ZMInputManager : MonoBehaviour
 		if (action(KeyCode.Q)) { Notifier.SendEventNotification(OnQKey, GetInputForKeyCode(KeyCode.Q, state)); }
 		if (action(KeyCode.R)) { Notifier.SendEventNotification(OnRKey, GetInputForKeyCode(KeyCode.R, state)); }
 
-		if (action(KeyCode.Space))  	 { Notifier.SendEventNotification(OnSpacebarKey, GetInputForKeyCode(KeyCode.Space, state)); }
-		if (action(KeyCode.RightShift))  { Notifier.SendEventNotification(OnRightShiftKey, GetInputForKeyCode(KeyCode.RightShift, state)); }
-		if (action(KeyCode.Return)) 	 { Notifier.SendEventNotification(OnReturnKey, GetInputForKeyCode(KeyCode.Return, state)); }
-		if (action(KeyCode.Escape)) 	 { Notifier.SendEventNotification(OnEscapeKey, GetInputForKeyCode(KeyCode.Escape, state)); }
+		if (action(KeyCode.Space))  	{ Notifier.SendEventNotification(OnSpacebarKey, GetInputForKeyCode(KeyCode.Space, state)); }
+		if (action(KeyCode.RightShift)) { Notifier.SendEventNotification(OnRightShiftKey, GetInputForKeyCode(KeyCode.RightShift, state)); }
+		if (action(KeyCode.Return)) 	{ Notifier.SendEventNotification(OnReturnKey, GetInputForKeyCode(KeyCode.Return, state)); }
+		if (action(KeyCode.Escape))     { Notifier.SendEventNotification(OnEscapeKey, GetInputForKeyCode(KeyCode.Escape, state)); }
 
 		if (action(KeyCode.Slash)) { Notifier.SendEventNotification(OnSlashKey, GetInputForKeyCode(KeyCode.Slash, state)); }
 	}
@@ -195,12 +190,7 @@ public class ZMInput
 	
 	public int ID { get { return _id; } }
 	
-	public enum State
-	{
-		PRESSED,
-		RELEASED,
-		HELD
-	}
+	public enum State { PRESSED, RELEASED, HELD }
 	
 	private State _state;
 	private int _id;

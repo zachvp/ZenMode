@@ -31,11 +31,8 @@ namespace ZMPlayer
 
 		void Awake()
 		{
-			string playerInfoString;
-
 			_playerInfo = GetComponent<ZMPlayerInfo> ();
-			playerInfoString = _playerInfo.playerTag.ToString ();
-			_playerNumber = int.Parse (playerInfoString.Substring (playerInfoString.Length - 1)) - 1;
+			_playerNumber = (int) _playerInfo.playerTag;
 
 			if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
 				ZMGameStateController.StartGameEvent += HandleStartGameEvent;
@@ -46,10 +43,6 @@ namespace ZMPlayer
 			} else {
 				_inputEnabled = true;
 			}
-
-			ZMPlayerController.PlayerRecoilEvent += HandlePlayerRecoilEvent;
-			ZMPlayerController.PlayerStunEvent += HandlePlayerStunEvent;
-			ZMPlayerController.PlayerParryEvent += HandlePlayerParryEvent;
 
 			ZMLobbyController.PauseGameEvent += HandlePauseGameEventPlayer;
 			ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
@@ -218,33 +211,6 @@ namespace ZMPlayer
 		void HandleStartGameEvent()
 		{
 			SetEnabled(true);
-		}
-		
-		void HandlePlayerParryEvent (ZMPlayerController playerController, float parryTime)
-		{
-			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-				SetEnabled(false);
-				
-				Invoke("Enable", parryTime);
-			}
-		}
-		
-		void HandlePlayerStunEvent (ZMPlayerController playerController, float stunTime)
-		{
-			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-				SetEnabled(false);
-
-				Invoke("Enable", stunTime);
-			}
-		}
-		
-		void HandlePlayerRecoilEvent (ZMPlayerController playerController, float stunTime)
-		{
-			if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-				SetEnabled(false);
-				
-				Invoke("Enable", stunTime);
-			}
 		}
 
 		void HandleQuitMatchEvent ()
