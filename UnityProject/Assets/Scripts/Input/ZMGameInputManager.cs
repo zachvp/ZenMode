@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using InControl;
 using Core;
 using ZMPlayer;
 
