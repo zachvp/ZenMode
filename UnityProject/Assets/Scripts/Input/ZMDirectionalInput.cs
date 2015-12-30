@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class ZMDirectionalInput : MonoBehaviour
+public class ZMDirectionalInput : MonoBehaviour
 {
 	protected Vector2 _movement;
 
@@ -101,5 +101,6 @@ public abstract class ZMDirectionalInput : MonoBehaviour
 		}
 	}
 
-	protected abstract bool IsCorrectInputControl(ZMInput input);
+	// Should be overridden if used.
+	protected virtual bool IsCorrectInputControl(ZMInput input) { return true; }
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Notifications;
+using Match;
 
 namespace ZMPlayer
 {
@@ -35,10 +36,11 @@ namespace ZMPlayer
 
 			if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
 				ZMGameStateController.StartGameEvent += HandleStartGameEvent;
-				ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
-				ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
 				ZMGameStateController.GameEndEvent += HandleGameEndEvent;
 				ZMGameStateController.QuitMatchEvent += HandleQuitMatchEvent;
+
+				MatchStateManager.OnMatchPause += HandlePauseGameEvent;
+				MatchStateManager.OnMatchResume += HandleResumeGameEvent;
 			} else {
 				_inputEnabled = true;
 			}

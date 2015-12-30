@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using ZMPlayer;
+using Match;
 
 public class ZMPlayerManager : MonoBehaviour {
 	public bool debug = false;
@@ -70,12 +71,14 @@ public class ZMPlayerManager : MonoBehaviour {
 		// TODO: Should be assert.
 		if (_instance != null)
 		{
-			Debug.LogError("ZMPlayerManager: More than one error exists in the scene.");
+			Debug.LogError("ZMPlayerManager: More than one instance exists in the scene.");
 		}
 
 		_instance = this;
 
 		DontDestroyOnLoad(gameObject);
+
+		MatchStateManager.OnMatchReset += OnDestroy;
 	}
 
 	void Start()

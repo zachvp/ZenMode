@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using ZMPlayer;
@@ -43,7 +43,8 @@ public class ZMLobbyController : MonoBehaviour {
 
 		ZMGameInputManager.StartInputEvent		 += HandleStartInputEvent;
 		ZMGameInputManager.AnyInputEvent 		 += HandleMainInputEvent;
-		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
+
+		ZMPauseMenu.SelectOptionEvent += HandleSelectOptionEvent;
 	}
 
 	void Start() {

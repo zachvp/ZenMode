@@ -1,6 +1,6 @@
 ﻿using Notifications;
 
-namespace SriLanka.Match
+namespace Match
 {
 	// Defines the match states.
 	public enum MatchState
@@ -19,12 +19,14 @@ namespace SriLanka.Match
 		public static MatchState matchState { get; private set; }
 
 		// Events.
-		public static event EventHandler OnMatchEnd;
-		public static event EventHandler OnPreMatchStart;
-		public static event EventHandler OnMatchStart;
-		public static event EventHandler OnMatchPause;
-        public static event EventHandler OnMatchResume;
-		public static event EventHandler<MatchState> OnMatchStateChanged;
+		public static EventHandler OnMatchEnd;
+		public static EventHandler OnPreMatchStart;
+		public static EventHandler OnMatchStart;
+		public static EventHandler OnMatchPause;
+        public static EventHandler OnMatchResume;
+		public static EventHandler OnMatchReset;
+		public static EventHandler OnMatchExit;
+		public static EventHandler<MatchState> OnMatchStateChanged;
 
 		// Signals the period before the match starts.
 		public static void StartPreMatch()
@@ -69,6 +71,7 @@ namespace SriLanka.Match
 		public static void ResetMatch()
 		{
 			SetState(MatchState.BEGIN);
+			Notifier.SendEventNotification(OnMatchReset);
 			
 			ClearEventHandlers();
 		}
@@ -83,6 +86,12 @@ namespace SriLanka.Match
 			{
 				ResumeMatch();
 			}
+		}
+
+		public static void ExitMatch()
+		{
+			SetState(MatchState.NONE);
+			Notifier.SendEventNotification(OnMatchExit);
 		}
 
 		// Clears the match state and event listeners. Think of this as a Destroy() lifecycle method.
@@ -108,7 +117,9 @@ namespace SriLanka.Match
 			OnMatchEnd = null;
 			OnMatchPause = null;
 			OnMatchResume = null;
+			OnMatchReset = null;
 			OnMatchStateChanged = null;
+			OnMatchExit = null;
 		}
 	}
 }

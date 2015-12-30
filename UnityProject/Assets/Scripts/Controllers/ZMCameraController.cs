@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using Match;
 
 public class ZMCameraController : MonoBehaviour {
 	public float endZoom = 432;
@@ -26,8 +26,9 @@ public class ZMCameraController : MonoBehaviour {
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 
 		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
-		ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
 		ZMGameStateController.GameEndEvent   += HandleGameEndEvent;
+
+		MatchStateManager.OnMatchPause += HandlePauseGameEvent;
 
 		_movementBobbing = GetComponent<ZMMovementBobbing>();
 	}

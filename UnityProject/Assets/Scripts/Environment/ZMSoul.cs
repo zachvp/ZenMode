@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using ZMPlayer;
+using Match;
 
 public class ZMSoul : MonoBehaviour {
 	private ZMScoreController _scoreController;
@@ -12,15 +13,18 @@ public class ZMSoul : MonoBehaviour {
 	private bool _fadingIn;
 	private bool _playingSound;
 
-	void Awake () {
+	void Awake ()
+	{
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
 		ZMScoreController.MinScoreReached += HandleMinScoreReached;
 		ZMScoreController.CanScoreEvent += HandleCanScoreEvent;
 		ZMScoreController.StopScoreEvent += HandleStopScoreEvent;
-		ZMGameStateController.PauseGameEvent += HandlePauseGameEvent;
-		ZMGameStateController.ResumeGameEvent += HandleResumeGameEvent;
+
 		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+
+		MatchStateManager.OnMatchPause += HandlePauseGameEvent;
+		MatchStateManager.OnMatchResume += HandleResumeGameEvent;
 	}
 
 	void HandleGameEndEvent ()

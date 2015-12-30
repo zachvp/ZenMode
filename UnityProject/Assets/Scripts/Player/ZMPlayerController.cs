@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ZMPlayer;
 using Notifications;
+using Match;
 
 public class ZMPlayerController : MonoBehaviour
 {
@@ -41,7 +42,10 @@ public class ZMPlayerController : MonoBehaviour
 	private RaycastHit2D _lastControllerColliderHit;
 	private RaycastHit2D _checkTouchingLeft;
 	private RaycastHit2D _checkTouchingRight;
+
 	private Vector3 _velocity;
+	private Vector3 _storedVelocity;
+
 	private int _framesUntilStep = 0;
 	private string[] kDeathStrings;
 	private bool _canLunge;
@@ -140,9 +144,11 @@ public class ZMPlayerController : MonoBehaviour
 		_controller.onTriggerEnterEvent += onTriggerEnterEvent;
 		_controller.onTriggerExitEvent += onTriggerExitEvent;
 
-		AcceptInputEvents();
-
 		ZMScoreController.MinScoreReached += HandleMinScoreReached;
+
+		MatchStateManager.OnMatchPause += HandleOnMatchPause;
+		MatchStateManager.OnMatchResume += HandleOnMatchResume;
+		MatchStateManager.OnMatchStart += HandleOnMatchStart;
 
 		// Set original facing direction.
 		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
@@ -150,6 +156,26 @@ public class ZMPlayerController : MonoBehaviour
 		// load resources
 		_upperBodyTemplate = Resources.Load(kBodyUpperHalfPath, typeof(GameObject)) as GameObject;
 		_lowerBodyTemplate = Resources.Load(kBodyLowerHalfPath, typeof(GameObject)) as GameObject;
+	}
+
+	private void HandleOnMatchStart()
+	{
+		EnablePlayer();
+		AcceptInputEvents();
+	}
+
+	private void HandleOnMatchPause()
+	{
+		DisablePlayer();
+
+		ClearInputEvents();
+	}
+
+	private void HandleOnMatchResume()
+	{
+		EnablePlayer();
+
+		AcceptInputEvents();
 	}
 
 	void Start() 
@@ -202,7 +228,7 @@ public class ZMPlayerController : MonoBehaviour
 		_materialDefault = renderer.material;
 	}
 
-	void FixedUpdate()
+	void Update()
 	{
 		// Set raycasts.
 		_checkTouchingLeft  = CheckLeft(TILE_SIZE, _controller.platformMask);
@@ -779,15 +805,15 @@ public class ZMPlayerController : MonoBehaviour
 		_moveModState = MoveModState.NEUTRAL;
 
 		_controller.enabled = true;
-		this.enabled = true;
+		enabled = true;
 
 		_animator.SetBool ("didBecomeActive", true);
 	}
 
-	public void DisablePlayer() 
+	public void DisablePlayer()
 	{
 		_controller.enabled = false;
-		this.enabled = false;
+		enabled = false;
 	}
 
 	private void SetMovementDirection(MovementDirectionState direction)

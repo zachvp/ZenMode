@@ -24,7 +24,6 @@ public class ZMGameInputManager : MonoBehaviour
 	{
 		ZMInputManager.Instance.OnStartButton += HandleOnStartButton;
 		ZMInputManager.Instance.OnEscapeKey   += HandleOnStartButton;
-		ZMInputManager.Instance.OnReturnKey   += HandleOnStartButton;
 		
 		ZMInputManager.Instance.OnAnyButton   += HandleOnAnyButton;
 	}
@@ -33,7 +32,6 @@ public class ZMGameInputManager : MonoBehaviour
 	{
 		ZMInputManager.Instance.OnStartButton -= HandleOnStartButton;
 		ZMInputManager.Instance.OnEscapeKey   -= HandleOnStartButton;
-		ZMInputManager.Instance.OnReturnKey   -= HandleOnStartButton;
 		
 		ZMInputManager.Instance.OnAnyButton   -= HandleOnAnyButton;
 	}

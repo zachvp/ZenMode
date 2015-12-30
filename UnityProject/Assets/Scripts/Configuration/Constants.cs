@@ -22,12 +22,14 @@ namespace ZMConfiguration
 			new HashSet<KeyCode>
 			{
 				KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D,
-				KeyCode.Q, KeyCode.E
+				KeyCode.Q, KeyCode.E,
+				KeyCode.Escape
 			},
 			new HashSet<KeyCode>
 			{
 				KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.UpArrow, KeyCode.DownArrow,
-				KeyCode.RightShift, KeyCode.Slash
+				KeyCode.RightShift, KeyCode.Slash,
+				KeyCode.Return
 			}
 		};
 	}

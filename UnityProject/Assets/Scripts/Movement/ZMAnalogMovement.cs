@@ -32,7 +32,7 @@ public class ZMAnalogMovement : ZMDirectionalInput
 		if (!_shouldBounce)
 		{
 			_deltaPos = transform.position;
-			_forward =  new Vector3(_deltaPos.x, _deltaPos.y, _deltaPos.z);
+			_forward = new Vector3(_deltaPos.x, _deltaPos.y, _deltaPos.z);
 
 			_deltaPos += new Vector3 (_movement.x, _movement.y, 0.0f);
 

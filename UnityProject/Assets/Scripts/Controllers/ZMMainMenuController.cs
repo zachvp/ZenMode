@@ -1,9 +1,10 @@
 using UnityEngine;
-using System.Collections;
+using Notifications;
 
-public class ZMMainMenuController : MonoBehaviour {
-	// delegates
-	public delegate void LoadGameAction(); public static event LoadGameAction LoadGameEvent;
+public class ZMMainMenuController : MonoBehaviour
+{
+	// Delegates.
+	public static EventHandler LoadGameEvent;
 
 	// menu options
 	private const int START_OPTION		 = 0;
@@ -12,12 +13,14 @@ public class ZMMainMenuController : MonoBehaviour {
 	private const int QUIT_OPTION 		 = 3;
 
 	// Use this for initialization
-	void Awake () {
-		ZMGameInputManager.StartInputEvent	     += HandleStartInputEvent;
-		ZMMenuOptionController.SelectOptionEvent += HandleSelectOptionEvent;
+	void Awake ()
+	{
+		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
+		ZMTextMenu.SelectOptionEvent += HandleSelectOptionEvent;
 	}
 
-	void OnDestroy() {
+	void OnDestroy()
+	{
 		LoadGameEvent = null;
 	}
 
@@ -66,7 +69,8 @@ public class ZMMainMenuController : MonoBehaviour {
 		}
 	}
 
-	void LoadGame() {
+	void LoadGame()
+	{
 		Application.LoadLevel(ZMSceneIndexList.INDEX_LOBBY);
 	}
 }
