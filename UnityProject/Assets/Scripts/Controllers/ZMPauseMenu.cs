@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
-using Notifications;
-using Match;
+using Core;
 
 public class ZMPauseMenu : ZMTextMenu
 {

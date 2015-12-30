@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using ZMConfiguration;
 
 public class ZMScoreLayoutController : MonoBehaviour {
 	private List<RectTransform> _scoreTransforms;
@@ -24,8 +25,9 @@ public class ZMScoreLayoutController : MonoBehaviour {
 	    _positionSlot2 = new Vector2(716, _paddingTop);
 	}
 
-	void Start() {
-		_playerCount = ZMPlayerManager.PlayerCount;
+	void Start()
+	{
+		_playerCount = Settings.MatchPlayerCount.value;
 
 		for (int i = 0; i < _playerCount; ++i) {
 			_scoreTransforms.Add(null);

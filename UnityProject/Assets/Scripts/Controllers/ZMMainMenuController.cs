@@ -1,5 +1,5 @@
 using UnityEngine;
-using Notifications;
+using Core;
 
 public class ZMMainMenuController : MonoBehaviour
 {

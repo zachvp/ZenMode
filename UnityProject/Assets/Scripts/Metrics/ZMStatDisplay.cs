@@ -1,23 +1,27 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using ZMPlayer;
+using ZMConfiguration;
 
 public class ZMStatDisplay : MonoBehaviour {
 	public Text killCount, grassCutCount;
 
 	private ZMPlayerInfo[] _allPlayerInfo;
 
-	void Awake () {
-		_allPlayerInfo = new ZMPlayerInfo[ZMPlayerManager.MAX_PLAYERS];
+	void Awake ()
+	{
+		_allPlayerInfo = new ZMPlayerInfo[Constants.MAX_PLAYERS];
 
 		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
 
 		gameObject.SetActive(false);
 	}
 
-	void Start() {
-		for (int i = 0; i < ZMPlayerManager.MAX_PLAYERS; ++i) {
-			_allPlayerInfo[i] = ZMPlayerManager.Players[i].GetComponent<ZMPlayerInfo>();
+	void Start()
+	{
+		for (int i = 0; i < Constants.MAX_PLAYERS; ++i)
+		{
+			_allPlayerInfo[i] = ZMPlayerManager.Instance.Players[i].GetComponent<ZMPlayerInfo>();
 		}
 	}
 

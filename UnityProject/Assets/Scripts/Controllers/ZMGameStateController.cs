@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using Core;
 using UnityEngine.UI;
 using ZMPlayer;
-using Notifications;
 using ZMConfiguration;
-using Match;
 
 public class ZMGameStateController : MonoBehaviour {
 	public Text outputText;
@@ -47,9 +45,9 @@ public class ZMGameStateController : MonoBehaviour {
 	void Awake()
 	{
 		_spawnpoints = new List<Transform>();
-		_objectsToSpawn = new Queue<ZMPlayerController>(ZMPlayerManager.MAX_PLAYERS);
-		_players =  new List<ZMPlayerController>(ZMPlayerManager.MAX_PLAYERS);
-		_scoreControllers = new List<ZMScoreController>(ZMPlayerManager.MAX_PLAYERS);
+		_objectsToSpawn = new Queue<ZMPlayerController>(Constants.MAX_PLAYERS);
+		_players =  new List<ZMPlayerController>(Constants.MAX_PLAYERS);
+		_scoreControllers = new List<ZMScoreController>(Constants.MAX_PLAYERS);
 
 		// Add delegate handlers
 		ZMPlayerController.PlayerDeathEvent += RespawnObject;
@@ -73,7 +71,7 @@ public class ZMGameStateController : MonoBehaviour {
 		outputText.text = "";
 		absorbText.text = "";
 				
-		_playerCount = ZMPlayerManager.PlayerCount;
+		_playerCount = Settings.MatchPlayerCount.value;
 		
 		foreach (GameObject spawnpointObject in GameObject.FindGameObjectsWithTag(Tags.kSpawnpointTag))
 		{

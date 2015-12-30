@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using InControl;
-using Notifications;
+using Core;
 using ZMPlayer;
 
 public class ZMGameInputManager : MonoBehaviour

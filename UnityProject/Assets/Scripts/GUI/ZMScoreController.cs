@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using ZMConfiguration;
 
 namespace ZMPlayer{
 	public class ZMScoreController : MonoBehaviour {
@@ -90,9 +91,9 @@ namespace ZMPlayer{
 			scoreBar.maxValue = MAX_SCORE;
 
 			// xD
-			SetScore (ZMPlayerManager.PlayerCount > 2 ? MAX_SCORE / 2f : MAX_SCORE / ZMPlayerManager.PlayerCount);
+			SetScore (Settings.MatchPlayerCount.value > 2 ? MAX_SCORE / 2f : MAX_SCORE / Settings.MatchPlayerCount.value);
 
-			if ((int) _playerInfo.playerTag >= ZMPlayerManager.PlayerCount) {
+			if ((int) _playerInfo.playerTag >= Settings.MatchPlayerCount.value) {
 				scoreStatus.gameObject.SetActive(false);
 			} else {
 				scoreStatus.text = "";
@@ -159,7 +160,7 @@ namespace ZMPlayer{
 			if (_goalState == GoalState.MAX) {
 				_goalState = GoalState.MAXED;
 
-				if (MaxScoreReached != null && ZMPlayerManager.PlayerCount > 1) {
+				if (MaxScoreReached != null && Settings.MatchPlayerCount.value > 1) {
 					MaxScoreReached(this);
 				}
 			}

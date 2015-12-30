@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Core;
 
 namespace ZMConfiguration
 {
@@ -12,6 +13,12 @@ namespace ZMConfiguration
 	{
 		public const string kSpawnpointTag = "Spawnpoint";
 		public const string kPlayerTag 	= "Player";
+	}
+
+	public static class Settings
+	{
+		public static Setting<int> MatchPlayerCount = new Setting<int>("kMatchPlayerCount");
+		public static Setting<int[]> LobbyKillcount = new Setting<int[]>("kLobbyKillCount", Constants.MAX_PLAYERS);
 	}
 
 	public static class Configuration

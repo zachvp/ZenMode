@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using Notifications;
-using Match;
+using Core;
 
 public class ZMTextMenu : ZMMenuInput
 {

@@ -1,6 +1,4 @@
-﻿using Notifications;
-
-namespace Match
+﻿namespace Core
 {
 	// Defines the match states.
 	public enum MatchState

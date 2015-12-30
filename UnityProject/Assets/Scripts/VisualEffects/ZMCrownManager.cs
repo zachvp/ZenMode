@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
-using ZMPlayer;
 using UnityEngine.UI;
+using ZMPlayer;
+using ZMConfiguration;
 
 public class ZMCrownManager : MonoBehaviour {
 	private bool _lobbyDominator;
@@ -15,7 +16,7 @@ public class ZMCrownManager : MonoBehaviour {
 	private bool _endGame;
 
 	void Awake() {
-		_crowns = new GameObject[ZMPlayerManager.PlayerCount];
+		_crowns = new GameObject[Settings.MatchPlayerCount.value];
 
 		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
 		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
@@ -56,7 +57,7 @@ public class ZMCrownManager : MonoBehaviour {
 
 		foreach (GameObject crown in crownObjects) {
 			int crownIndex = (int) crown.GetComponent<ZMPlayerInfo>().playerTag;
-			if (crownIndex < ZMPlayerManager.PlayerCount) {
+			if (crownIndex < Settings.MatchPlayerCount.value) {
 				_crowns[crownIndex] = crown;
 			}
 		}
@@ -65,9 +66,9 @@ public class ZMCrownManager : MonoBehaviour {
 		int maxKills = 0;
 		int maxKillIndex = -1;
 		
-		for (int i = 0; i < ZMPlayerManager.PlayerCount; ++i) {
-			if (ZMPlayerManager.PlayerKills[i] > maxKills) {
-				maxKills = ZMPlayerManager.PlayerKills[i];
+		for (int i = 0; i < Settings.MatchPlayerCount.value; ++i) {
+			if (Settings.LobbyKillcount.value[i] > maxKills) {
+				maxKills = Settings.LobbyKillcount.value[i];
 				maxKillIndex = i;
 			}
 		}
@@ -87,14 +88,14 @@ public class ZMCrownManager : MonoBehaviour {
 		ZMScoreController maxScoreController = null;
 
 		// see if the scores are equal
-		for (int i = 1; i < ZMPlayerManager.PlayerCount; ++i) {
+		for (int i = 1; i < Settings.MatchPlayerCount.value; ++i) {
 			_leadingPlayerIndex = -1;
 			if (_gameStateController.ScoreControllers[i].TotalScore == checkEquality) {
 				scoresEqual = true;
 			}
 		}
 
-		for (int i = 0; i < ZMPlayerManager.PlayerCount; ++i) {
+		for (int i = 0; i < Settings.MatchPlayerCount.value; ++i) {
 			ZMScoreController scoreController = _gameStateController.ScoreControllers[i];
 
 			if (scoreController.TotalScore > maxScoreCrown && !scoresEqual) {

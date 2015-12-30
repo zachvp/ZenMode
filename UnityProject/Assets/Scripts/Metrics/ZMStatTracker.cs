@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using ZMPlayer;
+using ZMConfiguration;
 
 public sealed class ZMStatTracker {
 	private static readonly ZMStatTracker _instance = new ZMStatTracker(); public static ZMStatTracker Instance { get { return _instance; } }
@@ -11,7 +12,7 @@ public sealed class ZMStatTracker {
 
 	// private constructor for singleton
 	private ZMStatTracker() {
-		int statSize = ZMPlayerManager.MAX_PLAYERS;
+		int statSize = Constants.MAX_PLAYERS;
 
 		_kills = new Stat(statSize);
 		_grassCuts = new Stat(statSize);

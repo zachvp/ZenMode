@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
+using ZMConfiguration;
 
 public class ZMPlayerLabelController : MonoBehaviour {
 	public Transform parent;
@@ -17,7 +17,7 @@ public class ZMPlayerLabelController : MonoBehaviour {
 
 	void Update() {
 		if (controller && text) {
-			text.enabled = (int) _playerInfo.playerTag < ZMPlayerManager.PlayerCount && !controller.IsDead();
+			text.enabled = (int) _playerInfo.playerTag < Settings.MatchPlayerCount.value && !controller.IsDead();
 		}
 	}
 }

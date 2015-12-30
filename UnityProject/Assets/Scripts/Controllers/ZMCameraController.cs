@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using Match;
+using Core;
 
 public class ZMCameraController : MonoBehaviour {
 	public float endZoom = 432;

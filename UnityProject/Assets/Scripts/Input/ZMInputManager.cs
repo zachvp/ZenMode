@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using Notifications;
+using Core;
 using InControl;
 
 public class ZMInputManager : MonoBehaviour

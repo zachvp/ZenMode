@@ -3,8 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using ZMPlayer;
-using Notifications;
-using Match;
+using Core;
 
 public class ZMPlayerController : MonoBehaviour
 {
@@ -156,6 +155,8 @@ public class ZMPlayerController : MonoBehaviour
 		// load resources
 		_upperBodyTemplate = Resources.Load(kBodyUpperHalfPath, typeof(GameObject)) as GameObject;
 		_lowerBodyTemplate = Resources.Load(kBodyLowerHalfPath, typeof(GameObject)) as GameObject;
+
+		ZMPlayerManager.Instance.AddPlayer(this);
 	}
 
 	private void HandleOnMatchStart()

@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Notifications;
-using Match;
+using Core;
 
 namespace ZMPlayer
 {
@@ -12,8 +11,6 @@ namespace ZMPlayer
 		private ZMPlayerInfo _playerInfo;
 
 		private int _playerNumber;
-
-		private bool _inputEnabled;
 
 		// Delegates.
 		public EventHandler OnMoveRightEvent;
@@ -33,20 +30,6 @@ namespace ZMPlayer
 
 			_playerInfo = GetComponent<ZMPlayerInfo> ();
 			_playerNumber = (int) _playerInfo.playerTag;
-
-			if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
-				ZMGameStateController.StartGameEvent += HandleStartGameEvent;
-				ZMGameStateController.GameEndEvent += HandleGameEndEvent;
-				ZMGameStateController.QuitMatchEvent += HandleQuitMatchEvent;
-
-				MatchStateManager.OnMatchPause += HandlePauseGameEvent;
-				MatchStateManager.OnMatchResume += HandleResumeGameEvent;
-			} else {
-				_inputEnabled = true;
-			}
-
-			ZMLobbyController.PauseGameEvent += HandlePauseGameEventPlayer;
-			ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
 		}
 
 		void Update()
@@ -130,44 +113,6 @@ namespace ZMPlayer
 					else 							{ Notifier.SendEventNotification(OnAttackEvent, 0); }
 				}
 			}
-		}
-
-		void HandleStartGameEvent()
-		{
-			SetEnabled(true);
-		}
-
-		void HandleQuitMatchEvent ()
-		{
-			SetEnabled(true);
-		}
-		
-		void HandleGameEndEvent ()
-		{
-			SetEnabled(false);
-		}
-		
-		void HandleResumeGameEvent ()
-		{
-			SetEnabled(true);
-		}
-		
-		void HandlePauseGameEvent ()
-		{
-			SetEnabled(false);
-		}
-
-		void HandlePauseGameEventPlayer(int playerIndex)
-		{
-			SetEnabled(false);
-		}
-
-		void Enable() {
-			SetEnabled(true);
-		}
-
-		private void SetEnabled(bool value) {
-			_inputEnabled = value;
 		}
 
 		protected override bool IsCorrectInputControl(ZMInput input)

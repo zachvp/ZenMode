@@ -1,7 +1,7 @@
 ﻿using System;
 
 // Responsible for defining delegates and events.
-namespace Notifications
+namespace Core
 {
 	// Defines common delegates.
 	public delegate void EventHandler();

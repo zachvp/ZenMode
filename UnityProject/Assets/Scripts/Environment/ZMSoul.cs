@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using ZMPlayer;
-using Match;
+using Core;
 
 public class ZMSoul : MonoBehaviour {
 	private ZMScoreController _scoreController;

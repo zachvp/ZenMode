@@ -2,7 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using ZMPlayer;
-using Notifications;
+using Core;
+using ZMConfiguration;
 
 public class ZMLobbyController : MonoBehaviour {
 	public GameObject loadScreen;
@@ -34,8 +35,8 @@ public class ZMLobbyController : MonoBehaviour {
 		_currentJoinCount = 0;
 		_currentReadyCount = 0;
 		_paused = false;
-		_joinedPlayers = new bool[ZMPlayerManager.MAX_PLAYERS];
-		_readyPlayers = new bool[ZMPlayerManager.MAX_PLAYERS];
+		_joinedPlayers = new bool[Constants.MAX_PLAYERS];
+		_readyPlayers = new bool[Constants.MAX_PLAYERS];
 
 		message.text = "";
 
