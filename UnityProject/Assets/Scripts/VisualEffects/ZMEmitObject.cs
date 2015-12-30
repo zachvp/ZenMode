@@ -2,18 +2,20 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class ZMEmitObject : MonoBehaviour {
-	public string resourcePath;
+public class ZMEmitObject : MonoBehaviour
+{
+	[SerializeField] private GameObject resource;
+
+	public GameObject Resource { get { return resource; } }
+
 	public Color color;
 	public int interval = 10;
 
-	private GameObject _resource;
 	private int _currentFrame = 0;
 
-	void Awake() {
+	void Awake()
+	{
 		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
-
-		_resource = Resources.Load(resourcePath, typeof(GameObject)) as GameObject;
 	}
 
 	void HandleGameEndEvent ()
@@ -22,9 +24,11 @@ public class ZMEmitObject : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () {
-		if (_currentFrame > interval) {
-			GameObject emitObject = GameObject.Instantiate(_resource) as GameObject;
+	void Update ()
+	{
+		if (_currentFrame > interval)
+		{
+			GameObject emitObject = GameObject.Instantiate(resource) as GameObject;
 
 			emitObject.transform.position = transform.position;
 			emitObject.GetComponent<Text>().color = color;
@@ -34,9 +38,5 @@ public class ZMEmitObject : MonoBehaviour {
 		}
 
 		_currentFrame += 1;
-	}
-
-	void OnDestroy() {
-		Resources.UnloadUnusedAssets();
 	}
 }

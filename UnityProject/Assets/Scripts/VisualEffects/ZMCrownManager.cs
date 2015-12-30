@@ -15,7 +15,8 @@ public class ZMCrownManager : MonoBehaviour {
 
 	private bool _endGame;
 
-	void Awake() {
+	void Awake()
+	{
 		_crowns = new GameObject[Settings.MatchPlayerCount.value];
 
 		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;

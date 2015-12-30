@@ -42,7 +42,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b42fb856883d49c597051cff695890f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resourcePath: ZenGainText
+  resource: {fileID: 165862, guid: c441f9a1e14f84c95add8857a86ad213, type: 2}
   color: {r: .269968241, g: .808823526, b: .0356833749, a: 1}
   interval: 10
 --- !u!114 &11482802
