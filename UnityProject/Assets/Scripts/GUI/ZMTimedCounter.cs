@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
+using Core;
 
 public class ZMTimedCounter : MonoBehaviour {
 	public enum DisplayType { PLAIN, TIME };
@@ -24,26 +24,11 @@ public class ZMTimedCounter : MonoBehaviour {
 	void Awake () {
 		_value = startValue;
 
-		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
+		ZMGameStateController.StartGameEvent += StartTimer;
 		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
-	}
 
-	void HandleGameEndEvent ()
-	{
-		CancelInvoke(kCountMethodName);
-	}
-
-	void HandleStartGameEvent ()
-	{
-		BeginCount();
-	}
-
-	void OnDestroy() {
-		GameTimerEndedEvent = null;
-	}
-
-	void Start() {
-		UpdateText();
+		MatchStateManager.OnMatchPause += PauseTimer;
+		MatchStateManager.OnMatchResume += StartTimer;
 	}
 
 	void UpdateText() {
@@ -71,7 +56,30 @@ public class ZMTimedCounter : MonoBehaviour {
 		}
 	}
 
-	void StartCount() {
+	void PauseTimer()
+	{
+		CancelInvoke(kCountMethodName);
+		enabled = false;
+	}
+	
+	void HandleGameEndEvent ()
+	{
+		CancelInvoke(kCountMethodName);
+	}
+	
+	void OnDestroy() {
+		GameTimerEndedEvent = null;
+	}
+	
+	void Start() {
+		UpdateText();
+	}
+
+	void StartTimer()
+	{
+		UpdateText();
+
+		enabled = true;
 		InvokeRepeating (kCountMethodName, 0.1f, timeIncrement);
 	}
 
@@ -98,10 +106,5 @@ public class ZMTimedCounter : MonoBehaviour {
 
 	void ClearText() {
 		counterUIText.text = "";
-	}
-	
-	private void BeginCount() {
-		UpdateText ();
-		StartCount ();
 	}
 }
