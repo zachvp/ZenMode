@@ -1,55 +1,72 @@
 ﻿using UnityEngine;
-using System.Collections;
+using Core;
 
-public class ZMWaypointMovement : MonoBehaviour {
-	public Transform[] waypoints;
+public class ZMWaypointMovement : MonoBehaviour
+{
 	public float moveSpeed = 8f;
 	public bool moveAtStart = false;
 	public float startMoveDelay = 3.0f;
-	
-	public delegate void AtPathNodeAction(ZMWaypointMovement waypointMovement, int index); public static event AtPathNodeAction AtPathNodeEvent;
-	public delegate void AtPathEndAction(ZMWaypointMovement waypointMovement); public static event AtPathEndAction AtPathEndEvent;
+
+	public static EventHandler<ZMWaypointMovement, int> AtPathNodeEvent;
+	public static EventHandler<ZMWaypointMovement> AtPathEndEvent;
+
+	protected Transform[] _waypoints;
+	protected int _waypointSize; // in case not all waypoints will be reached right away
 	
 	// movement
 	private enum MoveState { STOPPED, MOVE, MOVING, AT_TARGET, COMPLETED };
 	
 	private MoveState _moveState;
 	private int _waypointIndex;
-	private int _waypointSize; // in case not all waypoints will be reached right away
 	private float _distanceToTarget;
 	private float _distanceTraveled;
 	private Vector3 _targetPosition;
 
-	// Use this for initialization
-	void Awake () {
-		_waypointSize = waypoints.GetLength(0);
+	void Awake()
+	{
+		enabled = false;
 
-		if (moveAtStart) {
-			if (startMoveDelay > 0) {
+		if (moveAtStart)
+		{
+			if (startMoveDelay > 0)
+			{
 				Invoke("Move", startMoveDelay);
-			} else {
+			}
+			else
+			{
 				Move(0);
 				_moveState = MoveState.MOVE;
 			}
-		} else {
+		}
+		else
+		{
 			Stop();
 		}
 	}
 
-	void OnDestroy() {
+	void Start()
+	{
+		InitData();
+	}
+
+	void OnDestroy()
+	{
 		AtPathNodeEvent    = null;
 		AtPathEndEvent 	   = null;
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {
+	void FixedUpdate()
+	{
 		// state sets
-		if (_moveState == MoveState.MOVE && _waypointIndex < _waypointSize) {
+		if (_moveState == MoveState.MOVE && _waypointIndex < _waypointSize)
+		{
 			// set up the movement variables
 			_distanceTraveled = 0.0f;
 
-			if (waypoints[_waypointIndex] != null) {
-				_targetPosition = waypoints[_waypointIndex].position;
+			if (_waypoints[_waypointIndex] != null)
+			{
+				_targetPosition = _waypoints[_waypointIndex].position;
 				_distanceToTarget = (_targetPosition - transform.position).magnitude;
 				
 				_moveState = MoveState.MOVING;
@@ -61,43 +78,54 @@ public class ZMWaypointMovement : MonoBehaviour {
 		// state checks
 		if (_moveState == MoveState.MOVING) {
 			float distanceRatio;
+			Vector3 newPosition;
 
 			_distanceTraveled += moveSpeed * Time.deltaTime;
 			distanceRatio = _distanceTraveled / _distanceToTarget;
-			
-			gameObject.transform.position = Vector3.Lerp(transform.position, _targetPosition, distanceRatio);
 
-			if ((_targetPosition - gameObject.transform.position).sqrMagnitude < 4.0f * 4.0f) {
+			newPosition = Vector3.Lerp(transform.position, _targetPosition, distanceRatio);
+
+			transform.position = newPosition;
+
+			if ((_targetPosition - transform.position).sqrMagnitude < 4.0f * 4.0f)
+			{
 				_moveState = MoveState.AT_TARGET;
 			}
-		} else if (_moveState == MoveState.AT_TARGET) {
-			if (_waypointIndex < _waypointSize) {
+		}
+		else if (_moveState == MoveState.AT_TARGET)
+		{
+			if (_waypointIndex < _waypointSize)
+			{
 				_moveState = MoveState.MOVE;
 				
-				if (AtPathNodeEvent != null) {
-					AtPathNodeEvent(this, _waypointIndex);
-				}
-			} else if (_waypointIndex == _waypointSize) {
+				Notifier.SendEventNotification(AtPathNodeEvent, this, _waypointIndex);
+			}
+			else if (_waypointIndex == _waypointSize)
+			{
 				_moveState = MoveState.COMPLETED;
 				_waypointIndex += 1;
 
-				if (AtPathEndEvent != null) {
-					AtPathEndEvent(this);
-				}
+				Notifier.SendEventNotification(AtPathEndEvent, this);
 			}
 		}
 	}
 
-	private void Stop() {
+	protected virtual void InitData() { }
+
+	private void Stop()
+	{
 		_moveState = MoveState.STOPPED;
 	}
 
-	private void Move(int index) {
+	private void Move(int index)
+	{
 		_waypointIndex = index;
 	}
 
-	void Move() {
+	private void Move()
+	{
 		_waypointIndex = 0;
 		_moveState = MoveState.MOVE;
+		enabled = true;
 	}
 }

@@ -28,7 +28,8 @@ public class ZMCrownManager : MonoBehaviour {
 	{
 		_endGame = true;
 
-		for (int i = 0; i < _crowns.Length; ++i) {
+		for (int i = 0; i < _crowns.Length; ++i)
+		{
 			if (_crowns[i] != null) { _crowns[i].SetActive(false); }
 		}
 	}

@@ -11,8 +11,10 @@ namespace ZMConfiguration
 
 	public static class Tags
 	{
-		public const string kSpawnpointTag = "Spawnpoint";
-		public const string kPlayerTag 	= "Player";
+		public const string kSpawnpointTag 			= "Spawnpoint";
+		public const string kPlayerTag 	   			= "Player";
+		public const string kPlayerStartPositionTag = "PlayerStartPosition";
+		public const string kCameraFocusBase		= "CameraFocusBase";
 	}
 
 	public static class Settings

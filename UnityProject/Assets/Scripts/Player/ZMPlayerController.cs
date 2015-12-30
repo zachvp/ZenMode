@@ -13,9 +13,9 @@ public class ZMPlayerController : MonoBehaviour
 	private float ACCELERATION = 30.0f;
 	private float FRICTION = 25.0f;
 	private float JUMP_HEIGHT = 800.0f;
-	private float PLUNGE_SPEED = 3000.0f;
-	private float LUNGE_SPEED = 2400.0f;
-	private float LUNGE_TIME = 0.1f;
+	private float PLUNGE_SPEED = 2000.0f;
+	private float LUNGE_SPEED = 1600.0f;
+	private float LUNGE_TIME = 0.12f;
 	private float WALL_SLIDE_SPEED = 80.0f;
 	private float WALL_JUMP_KICK_SPEED = 500.0f;
 	private float EDGE_OFFSET = 16.0f;

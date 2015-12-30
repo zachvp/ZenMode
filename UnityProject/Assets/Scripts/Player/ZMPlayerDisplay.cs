@@ -8,26 +8,12 @@ public class ZMPlayerDisplay : MonoBehaviour
 
 	private SpriteRenderer _renderer;
 	private SpriteRenderer _trailRenderer;
-
-	private ParticleSystem _particleSystem;
-
+	
 	private int _emitCount;
 
 	void Awake()
 	{
 		_renderer = GetComponent<SpriteRenderer>();
-		_particleSystem = GetComponent<ParticleSystem>();
-//		_trailObject = ZMEmitObject.Instantiate(_trailObject) as ZMEmitObject;
-//
-//		_trailObject.transform.SetParent(transform);
-//		_trailObject.transform.position = Vector3.zero;
-//
-//		_trailRenderer = _trailObject.Resource.GetComponent<SpriteRenderer>();
-
-//		if (_trailRenderer == null)
-//		{
-//			Debug.LogError("ZMPlayerDisplay: Expecting SpriteRender attached to _trailObject ZMEmitObject.");
-//		}
 	}
 
 	void Update()
