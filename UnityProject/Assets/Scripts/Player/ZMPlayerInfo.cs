@@ -8,7 +8,13 @@ namespace ZMPlayer
 	{
 		[SerializeField] private int id;
 
-		public int ID { get { return id; } }
+		public int ID { get { return id; } set { id = value; } }
+		public Color color { get; set; } // TODO: Have this be set in constructor when this is not a MonoBehaviour.
+
+		void Awake()
+		{
+
+		}
 
 		public override bool Equals(System.Object other)
 		{

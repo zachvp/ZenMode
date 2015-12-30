@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using ZMPlayer;
 using Core;
 
-public class ZMPlayerController : MonoBehaviour
+public class ZMPlayerController : ZMPlayerItem
 {
 	// Movement constants.
 	private float GRAVITY = 2200.0f;
@@ -33,7 +33,6 @@ public class ZMPlayerController : MonoBehaviour
 	private float TILE_SIZE = 2.0f;
 	private int FRAMES_PER_STEP = 30;
 
-	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 	private CharacterController2D _controller;
 	private Animator _animator;
 	private ZMPlayerInputController _inputController;
@@ -129,8 +128,10 @@ public class ZMPlayerController : MonoBehaviour
 	private SpriteRenderer _spriteRenderer;
 	private Color _baseColor;
 
-	void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
+
 		_moveModState = MoveModState.NEUTRAL;
 
 		GetComponentReferences();
@@ -598,7 +599,6 @@ public class ZMPlayerController : MonoBehaviour
 	
 	private void GetComponentReferences()
 	{
-		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_animator = GetComponent<Animator>();
 		_controller = GetComponent<CharacterController2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();

@@ -41,5 +41,13 @@ namespace ZMConfiguration
 				KeyCode.Return
 			}
 		};
+
+		public static readonly Color[] PlayerColors = new Color[Constants.MAX_PLAYERS]
+		{
+			new Color(50, 200, 70),
+			new Color(50, 110, 250),
+			new Color(255, 145, 50),
+			new Color(55, 200, 30),
+		};
 	}
 }
