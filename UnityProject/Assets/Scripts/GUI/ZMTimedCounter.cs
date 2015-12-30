@@ -21,7 +21,8 @@ public class ZMTimedCounter : MonoBehaviour {
 
 	public delegate void GameTimerEndedAction(); public static event GameTimerEndedAction GameTimerEndedEvent;
 	
-	void Awake () {
+	void Awake ()
+	{
 		_value = startValue;
 
 		ZMGameStateController.StartGameEvent += StartTimer;
@@ -29,9 +30,12 @@ public class ZMTimedCounter : MonoBehaviour {
 
 		MatchStateManager.OnMatchPause += PauseTimer;
 		MatchStateManager.OnMatchResume += StartTimer;
+
+		UpdateText();
 	}
 
-	void UpdateText() {
+	private void UpdateText()
+	{
 		if (minMessage != null && _value == min) {
 			counterUIText.text = minMessage;
 		} else if (maxMessage != null && _value == max) {
@@ -56,26 +60,22 @@ public class ZMTimedCounter : MonoBehaviour {
 		}
 	}
 
-	void PauseTimer()
+	private void PauseTimer()
 	{
 		CancelInvoke(kCountMethodName);
 		enabled = false;
 	}
 	
-	void HandleGameEndEvent ()
+	private void HandleGameEndEvent ()
 	{
 		CancelInvoke(kCountMethodName);
 	}
 	
-	void OnDestroy() {
+	private void OnDestroy() {
 		GameTimerEndedEvent = null;
 	}
-	
-	void Start() {
-		UpdateText();
-	}
 
-	void StartTimer()
+	private void StartTimer()
 	{
 		UpdateText();
 
@@ -83,7 +83,8 @@ public class ZMTimedCounter : MonoBehaviour {
 		InvokeRepeating (kCountMethodName, 0.1f, timeIncrement);
 	}
 
-	void Count() {
+	private void Count()
+	{
 		_value += valueIncrement;
 		UpdateText ();
 
@@ -104,7 +105,8 @@ public class ZMTimedCounter : MonoBehaviour {
 		}
 	}
 
-	void ClearText() {
+	private void ClearText()
+	{
 		counterUIText.text = "";
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using ZMPlayer;
+using Core;
 
 public class ZMAnalogMovement : ZMDirectionalInput
 {
@@ -8,8 +9,11 @@ public class ZMAnalogMovement : ZMDirectionalInput
 
 	private Vector3 _deltaPos;
 	private Vector3 _forward;
-	
+
+	private Vector2 _previousVelocity;
+
 	private bool _shouldBounce;
+
 	private float _slowFactor;
 
 	// References.
@@ -25,8 +29,23 @@ public class ZMAnalogMovement : ZMDirectionalInput
 		_slowFactor = 1;
 
 		if (renderer != null) { _baseColor = renderer.material.color; }
+
+		MatchStateManager.OnMatchPause += Disable;
+		MatchStateManager.OnMatchResume += Enable;
 	}
 
+	private void Disable()
+	{
+		enabled = false;
+		_previousVelocity = rigidbody2D.velocity;
+		rigidbody2D.velocity = Vector2.zero;
+	}
+
+	private void Enable()
+	{
+		rigidbody2D.velocity = _previousVelocity;
+		enabled = true;
+	}
 	void Update()
 	{
 		if (!_shouldBounce)

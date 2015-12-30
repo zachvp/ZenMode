@@ -890,7 +890,7 @@ public class ZMPlayerController : MonoBehaviour
 		// Set player states
 		_playerInPath = false;
 
-		DisableInputWithCallbackDelay(Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY ? RESPAWN_TIME : 0.75f);
+		ClearInputEvents();
 		Invoke(kRespawnMethodName, RESPAWN_TIME);
 
 		audio.PlayOneShot(_audioGore[Random.Range (0, _audioGore.Length)]);
@@ -959,9 +959,11 @@ public class ZMPlayerController : MonoBehaviour
 
 		_spriteRenderer.enabled = true;
 		light.enabled = true;
-		
+
 		EnablePlayer();
 		SetMovementDirection(transform.position.x < 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
+
+		if (!MatchStateManager.IsPause() && !MatchStateManager.IsEnd()) { AcceptInputEvents(); }
 
 		if (PlayerRespawnEvent != null) {
 			PlayerRespawnEvent(this);

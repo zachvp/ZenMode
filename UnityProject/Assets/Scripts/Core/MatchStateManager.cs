@@ -1,20 +1,10 @@
 ﻿namespace Core
 {
-	// Defines the match states.
-	public enum MatchState
-	{
-		NONE	= 0,
-		BEGIN	= 1,
-		MAIN	= 2,
-		END		= 3,
-		PAUSE	= 4
-	}
-	
 	// Tracks the state of a match.
 	public class MatchStateManager
 	{
 		// Static read-only MatchState.
-		public static MatchState matchState { get; private set; }
+		private static MatchState matchState;
 
 		// Events.
 		public static EventHandler OnMatchEnd;
@@ -24,7 +14,12 @@
         public static EventHandler OnMatchResume;
 		public static EventHandler OnMatchReset;
 		public static EventHandler OnMatchExit;
-		public static EventHandler<MatchState> OnMatchStateChanged;
+
+		public static bool IsNone()  { return matchState == MatchState.NONE; }
+		public static bool IsBegin() { return matchState == MatchState.BEGIN; }
+		public static bool IsMain()  { return matchState == MatchState.MAIN; }
+		public static bool IsEnd()	  { return matchState == MatchState.END; }
+		public static bool IsPause()  { return matchState == MatchState.PAUSE; }
 
 		// Signals the period before the match starts.
 		public static void StartPreMatch()
@@ -104,8 +99,6 @@
 		private static void SetState(MatchState state)
 		{
 			matchState = state;
-
-			Notifier.SendEventNotification(OnMatchStateChanged, matchState);
 		}
 
 		private static void ClearEventHandlers()
@@ -116,8 +109,17 @@
 			OnMatchPause = null;
 			OnMatchResume = null;
 			OnMatchReset = null;
-			OnMatchStateChanged = null;
 			OnMatchExit = null;
+		}
+
+		// Defines the match states.
+		private enum MatchState
+		{
+			NONE	= 0,
+			BEGIN	= 1,
+			MAIN	= 2,
+			END		= 3,
+			PAUSE	= 4
 		}
 	}
 }
