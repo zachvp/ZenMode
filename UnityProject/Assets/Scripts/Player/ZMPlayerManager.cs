@@ -57,9 +57,8 @@ public class ZMPlayerManager : MonoBehaviour
 		for (int i = 0; i < playerStartpoints.Length; ++i)
 		{
 			var playerInfo = playerStartpoints[i].GetComponent<ZMPlayerInfo>();
-			var playerID = (int) playerInfo.playerTag;
 
-			_playerStartPoints[playerID] = playerInfo.transform;
+			_playerStartPoints[playerInfo.ID] = playerInfo.transform;
 		}
 	}
 
@@ -70,8 +69,6 @@ public class ZMPlayerManager : MonoBehaviour
 
 	public void AddPlayer(ZMPlayerController player)
 	{
-		var playerTag = player.GetComponent<ZMPlayerInfo>().playerTag;
-
-		_players[(int) playerTag] = player;
+		_players[player.PlayerInfo.ID] = player;
 	}
 }

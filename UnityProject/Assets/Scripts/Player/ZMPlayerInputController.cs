@@ -10,8 +10,6 @@ namespace ZMPlayer
 		public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 		private ZMPlayerInfo _playerInfo;
 
-		private int _playerNumber;
-
 		// Delegates.
 		public EventHandler OnMoveRightEvent;
 		public EventHandler OnMoveLeftEvent;
@@ -29,7 +27,6 @@ namespace ZMPlayer
 			base.Awake();
 
 			_playerInfo = GetComponent<ZMPlayerInfo> ();
-			_playerNumber = (int) _playerInfo.playerTag;
 		}
 
 		void Update()
@@ -117,7 +114,7 @@ namespace ZMPlayer
 
 		protected override bool IsCorrectInputControl(ZMInput input)
 		{
-			return input.ID == -1 || input.ID == _playerNumber;
+			return input.ID == -1 || input.ID == _playerInfo.ID;
 		}
 	}
 }

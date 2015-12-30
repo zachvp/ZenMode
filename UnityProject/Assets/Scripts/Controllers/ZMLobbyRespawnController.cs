@@ -16,7 +16,7 @@ public class ZMLobbyRespawnController : MonoBehaviour {
 	IEnumerator SpawnPlayer(ZMPlayerController playerController) {
 		yield return new WaitForSeconds(0.75f);
 
-		playerController.transform.position = spawnpoints[(int) playerController.PlayerInfo.playerTag].position;
+		playerController.transform.position = spawnpoints[playerController.PlayerInfo.ID].position;
 		playerController.EnablePlayer();
 	}
 }

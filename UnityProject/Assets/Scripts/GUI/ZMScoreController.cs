@@ -93,9 +93,12 @@ namespace ZMPlayer{
 			// xD
 			SetScore (Settings.MatchPlayerCount.value > 2 ? MAX_SCORE / 2f : MAX_SCORE / Settings.MatchPlayerCount.value);
 
-			if ((int) _playerInfo.playerTag >= Settings.MatchPlayerCount.value) {
+			if (_playerInfo.ID >= Settings.MatchPlayerCount.value)
+			{
 				scoreStatus.gameObject.SetActive(false);
-			} else {
+			}
+			else
+			{
 				scoreStatus.text = "";
 			}
 		}
@@ -171,10 +174,14 @@ namespace ZMPlayer{
 				ZMSoul soul = collision.GetComponent<ZMSoul>();
 				ZMPedestalController pedestalController = collision.GetComponent<ZMPedestalController>();
 
-				if (!soul.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-					if (pedestalController.IsEnabled() && _targetState == TargetState.ALIVE) {
+				if (_playerInfo != soul.PlayerInfo)
+				{
+					if (pedestalController.IsEnabled() && _targetState == TargetState.ALIVE)
+					{
 						AddSoul(soul);
-					} else if (!pedestalController.IsEnabled()) {
+					}
+					else if (!pedestalController.IsEnabled())
+					{
 						RemoveSoul(soul);
 					}
 				}
@@ -240,20 +247,24 @@ namespace ZMPlayer{
 			}
 		}
 
-		void HandlePlayerRespawnEvent (ZMPlayerController playerController) {
-			if (playerController.gameObject.Equals(gameObject)) {
+		void HandlePlayerRespawnEvent(ZMPlayerController playerController)
+		{
+			if (playerController.gameObject.Equals(gameObject))
+			{
 				_targetState = TargetState.ALIVE;
 				_pointState = PointState.NEUTRAL;
 			}
 		}
 
-		private void HandlePedestalDeactivation (ZMPedestalController pedestalController) {
-			if (_playerInfo.playerTag.Equals(pedestalController.PlayerInfo.playerTag)) {
+		private void HandlePedestalDeactivation(ZMPedestalController pedestalController)
+		{
+			if (_playerInfo == pedestalController.PlayerInfo)
+			{
 				RemoveSoul(pedestalController);
 			}
 		}
 
-		void HandleSoulDestroyedEvent (ZMSoul soul)
+		void HandleSoulDestroyedEvent(ZMSoul soul)
 		{
 			RemoveSoul(soul);
 		}

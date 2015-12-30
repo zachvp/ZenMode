@@ -24,8 +24,8 @@ public sealed class ZMStatTracker {
 
 		public Stat(int maxSize) { _array = new int[maxSize]; }
 
-		public void Add(ZMPlayerInfo playerInfo) { _array[(int) playerInfo.playerTag] += 1; }
-		public int GetStat(ZMPlayerInfo playerInfo) { return _array[(int) playerInfo.playerTag]; }
+		public void Add(ZMPlayerInfo playerInfo) { _array[playerInfo.ID] += 1; }
+		public int GetStat(ZMPlayerInfo playerInfo) { return _array[playerInfo.ID]; }
 		public int[] GetMax() {
 			int[] max = { 0, 0 };
 			

@@ -101,7 +101,7 @@ public class ZMAnalogMovement : ZMDirectionalInput
 
 	protected override bool IsCorrectInputControl(ZMInput input)
 	{
-		return (int) _playerInfo.playerTag == input.ID;
+		return _playerInfo.ID == input.ID;
 	}
 
 	private void CancelBounce()

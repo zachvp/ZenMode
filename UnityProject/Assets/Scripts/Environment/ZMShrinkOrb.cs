@@ -13,7 +13,8 @@ public class ZMShrinkOrb : MonoBehaviour {
 
 	void HandleAtPathNodeEvent (ZMWaypointMovement waypointMovement, int index)
 	{
-		if (waypointMovement.name.Equals("Main Camera") && index - 1 == (int) _playerInfo.playerTag) {
+		if (waypointMovement.name.Equals("Main Camera") && index - 1 == _playerInfo.ID)
+		{
 			SendMessage("Stop");
 			_shrinking = true;
 		}

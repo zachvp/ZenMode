@@ -27,14 +27,16 @@ public class ZMColorFade : MonoBehaviour {
 
 	void HandleStopScoreEvent (ZMPlayer.ZMScoreController scoreController)
 	{
-		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if (_playerInfo == scoreController.PlayerInfo)
+		{
 			_fadingIn = false;
 		}
 	}
 
 	void HandleCanScoreEvent (ZMPlayer.ZMScoreController scoreController)
 	{
-		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if (_playerInfo == scoreController.PlayerInfo)
+		{
 			_fadingIn = true;
 
 			if (!_image.enabled) { _image.enabled = true; }
@@ -43,31 +45,43 @@ public class ZMColorFade : MonoBehaviour {
 
 	void HandleMinScoreReached (ZMPlayer.ZMScoreController scoreController)
 	{
-		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if (_playerInfo == scoreController.PlayerInfo)
+		{
 			_image.enabled = false;
 		}
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		if (_fadingIn) {
-			if (ColorDifference(_image.color, fadeColor) < TARGET_THRESHOLD) {
+	void Update ()
+	{
+		if (_fadingIn)
+		{
+			if (ColorDifference(_image.color, fadeColor) < TARGET_THRESHOLD)
+			{
 				if (looping)
 					_fadingIn = false;
-			} else {
+			}
+			else
+			{
 				_image.color = Color.Lerp(_image.color, fadeColor, fadeSpeed * Time.deltaTime);
 			}
-		} else {
-			if (ColorDifference(_image.color, _baseColor) < TARGET_THRESHOLD) {
+		}
+		else
+		{
+			if (ColorDifference(_image.color, _baseColor) < TARGET_THRESHOLD)
+			{
 				if (looping)
 					_fadingIn = true;
-			} else {
+			}
+			else
+			{
 				_image.color = Color.Lerp(_image.color, _baseColor, fadeSpeed * Time.deltaTime);
 			}
 		}
 	}
 
-	float ColorDifference(Color a, Color b) {
+	private float ColorDifference(Color a, Color b)
+	{
 		Vector4 va = new Vector4(a.r, a.g, a.b, a.a);
 		Vector4 vb = new Vector4(b.r, b.g, b.b, b.a);
 

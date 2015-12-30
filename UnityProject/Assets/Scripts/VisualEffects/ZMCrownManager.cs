@@ -36,18 +36,15 @@ public class ZMCrownManager : MonoBehaviour {
 
 	void HandlePlayerRespawnEvent (ZMPlayerController playerController)
 	{
-		if (!_endGame) {
-			int index = (int) playerController.PlayerInfo.playerTag;
-			
-			_crowns[index].SetActive(true);
+		if (!_endGame)
+		{
+			_crowns[playerController.PlayerInfo.ID].SetActive(true);
 		}
 	}
 
 	void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
-		int index = (int) playerController.PlayerInfo.playerTag;
-
-		_crowns[index].SetActive(false);
+		_crowns[playerController.PlayerInfo.ID].SetActive(false);
 	}
 	
 	void Start () {
@@ -58,8 +55,10 @@ public class ZMCrownManager : MonoBehaviour {
 		GameObject[] crownObjects = GameObject.FindGameObjectsWithTag("Crown");
 
 		foreach (GameObject crown in crownObjects) {
-			int crownIndex = (int) crown.GetComponent<ZMPlayerInfo>().playerTag;
-			if (crownIndex < Settings.MatchPlayerCount.value) {
+			int crownIndex = crown.GetComponent<ZMPlayerInfo>().ID;
+
+			if (crownIndex < Settings.MatchPlayerCount.value)
+			{
 				_crowns[crownIndex] = crown;
 			}
 		}
@@ -111,9 +110,12 @@ public class ZMCrownManager : MonoBehaviour {
 				_crowns[i].GetComponent<Text>().color = Color.white;
 		}
 		
-		if (maxScoreController != null && !_lobbyDominator) {
-			_crowns[(int) maxScoreController.PlayerInfo.playerTag].GetComponent<Text>().color = Color.yellow;
-		} else if (_lobbyDominator && _dominatorIndex < _crowns.Length) {
+		if (maxScoreController != null && !_lobbyDominator)
+		{
+			_crowns[maxScoreController.PlayerInfo.ID].GetComponent<Text>().color = Color.yellow;
+		}
+		else if (_lobbyDominator && _dominatorIndex < _crowns.Length)
+		{
 			_crowns[_dominatorIndex].GetComponent<Text>().color = Color.yellow;
 		}
 	}

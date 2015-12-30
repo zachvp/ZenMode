@@ -31,15 +31,13 @@ public class ZMLobbyPlayerManager : ZMPlayerManager
 		_playerCount -= 1;
 	}
 
-	private void HandlePlayerReadyEvent (ZMPlayer.ZMPlayerInfo.PlayerTag playerTag)
+	private void HandlePlayerReadyEvent (ZMPlayer.ZMPlayerInfo playerTag)
 	{
 		_playerCount += 1;
 	}
 
 	private void HandlePlayerKillEvent(ZMPlayerController killer)
-	{
-		int killerIndex = (int) killer.PlayerInfo.playerTag;
-		
-		Settings.LobbyKillcount.value[killerIndex] += 1;
+	{		
+		Settings.LobbyKillcount.value[killer.PlayerInfo.ID] += 1;
 	}
 }

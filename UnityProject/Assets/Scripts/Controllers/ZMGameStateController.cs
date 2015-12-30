@@ -86,10 +86,9 @@ public class ZMGameStateController : MonoBehaviour {
 		
 		foreach (GameObject player in GameObject.FindGameObjectsWithTag(Tags.kPlayerTag))
 		{
-			ZMPlayerController playerController = player.GetComponent<ZMPlayerController>();
-			ZMScoreController scoreController = player.GetComponent<ZMScoreController>();
-			
-			int index = (int) playerController.PlayerInfo.playerTag;
+			var playerController = player.GetComponent<ZMPlayerController>();
+			var scoreController = player.GetComponent<ZMScoreController>();
+			var index = playerController.PlayerInfo.ID;
 			
 			playerController.gameObject.SetActive(false);
 			
@@ -137,7 +136,7 @@ public class ZMGameStateController : MonoBehaviour {
 				if (scoreController.TotalScore > maxScore)
 				{
 					maxScore = scoreController.TotalScore;
-					_victoryMessage =  "P" + (int) (scoreController.PlayerInfo.playerTag + 1) + " WINS!";
+					_victoryMessage =  "P" + (scoreController.PlayerInfo.ID + 1) + " WINS!";
 				}
 			}
 

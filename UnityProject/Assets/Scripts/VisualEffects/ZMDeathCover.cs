@@ -2,13 +2,14 @@
 using System.Collections;
 using ZMPlayer;
 
-public class ZMDeathCover : MonoBehaviour {
+public class ZMDeathCover : MonoBehaviour
+{
 	ZMPlayerInfo _playerInfo;
 	SpriteRenderer _spriteRenderer;
 
-
 	// Use this for initialization
-	void Awake () {
+	void Awake ()
+	{
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_spriteRenderer = GetComponent<SpriteRenderer>();
 
@@ -18,14 +19,16 @@ public class ZMDeathCover : MonoBehaviour {
 
 	void HandlePlayerRespawnEvent (ZMPlayerController playerController)
 	{
-		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if (_playerInfo == playerController.PlayerInfo)
+		{
 			_spriteRenderer.enabled = false;
 		}
 	}
 
 	void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
-		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if (_playerInfo == playerController.PlayerInfo)
+		{
 			_spriteRenderer.enabled = true;
 			gameObject.SetActive(true);
 		}

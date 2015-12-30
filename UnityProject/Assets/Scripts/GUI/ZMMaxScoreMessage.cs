@@ -19,9 +19,10 @@ public class ZMMaxScoreMessage : MonoBehaviour {
 		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
 	}
 
-	void HandleMaxScoreReachedEvent (ZMLobbyScoreController lobbyScoreController)
+	void HandleMaxScoreReachedEvent(ZMLobbyScoreController lobbyScoreController)
 	{
-		if (lobbyScoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if (_playerInfo == lobbyScoreController.PlayerInfo)
+		{
 			text.text = message;
 			text.gameObject.SetActive(true);
 			Destroy(slider);

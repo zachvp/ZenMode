@@ -129,7 +129,8 @@ public class ZMPedestalController : MonoBehaviour {
 	// event handlers
 	void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
-		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if (_playerInfo == playerController.PlayerInfo)
+		{
 			ZMScoreController scoreController = playerController.GetComponent<ZMScoreController>();
 
 			if (scoreController.TotalScore <= 0) { return; }
@@ -149,9 +150,8 @@ public class ZMPedestalController : MonoBehaviour {
 
 	void HandleMinScoreReached (ZMScoreController scoreController)
 	{
-		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
-			//ZMScoreController.MinScoreReached -= HandleMinScoreReached;
-
+		if (_playerInfo == scoreController.PlayerInfo)
+		{
 			zenPop.renderer.material.color = renderer.material.color;
 
 			_zenPopSystems.Add(ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem);
@@ -160,7 +160,6 @@ public class ZMPedestalController : MonoBehaviour {
 
 			Disable();
 			Invoke ("StopThePop", 0.08f);
-			//gameObject.SetActive(false);
 		}
 	}
 
@@ -194,12 +193,15 @@ public class ZMPedestalController : MonoBehaviour {
 		}
 	}
 
-	void HandleStopScoreEvent (ZMScoreController scoreController) {
+	void HandleStopScoreEvent (ZMScoreController scoreController)
+	{
 		_scoringAgents.Remove(scoreController);
 	}
 
-	void HandleSpawnObjectEvent(ZMGameStateController gameStateController, ZMPlayerController playerController) {
-		if (playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+	void HandleSpawnObjectEvent(ZMGameStateController gameStateController, ZMPlayerController playerController)
+	{
+		if (_playerInfo == playerController.PlayerInfo)
+		{
 			Invoke(kDisableMethodName, lingerAfterSpawnTime);
 		}
 	}

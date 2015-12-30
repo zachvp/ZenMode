@@ -787,7 +787,8 @@ public class ZMPlayerController : MonoBehaviour
 
 	void HandleMinScoreReached (ZMScoreController scoreController)
 	{
-		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if (_playerInfo == scoreController.PlayerInfo)
+		{
 			gameObject.SetActive(false);
 
 			_moveModState = MoveModState.ELIMINATED;

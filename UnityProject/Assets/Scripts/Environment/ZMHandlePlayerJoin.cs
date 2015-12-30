@@ -18,14 +18,15 @@ public class ZMHandlePlayerJoin : MonoBehaviour {
 
 	void HandleDropOutEvent (int playerIndex)
 	{
-		if (playerIndex == (int) _playerInfo.playerTag) {
+		if (_playerInfo.ID == playerIndex)
+		{
 			_sent = false;
 		}
 	}
 
 	void HandlePlayerJoinedEvent(int controlIndex)
 	{
-		if ((int) _playerInfo.playerTag == controlIndex )
+		if (_playerInfo.ID == controlIndex )
 		{
 			if (sendOnce)
 			{

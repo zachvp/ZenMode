@@ -42,32 +42,36 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		UpdateUI();
 	}
 
-	void HandlePlayerRespawnEvent (ZMPlayerController playerController)
+	void HandlePlayerRespawnEvent(ZMPlayerController playerController)
 	{
-		if(playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if(_playerInfo == playerController.PlayerInfo)
+		{
 			_targetAlive = true;
 		}
 	}
 
-	void HandlePlayerDeathEvent (ZMPlayerController playerController)
+	void HandlePlayerDeathEvent(ZMPlayerController playerController)
 	{
-		if(playerController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if(_playerInfo == playerController.PlayerInfo)
+		{
 			_targetAlive = false;
 		}
 	}
 
-	void HandleDropOutEvent (int playerIndex)
+	void HandleDropOutEvent(int playerIndex)
 	{
-		if (playerIndex == (int) _playerInfo.playerTag) {
+		if (playerIndex == _playerInfo.ID)
+		{
 			transform.position = _basePosition;
 			gameObject.SetActive(false);
 			scoreBar.gameObject.SetActive(false);
 		}
 	}
 
-	void HandleActivateEvent (ZMLobbyPedestalController lobbyPedestalController)
+	void HandleActivateEvent(ZMLobbyPedestalController lobbyPedestalController)
 	{
-		if (lobbyPedestalController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if (_playerInfo == lobbyPedestalController.PlayerInfo)
+		{
 			_pedestalActive = true;
 			scoreBar.gameObject.SetActive(true);
 		}
@@ -79,7 +83,8 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		foreach (GameObject pedestal in GameObject.FindGameObjectsWithTag("Pedestal")) {
 			ZMLobbyPedestalController controller = pedestal.GetComponent<ZMLobbyPedestalController>();
 			
-			if (controller.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			if (_playerInfo == controller.PlayerInfo)
+			{
 				_pedestalController = controller;
 			}
 		}
@@ -123,7 +128,7 @@ public class ZMLobbyScoreController : MonoBehaviour {
 
 	void HandlePlayerJoinedEvent(int controlIndex)
 	{
-		if ((int) _playerInfo.playerTag == controlIndex)
+		if (_playerInfo.ID == controlIndex)
 		{
 			gameObject.SetActive(true);
 			light.enabled = true;

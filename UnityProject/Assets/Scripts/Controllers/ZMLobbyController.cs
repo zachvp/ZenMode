@@ -11,10 +11,10 @@ public class ZMLobbyController : MonoBehaviour {
 
 	public static EventHandler<int> PlayerJoinedEvent;
 
-	public delegate void PlayerReadyAction(ZMPlayerInfo.PlayerTag playerTag); public static event PlayerReadyAction PlayerReadyEvent;
-	public delegate void PauseGameAction(int playerIndex); public static event PauseGameAction PauseGameEvent;
-	public delegate void ResumeGameAction(); public static event ResumeGameAction ResumeGameEvent;
-	public delegate void DropOutAction(int playerIndex); public static event DropOutAction DropOutEvent;
+	public static EventHandler<ZMPlayerInfo> PlayerReadyEvent;
+	public static EventHandler<int> DropOutEvent;
+	public static EventHandler<int> PauseGameEvent;
+	public static EventHandler ResumeGameEvent;
 	
 	private int _requiredPlayerCount;
 	private int _currentJoinCount; // i.e. how many  have pressed a button to join
@@ -48,11 +48,13 @@ public class ZMLobbyController : MonoBehaviour {
 		ZMPauseMenu.SelectOptionEvent += HandleSelectOptionEvent;
 	}
 
-	void Start() {
+	void Start()
+	{
 		loadScreen.SetActive(false);
 	}
 
-	void OnDestroy() {
+	void OnDestroy()
+	{
 		PlayerJoinedEvent = null;
 		PauseGameEvent    = null;
 		PlayerReadyEvent  = null;
@@ -60,7 +62,8 @@ public class ZMLobbyController : MonoBehaviour {
 		DropOutEvent	  = null;
 	}
 
-	void HandleSelectOptionEvent(int optionIndex) {
+	void HandleSelectOptionEvent(int optionIndex)
+	{
 		Time.timeScale = 1;
 
 		switch(optionIndex) {
@@ -116,18 +119,14 @@ public class ZMLobbyController : MonoBehaviour {
 			_currentReadyCount -= 1;
 		}
 
-		if (DropOutEvent != null) {
-			DropOutEvent(_playerPauseIndex);
-		}
+		Notifier.SendEventNotification(DropOutEvent, _playerPauseIndex);
 	}
 
 	void HandleSelectResumeEvent ()
 	{
 		_paused = false;
 
-		if (ResumeGameEvent != null) {
-			ResumeGameEvent();
-		}
+		Notifier.SendEventNotification(ResumeGameEvent);
 	}
 
 	void HandleStartInputEvent (int controlID)
@@ -140,20 +139,16 @@ public class ZMLobbyController : MonoBehaviour {
 				_playerPauseIndex = controlID;
 				_paused = true;
 
-				if (PauseGameEvent != null) {
-					PauseGameEvent(_playerPauseIndex);
-				}
+				Notifier.SendEventNotification(PauseGameEvent, _playerPauseIndex);
 			}
 		}
 	}
 
 	private void HandleMaxScoreReachedEvent(ZMLobbyScoreController scoreController) {
 		_currentReadyCount += 1;
-		_readyPlayers[(int) scoreController.PlayerInfo.playerTag] = true;
+		_readyPlayers[scoreController.PlayerInfo.ID] = true;
 
-		if (PlayerReadyEvent != null) {
-			PlayerReadyEvent(scoreController.PlayerInfo.playerTag);
-		}
+		Notifier.SendEventNotification(PlayerReadyEvent, scoreController.PlayerInfo);
 
 		if(_currentReadyCount > 1 && _currentReadyCount == _requiredPlayerCount) {
 			Invoke("LoadLevel", 1.0f);

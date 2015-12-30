@@ -18,20 +18,26 @@ public class ZMZenStream : MonoBehaviour {
 		_particleSystem.renderer.sortingLayerName = "Foreground";
 	}
 
-	private void HandleActivateEvent(ZMPedestalController pedestalController) {
-		if (_playerInfo.playerTag.Equals(pedestalController.PlayerInfo.playerTag)) {
+	private void HandleActivateEvent(ZMPedestalController pedestalController)
+	{
+		if (_playerInfo == pedestalController.PlayerInfo)
+		{
 			_particleSystem.enableEmission = true;
 		}
 	}
 
-	private void HandleDeactivateEvent(ZMPedestalController pedestalController) {
-		if (_playerInfo.playerTag.Equals(pedestalController.PlayerInfo.playerTag)) {
+	private void HandleDeactivateEvent(ZMPedestalController pedestalController)
+	{
+		if (_playerInfo == pedestalController.PlayerInfo)
+		{
 			_particleSystem.enableEmission = false;
 		}
 	}
 
-	private void HandleMaxScoreReachedEvent(ZMLobbyScoreController lobbyScoreController) {
-		if (_playerInfo.playerTag.Equals(lobbyScoreController.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag)) {
+	private void HandleMaxScoreReachedEvent(ZMLobbyScoreController lobbyScoreController)
+	{
+		if (_playerInfo == lobbyScoreController.GetComponent<ZMPlayer.ZMPlayerInfo>())
+		{
 			if (gameObject != null) {
 				Destroy(gameObject);
 			}

@@ -16,14 +16,18 @@ public class ZMScoreResponder : MonoBehaviour {
 		gameObject.SetActive(!activeOnScore);
 	}
 
-	void HandleCanScoreEvent(ZMScoreController scoreController) {
-		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+	void HandleCanScoreEvent(ZMScoreController scoreController)
+	{
+		if (_playerInfo == scoreController.PlayerInfo)
+		{
 			gameObject.SetActive(activeOnScore);
 		}
 	}
 
-	void HandleStopScoreEvent (ZMScoreController scoreController) {
-		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+	void HandleStopScoreEvent (ZMScoreController scoreController)
+	{
+		if (_playerInfo == scoreController.PlayerInfo)
+		{
 			gameObject.SetActive(!activeOnScore);
 		}
 	}

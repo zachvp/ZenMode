@@ -17,7 +17,7 @@ public class ZMPlayerLabelController : MonoBehaviour {
 
 	void Update() {
 		if (controller && text) {
-			text.enabled = (int) _playerInfo.playerTag < Settings.MatchPlayerCount.value && !controller.IsDead();
+			text.enabled = _playerInfo.ID < Settings.MatchPlayerCount.value && !controller.IsDead();
 		}
 	}
 }

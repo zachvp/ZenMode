@@ -33,24 +33,28 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 
 	void HandlePlayerJoinedEvent(int controlIndex)
 	{
-		if ((int) _playerInfo.playerTag == controlIndex)
+		if (_playerInfo.ID == controlIndex)
 		{
 			gameObject.SetActive(true);
 		}
 	}
 
-	void HandleMaxScoreReachedEvent (ZMLobbyScoreController lobbyScoreController)
+	void HandleMaxScoreReachedEvent(ZMLobbyScoreController lobbyScoreController)
 	{
-		if (lobbyScoreController.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag.Equals(GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag)) {
+		if (lobbyScoreController.GetComponent<ZMPlayer.ZMPlayerInfo>() == _playerInfo) {
 
 			GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 			
-			foreach (GameObject player in players) {
-				ZMPlayerController playerController = player.GetComponent<ZMPlayerController>();
-				if (playerController.PlayerInfo.playerTag.Equals(GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag)) {
+			foreach (GameObject player in players)
+			{
+				var playerController = player.GetComponent<ZMPlayerController>();
+
+				if (playerController.PlayerInfo == _playerInfo)
+				{
 					playerController.DisablePlayer();
 					playerController.renderer.enabled = false;
 					playerController.transform.position = new Vector3(9000.0f, 9000.0f, 9000.0f);
+
 					break;
 				}
 			}

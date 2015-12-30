@@ -34,8 +34,9 @@ public class ZMScoreLayoutController : MonoBehaviour {
 			_scoreStatusTransforms.Add(null);
 		}
 
-		foreach (GameObject item in GameObject.FindGameObjectsWithTag("ScoreGui")) {
-			int index = (int) item.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag;
+		foreach (GameObject item in GameObject.FindGameObjectsWithTag("ScoreGui"))
+		{
+			int index = item.GetComponent<ZMPlayer.ZMPlayerInfo>().ID;
 
 			item.gameObject.SetActive(false);
 
@@ -43,8 +44,9 @@ public class ZMScoreLayoutController : MonoBehaviour {
 				_scoreTransforms[index] = item.GetComponent<RectTransform>();
 		}
 
-		foreach (GameObject item in GameObject.FindGameObjectsWithTag("ScoreStatus")) {
-			int index = (int) item.GetComponent<ZMPlayer.ZMPlayerInfo>().playerTag;
+		foreach (GameObject item in GameObject.FindGameObjectsWithTag("ScoreStatus"))
+		{
+			int index = item.GetComponent<ZMPlayer.ZMPlayerInfo>().ID;
 
 			item.gameObject.SetActive(false);
 
@@ -52,7 +54,8 @@ public class ZMScoreLayoutController : MonoBehaviour {
 				_scoreStatusTransforms[index] = item.GetComponent<RectTransform>();
 		}
 
-		for (int i = 0; i < _playerCount; ++i) {
+		for (int i = 0; i < _playerCount; ++i)
+		{
 			_scoreTransforms[i].gameObject.SetActive(true);
 			_scoreStatusTransforms[i].gameObject.SetActive(true);
 		}

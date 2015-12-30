@@ -11,6 +11,6 @@ public class ZMOrbOpeningMovement : ZMWaypointMovement
 		_waypointSize = 1;
 		_waypoints = new Transform[_waypointSize];
 
-		_waypoints[0] = ZMPlayerManager.Instance.PlayerStartPoints[(int) playerInfo.playerTag];
+		_waypoints[0] = ZMPlayerManager.Instance.PlayerStartPoints[playerInfo.ID];
 	}
 }

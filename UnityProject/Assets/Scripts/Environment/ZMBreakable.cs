@@ -14,17 +14,21 @@ public class ZMBreakable : MonoBehaviour {
 
 	}
 
-	void HandleDropOutEvent (int playerIndex)
+	void HandleDropOutEvent(int playerIndex)
 	{
-		if ((int) _playerInfo.playerTag == playerIndex) {
-			Debug.Log(_playerInfo.playerTag.ToString() + ": droppped out");
+		if (_playerInfo.ID == playerIndex)
+		{
+			Debug.Log(_playerInfo.ID.ToString() + ": droppped out");
 			gameObject.SetActive(true);
 		}
 	}
 
-	public void HandleCollision(ZMPlayer.ZMPlayerInfo playerInfo) {
-		if (_playerInfo.playerTag.Equals(playerInfo.playerTag)) {
-			if (!_handlingCollision) {
+	public void HandleCollision(ZMPlayer.ZMPlayerInfo playerInfo)
+	{
+		if (_playerInfo == playerInfo)
+		{
+			if (!_handlingCollision)
+			{
 				Break ();
 			}
 			_handlingCollision = true;

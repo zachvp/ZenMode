@@ -20,7 +20,8 @@ public class ZMKillCounter : MonoBehaviour {
 
 	void HandlePlayerKillEvent (ZMPlayerController killer)
 	{
-		if (killer.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if (_playerInfo == killer.PlayerInfo)
+		{
 			_kills += 1;
 			UpdateUI();
 		}

@@ -68,7 +68,8 @@ public class ZMSoul : MonoBehaviour {
 
 	void HandleMinScoreReached (ZMScoreController scoreController)
 	{
-		if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+		if (_playerInfo == scoreController.PlayerInfo)
+		{
 			audio.Stop();
 
 			if (SoulDestroyedEvent != null) {
@@ -83,7 +84,8 @@ public class ZMSoul : MonoBehaviour {
 		foreach (GameObject player in players) {
 			ZMScoreController scoreController = player.GetComponent<ZMScoreController>();
 			
-			if (scoreController.PlayerInfo.playerTag.Equals(_playerInfo.playerTag)) {
+			if (_playerInfo == scoreController.PlayerInfo)
+			{
 				_scoreController = scoreController;
 			}
 		}

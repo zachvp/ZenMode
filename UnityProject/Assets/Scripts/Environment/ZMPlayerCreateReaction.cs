@@ -10,7 +10,7 @@ public class ZMPlayerCreateReaction : MonoBehaviour {
 	}
 
 	void Start() {
-		if ((int) _playerInfo.playerTag > Settings.MatchPlayerCount.value - 1)
+		if (_playerInfo.ID > Settings.MatchPlayerCount.value - 1)
 		{
 			if (CompareTag(Tags.kCameraFocusBase))
 				Destroy(gameObject);

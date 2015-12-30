@@ -30,8 +30,9 @@ public class MetricManagerScript : MonoBehaviour {
 		createText += "Player " + player.ToString() + " Position: " + position.ToString() + "\n";
 	}
 
-	private void HandlePlayerDeathEvent(ZMPlayerController playerController) {
-		int playerNum = (int) playerController.GetComponent<ZMPlayerInfo>().playerTag;
+	private void HandlePlayerDeathEvent(ZMPlayerController playerController)
+	{
+		int playerNum = playerController.GetComponent<ZMPlayerInfo>().ID;
 
 		createText += "Player " + playerNum.ToString() + " Death: " + playerController.gameObject.transform.position.ToString() + "\n";
 	}

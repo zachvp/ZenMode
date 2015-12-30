@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using ZMPlayer;
 
-public class ZMMetricsCollector : MonoBehaviour {
-	private ZMPlayerInfo.PlayerTag _playerTag;
+public class ZMMetricsCollector : MonoBehaviour
+{
+	private ZMPlayerInfo _playerInfo;
 
 	private enum MetricsType { POSITION, JUMP, WALL_JUMP, DEATH, WARP, LUNGE, PLUNGE };
 
@@ -31,7 +32,7 @@ public class ZMMetricsCollector : MonoBehaviour {
 	void Start () {
 		InvokeRepeating("AddPosition", 0.001f, kAddPositionInterval);
 
-		_playerTag = GetComponent<ZMPlayerInfo>().playerTag;
+		_playerInfo = GetComponent<ZMPlayerInfo>();
 	}
 
 	void OnDestroy() {
@@ -77,7 +78,7 @@ public class ZMMetricsCollector : MonoBehaviour {
 		_positionData.Add(gameObject.transform.position);
 
 		if (MetricsAddPositionEvent != null) {
-			MetricsAddPositionEvent(PlayerTagToInt(_playerTag), gameObject.transform.position);
+			MetricsAddPositionEvent(_playerInfo.ID, gameObject.transform.position);
 		}
 	}
 
@@ -104,20 +105,6 @@ public class ZMMetricsCollector : MonoBehaviour {
 	private void DrawDataPoint(Vector3 point, Color color) {
 		Gizmos.color = color;
 		Gizmos.DrawSphere(point, 12.0f);
-	}
-
-	private int PlayerTagToInt (ZMPlayerInfo.PlayerTag playerTag) {
-		if (playerTag == ZMPlayerInfo.PlayerTag.PLAYER_1) {
-			return 1;
-		} else if (playerTag == ZMPlayerInfo.PlayerTag.PLAYER_2) {
-			return 2;
-		} else if (playerTag == ZMPlayerInfo.PlayerTag.PLAYER_3) {
-			return 3;
-		} else if (playerTag == ZMPlayerInfo.PlayerTag.PLAYER_4) {
-			return 4;
-		} else {
-			return -1;
-		}
 	}
 }
 

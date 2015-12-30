@@ -2,23 +2,52 @@
 using System;
 using System.Collections;
 
-namespace ZMPlayer {
-	public class ZMPlayerInfo : MonoBehaviour, IComparable {
-		public enum PlayerTag : int
+namespace ZMPlayer
+{
+	public class ZMPlayerInfo : MonoBehaviour, IComparable
+	{
+		[SerializeField] private int id;
+
+		public int ID { get { return id; } }
+
+		public override bool Equals(System.Object other)
 		{
-			PLAYER_1,
-			PLAYER_2,
-			PLAYER_3,
-			PLAYER_4
-		};
-		public PlayerTag playerTag;
+			var otherInfo = other as ZMPlayerInfo;
 
-		int IComparable.CompareTo(object other) {
-			int thisID = (int) this.playerTag;
-			int otherID = (int) ((ZMPlayerInfo) other).playerTag;
+			if (otherInfo == null) { return false; }
 
-			if (thisID < otherID) return -1;
-			if (thisID > otherID) return 1;
+			return id == otherInfo.id;
+		}
+
+		public override int GetHashCode()
+		{
+			return id;
+		}
+
+		public static bool operator ==(ZMPlayerInfo lhs, ZMPlayerInfo rhs)
+		{
+			// Automatically equal if same reference (or both null).
+			if (System.Object.ReferenceEquals(lhs, rhs)) { return true; }
+
+			// If one is null, but not both, return false.
+			if ((object) lhs == null || (object) rhs == null) { return false; }
+
+			return lhs.id == rhs.id;
+		}
+
+		public static bool operator !=(ZMPlayerInfo lhs, ZMPlayerInfo rhs)
+		{
+			return !(lhs == rhs);
+		}
+
+		int IComparable.CompareTo(object other)
+		{
+			var otherInfo = (ZMPlayerInfo) other;
+
+			if (otherInfo == null) { return 1; }
+
+			if (id < otherInfo.id) return -1;
+			if (id > otherInfo.id) return 1;
 			else { return 0; }
 		}
 	}
