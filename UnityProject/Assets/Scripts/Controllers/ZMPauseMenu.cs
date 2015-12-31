@@ -90,7 +90,8 @@ public class ZMPauseMenu : ZMTextMenu
 	}
 
 	private void HandleGameEndEvent()
-	{		
+	{
+		ClearInputEvents();
 		HideUI();
 		
 		ToggleActive(false);

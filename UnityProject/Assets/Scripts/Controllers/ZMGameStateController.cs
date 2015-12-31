@@ -14,8 +14,14 @@ public class ZMGameStateController : MonoBehaviour
 	public enum GameState { NEUTRAL, BEGIN, PAUSE, PAUSED, RESUME, RESET };
 	private static GameState _gameState; public static GameState Game_State { get { return _gameState; } }
 
-	public enum MatchState { PRE_MATCH, BEGIN_COUNTDOWN, MATCH, POST_MATCH };
+	public enum MatchState { PRE_MATCH, BEGIN_COUNTDOWN, MATCH, POST_MATCH, GARBAGE };
 	private static MatchState _matchState; public static MatchState Match_State { get { return _matchState; } }
+
+	private const float END_GAME_DELAY = 1.0f;
+
+	private const string kEndGameMethodName		    = "EndGame";
+	private const string kClearOutputTextMethodName = "ClearOutputText";
+	private const string kSpawnObjectMethodName 	= "SpawnObject";
 
 	// references
 	private List<Transform> _spawnpoints;
@@ -27,9 +33,7 @@ public class ZMGameStateController : MonoBehaviour
 
 	// constants
 	private Vector3 outputTextPositionUpOffset = new Vector3 (0, 109, 0);
-
-	private const float END_GAME_DELAY = 1.0f;
-
+	
 	// delegates
 	public static EventHandler<ZMGameStateController, ZMPlayerController> SpawnObjectEvent;
 
@@ -111,6 +115,8 @@ public class ZMGameStateController : MonoBehaviour
 		ResetGameEvent 		= null;
 		QuitMatchEvent		= null;
 
+		_gameState = GameState.NEUTRAL;
+		_matchState = MatchState.PRE_MATCH;
 		MatchStateManager.Clear();
 	}
 
@@ -138,7 +144,9 @@ public class ZMGameStateController : MonoBehaviour
 				}
 			}
 
-			if (!IsInvoking("EndGame")) { Invoke("EndGame", END_GAME_DELAY); }
+			_matchState = MatchState.GARBAGE;
+
+			if (!IsInvoking(kEndGameMethodName)) { Invoke(kEndGameMethodName, END_GAME_DELAY); }
 		}
 
 		if (_gameState == GameState.RESUME)
@@ -228,7 +236,7 @@ public class ZMGameStateController : MonoBehaviour
 		Notifier.SendEventNotification(StartGameEvent);
 		MatchStateManager.StartMatch();
 
-		Invoke("ClearOutputText", 1.0f);
+		Invoke(kClearOutputTextMethodName, 1.0f);
 	}
 
 	private void PauseGame()
@@ -243,9 +251,9 @@ public class ZMGameStateController : MonoBehaviour
 
 	private void ResetGame()
 	{
-		Application.LoadLevel(Application.loadedLevelName);
-
 		Notifier.SendEventNotification(ResetGameEvent);
+
+		Application.LoadLevel(Application.loadedLevel);
 	}
 
 	private void SpawnObject()
@@ -317,7 +325,7 @@ public class ZMGameStateController : MonoBehaviour
 		if (!_objectsToSpawn.Contains(playerController))
 		{
 			_objectsToSpawn.Enqueue(playerController);
-			Invoke("SpawnObject", 5.0f);
+			Invoke(kSpawnObjectMethodName, 5.0f); // TODO: Read from PlayerManager constant.
 		}
 	}	
 }
