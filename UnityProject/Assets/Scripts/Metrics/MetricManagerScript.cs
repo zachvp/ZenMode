@@ -3,20 +3,20 @@ using System.Collections;
 using System.IO;
 using ZMPlayer;
 
-public class MetricManagerScript : MonoBehaviour {
-
+public class MetricManagerScript : MonoBehaviour
+{
 	string createText = "";
 
-	void Awake() {
+	void Awake()
+	{
 		ZMMetricsCollector.MetricsAddPositionEvent += HandleAddPositionEvent;
-		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
-	}
 
-	void Start () {}
-	void Update () {}
+		AcceptPlayerEvents();
+	}
 	
 	//When the game quits we'll actually write the file.
-	void OnApplicationQuit(){
+	void OnApplicationQuit()
+	{
 		string time = System.DateTime.UtcNow.ToString ();//string dateTime = System.DateTime.Now.ToString (); //Get the time to tack on to the file name
 		time = time.Replace ("/", "-"); //Replace slashes with dashes, because Unity thinks they are directories..
 		time = time.Replace (":", "-");
@@ -26,7 +26,18 @@ public class MetricManagerScript : MonoBehaviour {
 		//In Standalone, this will show up in the same directory as your executable
 	}
 
-	private void HandleAddPositionEvent(int player, Vector3 position) {
+	private void AcceptPlayerEvents()
+	{
+		var players = ZMPlayerManager.Instance.Players;
+
+		for (int i = 0; i < players.Length; ++i)
+		{
+			players[i].PlayerDeathEvent += HandlePlayerDeathEvent;
+		}
+	}
+
+	private void HandleAddPositionEvent(int player, Vector3 position)
+	{
 		createText += "Player " + player.ToString() + " Position: " + position.ToString() + "\n";
 	}
 

@@ -6,12 +6,11 @@ public class ZMFudgeParentToObject : ZMPlayerItem
 
 	protected Transform _parent;
 
-	protected override void Awake()
+	public override void ConfigureItemWithID(Transform parent, int id)
 	{
-		base.Awake();
+		base.ConfigureItemWithID(parent, id);
 
-		ZMPlayerController.PlayerCreateEvent += InitData;
-		enabled = false;
+		InitData(ZMPlayerManager.Instance.Players[_playerInfo.ID]);
 	}
 
 	protected virtual void Update()
@@ -21,10 +20,6 @@ public class ZMFudgeParentToObject : ZMPlayerItem
 
 	protected virtual void InitData(ZMPlayerController controller)
 	{
-		if (_playerInfo == controller.PlayerInfo)
-		{
-			_parent = controller.transform;
-			enabled = true;
-		}		
+		_parent = controller.transform;
 	}
 }

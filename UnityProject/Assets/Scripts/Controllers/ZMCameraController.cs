@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using Core;
 
-public class ZMCameraController : MonoBehaviour {
+public class ZMCameraController : MonoBehaviour
+{
 	public float endZoom = 432;
 	public bool zoomAtStart;
 	public float zoomDelay = 6;
@@ -15,101 +16,111 @@ public class ZMCameraController : MonoBehaviour {
 	private bool _isShaking = false;
 	private ZMMovementBobbing _movementBobbing;
 
-	// Use this for initialization
-	void Awake () {
+	void Awake()
+	{
 		_speed = _baseSpeed;
-
-		ZMPlayerController.PlayerRecoilEvent 	 += HandlePlayerRecoilEvent;
-		ZMPlayerController.PlayerLandPlungeEvent += HandlePlayerLandPlungeEvent;
-		ZMPlayerController.PlayerDeathEvent 	 += HandlePlayerDeathEvent;
 
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 
 		ZMGameStateController.Instance.StartGameEvent += HandleStartGameEvent;
-		ZMGameStateController.Instance.GameEndEvent   += HandleGameEndEvent;
 
+		MatchStateManager.OnMatchEnd   += HandleGameEndEvent;
 		MatchStateManager.OnMatchPause += HandlePauseGameEvent;
 
 		_movementBobbing = GetComponent<ZMMovementBobbing>();
+
+		ZMPlayerManager.Instance.OnAllPlayersSpawned += AcceptPlayerEvents;
 	}
 
-	void Start() {
-		if (_movementBobbing != null)
-			_movementBobbing.enabled = false;
+	void Start()
+	{
+		if (_movementBobbing != null) { _movementBobbing.enabled = false; }
 
-		if (zoomAtStart)
-			Invoke("StartZoom", zoomDelay);
+		if (zoomAtStart) { Invoke("StartZoom", zoomDelay); }
 	}
 
-	void HandleGameEndEvent ()
+	void Update()
+	{
+		if (_isZooming)
+		{
+			camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, _zoomTargetSize, _speed * Time.deltaTime);
+
+			if (Mathf.Abs(camera.orthographicSize - _zoomTargetSize) < 1f)
+			{
+				_isZooming = false;
+				_speed = _baseSpeed;
+			}
+		}
+
+		if (_zoomStep < _zoomFrames) { _zoomStep += 1; }
+		else { StopShake(); }
+	}
+
+	private void AcceptPlayerEvents()
+	{
+		var players = ZMPlayerManager.Instance.Players;
+		
+		for (int i = 0; i < players.Length; ++i)
+		{
+			players[i].PlayerDeathEvent 	 += HandlePlayerDeathEvent;
+			players[i].PlayerRecoilEvent 	 += HandlePlayerRecoilEvent;
+			players[i].PlayerLandPlungeEvent += HandlePlayerLandPlungeEvent;
+		}
+	}
+	
+	private void HandleGameEndEvent ()
 	{
 		if (_isShaking) {
 			StopShake();
 		}
 	}
-
-	void HandlePauseGameEvent ()
+	
+	private void HandlePauseGameEvent()
 	{
 		if (_isShaking) {
 			StopShake();
 		}
 	}
-
-	void HandleStartGameEvent ()
+	
+	private void HandleStartGameEvent()
 	{
 		Zoom(432);
 		_speed = 1.0f;
 	}
-
-	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
+	
+	private void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
 	{
 		if (waypointMovement.name.Equals("Main Camera")) {
 			Zoom(endZoom);
 			_speed = 1.0f;
 		}
 	}
-
-	void HandlePlayerLandPlungeEvent ()
+	
+	private void HandlePlayerLandPlungeEvent()
 	{
 		Shake(10);
 	}
-
-	void HandlePlayerDeathEvent (ZMPlayerController controller)
+	
+	private void HandlePlayerDeathEvent(ZMPlayerController controller)
 	{
 		Shake(25);
 	}
 
-	void Update() {
-		if (_isZooming) {
-			camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, _zoomTargetSize, _speed * Time.deltaTime);
-
-			if (Mathf.Abs(camera.orthographicSize - _zoomTargetSize) < 1f) {
-				_isZooming = false;
-				_speed = _baseSpeed;
-			}
-		}
-
-		if (_zoomStep < _zoomFrames) {
-			_zoomStep += 1;
-		} else {
-			StopShake();
-		}
-	}
-
-	void HandlePlayerRecoilEvent (ZMPlayerController playerController, float stunTime)
+	private void HandlePlayerRecoilEvent (ZMPlayerController playerController, float stunTime)
 	{
 		Shake(25);
 	}
 	
-	void Shake(int frames) {
-		if (_movementBobbing != null)
-			_movementBobbing.enabled = true;
+	private void Shake(int frames)
+	{
+		if (_movementBobbing != null) { _movementBobbing.enabled = true; }
 		_zoomStep = 0;
 		_zoomFrames = frames;
 		_isShaking = true;
 	}
 
-	void StopShake() {
+	private void StopShake()
+	{
 		if (_movementBobbing != null)
 			_movementBobbing.enabled = false;
 		_isShaking = false;
@@ -129,10 +140,8 @@ public class ZMCameraController : MonoBehaviour {
 		camera.transform.position = new Vector3(position.x, position.y, -192.0f);
 	}
 
-	void ResetZoom() {
-	}
-
-	void StartZoom() {
+	private void StartZoom()
+	{
 		Zoom (200);
 	}
 }

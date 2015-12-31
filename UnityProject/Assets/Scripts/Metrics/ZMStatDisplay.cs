@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Core;
 using ZMPlayer;
 using ZMConfiguration;
 
@@ -12,7 +13,7 @@ public class ZMStatDisplay : MonoBehaviour {
 	{
 		_allPlayerInfo = new ZMPlayerInfo[Constants.MAX_PLAYERS];
 
-		ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
+		MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 
 		gameObject.SetActive(false);
 	}

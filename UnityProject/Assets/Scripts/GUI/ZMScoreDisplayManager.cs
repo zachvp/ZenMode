@@ -39,30 +39,44 @@ public class ZMScoreDisplayManager : MonoBehaviour
 		}
 		
 		_instance = this;
-	}
 
-	void Start()
-	{
 		var sliderObjects = GameObject.FindGameObjectsWithTag(Tags.kScoreGui);
 		var statusObjects = GameObject.FindGameObjectsWithTag(Tags.kScoreStatus);
-
+		
 		for (int i = 0; i < sliderObjects.Length; ++i)
 		{
 			var info = sliderObjects[i].GetComponent<ZMPlayerInfo>();
-
+			
 			_scoreSliders[info.ID] = sliderObjects[i].GetComponent<Slider>();
+			_scoreSliders[info.ID].handleRect = null;
+			_scoreSliders[info.ID].maxValue = ZMScoreController.MAX_SCORE;
+			_scoreSliders[info.ID].value = Settings.MatchPlayerCount.value > 2 ? ZMScoreController.MAX_SCORE / 2f : ZMScoreController.MAX_SCORE / Settings.MatchPlayerCount.value;
 		}
-
+		
 		for (int i = 0; i < statusObjects.Length; ++i)
 		{
 			var info = statusObjects[i].GetComponent<ZMPlayerInfo>();
 			
 			_scoreStatuses[info.ID] = statusObjects[i].GetComponent<Text>();
+			_scoreStatuses[info.ID].text = "";
 		}
-	}
 
+		ZMScoreController.MinScoreReached += EliminateScore;
+		ZMScoreController.UpdateScoreEvent += UpdateScore;
+	}
+	
 	void OnDestroy()
 	{
 		_instance = null;
+	}
+
+	private void EliminateScore(ZMScoreController controller)
+	{
+		_scoreStatuses[controller.PlayerInfo.ID].text = "ELIMINATED!";
+	}
+
+	private void UpdateScore(ZMScoreController controller)
+	{		
+		_scoreSliders[controller.PlayerInfo.ID].value = controller.TotalScore;
 	}
 }

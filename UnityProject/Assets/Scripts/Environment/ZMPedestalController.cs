@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using ZMPlayer;
 
-public class ZMPedestalController : MonoBehaviour {
+public class ZMPedestalController : ZMPlayerItem
+{
 	public ParticleSystem zenAbsorbEffect;
 	public ParticleSystem zenPop;
 	public TextMesh timerText;
 	public float moveSpeed;
-
-	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
-
+	
 	private enum ScoreState { SCORING_ENABLED, SCORING_DISABLED };
 	private int RESPAWN_TIME = 5;
 	private int currentTimer;
@@ -32,36 +31,44 @@ public class ZMPedestalController : MonoBehaviour {
 	public delegate void ActivateAction(ZMPedestalController pedestalController); public static event ActivateAction ActivateEvent;
 	public delegate void DeactivateAction(ZMPedestalController pedestalController); public static event DeactivateAction DeactivateEvent;
 
-	void Awake() {
+	protected override void Awake()
+	{
+		base.Awake();
+
 		_scoringAgents = new HashSet<ZMScoreController>();
 		_zenPopSystems = new List<ParticleSystem>();
-		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_baseScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
 
 		// event handler subscriptions
-		ZMPlayerController.PlayerDeathEvent      += HandlePlayerDeathEvent;
 		ZMScoreController.UpdateScoreEvent       += HandleUpdateScoreEvent;
 		ZMScoreController.CanScoreEvent 	     += HandleCanScoreEvent;
 		ZMScoreController.StopScoreEvent   	     += HandleStopScoreEvent;
 		ZMScoreController.MinScoreReached	     += HandleMinScoreReached;
 
-		ZMGameStateController.Instance.SpawnObjectEvent   += HandleSpawnObjectEvent;
-
 		Disable();
 	}
 
-	void Start () {
-		currentTimer = RESPAWN_TIME;
-		timerText.text = currentTimer.ToString ();
+	public override void ConfigureItemWithID (Transform parent, int id)
+	{
+		base.ConfigureItemWithID (parent, id);
 	}
 
-	void FixedUpdate() {
-		if (IsEnabled() && _shouldScale) {
+	protected void Start()
+	{
+		currentTimer = RESPAWN_TIME;
+		timerText.text = currentTimer.ToString();
+	}
+
+	void FixedUpdate()
+	{
+		if (IsEnabled() && _shouldScale)
+		{
 			Vector3 newScale = Vector3.Lerp(transform.localScale, _baseScale, 5.0f * Time.deltaTime);
 
 			transform.localScale = newScale;
 
-			if (Vector3.SqrMagnitude(transform.localScale - _baseScale) < 0.7f) {
+			if (Vector3.SqrMagnitude(transform.localScale - _baseScale) < 0.7f)
+			{
 				SendMessage("Resume");
 				_shouldScale = false;
 			}
@@ -74,7 +81,14 @@ public class ZMPedestalController : MonoBehaviour {
 		DeactivateEvent = null;
 	}
 
-	private void CountdownText() {
+	protected override void AcceptPlayerEvents()
+	{
+		ZMPlayerManager.Instance.OnPlayerDeath += HandlePlayerDeathEvent;
+		ZMPlayerManager.Instance.OnPlayerRespawn += HandleSpawnObjectEvent;
+	}
+
+	private void CountdownText()
+	{
 		if (currentTimer > 0) {
 			currentTimer--;
 			timerText.text = currentTimer.ToString ();
@@ -83,10 +97,12 @@ public class ZMPedestalController : MonoBehaviour {
 	}
 
 	// public methods
-	public void Enable() {
+	public void Enable()
+	{
 		_scoreState = ScoreState.SCORING_ENABLED;
 		renderer.enabled = true;
 		zenAbsorbEffect.Play();
+
 		if (timerText.renderer.enabled == false) {
 			currentTimer = RESPAWN_TIME;
 			timerText.text = RESPAWN_TIME.ToString();
@@ -103,7 +119,8 @@ public class ZMPedestalController : MonoBehaviour {
 		}
 	}
 
-	private void Disable() {
+	private void Disable()
+	{
 		_scoreState = ScoreState.SCORING_DISABLED;
 		renderer.enabled = false;
 		zenAbsorbEffect.Stop();
@@ -128,11 +145,11 @@ public class ZMPedestalController : MonoBehaviour {
 	public bool IsDiabled() { return _scoreState == ScoreState.SCORING_DISABLED; }
 
 	// event handlers
-	void HandlePlayerDeathEvent (ZMPlayerController playerController)
+	private void HandlePlayerDeathEvent(ZMPlayerController playerController)
 	{
 		if (_playerInfo == playerController.PlayerInfo)
 		{
-			ZMScoreController scoreController = playerController.GetComponent<ZMScoreController>();
+			var scoreController = playerController.GetComponent<ZMScoreController>();
 
 			if (scoreController.TotalScore <= 0) { return; }
 
@@ -143,13 +160,11 @@ public class ZMPedestalController : MonoBehaviour {
 			MoveToLocation(playerController.transform.position);
 			Enable();
 
-			if (IsInvoking(kDisableMethodName)) {
-				CancelInvoke(kDisableMethodName);
-			}
+			if (IsInvoking(kDisableMethodName)) { CancelInvoke(kDisableMethodName); }
 		}
 	}
 
-	void HandleMinScoreReached (ZMScoreController scoreController)
+	void HandleMinScoreReached(ZMScoreController scoreController)
 	{
 		if (_playerInfo == scoreController.PlayerInfo)
 		{
@@ -199,7 +214,7 @@ public class ZMPedestalController : MonoBehaviour {
 		_scoringAgents.Remove(scoreController);
 	}
 
-	void HandleSpawnObjectEvent(ZMGameStateController gameStateController, ZMPlayerController playerController)
+	void HandleSpawnObjectEvent(ZMPlayerController playerController)
 	{
 		if (_playerInfo == playerController.PlayerInfo)
 		{

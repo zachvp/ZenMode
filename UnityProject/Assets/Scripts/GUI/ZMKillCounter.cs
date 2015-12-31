@@ -2,23 +2,26 @@
 using UnityEngine.UI;
 using ZMPlayer;
 
-public class ZMKillCounter : MonoBehaviour {
-	int _kills = 0;
+public class ZMKillCounter : ZMPlayerItem
+{
+	private int _kills = 0;
 
 	// references
-	Text _text;
-	ZMPlayerInfo _playerInfo;
+	private Text _text;
 
-	void Awake () {
+	protected override void Awake()
+	{
+		base.Awake();
+
 		_text = GetComponent<Text>();
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
-		ZMPlayerController.PlayerKillEvent += HandlePlayerKillEvent;
+		_playerController.PlayerKillEvent += HandlePlayerKillEvent;
 
 		UpdateUI();
 	}
 
-	void HandlePlayerKillEvent (ZMPlayerController killer)
+	private void HandlePlayerKillEvent (ZMPlayerController killer)
 	{
 		if (_playerInfo == killer.PlayerInfo)
 		{
@@ -27,7 +30,8 @@ public class ZMKillCounter : MonoBehaviour {
 		}
 	}
 
-	private void UpdateUI() {
+	private void UpdateUI()
+	{
 		_text.text = _kills.ToString();
 	}
 }

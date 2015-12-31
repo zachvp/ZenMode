@@ -5,13 +5,22 @@ using ZMPlayer;
 
 public class ZMPlayerManager : MonoBehaviour
 {
+	[SerializeField] private ZMPlayerController playerTemplate;
+
 	public bool debug = false;
 	public int debugPlayerCount = 2;
 
 	public ZMPlayerController[] Players { get { return _players; } }
+	public ZMScoreController[] Scores { get { return _scores; } }
 	public Transform[] PlayerStartPoints { get { return _playerStartPoints; } }
-		
-	protected ZMPlayerController[] _players = new ZMPlayerController[Constants.MAX_PLAYERS];
+
+	public EventHandler OnAllPlayersSpawned;
+	public EventHandler<ZMPlayerController> OnPlayerDeath;
+	public EventHandler<ZMPlayerController> OnPlayerRespawn;
+	public EventHandler<ZMPlayerController> OnPlayerCreate;
+
+	protected ZMPlayerController[] _players;
+	protected ZMScoreController[] _scores;
 	
 	public static ZMPlayerManager Instance
 	{
@@ -33,6 +42,14 @@ public class ZMPlayerManager : MonoBehaviour
 	
 	protected virtual void Awake()
 	{
+		if (debug)
+		{
+			Settings.MatchPlayerCount.value = debugPlayerCount;
+		}
+
+		_players = new ZMPlayerController[Settings.MatchPlayerCount.value];
+		_scores = new ZMScoreController[Settings.MatchPlayerCount.value];
+
 		// TODO: Should be assert.
 		if (_instance != null)
 		{
@@ -41,25 +58,43 @@ public class ZMPlayerManager : MonoBehaviour
 
 		_instance = this;
 
-		if (debug)
+		var playerStartpoints = GameObject.FindGameObjectsWithTag(Tags.kPlayerStartPositionTag);
+		_playerStartPoints = new Transform[playerStartpoints.Length];
+		
+		for (int i = 0; i < playerStartpoints.Length; ++i)
 		{
-			Settings.MatchPlayerCount.value = debugPlayerCount;
+			var playerInfo = playerStartpoints[i].GetComponent<ZMPlayerInfo>();
+			
+			_playerStartPoints[playerInfo.ID] = playerInfo.transform;
 		}
 
-		_playerStartPoints = new Transform[Constants.MAX_PLAYERS];
+		for (int i = 0; i < Settings.MatchPlayerCount.value; ++i)
+		{
+			var player = ZMPlayerController.Instantiate(playerTemplate) as ZMPlayerController;
+			var score = player.GetComponent<ZMScoreController>();
+			var input = player.GetComponent<ZMPlayerInputController>();
+
+			player.ConfigureItemWithID(transform, i);
+			player.PlayerDeathEvent += SendDeathEvent;
+			player.PlayerRespawnEvent += SendRespawnEvent;
+
+			_players[player.PlayerInfo.ID] = player;
+			_players[player.PlayerInfo.ID].transform.position = _playerStartPoints[player.PlayerInfo.ID].position;
+
+			_scores[player.PlayerInfo.ID] = score;
+			score.ConfigureItemWithID(null, player.PlayerInfo.ID);
+
+			input.ConfigureItemWithID(null, player.PlayerInfo.ID);
+		}
+
+		Notifier.SendEventNotification(OnAllPlayersSpawned);
+
 		MatchStateManager.OnMatchReset += OnDestroy;
 	}
 
 	protected virtual void Start()
 	{
-		var playerStartpoints = GameObject.FindGameObjectsWithTag(Tags.kPlayerStartPositionTag);
-		
-		for (int i = 0; i < playerStartpoints.Length; ++i)
-		{
-			var playerInfo = playerStartpoints[i].GetComponent<ZMPlayerInfo>();
 
-			_playerStartPoints[playerInfo.ID] = playerInfo.transform;
-		}
 	}
 
 	protected virtual void OnDestroy()
@@ -67,8 +102,13 @@ public class ZMPlayerManager : MonoBehaviour
 		_instance = null;
 	}
 
-	public void AddPlayer(ZMPlayerController player)
+	private void SendDeathEvent(ZMPlayerController controller)
 	{
-		_players[player.PlayerInfo.ID] = player;
+		Notifier.SendEventNotification(OnPlayerDeath, controller);
+	}
+
+	private void SendRespawnEvent(ZMPlayerController controller)
+	{
+		Notifier.SendEventNotification(OnPlayerRespawn, controller);
 	}
 }

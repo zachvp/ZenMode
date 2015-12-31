@@ -7,7 +7,7 @@ public class ZMGameEndMenu : ZMTextMenu
 	{
 		base.Awake();
 
-		ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
+		MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 	}
 
 	protected override void HandleMenuSelection()
@@ -26,5 +26,10 @@ public class ZMGameEndMenu : ZMTextMenu
 	{
 		AcceptInputEvents();
 		ShowMenu();
+	}
+
+	protected override bool IsCorrectInputControl (ZMInput input)
+	{
+		return base.IsCorrectInputControl (input);
 	}
 }

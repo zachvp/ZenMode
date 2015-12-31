@@ -1,15 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Core;
 using ZMPlayer;
 using ZMConfiguration;
 
-public class ZMCrownManager : MonoBehaviour {
+public class ZMCrownManager : MonoBehaviour
+{
 	private bool _lobbyDominator;
 	private int _dominatorIndex;
 
 	// references
-	private ZMGameStateController _gameStateController;
 	private GameObject[] _crowns;
+	private ZMScoreController[] _scores;
 
 	private static int _leadingPlayerIndex; public static int LeadingPlayerIndex { get { return _leadingPlayerIndex; } }
 
@@ -19,38 +21,15 @@ public class ZMCrownManager : MonoBehaviour {
 	{
 		_crowns = new GameObject[Settings.MatchPlayerCount.value];
 
-		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
-		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
+		MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 
-		ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
+		ZMPlayerManager.Instance.OnAllPlayersSpawned += AcceptPlayerEvents;
 	}
 
-	void HandleGameEndEvent ()
+	void Start()
 	{
-		_endGame = true;
-
-		for (int i = 0; i < _crowns.Length; ++i)
-		{
-			if (_crowns[i] != null) { _crowns[i].SetActive(false); }
-		}
-	}
-
-	void HandlePlayerRespawnEvent (ZMPlayerController playerController)
-	{
-		if (!_endGame)
-		{
-			_crowns[playerController.PlayerInfo.ID].SetActive(true);
-		}
-	}
-
-	void HandlePlayerDeathEvent (ZMPlayerController playerController)
-	{
-		_crowns[playerController.PlayerInfo.ID].SetActive(false);
-	}
-	
-	void Start () {
-		// get ref to GameStateController
-		_gameStateController = GameObject.FindGameObjectWithTag("GameController").GetComponent<ZMGameStateController>();
+		_scores = ZMPlayerManager.Instance.Scores;
+		enabled = false;
 
 		// find and store all the crowns
 		GameObject[] crownObjects = GameObject.FindGameObjectsWithTag("Crown");
@@ -83,32 +62,34 @@ public class ZMCrownManager : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update()
+	{
 		float maxScoreCrown = 0;
-		float checkEquality = _gameStateController.ScoreControllers[0].TotalScore;
+		float checkEquality = _scores[0].TotalScore;
 		bool scoresEqual = false;
 		ZMScoreController maxScoreController = null;
 
 		// see if the scores are equal
-		for (int i = 1; i < Settings.MatchPlayerCount.value; ++i) {
+		for (int i = 1; i < Settings.MatchPlayerCount.value; ++i)
+		{
 			_leadingPlayerIndex = -1;
-			if (_gameStateController.ScoreControllers[i].TotalScore == checkEquality) {
-				scoresEqual = true;
-			}
+
+			if (_scores[i].TotalScore == checkEquality) { scoresEqual = true; }
 		}
 
-		for (int i = 0; i < Settings.MatchPlayerCount.value; ++i) {
-			ZMScoreController scoreController = _gameStateController.ScoreControllers[i];
+		for (int i = 0; i < Settings.MatchPlayerCount.value; ++i)
+		{
+			var scoreController = _scores[i];
 
-			if (scoreController.TotalScore > maxScoreCrown && !scoresEqual) {
+			if (scoreController.TotalScore > maxScoreCrown && !scoresEqual)
+			{
 				_leadingPlayerIndex = i;
 				_lobbyDominator = false;
 				maxScoreCrown = scoreController.TotalScore;
 				maxScoreController = scoreController;
 			}
 			
-			if (_crowns[i] != null && !_lobbyDominator)
-				_crowns[i].GetComponent<Text>().color = Color.white;
+			if (_crowns[i] != null && !_lobbyDominator) { _crowns[i].GetComponent<Text>().color = Color.white; }
 		}
 		
 		if (maxScoreController != null && !_lobbyDominator)
@@ -119,5 +100,41 @@ public class ZMCrownManager : MonoBehaviour {
 		{
 			_crowns[_dominatorIndex].GetComponent<Text>().color = Color.yellow;
 		}
+	}
+
+	private void AcceptPlayerEvents()
+	{
+		var players = ZMPlayerManager.Instance.Players;
+		
+		for (int i = 0; i < players.Length; ++i)
+		{
+			players[i].PlayerDeathEvent += HandlePlayerDeathEvent;
+			players[i].PlayerRespawnEvent += HandlePlayerRespawnEvent;
+		}
+
+		enabled = true;
+	}
+	
+	private void HandleGameEndEvent ()
+	{
+		_endGame = true;
+		
+		for (int i = 0; i < _crowns.Length; ++i)
+		{
+			if (_crowns[i] != null) { _crowns[i].SetActive(false); }
+		}
+	}
+	
+	private void HandlePlayerRespawnEvent (ZMPlayerController playerController)
+	{
+		if (!_endGame)
+		{
+			_crowns[playerController.PlayerInfo.ID].SetActive(true);
+		}
+	}
+	
+	private void HandlePlayerDeathEvent (ZMPlayerController playerController)
+	{
+		_crowns[playerController.PlayerInfo.ID].SetActive(false);
 	}
 }

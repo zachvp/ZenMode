@@ -1,10 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 using ZMConfiguration;
+using ZMPlayer;
 
 public class ZMScoreLayoutController : MonoBehaviour
 {
-	private List<RectTransform> _scoreTransforms;
+	private RectTransform[] _scoreTransforms;
 	private int _playerCount;
 
 	// constants
@@ -17,7 +18,9 @@ public class ZMScoreLayoutController : MonoBehaviour
 
 	void Awake()
 	{
-		_scoreTransforms = new List<RectTransform>();
+		_playerCount = Settings.MatchPlayerCount.value;
+
+		_scoreTransforms = new RectTransform[_playerCount];
 
 		_positionSlot0 = new Vector2(32,  _paddingTop);
 	    _positionSlot2 = new Vector2(716, _paddingTop);
@@ -25,10 +28,6 @@ public class ZMScoreLayoutController : MonoBehaviour
 
 	void Start()
 	{
-		_playerCount = Settings.MatchPlayerCount.value;
-
-		for (int i = 0; i < _playerCount; ++i) { _scoreTransforms.Add(null); }
-
 		foreach (GameObject item in GameObject.FindGameObjectsWithTag(Tags.kScoreGui))
 		{
 			int index = item.GetComponent<ZMPlayer.ZMPlayerInfo>().ID;

@@ -6,9 +6,8 @@ using ZMConfiguration;
 public class ZMPlayerLabelController : ZMFudgeParentToObject
 {
 	private Text _text;
-	private ZMPlayerController _controller;
 
-	void Start()
+	protected void Start()
 	{
 		_text.text = string.Format("P{0}", _playerInfo.ID + 1);
 	}
@@ -17,9 +16,9 @@ public class ZMPlayerLabelController : ZMFudgeParentToObject
 	{
 		base.Update();
 
-		if (_controller && _text)
+		if (_playerController && _text)
 		{
-			_text.enabled = _playerInfo.ID < Settings.MatchPlayerCount.value && !_controller.IsDead();
+			_text.enabled = _playerInfo.ID < Settings.MatchPlayerCount.value && !_playerController.IsDead();
 		}
 	}
 
@@ -27,10 +26,6 @@ public class ZMPlayerLabelController : ZMFudgeParentToObject
 	{
 		base.InitData(controller);
 
-		if (_playerInfo == controller.PlayerInfo)
-		{
-			_controller = controller;
-			_text = GetComponent<Text>();
-		}		
+		_text = GetComponent<Text>();
 	}
 }

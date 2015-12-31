@@ -26,9 +26,12 @@ public class ZMTextMenu : ZMMenuInput
 		_menuOptions = new Text[transform.childCount];
 		_optionsSize = _menuOptions.Length;
 		_selectedColor = new Color(255, 255, 255, 255);
+
+		AcceptGamepadEvents();
+		AcceptKeyboardEvents();
 	}
 
-	protected virtual void Start()
+	protected void Start()
 	{
 		for (int i = 0; i < _menuOptions.Length; ++i)
 		{

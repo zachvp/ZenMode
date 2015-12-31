@@ -29,7 +29,7 @@ public class ZMAnalogMovement : ZMDirectionalInput
 		MatchStateManager.OnMatchResume += Enable;
 	}
 
-	void Start()
+	protected void Start()
 	{
 		if (renderer != null) { _baseColor = Utilities.GetRGB(renderer.material.color, _playerInfo.standardColor); }
 	}

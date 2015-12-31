@@ -2,22 +2,26 @@
 using System.Collections;
 using ZMPlayer;
 
-public class ZMDeathCover : MonoBehaviour
+public class ZMDeathCover : ZMPlayerItem
 {
-	ZMPlayerInfo _playerInfo;
-	SpriteRenderer _spriteRenderer;
+	private SpriteRenderer _spriteRenderer;
 
 	// Use this for initialization
-	void Awake ()
+	protected override void Awake ()
 	{
+		base.Awake();
+
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_spriteRenderer = GetComponent<SpriteRenderer>();
-
-		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
-		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
 	}
 
-	void HandlePlayerRespawnEvent (ZMPlayerController playerController)
+	protected override void AcceptPlayerEvents()
+	{
+		_playerController.PlayerDeathEvent += HandlePlayerDeathEvent;
+		_playerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
+	}
+
+	private void HandlePlayerRespawnEvent (ZMPlayerController playerController)
 	{
 		if (_playerInfo == playerController.PlayerInfo)
 		{
@@ -25,7 +29,7 @@ public class ZMDeathCover : MonoBehaviour
 		}
 	}
 
-	void HandlePlayerDeathEvent (ZMPlayerController playerController)
+	private void HandlePlayerDeathEvent (ZMPlayerController playerController)
 	{
 		if (_playerInfo == playerController.PlayerInfo)
 		{

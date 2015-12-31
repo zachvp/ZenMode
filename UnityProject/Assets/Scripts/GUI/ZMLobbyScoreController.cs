@@ -3,7 +3,8 @@ using System.Collections;
 using UnityEngine.UI;
 using ZMPlayer;
 
-public class ZMLobbyScoreController : MonoBehaviour {
+public class ZMLobbyScoreController : ZMPlayerItem
+{
 	public float maxScore = 100.0f;
 	public float scoreAmount = 0.5f;
 	public Slider scoreBar;
@@ -15,18 +16,19 @@ public class ZMLobbyScoreController : MonoBehaviour {
 	private bool _pedestalActive;
 	private bool _readyFired;
 	private bool _targetAlive;
-	private ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 
 	// references
 	private ZMLobbyPedestalController _pedestalController;
 	private Vector3 _basePosition;
 
 	// Use this for initialization
-	void Awake () {
+	protected override void Awake()
+	{
+		base.Awake();
+
 		_currentScore = 0;
 		_pedestalActive = false;
 		_readyFired = false;
-		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 		_targetAlive = true;
 
 		gameObject.SetActive(false);
@@ -36,29 +38,74 @@ public class ZMLobbyScoreController : MonoBehaviour {
 		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
 		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
 		ZMLobbyPedestalController.ActivateEvent += HandleActivateEvent;
-		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
-		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
 
 		UpdateUI();
+		AcceptPlayerEvents();
 	}
 
-	void HandlePlayerRespawnEvent(ZMPlayerController playerController)
+	protected void Start()
+	{
+		_basePosition = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
+
+		foreach (GameObject pedestal in GameObject.FindGameObjectsWithTag("Pedestal"))
+		{
+			ZMLobbyPedestalController controller = pedestal.GetComponent<ZMLobbyPedestalController>();
+			
+			if (_playerInfo == controller.PlayerInfo) { _pedestalController = controller; }
+		}
+
+		scoreBar.handleRect = null;
+	}
+
+	void OnDestroy()
+	{
+		MaxScoreReachedEvent = null;
+	}
+
+	void OnTriggerStay2D(Collider2D collider)
+	{
+		if (collider.gameObject.Equals(_pedestalController.gameObject))
+		{
+			if (_currentScore < maxScore)
+			{
+				if (_pedestalActive && _targetAlive)
+					AddToScore(scoreAmount);
+			}
+			else if(!_readyFired)
+			{
+				if (MaxScoreReachedEvent != null)
+				{
+					MaxScoreReachedEvent(this);
+				}
+
+				_readyFired = true;
+			}
+		}
+	}
+
+	protected override void AcceptPlayerEvents()
+	{
+		_playerController.PlayerDeathEvent += HandlePlayerDeathEvent;
+		_playerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
+	}
+	
+	private void HandlePlayerRespawnEvent(ZMPlayerController playerController)
 	{
 		if(_playerInfo == playerController.PlayerInfo)
 		{
 			_targetAlive = true;
 		}
 	}
-
-	void HandlePlayerDeathEvent(ZMPlayerController playerController)
+	
+	private void HandlePlayerDeathEvent(ZMPlayerController playerController)
 	{
 		if(_playerInfo == playerController.PlayerInfo)
 		{
 			_targetAlive = false;
 		}
 	}
-
-	void HandleDropOutEvent(int playerIndex)
+	
+	private void HandleDropOutEvent(int playerIndex)
 	{
 		if (playerIndex == _playerInfo.ID)
 		{
@@ -67,47 +114,13 @@ public class ZMLobbyScoreController : MonoBehaviour {
 			scoreBar.gameObject.SetActive(false);
 		}
 	}
-
-	void HandleActivateEvent(ZMLobbyPedestalController lobbyPedestalController)
+	
+	private void HandleActivateEvent(ZMLobbyPedestalController lobbyPedestalController)
 	{
 		if (_playerInfo == lobbyPedestalController.PlayerInfo)
 		{
 			_pedestalActive = true;
 			scoreBar.gameObject.SetActive(true);
-		}
-	}
-
-	void Start() {
-		_basePosition = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
-
-		foreach (GameObject pedestal in GameObject.FindGameObjectsWithTag("Pedestal")) {
-			ZMLobbyPedestalController controller = pedestal.GetComponent<ZMLobbyPedestalController>();
-			
-			if (_playerInfo == controller.PlayerInfo)
-			{
-				_pedestalController = controller;
-			}
-		}
-
-		scoreBar.handleRect = null;
-	}
-
-	void OnDestroy() {
-		MaxScoreReachedEvent = null;
-	}
-
-	void OnTriggerStay2D(Collider2D collider) {
-		if (collider.gameObject.Equals(_pedestalController.gameObject)) {
-			if (_currentScore < maxScore) {
-				if (_pedestalActive && _targetAlive)
-					AddToScore(scoreAmount);
-			} else if(!_readyFired) {
-				if (MaxScoreReachedEvent != null) {
-					MaxScoreReachedEvent(this);
-				}
-
-				_readyFired = true;
-			}
 		}
 	}
 

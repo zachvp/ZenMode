@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using ZMPlayer;
 using Core;
 
+[RequireComponent(typeof(ZMPlayerInputController))]
 public class ZMPlayerController : ZMPlayerItem
 {
 	// Movement constants.
@@ -115,16 +116,15 @@ public class ZMPlayerController : ZMPlayerItem
 	public Material _materialFlash;
 
 	// Delegates
-	public static EventHandler<ZMPlayerController> PlayerKillEvent;
-	public static EventHandler<ZMPlayerController> PlayerDeathEvent;
-	public static EventHandler<ZMPlayerController> PlayerRespawnEvent;
-	public static EventHandler<ZMPlayerController> PlayerEliminatedEvent;
-	public static EventHandler<ZMPlayerController, float> PlayerRecoilEvent;
-	public static EventHandler<ZMPlayerController, float> PlayerStunEvent;
-	public static EventHandler<ZMPlayerController, float> PlayerParryEvent;
-	public static EventHandler<ZMPlayerController> PlayerCreateEvent;
+	public EventHandler<ZMPlayerController> PlayerKillEvent;
+	public EventHandler<ZMPlayerController> PlayerDeathEvent;
+	public EventHandler<ZMPlayerController> PlayerRespawnEvent;
+	public EventHandler<ZMPlayerController> PlayerEliminatedEvent;
+	public EventHandler<ZMPlayerController, float> PlayerRecoilEvent;
+	public EventHandler<ZMPlayerController, float> PlayerStunEvent;
+	public EventHandler<ZMPlayerController, float> PlayerParryEvent;
 
-	public static EventHandler PlayerLandPlungeEvent;
+	public EventHandler PlayerLandPlungeEvent;
 
 	// Debug
 	private SpriteRenderer _spriteRenderer;
@@ -151,6 +151,7 @@ public class ZMPlayerController : ZMPlayerItem
 		MatchStateManager.OnMatchPause += HandleOnMatchPause;
 		MatchStateManager.OnMatchResume += HandleOnMatchResume;
 		MatchStateManager.OnMatchStart += HandleOnMatchStart;
+		MatchStateManager.OnMatchEnd += HandleOnMatchPause;
 
 		// Set original facing direction.
 		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
@@ -158,14 +159,10 @@ public class ZMPlayerController : ZMPlayerItem
 		// load resources
 		_upperBodyTemplate = Resources.Load(kBodyUpperHalfPath, typeof(GameObject)) as GameObject;
 		_lowerBodyTemplate = Resources.Load(kBodyLowerHalfPath, typeof(GameObject)) as GameObject;
-
-		ZMPlayerManager.Instance.AddPlayer(this);
 	}
 
-	void Start()
+	 protected void Start()
 	{
-		transform.position = ZMPlayerManager.Instance.PlayerStartPoints[_playerInfo.ID].position;
-
 		kDeathStrings = new string[39];
 		kDeathStrings[0] = "OOOAHH";
 		kDeathStrings[1] = "WHOOOP";
@@ -212,8 +209,6 @@ public class ZMPlayerController : ZMPlayerItem
 		_goreEmitter.startColor = _baseColor;
 
 		_materialDefault = renderer.material;
-
-		Notifier.SendEventNotification(PlayerCreateEvent, this);
 	}
 
 	void Update()
@@ -540,16 +535,6 @@ public class ZMPlayerController : ZMPlayerItem
 	{
 		ZMScoreController.MinScoreReached -= HandleMinScoreReached;
 
-		PlayerKillEvent		  = null;
-		PlayerDeathEvent   	  = null;
-		PlayerRespawnEvent 	  = null;
-		PlayerEliminatedEvent = null;
-		PlayerRecoilEvent  	  = null;
-		PlayerStunEvent		  = null;
-		PlayerParryEvent	  = null;
-		PlayerLandPlungeEvent = null;
-		PlayerCreateEvent	  = null;
-
 		Resources.UnloadUnusedAssets();
 	}
 	
@@ -616,79 +601,85 @@ public class ZMPlayerController : ZMPlayerItem
 	}
 	
 	// Event handling - CCONTROL
-	private void MoveRightEvent() {
-		if (enabled) {
+	private void MoveRightEvent()
+	{
+		if (enabled)
+		{
 			_controlMoveState = ControlMoveState.MOVING;
-			if (_movementDirection == MovementDirectionState.FACING_LEFT) {
-				CheckSkidding ();
-			}
 
-			if (!IsPerformingLunge()) {
-				SetMovementDirection(MovementDirectionState.FACING_RIGHT);
-			}
+			if (_movementDirection == MovementDirectionState.FACING_LEFT) { CheckSkidding (); }
+
+			if (!IsPerformingLunge()) { SetMovementDirection(MovementDirectionState.FACING_RIGHT); }
 		}
 	}
 
-	private void MoveLeftEvent() {
-		if (enabled) {
+	private void MoveLeftEvent()
+	{
+		if (enabled)
+		{
 			_controlMoveState = ControlMoveState.MOVING;
-			if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
-				CheckSkidding ();
-			}
 
-			if (!IsPerformingLunge()) {
-				SetMovementDirection(MovementDirectionState.FACING_LEFT);
-			}
+			if (_movementDirection == MovementDirectionState.FACING_RIGHT) { CheckSkidding (); }
+
+			if (!IsPerformingLunge()) { SetMovementDirection(MovementDirectionState.FACING_LEFT); }
 		}
 	}
 
-	private void NoMoveEvent() {
+	private void NoMoveEvent()
+	{
 		_controlMoveState = ControlMoveState.NEUTRAL;
 	}
 
-	private void JumpEvent() {
-		if (_controller.isGrounded && _controlModState != ControlModState.JUMPING) {
-			_controlModState = ControlModState.JUMPING;
-		} else if (IsTouchingEitherSide() && _canWallJump) {
-			_controlModState = ControlModState.WALL_JUMPING;
-		}
+	private void JumpEvent()
+	{
+		if (_controller.isGrounded && _controlModState != ControlModState.JUMPING) { _controlModState = ControlModState.JUMPING; }
+		else if (IsTouchingEitherSide() && _canWallJump) { _controlModState = ControlModState.WALL_JUMPING; }
 	}
 
-	private void AttackEvent(int direction) {
-		if (!IsAttacking() && _moveModState != MoveModState.RESPAWN) {
-			RaycastHit2D hit;
+	private void AttackEvent(int direction)
+	{
+		if (!IsAttacking() && _moveModState != MoveModState.RESPAWN)
+		{
 			var forward = new Vector2(direction, 0);
+			RaycastHit2D hit;
 
 			_controlModState = ControlModState.ATTACK;
 
-			if (direction != 0) {
+			if (direction != 0)
+			{
 				SetMovementDirection(direction == -1 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
 			}
 
 			// hack for destroying a breakable when pressed up against it
-			if (_movementDirection == MovementDirectionState.FACING_LEFT) {
-				hit = CheckLeft(10.0f, _controller.specialInteractibleMask);
-			} else {
-				hit = CheckRight(10.0f, _controller.specialInteractibleMask);
-			}
+			if (_movementDirection == MovementDirectionState.FACING_LEFT) { hit = CheckLeft(10.0f, _controller.specialInteractibleMask); }
+			else { hit = CheckRight(10.0f, _controller.specialInteractibleMask); }
 
-			if (hit && Mathf.Round(Vector3.Dot(hit.normal, forward)) != 0 && hit.collider != null) {
-				if (hit.collider.CompareTag("Breakable")) {
+			if (hit && Mathf.Round(Vector3.Dot(hit.normal, forward)) != 0 && hit.collider != null)
+			{
+				if (hit.collider.CompareTag("Breakable"))
+				{
 					hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
 				}
 			}
 		}
 	}
 
-	private void PlungeEvent() {
-		if (!IsAttacking() && _moveModState != MoveModState.RESPAWN) {
-			if (!_controller.isGrounded) {
+	private void PlungeEvent()
+	{
+		if (!IsAttacking() && _moveModState != MoveModState.RESPAWN)
+		{
+			if (!_controller.isGrounded)
+			{
 				_controlModState = ControlModState.PLUNGE;
-			} else {
-				RaycastHit2D hit = CheckBelow(2, _controller.specialInteractibleMask);
+			}
+			else
+			{
+				var hit = CheckBelow(2, _controller.specialInteractibleMask);
 
-				if (hit && hit.collider != null) {
-					if (hit.collider.CompareTag("Breakable")) {
+				if (hit && hit.collider != null)
+				{
+					if (hit.collider.CompareTag("Breakable"))
+					{
 						_controlModState = ControlModState.PLUNGE;
 						hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
 					}
@@ -697,15 +688,15 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 	}
 
-	private void ParryEvent () {
-		if (!IsParrying () && _moveModState != MoveModState.RESPAWN) {
+	private void ParryEvent()
+	{
+		if (!IsParrying () && _moveModState != MoveModState.RESPAWN)
+		{
 			_controlModState = ControlModState.PARRY;
 		}
 	}
 
-	void ResetControlModState() {
-		_controlModState = ControlModState.NEUTRAL;
-	}
+	void ResetControlModState() { _controlModState = ControlModState.NEUTRAL; }
 
 	void ResetMoveModState() { _moveModState = MoveModState.NEUTRAL; }
 
@@ -971,6 +962,8 @@ public class ZMPlayerController : ZMPlayerItem
 
 		_spriteRenderer.enabled = true;
 		light.enabled = true;
+
+		transform.position = ZMGameStateController.Instance.GetSpawnPosition();
 
 		EnablePlayer();
 		SetMovementDirection(transform.position.x < 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);

@@ -33,8 +33,7 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 				HandleMenuNavigationBackward();
 			}
 		}
-		
-		if (!_canCycleSelection)
+		else
 		{
 			_delayFrame += 1;
 			

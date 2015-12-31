@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using Core;
 
 public class ZMEmitObject : ZMPlayerItem
 {
@@ -17,15 +17,17 @@ public class ZMEmitObject : ZMPlayerItem
 	{
 		base.Awake();
 
-		ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
+		MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 	}
 
-	void Start()
+	public override void ConfigureItemWithID(Transform parent, int id)
 	{
+		base.ConfigureItemWithID(parent, id);
+
 		_color = _playerInfo.standardColor;
 	}
 
-	void HandleGameEndEvent ()
+	void HandleGameEndEvent()
 	{
 		enabled = false;
 	}

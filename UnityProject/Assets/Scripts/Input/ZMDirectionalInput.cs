@@ -4,9 +4,9 @@ public class ZMDirectionalInput : ZMPlayerItem
 {
 	protected Vector2 _movement;
 
-	protected override void Awake()
+	public override void ConfigureItemWithID(Transform parent, int id)
 	{
-		base.Awake();
+		base.ConfigureItemWithID(parent, id);
 
 		AcceptGamepadEvents();
 		AcceptKeyboardEvents();

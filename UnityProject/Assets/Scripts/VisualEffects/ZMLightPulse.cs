@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using Core;
 
 public class ZMLightPulse : MonoBehaviour {
 	public float interval;
@@ -13,7 +13,7 @@ public class ZMLightPulse : MonoBehaviour {
 
 	void Awake()
 	{
-		ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
+		MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 	}
 
 	void HandleGameEndEvent ()

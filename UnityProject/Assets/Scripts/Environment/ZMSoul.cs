@@ -16,7 +16,7 @@ public class ZMSoul : MonoBehaviour
 
 	private ParticleSystem _particles;
 
-	void Awake ()
+	void Awake()
 	{
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
@@ -24,8 +24,7 @@ public class ZMSoul : MonoBehaviour
 		ZMScoreController.CanScoreEvent += HandleCanScoreEvent;
 		ZMScoreController.StopScoreEvent += HandleStopScoreEvent;
 
-		ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
-
+		MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 		MatchStateManager.OnMatchPause += HandlePauseGameEvent;
 		MatchStateManager.OnMatchResume += HandleResumeGameEvent;
 

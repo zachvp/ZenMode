@@ -13,7 +13,7 @@ public class ZMPauseMenu : ZMTextMenu
 			ZMLobbyController.PauseGameEvent += HandlePauseGameLobbyEvent;
 		}
 		else if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
-			ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
+			MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 		}
 
 		AcceptInputEvents();
@@ -41,6 +41,13 @@ public class ZMPauseMenu : ZMTextMenu
 		base.AcceptInputEvents();
 
 		ZMGameInputManager.StartInputEvent += HandleTogglePause;
+	}
+
+	protected override void ClearInputEvents()
+	{
+		base.ClearInputEvents();
+
+		ZMGameInputManager.StartInputEvent -= HandleTogglePause;
 	}
 
 	protected override void HandleMenuSelection()

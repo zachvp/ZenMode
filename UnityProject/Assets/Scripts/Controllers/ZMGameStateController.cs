@@ -7,10 +7,8 @@ using ZMConfiguration;
 
 public class ZMGameStateController : MonoBehaviour
 {
-	public AudioClip audioComplete;
-
-	private int _playerCount;
-
+	[SerializeField] private AudioClip audioComplete;
+	
 	public enum GameState { NEUTRAL, BEGIN, PAUSE, PAUSED, RESUME, RESET };
 	public enum MatchState { PRE_MATCH, BEGIN_COUNTDOWN, MATCH, POST_MATCH, GARBAGE };
 
@@ -25,21 +23,14 @@ public class ZMGameStateController : MonoBehaviour
 
 	// references
 	private List<Transform> _spawnpoints;
-	private Queue<ZMPlayerController> _objectsToSpawn;
-	private List<ZMPlayerController> _players;
-	private List<ZMScoreController> _scoreControllers; public List<ZMScoreController> ScoreControllers { get { return _scoreControllers; } }
-	private bool _firedGameEndEvent;
 	private Text _outputText;
 
 	// constants
 	private Vector3 outputTextPositionUpOffset = new Vector3 (0, 109, 0);
 	
 	// Events.
-	public EventHandler<ZMGameStateController, ZMPlayerController> SpawnObjectEvent;
-
 	public EventHandler StartGameEvent;
 	public EventHandler ResetGameEvent;
-	public EventHandler GameEndEvent;
 	public EventHandler QuitMatchEvent;
 
 	// HACKS!
@@ -63,13 +54,6 @@ public class ZMGameStateController : MonoBehaviour
 
 		_instance = this;
 		_spawnpoints = new List<Transform>();
-		_objectsToSpawn = new Queue<ZMPlayerController>(Constants.MAX_PLAYERS);
-		_players =  new List<ZMPlayerController>(Constants.MAX_PLAYERS);
-		_scoreControllers = new List<ZMScoreController>(Constants.MAX_PLAYERS);
-
-		// Add delegate handlers
-		ZMPlayerController.PlayerDeathEvent += RespawnObject;
-		ZMPlayerController.PlayerEliminatedEvent += HandlePlayerEliminatedEvent;
 
 		ZMScoreController.MaxScoreReached += HandleMaxScoreReached;
 
@@ -88,37 +72,9 @@ public class ZMGameStateController : MonoBehaviour
 
 		_outputText.text = "";
 				
-		_playerCount = Settings.MatchPlayerCount.value;
-		
 		foreach (GameObject spawnpointObject in GameObject.FindGameObjectsWithTag(Tags.kSpawnpointTag))
 		{
 			_spawnpoints.Add(spawnpointObject.transform);
-		}
-		
-		for (int i = 0; i < _playerCount; ++i)
-		{
-			_players.Add(null);
-			_scoreControllers.Add(null);
-		}
-		
-		foreach (GameObject player in GameObject.FindGameObjectsWithTag(Tags.kPlayerTag))
-		{
-			var playerController = player.GetComponent<ZMPlayerController>();
-			var scoreController = player.GetComponent<ZMScoreController>();
-			var index = playerController.PlayerInfo.ID;
-			
-			playerController.gameObject.SetActive(false);
-			
-			if (index < _playerCount)
-			{
-				_players[index] = playerController;
-				_scoreControllers[index] = scoreController;
-			}
-		}
-		
-		for (int i = 0; i < _playerCount; ++i)
-		{
-			_players[i].gameObject.SetActive(true);
 		}
 	}
 	
@@ -141,17 +97,6 @@ public class ZMGameStateController : MonoBehaviour
 		}
 		else if (matchState == MatchState.POST_MATCH)
 		{
-			float maxScore = 0.0f;
-
-			foreach (ZMScoreController scoreController in _scoreControllers)
-			{
-				if (scoreController.TotalScore > maxScore)
-				{
-					maxScore = scoreController.TotalScore;
-					_victoryMessage =  "P" + (scoreController.PlayerInfo.ID + 1) + " WINS!";
-				}
-			}
-
 			matchState = MatchState.GARBAGE;
 
 			if (!IsInvoking(kEndGameMethodName)) { Invoke(kEndGameMethodName, END_GAME_DELAY); }
@@ -181,12 +126,12 @@ public class ZMGameStateController : MonoBehaviour
 		}
 	}
 
-	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
+	private void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
 	{
 		if (waypointMovement.CompareTag("MainCamera")) { matchState = MatchState.BEGIN_COUNTDOWN; }
 	}
 	
-	void HandleGameTimerEndedEvent()
+	private void HandleGameTimerEndedEvent()
 	{
 		if (matchState != MatchState.POST_MATCH)
 		{
@@ -194,11 +139,6 @@ public class ZMGameStateController : MonoBehaviour
 			audio.PlayOneShot(audioComplete, 2.0f);
 			_outputText.text = _victoryMessage;
 		}
-	}
-	
-	void HandlePlayerEliminatedEvent (ZMPlayerController playerController)
-	{
-		_players.Remove(playerController);
 	}
 	
 	private void HandleSelectQuitEvent()
@@ -252,7 +192,7 @@ public class ZMGameStateController : MonoBehaviour
 		_outputText.rectTransform.position = outputTextPositionUpOffset;
 	}
 	
-	void ClearOutputText()
+	private void ClearOutputText()
 	{
 		_outputText.text = "";
 	}
@@ -264,10 +204,8 @@ public class ZMGameStateController : MonoBehaviour
 		Application.LoadLevel(Application.loadedLevel);
 	}
 
-	private void SpawnObject()
+	public Vector3 GetSpawnPosition()
 	{
-		if (matchState == MatchState.POST_MATCH) { return; }
-
 		float maximumDistance = float.MinValue;
 		int targetIndex = 0;
 
@@ -276,11 +214,11 @@ public class ZMGameStateController : MonoBehaviour
 			Transform point = _spawnpoints[i];
 			float distance = 0.0f;
 
-			foreach (ZMPlayerController player in _players)
+			foreach (ZMPlayerController player in ZMPlayerManager.Instance.Players)
 			{
 				if (!player.IsDead())
 				{
-					distance += Mathf.Abs (point.position.y - player.transform.position.y) + Mathf.Abs (point.position.x - player.transform.position.x);
+					distance += Mathf.Abs(point.position.y - player.transform.position.y) + Mathf.Abs (point.position.x - player.transform.position.x);
 				}
 			}
 
@@ -291,49 +229,29 @@ public class ZMGameStateController : MonoBehaviour
 			}
 		}
 
-		ZMPlayerController spawnObject = _objectsToSpawn.Dequeue();
-
-		if (spawnObject != null && spawnObject)
-		{
-			spawnObject.transform.position = _spawnpoints[targetIndex].position;
-
-			Notifier.SendEventNotification(SpawnObjectEvent, this, spawnObject);
-		}
+		return _spawnpoints[targetIndex].position;
 	}
 
-	void EndGame()
+	private void EndGame()
 	{
 		_outputText.rectTransform.position = outputTextPositionUpOffset;
 
 		if (ZMCrownManager.LeadingPlayerIndex < 0) { _victoryMessage = "DRAW!"; }
 
-		_outputText.text = _victoryMessage;
-
-		for (int i = 0; i < _playerCount && i < _players.Count; ++i)
+		float maxScore = 0.0f;
+		
+		foreach (ZMScoreController scoreController in ZMPlayerManager.Instance.Scores)
 		{
-			if (i != ZMCrownManager.LeadingPlayerIndex)
+			if (scoreController.TotalScore > maxScore)
 			{
-				_players[i].gameObject.SetActive(false);
+				maxScore = scoreController.TotalScore;
+				_victoryMessage =  "P" + (scoreController.PlayerInfo.ID + 1) + " WINS!";
 			}
 		}
-		
-		if (!_firedGameEndEvent)
-		{
-			_firedGameEndEvent = true;
-			
-			Notifier.SendEventNotification(GameEndEvent);
-		}
 
+		_outputText.text = _victoryMessage;
+
+		MatchStateManager.EndMatch();
 		enabled = false;
 	}
-
-	// Event handlers
-	private void RespawnObject(ZMPlayerController playerController)
-	{
-		if (!_objectsToSpawn.Contains(playerController))
-		{
-			_objectsToSpawn.Enqueue(playerController);
-			Invoke(kSpawnObjectMethodName, 5.0f); // TODO: Read from PlayerManager constant.
-		}
-	}	
 }

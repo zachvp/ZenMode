@@ -29,47 +29,48 @@ public class ZMMetricsCollector : MonoBehaviour
 	public static MetricsAddPositionAction MetricsAddPositionEvent;
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+	{
 		InvokeRepeating("AddPosition", 0.001f, kAddPositionInterval);
 
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 	}
 
-	void OnDestroy() {
+	void OnDestroy()
+	{
 		MetricsAddPositionEvent = null;
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		if (Input.GetKeyDown(KeyCode.Backspace)) {
+	void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.Backspace))
+		{
 			_shouldDrawPositionData = !_shouldDrawPositionData;
 			_shouldDrawJumpData = !_shouldDrawJumpData;
 			_shouldDrawDeathData = !_shouldDrawDeathData;
 		}
 	}
 
-	void OnDrawGizmos() {
-		if (_shouldDrawPositionData) {
-			DrawData(_positionData, _drawPosColor);
-		}
+	void OnDrawGizmos()
+	{
+		if (_shouldDrawPositionData) { DrawData(_positionData, _drawPosColor); }
 
-		if (_shouldDrawJumpData) {
-			DrawData (_jumpData, _drawJumpColor);
-		}
+		if (_shouldDrawJumpData) { DrawData (_jumpData, _drawJumpColor); }
 
-		if (_shouldDrawDeathData) {
-			DrawDeathData();
-		}
+		if (_shouldDrawDeathData) { DrawDeathData(); }
 	}
 
 	// Public methods
-	public void AddJumpData(ZMPlayerInputController inputController) {
+	public void AddJumpData(ZMPlayerInputController inputController)
+	{
 		//Debug.Log (gameObject.name + ": add jump data");
 
 //		_jumpData.Add(gameObject.transform.position);
 	}
 
-	public void AddDeathData(int type) {
+	public void AddDeathData(int type)
+	{
 		_deathData.Add(new DeathMetric(gameObject.transform.position, type));
 	}
 
@@ -82,37 +83,42 @@ public class ZMMetricsCollector : MonoBehaviour
 		}
 	}
 
-	private void DrawDeathData(DeathMetric metric) {
-		if (metric.type == 0) {
-			DrawDataPoint(metric.position, Color.red);
-		} else {
-			DrawDataPoint(metric.position, Color.green);
-		}
+	private void DrawDeathData(DeathMetric metric)
+	{
+		if (metric.type == 0) { DrawDataPoint(metric.position, Color.red); }
+		else { DrawDataPoint(metric.position, Color.green); }
 	}
 
-	private void DrawDeathData() {
-		foreach (DeathMetric metric in _deathData) {
+	private void DrawDeathData()
+	{
+		foreach (DeathMetric metric in _deathData)
+		{
 			DrawDeathData(metric);
 		}
 	}
 
-	private void DrawData(List<Vector3> dataSet, Color dataColor) {
-		foreach (Vector3 position in dataSet) {
+	private void DrawData(List<Vector3> dataSet, Color dataColor)
+	{
+		foreach (Vector3 position in dataSet)
+		{
 			DrawDataPoint(position, dataColor);
 		}
 	}
 
-	private void DrawDataPoint(Vector3 point, Color color) {
+	private void DrawDataPoint(Vector3 point, Color color)
+	{
 		Gizmos.color = color;
 		Gizmos.DrawSphere(point, 12.0f);
 	}
 }
 
-struct DeathMetric {
+struct DeathMetric
+{
 	public Vector3 position;
 	public int type;
 
-	public DeathMetric(Vector3 pos, int type) {
+	public DeathMetric(Vector3 pos, int type)
+	{
 		position = pos;
 		this.type = type;
 	}

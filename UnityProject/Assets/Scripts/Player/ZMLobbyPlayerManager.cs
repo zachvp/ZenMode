@@ -22,8 +22,12 @@ public class ZMLobbyPlayerManager : ZMPlayerManager
 		}
 
 		ZMLobbyController.PlayerReadyEvent += HandlePlayerReadyEvent;
-		ZMPlayerController.PlayerKillEvent += HandlePlayerKillEvent;
 		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
+
+		for (int i = 0; i < _players.Length; ++i)
+		{
+			_players[i].PlayerKillEvent += HandlePlayerKillEvent;
+		}
 	}
 
 	private void HandleDropOutEvent(int playerIndex)
