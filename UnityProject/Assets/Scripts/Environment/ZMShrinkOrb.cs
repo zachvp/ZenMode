@@ -1,27 +1,21 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class ZMShrinkOrb : MonoBehaviour {
+public class ZMShrinkOrb : MonoBehaviour
+{
 	public float _shrinkRate = 0.04f;
 	private bool _shrinking;
 	private ZMPlayer.ZMPlayerInfo _playerInfo;
 
-	void Awake () {
+	void Awake ()
+	{
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 		ZMWaypointMovement.AtPathNodeEvent += HandleAtPathNodeEvent;
 	}
 
-	void HandleAtPathNodeEvent (ZMWaypointMovement waypointMovement, int index)
+	void Update()
 	{
-		if (waypointMovement.name.Equals("Main Camera") && index - 1 == _playerInfo.ID)
+		if (_shrinking && Vector3.SqrMagnitude(transform.localScale) > 0)
 		{
-			SendMessage("Stop");
-			_shrinking = true;
-		}
-	}
-
-	void Update() {
-		if (_shrinking && Vector3.SqrMagnitude(transform.localScale) > 0) {
 			Vector3 newScale = transform.localScale;
 
 			newScale = Vector3.Lerp(newScale, Vector3.zero, _shrinkRate);
@@ -29,9 +23,16 @@ public class ZMShrinkOrb : MonoBehaviour {
 
 			transform.localScale = newScale;
 
-			if (Vector3.SqrMagnitude(transform.localScale) <= 0.2) {
-				gameObject.SetActive(false);
-			}
+			if (Vector3.SqrMagnitude(transform.localScale) <= 0.2) { gameObject.SetActive(false); }
+		}
+	}
+
+	private void HandleAtPathNodeEvent(ZMWaypointMovement waypointMovement, int index)
+	{
+		if (index - 1 == _playerInfo.ID)
+		{
+			SendMessage("Stop");
+			_shrinking = true;
 		}
 	}
 }

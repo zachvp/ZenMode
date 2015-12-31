@@ -15,10 +15,7 @@ public class ZMAnalogMovement : ZMDirectionalInput
 	private bool _shouldBounce;
 
 	private float _slowFactor;
-
-	// References.
-	private ZMPlayerInfo _playerInfo;
-
+	
 	private Color _baseColor;
 
 	protected override void Awake()
@@ -28,24 +25,15 @@ public class ZMAnalogMovement : ZMDirectionalInput
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_slowFactor = 1;
 
-		if (renderer != null) { _baseColor = renderer.material.color; }
-
 		MatchStateManager.OnMatchPause += Disable;
 		MatchStateManager.OnMatchResume += Enable;
 	}
 
-	private void Disable()
+	void Start()
 	{
-		enabled = false;
-		_previousVelocity = rigidbody2D.velocity;
-		rigidbody2D.velocity = Vector2.zero;
+		if (renderer != null) { _baseColor = Utilities.GetRGB(renderer.material.color, _playerInfo.standardColor); }
 	}
 
-	private void Enable()
-	{
-		rigidbody2D.velocity = _previousVelocity;
-		enabled = true;
-	}
 	void Update()
 	{
 		if (!_shouldBounce)
@@ -99,9 +87,23 @@ public class ZMAnalogMovement : ZMDirectionalInput
 		}
 	}
 
+
 	protected override bool IsCorrectInputControl(ZMInput input)
 	{
 		return _playerInfo.ID == input.ID;
+	}
+
+	private void Disable()
+	{
+		enabled = false;
+		_previousVelocity = rigidbody2D.velocity;
+		rigidbody2D.velocity = Vector2.zero;
+	}
+	
+	private void Enable()
+	{
+		rigidbody2D.velocity = _previousVelocity;
+		enabled = true;
 	}
 
 	private void CancelBounce()

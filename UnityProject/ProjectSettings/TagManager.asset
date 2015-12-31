@@ -19,6 +19,8 @@ TagManager:
   - Crown
   - ScoreStatus
   - PlayerStartPosition
+  - Output
+  - CameraFocus
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX

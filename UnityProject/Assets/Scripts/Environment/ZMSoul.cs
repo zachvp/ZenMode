@@ -3,7 +3,8 @@ using System.Collections;
 using ZMPlayer;
 using Core;
 
-public class ZMSoul : MonoBehaviour {
+public class ZMSoul : MonoBehaviour
+{
 	private ZMScoreController _scoreController;
 
 	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
@@ -12,6 +13,8 @@ public class ZMSoul : MonoBehaviour {
 
 	private bool _fadingIn;
 	private bool _playingSound;
+
+	private ParticleSystem _particles;
 
 	void Awake ()
 	{
@@ -25,60 +28,14 @@ public class ZMSoul : MonoBehaviour {
 
 		MatchStateManager.OnMatchPause += HandlePauseGameEvent;
 		MatchStateManager.OnMatchResume += HandleResumeGameEvent;
-	}
 
-	void HandleGameEndEvent ()
+		_particles = GetComponentInChildren<ParticleSystem>();
+	}
+	
+	void Start()
 	{
-		enabled = false;
+		_particles.renderer.material.color = Utilities.GetRGB(_particles.renderer.material.color, _playerInfo.standardColor);
 
-		Invoke ("Deactivate", 0.2f);
-	}
-
-	void HandleResumeGameEvent ()
-	{
-		if (_playingSound) {
-			PlayLoop();
-		}
-	}
-
-	void HandlePauseGameEvent ()
-	{
-		StopLoop();
-
-		if (audio.isPlaying) {
-			_playingSound = true;
-		} else {
-			_playingSound = false;
-		}
-	}
-
-	void HandleStopScoreEvent (ZMScoreController scoreController)
-	{
-		StopLoop();
-	}
-
-	void HandleCanScoreEvent (ZMScoreController scoreController)
-	{
-		PlayLoop();
-	}
-
-	void OnDestroy() {
-		SoulDestroyedEvent = null;
-	}
-
-	void HandleMinScoreReached (ZMScoreController scoreController)
-	{
-		if (_playerInfo == scoreController.PlayerInfo)
-		{
-			audio.Stop();
-
-			if (SoulDestroyedEvent != null) {
-				SoulDestroyedEvent(this);
-			}
-		}
-	}
-
-	void Start() {
 		GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 		
 		foreach (GameObject player in players) {
@@ -91,12 +48,65 @@ public class ZMSoul : MonoBehaviour {
 		}
 	}
 
-	void Update() {
+	void OnDestroy()
+	{
+		SoulDestroyedEvent = null;
+	}
+
+	void Update()
+	{
 		if (_fadingIn) {
 			if (audio.volume < 0.75f) { audio.volume += 0.02f; }
 		} else {
 			if (audio.volume > 0) { audio.volume -= 0.02f; }
 			else { audio.Stop(); }
+		}
+	}
+
+	private void HandleGameEndEvent ()
+	{
+		enabled = false;
+		
+		Invoke ("Deactivate", 0.2f);
+	}
+	
+	private void HandleResumeGameEvent ()
+	{
+		if (_playingSound) {
+			PlayLoop();
+		}
+	}
+	
+	private void HandlePauseGameEvent ()
+	{
+		StopLoop();
+		
+		if (audio.isPlaying) {
+			_playingSound = true;
+		} else {
+			_playingSound = false;
+		}
+	}
+	
+	private void HandleStopScoreEvent (ZMScoreController scoreController)
+	{
+		StopLoop();
+	}
+	
+	private void HandleCanScoreEvent (ZMScoreController scoreController)
+	{
+		PlayLoop();
+	}
+	
+	private void HandleMinScoreReached (ZMScoreController scoreController)
+	{
+		if (_playerInfo == scoreController.PlayerInfo)
+		{
+			audio.Stop();
+			
+			if (SoulDestroyedEvent != null) {
+				SoulDestroyedEvent(this);
+			}
 		}
 	}
 

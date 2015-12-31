@@ -3,26 +3,34 @@ using UnityEngine.UI;
 using ZMConfiguration;
 
 [RequireComponent(typeof(Text))]
-public class ZMPlayerLabelController : MonoBehaviour
+public class ZMPlayerLabelController : ZMFudgeParentToObject
 {
-	public Transform parent;
-
-	private ZMPlayer.ZMPlayerInfo _playerInfo;
-	private ZMPlayerController _controller;
 	private Text _text;
-	
+	private ZMPlayerController _controller;
+
 	void Start()
 	{
-		_controller = parent.GetComponent<ZMPlayerController>();
-		_text = GetComponent<Text>();
-		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
+		_text.text = string.Format("P{0}", _playerInfo.ID + 1);
 	}
 
-	void Update()
+	protected override void Update()
 	{
+		base.Update();
+
 		if (_controller && _text)
 		{
 			_text.enabled = _playerInfo.ID < Settings.MatchPlayerCount.value && !_controller.IsDead();
 		}
+	}
+
+	protected override void InitData(ZMPlayerController controller)
+	{
+		base.InitData(controller);
+
+		if (_playerInfo == controller.PlayerInfo)
+		{
+			_controller = controller;
+			_text = GetComponent<Text>();
+		}		
 	}
 }

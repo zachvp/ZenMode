@@ -5,6 +5,7 @@ public class ZMPlayerDisplay : MonoBehaviour
 {
 	[SerializeField] private SpriteRenderer _spriteRendererTemplate;
 	[SerializeField] private int emitInterval = 1;
+	[SerializeField] private bool emitAtStart;
 
 	private SpriteRenderer _renderer;
 	private SpriteRenderer _trailRenderer;
@@ -14,6 +15,7 @@ public class ZMPlayerDisplay : MonoBehaviour
 	void Awake()
 	{
 		_renderer = GetComponent<SpriteRenderer>();
+		enabled = emitAtStart;
 	}
 
 	void Update()

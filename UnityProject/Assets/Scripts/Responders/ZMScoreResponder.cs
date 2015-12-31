@@ -1,18 +1,22 @@
 ﻿using UnityEngine;
 using ZMPlayer;
 
-public class ZMScoreResponder : MonoBehaviour {
+public class ZMScoreResponder : MonoBehaviour
+{
 	public bool activeOnScore = true;
 
 	private ZMPlayerInfo _playerInfo;
 
-	// Use this for initialization
-	void Awake () {
+	void Awake()
+	{
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
 		ZMScoreController.CanScoreEvent += HandleCanScoreEvent;
 		ZMScoreController.StopScoreEvent += HandleStopScoreEvent;
+	}
 
+	void Start()
+	{
 		gameObject.SetActive(!activeOnScore);
 	}
 

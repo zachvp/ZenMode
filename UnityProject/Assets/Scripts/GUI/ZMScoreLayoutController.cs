@@ -2,9 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using ZMConfiguration;
 
-public class ZMScoreLayoutController : MonoBehaviour {
+public class ZMScoreLayoutController : MonoBehaviour
+{
 	private List<RectTransform> _scoreTransforms;
-	private List<RectTransform> _scoreStatusTransforms;
 	private int _playerCount;
 
 	// constants
@@ -13,13 +13,11 @@ public class ZMScoreLayoutController : MonoBehaviour {
 	private const float _paddingTop = -20;
 
 	private Vector2 _positionSlot0;
-    //private Vector2 _positionSlot1;
 	private Vector2 _positionSlot2;
-	//private Vector2 _positionSlot3;
 
-	void Awake() {
+	void Awake()
+	{
 		_scoreTransforms = new List<RectTransform>();
-		_scoreStatusTransforms = new List<RectTransform>();
 
 		_positionSlot0 = new Vector2(32,  _paddingTop);
 	    _positionSlot2 = new Vector2(716, _paddingTop);
@@ -29,12 +27,9 @@ public class ZMScoreLayoutController : MonoBehaviour {
 	{
 		_playerCount = Settings.MatchPlayerCount.value;
 
-		for (int i = 0; i < _playerCount; ++i) {
-			_scoreTransforms.Add(null);
-			_scoreStatusTransforms.Add(null);
-		}
+		for (int i = 0; i < _playerCount; ++i) { _scoreTransforms.Add(null); }
 
-		foreach (GameObject item in GameObject.FindGameObjectsWithTag("ScoreGui"))
+		foreach (GameObject item in GameObject.FindGameObjectsWithTag(Tags.kScoreGui))
 		{
 			int index = item.GetComponent<ZMPlayer.ZMPlayerInfo>().ID;
 
@@ -44,38 +39,24 @@ public class ZMScoreLayoutController : MonoBehaviour {
 				_scoreTransforms[index] = item.GetComponent<RectTransform>();
 		}
 
-		foreach (GameObject item in GameObject.FindGameObjectsWithTag("ScoreStatus"))
-		{
-			int index = item.GetComponent<ZMPlayer.ZMPlayerInfo>().ID;
-
-			item.gameObject.SetActive(false);
-
-			if (index < _playerCount)
-				_scoreStatusTransforms[index] = item.GetComponent<RectTransform>();
-		}
-
 		for (int i = 0; i < _playerCount; ++i)
 		{
 			_scoreTransforms[i].gameObject.SetActive(true);
-			_scoreStatusTransforms[i].gameObject.SetActive(true);
 		}
 
 		if (_playerCount == 1)
 		{
 			_scoreTransforms[0].anchoredPosition = _positionSlot0;
 			_scoreTransforms[0].localScale = new Vector3 (5.0f, 3.0f, 1.0f);
-			_scoreStatusTransforms[0].anchoredPosition = _positionSlot0 + new Vector2(_scoreStatusTransforms[0].rect.width * 1.26f, -_scoreStatusTransforms[0].rect.height * 0.67f);
 		}
-		else if (_playerCount == 2) {
+		else if (_playerCount == 2)
+		{
 			_scoreTransforms[0].anchoredPosition = _positionSlot0;
 			_scoreTransforms[1].anchoredPosition = _positionSlot2;
 
 			_scoreTransforms[0].localScale = new Vector3 (5.0f, 3.0f, 1.0f);
 			_scoreTransforms[1].localScale = new Vector3 (5.0f, 3.0f, 1.0f);
 			_scoreTransforms[1].anchoredPosition = new Vector2 (742, _paddingTop);
-
-			_scoreStatusTransforms[0].anchoredPosition = _positionSlot0 + new Vector2(_scoreStatusTransforms[0].rect.width * 1.26f, -_scoreStatusTransforms[0].rect.height * 0.67f);
-			_scoreStatusTransforms[1].anchoredPosition = _positionSlot2 + new Vector2(_scoreStatusTransforms[1].rect.width * 1.4f, -_scoreStatusTransforms[1].rect.height * 0.67f);
 		}
 	}
 }

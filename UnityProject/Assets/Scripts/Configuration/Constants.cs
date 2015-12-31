@@ -15,6 +15,9 @@ namespace ZMConfiguration
 		public const string kPlayerTag 	   			= "Player";
 		public const string kPlayerStartPositionTag = "PlayerStartPosition";
 		public const string kCameraFocusBase		= "CameraFocusBase";
+		public const string kScoreGui				= "ScoreGui";
+		public const string kScoreStatus			= "ScoreStatus";
+		public const string kOutput					= "Output";
 	}
 
 	public static class Settings
@@ -44,10 +47,34 @@ namespace ZMConfiguration
 
 		public static readonly Color[] PlayerColors = new Color[Constants.MAX_PLAYERS]
 		{
-			new Color(50, 200, 70),
-			new Color(50, 110, 250),
-			new Color(255, 145, 50),
-			new Color(55, 200, 30),
+			Utilities.GetNormalizedColor(50, 200, 70),
+			Utilities.GetNormalizedColor(50, 110, 250),
+			Utilities.GetNormalizedColor(255, 145, 50),
+			Utilities.GetNormalizedColor(55, 200, 30)
 		};
+
+		public static readonly Color[] PlayerLightColors = new Color[Constants.MAX_PLAYERS]
+		{
+			Utilities.GetNormalizedColor(10, 185, 0),
+			Utilities.GetNormalizedColor(0, 120, 255),
+			Utilities.GetNormalizedColor(255, 145, 50),
+			Utilities.GetNormalizedColor(55, 200, 30)
+		};
+	}	
+}
+
+namespace Core
+{
+	public static class Utilities
+	{
+		public static Color GetNormalizedColor(float r, float g, float b)
+		{
+			return new Color(r / 255.0f, g / 255.0f, b / 255.0f);
+		}
+		
+		public static Color GetRGB(Color lhs, Color rhs)
+		{
+			return new Color(rhs.r, rhs.g, rhs.b, lhs.a);
+		}
 	}
 }

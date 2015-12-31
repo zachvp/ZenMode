@@ -2,20 +2,27 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class ZMEmitObject : MonoBehaviour
+public class ZMEmitObject : ZMPlayerItem
 {
 	[SerializeField] private GameObject resource;
 
 	public GameObject Resource { get { return resource; } }
 
-	public Color color;
 	public int interval = 10;
 
+	private Color _color;
 	private int _currentFrame = 0;
 
-	void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
+
 		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+	}
+
+	void Start()
+	{
+		_color = _playerInfo.standardColor;
 	}
 
 	void HandleGameEndEvent ()
@@ -31,7 +38,7 @@ public class ZMEmitObject : MonoBehaviour
 			GameObject emitObject = GameObject.Instantiate(resource) as GameObject;
 
 			emitObject.transform.position = transform.position;
-			emitObject.GetComponent<Text>().color = color;
+			emitObject.GetComponent<Text>().color = _color;
 			emitObject.transform.SetParent(transform);
 
 			_currentFrame = 0;

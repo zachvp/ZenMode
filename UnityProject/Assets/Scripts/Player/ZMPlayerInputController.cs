@@ -6,10 +6,6 @@ namespace ZMPlayer
 {
 	public class ZMPlayerInputController : ZMDirectionalInput
 	{
-		// Player info.
-		public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
-		private ZMPlayerInfo _playerInfo;
-
 		// Delegates.
 		public EventHandler OnMoveRightEvent;
 		public EventHandler OnMoveLeftEvent;
@@ -21,13 +17,6 @@ namespace ZMPlayer
 		public EventHandler<int> OnAttackEvent;
 
 		private const float DOT_THRESHOLD = 0.75f;
-
-		protected override void Awake()
-		{
-			base.Awake();
-
-			_playerInfo = GetComponent<ZMPlayerInfo> ();
-		}
 
 		void Update()
 		{

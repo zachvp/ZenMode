@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 
-public class ZMDirectionalInput : MonoBehaviour
+public class ZMDirectionalInput : ZMPlayerItem
 {
 	protected Vector2 _movement;
 
-	protected virtual void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
+
 		AcceptGamepadEvents();
 		AcceptKeyboardEvents();
 	}

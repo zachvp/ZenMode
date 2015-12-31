@@ -122,6 +122,8 @@ public class ZMPlayerController : ZMPlayerItem
 	public static EventHandler<ZMPlayerController, float> PlayerRecoilEvent;
 	public static EventHandler<ZMPlayerController, float> PlayerStunEvent;
 	public static EventHandler<ZMPlayerController, float> PlayerParryEvent;
+	public static EventHandler<ZMPlayerController> PlayerCreateEvent;
+
 	public static EventHandler PlayerLandPlungeEvent;
 
 	// Debug
@@ -160,28 +162,10 @@ public class ZMPlayerController : ZMPlayerItem
 		ZMPlayerManager.Instance.AddPlayer(this);
 	}
 
-	private void HandleOnMatchStart()
+	void Start()
 	{
-		EnablePlayer();
-		AcceptInputEvents();
-	}
+		transform.position = ZMPlayerManager.Instance.PlayerStartPoints[_playerInfo.ID].position;
 
-	private void HandleOnMatchPause()
-	{
-		DisablePlayer();
-
-		ClearInputEvents();
-	}
-
-	private void HandleOnMatchResume()
-	{
-		EnablePlayer();
-
-		AcceptInputEvents();
-	}
-
-	void Start() 
-	{
 		kDeathStrings = new string[39];
 		kDeathStrings[0] = "OOOAHH";
 		kDeathStrings[1] = "WHOOOP";
@@ -228,6 +212,8 @@ public class ZMPlayerController : ZMPlayerItem
 		_goreEmitter.startColor = _baseColor;
 
 		_materialDefault = renderer.material;
+
+		Notifier.SendEventNotification(PlayerCreateEvent, this);
 	}
 
 	void Update()
@@ -549,17 +535,9 @@ public class ZMPlayerController : ZMPlayerItem
 		_animator.SetBool ("isNeutral", _moveModState == MoveModState.NEUTRAL);
 		_animator.SetFloat ("velocityY", _velocity.y);
 	}
-
-	void WallJumpCooldown() {
-		_canWallJump = true;
-	}
-
-	void LungeCooldown() {
-		_canLunge = true;
-		_controlModState = ControlModState.NEUTRAL;
-	}
-
-	void OnDestroy() {
+	
+	private void OnDestroy()
+	{
 		ZMScoreController.MinScoreReached -= HandleMinScoreReached;
 
 		PlayerKillEvent		  = null;
@@ -570,10 +548,11 @@ public class ZMPlayerController : ZMPlayerItem
 		PlayerStunEvent		  = null;
 		PlayerParryEvent	  = null;
 		PlayerLandPlungeEvent = null;
+		PlayerCreateEvent	  = null;
 
 		Resources.UnloadUnusedAssets();
 	}
-
+	
 	// Setup.
 	private void AcceptInputEvents()
 	{
@@ -604,6 +583,37 @@ public class ZMPlayerController : ZMPlayerItem
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _inputController = GetComponent<ZMPlayerInputController>();
     }
+
+	private void HandleOnMatchStart()
+	{
+		EnablePlayer();
+		AcceptInputEvents();
+	}
+	
+	private void HandleOnMatchPause()
+	{
+		DisablePlayer();
+		
+		ClearInputEvents();
+	}
+	
+	private void HandleOnMatchResume()
+	{
+		EnablePlayer();
+		
+		AcceptInputEvents();
+	}
+	
+	private void WallJumpCooldown()
+	{
+		_canWallJump = true;
+	}
+	
+	private void LungeCooldown()
+	{
+		_canLunge = true;
+		_controlModState = ControlModState.NEUTRAL;
+	}
 	
 	// Event handling - CCONTROL
 	private void MoveRightEvent() {
@@ -953,7 +963,8 @@ public class ZMPlayerController : ZMPlayerItem
 		_tauntText.gameObject.SetActive (false);
 	}
 
-	private void Respawn() {
+	private void Respawn()
+	{
 		_controlModState = ControlModState.NEUTRAL;
 		_controlMoveState = ControlMoveState.NEUTRAL;
 		runSpeed = 0;

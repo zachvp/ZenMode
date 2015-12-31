@@ -1,38 +1,27 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using ZMConfiguration;
+using Core;
 
-namespace ZMPlayer{
-	public class ZMScoreController : MonoBehaviour {
-		public Slider scoreBar;
-		public Text scoreStatus;
+namespace ZMPlayer
+{
+	public class ZMScoreController : ZMPlayerItem
+	{
+		// Events
+		public static EventHandler<ZMScoreController> MaxScoreReached;
+		public static EventHandler<ZMScoreController> MinScoreReached;
+		public static EventHandler<ZMScoreController> UpdateScoreEvent;
+		public static EventHandler<ZMScoreController> CanScoreEvent;
+		public static EventHandler<ZMScoreController> CanDrainEvent;
+		public static EventHandler<ZMScoreController> StopScoreEvent;
 
 		private const float SCORE_RATE = 0.5f;
 		private const float MAX_SCORE = 1000.0f;
 
-		// Events
-		public delegate void MaxScoreAction(ZMScoreController scoreController);
-		public static event MaxScoreAction MaxScoreReached;
-
-		public delegate void MinScoreAction(ZMScoreController scoreController);
-		public static event MinScoreAction MinScoreReached;
-
-		public delegate void UpdateScoreAction(ZMScoreController scoreController);
-		public static event UpdateScoreAction UpdateScoreEvent;
-
-		public delegate void CanScoreAction(ZMScoreController scoreController);
-		public static event CanScoreAction CanScoreEvent;
-
-		public delegate void CanDrainAction(ZMScoreController scoreController);
-		public static event CanDrainAction CanDrainEvent;
-
-		public delegate void StopScoreAction(ZMScoreController scoreController);
-		public static event StopScoreAction StopScoreEvent;
-
 		// References
-		private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
+		private Slider _scoreBar;
+		private Text _scoreStatus;
 		private List<ZMScoreController> _allScoreControllers;
 		private List<ZMSoul> _drainingSouls = new List<ZMSoul>();
 		
@@ -54,11 +43,12 @@ namespace ZMPlayer{
 		private GoalState   _goalState;
 		private PointState  _pointState;
 
-		void Awake() {
-			_totalScore = 0;
-			scoreBar.maxValue = MAX_SCORE;
+		protected override void Awake()
+		{
+			base.Awake();
 
-			_playerInfo = GetComponent<ZMPlayerInfo>();
+			_totalScore = 0;
+
 			_allScoreControllers = new List<ZMScoreController>();
 
 			_targetState = TargetState.ALIVE;
@@ -76,96 +66,106 @@ namespace ZMPlayer{
 			ZMGameStateController.GameEndEvent += HandleGameEndEvent;
 		}
 
-		void HandleGameEndEvent ()
+		void HandleGameEndEvent()
 		{
 			enabled = false;
 		}
 
-		void Start () {
-			GameObject[] scoreObjects = GameObject.FindGameObjectsWithTag("Player");
-			foreach (GameObject scoreObject in scoreObjects) {
+		void Start()
+		{
+			GameObject[] scoreObjects = GameObject.FindGameObjectsWithTag(Tags.kPlayerTag);
+
+			foreach (GameObject scoreObject in scoreObjects)
+			{
 				_allScoreControllers.Add(scoreObject.GetComponent<ZMScoreController>());
 			}
 
-			scoreBar.handleRect = null;
-			scoreBar.maxValue = MAX_SCORE;
+			_scoreBar = ZMScoreDisplayManager.Instance.ScoreSliders[_playerInfo.ID];
+			_scoreBar.handleRect = null;
+			_scoreBar.maxValue = MAX_SCORE;
+
+			_scoreStatus = ZMScoreDisplayManager.Instance.ScoreStatuses[_playerInfo.ID];
 
 			// xD
-			SetScore (Settings.MatchPlayerCount.value > 2 ? MAX_SCORE / 2f : MAX_SCORE / Settings.MatchPlayerCount.value);
+			SetScore(Settings.MatchPlayerCount.value > 2 ? MAX_SCORE / 2f : MAX_SCORE / Settings.MatchPlayerCount.value);
 
 			if (_playerInfo.ID >= Settings.MatchPlayerCount.value)
 			{
-				scoreStatus.gameObject.SetActive(false);
+				_scoreStatus.gameObject.SetActive(false);
 			}
 			else
 			{
-				scoreStatus.text = "";
+				_scoreStatus.text = "";
 			}
 		}
 
-		void FixedUpdate() {
-			// pedestal score checks
-			if (IsAbleToScore()) {
-				if (_pointState != PointState.GAINING) {
+		void FixedUpdate()
+		{
+			// Score checks.
+			if (IsAbleToScore())
+			{
+				if (_pointState != PointState.GAINING)
+				{
 					_pointState = PointState.GAINING;
-					if (CanScoreEvent != null) {
-						CanScoreEvent(this);
-					}
+
+					Notifier.SendEventNotification(CanScoreEvent, this);
 				}
-			} else if (_pointState != PointState.NEUTRAL) {
+			}
+			else if (_pointState != PointState.NEUTRAL)
+			{
 				_pointState = PointState.NEUTRAL;
 
-				if (StopScoreEvent != null) {
-					StopScoreEvent(this);
-				}
+				Notifier.SendEventNotification(StopScoreEvent, this);
 			}
 
 			// state handling
-			if (_pointState == PointState.GAINING) {
-				foreach (ZMSoul soul in _drainingSouls) {
+			if (_pointState == PointState.GAINING)
+			{
+				foreach (ZMSoul soul in _drainingSouls)
+				{
 					if (soul.GetComponent<ZMPedestalController>().IsDiabled()) continue;
 
-					if ((soul.GetZen() - SCORE_RATE) > 0) {
+					if ((soul.GetZen() - SCORE_RATE) > 0)
+					{
 						AddToScore(SCORE_RATE);
 						soul.AddZen(-SCORE_RATE);
 						soul.SendMessage("SetPulsingOn");
-					} else if (soul.GetZen() > 0) {
+					}
+					else if (soul.GetZen() > 0)
+					{
 						AddToScore(soul.GetZen());
 						soul.SetZen(0);
 						soul.SendMessage("SetPulsingOff");
 					}
 				}
-			} else if (_pointState == PointState.LOSING) {
-				if (CanDrainEvent != null) {
-					CanDrainEvent(this);
-				}
+			}
+			else if (_pointState == PointState.LOSING)
+			{
+				Notifier.SendEventNotification(CanDrainEvent, this);
 
 			}
 
 			// player score checks
-			if (_totalScore <= 0 && _goalState != GoalState.MIN) {
+			if (_totalScore <= 0 && _goalState != GoalState.MIN)
+			{
 				_goalState = GoalState.MIN;
 
-				if (scoreStatus != null) {
-					scoreStatus.text = "ELIMINATED!";
-				}
+				if (_scoreStatus != null) { _scoreStatus.text = "ELIMINATED!"; }
 
-				if (MinScoreReached != null) {
-					MinScoreReached(this);
-				}
+				Notifier.SendEventNotification(MinScoreReached, this);
 			}
 
-			if (_totalScore >= MAX_SCORE && !IsMaxed()) {
+			if (_totalScore >= MAX_SCORE && !IsMaxed())
+			{
 				_goalState = GoalState.MAX;
 			}
 
 			// player score state checks
-			if (_goalState == GoalState.MAX) {
+			if (_goalState == GoalState.MAX)
+			{
 				_goalState = GoalState.MAXED;
 
-				if (MaxScoreReached != null && Settings.MatchPlayerCount.value > 1) {
-					MaxScoreReached(this);
-				}
+				Notifier.SendEventNotification(MaxScoreReached, this);
 			}
 		}
 
@@ -210,8 +210,10 @@ namespace ZMPlayer{
 		}
 
 		// utility methods
-		public void AddToScore(float amount) {
-			if (_totalScore >= 0.0f && _totalScore < MAX_SCORE) {
+		public void AddToScore(float amount)
+		{
+			if (_totalScore >= 0.0f && _totalScore < MAX_SCORE)
+			{
 				_totalScore += amount;
 
 				if (_totalScore < 0) _totalScore = 0;
@@ -222,16 +224,15 @@ namespace ZMPlayer{
 		}
 
 
-		private void UpdateUI() {
+		private void UpdateUI()
+		{
 			_totalScore = Mathf.Max(_totalScore, 0);
 
 			float normalizedScore = (_totalScore / MAX_SCORE) * MAX_SCORE;
 
-			scoreBar.value = normalizedScore;
+			_scoreBar.value = normalizedScore;
 
-			if (UpdateScoreEvent != null) {
-				UpdateScoreEvent(this);
-			}
+			Notifier.SendEventNotification(UpdateScoreEvent, this);
 		}
 
 
@@ -241,8 +242,10 @@ namespace ZMPlayer{
 		private bool IsMaxed() { return _goalState == GoalState.MAX || _goalState == GoalState.MAXED; }
 
 		// event handlers
-		private void HandlePlayerDeathEvent (ZMPlayerController playerController) {
-			if (playerController.gameObject.Equals(gameObject)) {
+		private void HandlePlayerDeathEvent (ZMPlayerController playerController)
+		{
+			if (playerController.gameObject.Equals(gameObject))
+			{
 				_targetState = TargetState.DEAD;
 			}
 		}
@@ -273,17 +276,21 @@ namespace ZMPlayer{
 			_drainingSouls.Remove(soul);
 		}
 
-		private void RemoveSoul(ZMPedestalController pedestalController) {
+		private void RemoveSoul(ZMPedestalController pedestalController)
+		{
 			ZMSoul soul = pedestalController.GetComponent<ZMSoul>();
 
-			if (soul != null) {
+			if (soul != null)
+			{
 				soul.SendMessage("SetPulsingOff");
 				RemoveSoul(soul);
 			}
 		}
 
-		private void AddSoul(ZMSoul soul) {
-			if (!_drainingSouls.Contains(soul)) {
+		private void AddSoul(ZMSoul soul)
+		{
+			if (!_drainingSouls.Contains(soul))
+			{
 				_drainingSouls.Add(soul);
 			}
 		}

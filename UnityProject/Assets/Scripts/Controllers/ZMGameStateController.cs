@@ -5,9 +5,8 @@ using UnityEngine.UI;
 using ZMPlayer;
 using ZMConfiguration;
 
-public class ZMGameStateController : MonoBehaviour {
-	public Text outputText;
-	public Text absorbText;
+public class ZMGameStateController : MonoBehaviour
+{
 	public AudioClip audioComplete;
 
 	private int _playerCount;
@@ -24,7 +23,7 @@ public class ZMGameStateController : MonoBehaviour {
 	private List<ZMPlayerController> _players;
 	private List<ZMScoreController> _scoreControllers; public List<ZMScoreController> ScoreControllers { get { return _scoreControllers; } }
 	private bool _firedGameEndEvent;
-	private bool _showAbsorbText = true;
+	private Text _outputText;
 
 	// constants
 	private Vector3 outputTextPositionUpOffset = new Vector3 (0, 109, 0);
@@ -59,8 +58,6 @@ public class ZMGameStateController : MonoBehaviour {
 
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 
-		ZMPedestalController.ActivateEvent += HandleActivateEvent;
-
 		MatchStateManager.OnMatchPause += HandleOnMatchPause;
 		MatchStateManager.OnMatchResume += HandleOnMatchResume;
 		MatchStateManager.OnMatchReset += HandleResetGame;
@@ -68,8 +65,9 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void Start()
 	{
-		outputText.text = "";
-		absorbText.text = "";
+		_outputText = GameObject.FindGameObjectWithTag(Tags.kOutput).GetComponent<Text>();
+
+		_outputText.text = "";
 				
 		_playerCount = Settings.MatchPlayerCount.value;
 		
@@ -121,7 +119,7 @@ public class ZMGameStateController : MonoBehaviour {
 		/** State check **/
 		if (_matchState == MatchState.PRE_MATCH)
 		{
-			outputText.text = "Get Ready";
+			_outputText.text = "Get Ready";
 		}
 		else if (_matchState == MatchState.BEGIN_COUNTDOWN)
 		{
@@ -148,7 +146,7 @@ public class ZMGameStateController : MonoBehaviour {
 			if (_matchState != MatchState.POST_MATCH)
 			{
 				_gameState = GameState.NEUTRAL;
-				outputText.text = "";
+				_outputText.text = "";
 			}
 		}
 		else if (_gameState == GameState.PAUSE)
@@ -159,7 +157,9 @@ public class ZMGameStateController : MonoBehaviour {
 
 				PauseGame();
 			}
-		} else if (_gameState == GameState.RESET) {
+		}
+		else if (_gameState == GameState.RESET)
+		{
 			_gameState = GameState.NEUTRAL;
 			ResetGame();
 		}
@@ -167,8 +167,7 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
 	{
-		if (waypointMovement.CompareTag("MainCamera"))
-			_matchState = MatchState.BEGIN_COUNTDOWN;
+		if (waypointMovement.CompareTag("MainCamera")) { _matchState = MatchState.BEGIN_COUNTDOWN; }
 	}
 	
 	void HandleGameTimerEndedEvent()
@@ -177,7 +176,7 @@ public class ZMGameStateController : MonoBehaviour {
 		{
 			_matchState = MatchState.POST_MATCH;
 			audio.PlayOneShot(audioComplete, 2.0f);
-			outputText.text = _victoryMessage;
+			_outputText.text = _victoryMessage;
 		}
 	}
 	
@@ -223,7 +222,7 @@ public class ZMGameStateController : MonoBehaviour {
 	
 	private void BeginGame()
 	{
-		outputText.text = "Begin!";
+		_outputText.text = "Begin!";
 		_matchState = MatchState.MATCH;
 		
 		Notifier.SendEventNotification(StartGameEvent);
@@ -234,12 +233,12 @@ public class ZMGameStateController : MonoBehaviour {
 
 	private void PauseGame()
 	{
-		outputText.rectTransform.position = outputTextPositionUpOffset;
+		_outputText.rectTransform.position = outputTextPositionUpOffset;
 	}
 	
 	void ClearOutputText()
 	{
-		outputText.text = "";
+		_outputText.text = "";
 	}
 
 	private void ResetGame()
@@ -288,11 +287,11 @@ public class ZMGameStateController : MonoBehaviour {
 
 	void EndGame()
 	{
-		outputText.rectTransform.position = outputTextPositionUpOffset;
+		_outputText.rectTransform.position = outputTextPositionUpOffset;
 
 		if (ZMCrownManager.LeadingPlayerIndex < 0) { _victoryMessage = "DRAW!"; }
 
-		outputText.text = _victoryMessage;
+		_outputText.text = _victoryMessage;
 
 		for (int i = 0; i < _playerCount && i < _players.Count; ++i)
 		{
@@ -319,19 +318,6 @@ public class ZMGameStateController : MonoBehaviour {
 		{
 			_objectsToSpawn.Enqueue(playerController);
 			Invoke("SpawnObject", 5.0f);
-
-			if (_showAbsorbText)
-			{
-				_showAbsorbText = false;
-				absorbText.text = "ABSORB THEIR ZEN";
-			}
 		}
-	}
-
-	private void HandleActivateEvent(ZMPedestalController pedestalController)
-	{
-		if (absorbText.text == "ABSORB THEIR ZEN") {
-			absorbText.text = "GOOD";
-		}
-	}
+	}	
 }
