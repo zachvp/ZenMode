@@ -1,42 +1,30 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &168424
+--- !u!1 &162468
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 468424}
-  - 114: {fileID: 11468424}
-  - 114: {fileID: 11459956}
-  - 114: {fileID: 11447544}
-  - 82: {fileID: 8247544}
-  m_Layer: 0
-  m_Name: GameStateManager
-  m_TagString: GameController
+  - 224: {fileID: 22462468}
+  - 222: {fileID: 22262468}
+  - 114: {fileID: 11462468}
+  - 114: {fileID: 11462470}
+  - 82: {fileID: 8262468}
+  m_Layer: 5
+  m_Name: TimerText
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &468424
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 168424}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 0
---- !u!82 &8247544
+--- !u!82 &8262468
 AudioSource:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 168424}
+  m_GameObject: {fileID: 162468}
   m_Enabled: 1
   serializedVersion: 3
   m_audioClip: {fileID: 0}
@@ -89,40 +77,79 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
---- !u!114 &11447544
+--- !u!114 &11462468
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 168424}
+  m_GameObject: {fileID: 162468}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 728f00430ab5b4b23ac1619cc71df5d3, type: 3}
+  m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11459956
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: .745098054}
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 2ea5a10b04910487f8ef993bd6072ab7, type: 3}
+    m_FontSize: 200
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 3:00
+--- !u!114 &11462470
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 168424}
+  m_GameObject: {fileID: 162468}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 536229b21385625449ade63f29b4a9d5, type: 3}
+  m_Script: {fileID: 11500000, guid: e6d8d2f29618e3248ac2a0af716118ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11468424
-MonoBehaviour:
+  displayType: 1
+  startValue: 180
+  min: 0
+  max: 0
+  valueIncrement: -1
+  timeIncrement: 1
+  shouldClearOnCompletion: 0
+  start: 1
+  juicy: 1
+  counterUIText: {fileID: 11462468}
+  minMessage: 
+  maxMessage: TIME
+  audioTick: {fileID: 8300000, guid: d7bda4b15091948a79b18fe4681034bd, type: 3}
+--- !u!222 &22262468
+CanvasRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 168424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45ce649cacc2df54b8a230b62533fdb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioComplete: {fileID: 8300000, guid: b387ab8d6b25f43bd85346383b56cb55, type: 3}
+  m_GameObject: {fileID: 162468}
+--- !u!224 &22462468
+RectTransform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 162468}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: .300000012, y: .300000012, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_AnchorMin: {x: .5, y: .5}
+  m_AnchorMax: {x: .5, y: .5}
+  m_AnchoredPosition: {x: 6.10947609e-06, y: 310.799988}
+  m_SizeDelta: {x: 500, y: 200}
+  m_Pivot: {x: .5, y: .5}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -132,6 +159,6 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 168424}
+  m_RootGameObject: {fileID: 162468}
   m_IsPrefabParent: 1
   m_IsExploded: 1

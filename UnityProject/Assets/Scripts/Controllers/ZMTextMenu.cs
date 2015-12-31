@@ -4,16 +4,18 @@ using Core;
 
 public class ZMTextMenu : ZMMenuInput
 {
-	public bool startActive = false;
-	public Text[] menuOptions;
-	public int _selectedIndex = 0;
+	public bool startActive;
 	public AudioClip[] _audioChoose;
 	public AudioClip[] _audioHighlight;
 
-	private int  _optionsSize;
+	protected int _selectedIndex;
+
+	private Text[] _menuOptions;
 	
 	private Color _baseColor;
 	private Color _selectedColor;
+
+	private int  _optionsSize;
 
 	public static EventHandler<int> SelectOptionEvent; 
 
@@ -21,15 +23,25 @@ public class ZMTextMenu : ZMMenuInput
 	{
 		base.Awake();
 
-		_baseColor 	   = menuOptions[0].color;
+		_menuOptions = new Text[transform.childCount];
+		_optionsSize = _menuOptions.Length;
 		_selectedColor = new Color(255, 255, 255, 255);
-		_optionsSize = menuOptions.Length;
-
-		UpdateUI();
 	}
 
 	protected virtual void Start()
 	{
+		for (int i = 0; i < _menuOptions.Length; ++i)
+		{
+			var text = transform.GetChild(i).GetComponent<Text>();
+
+			if (text == null) { Debug.LogError("ZMTextMenu: Child of TextMenu does not have Text component."); }
+
+			_menuOptions[i] = text;
+		}
+
+		_baseColor = _menuOptions[0].color;
+
+		UpdateUI();
 		ToggleActive(startActive);
 	}
 
@@ -69,7 +81,7 @@ public class ZMTextMenu : ZMMenuInput
 
 	private void ToggleSelection(int index, bool selected)
 	{
-		menuOptions[index].color = selected ? _selectedColor : _baseColor;
+		_menuOptions[index].color = selected ? _selectedColor : _baseColor;
 	}
 	
 	protected virtual void ToggleActive(bool active)
@@ -78,16 +90,19 @@ public class ZMTextMenu : ZMMenuInput
 		gameObject.SetActive(active);
 	}
 	
-	protected void HideUI() {
+	protected void HideUI()
+	{
 		Color transparent = new Color(_baseColor.r, _baseColor.g, _baseColor.b, 0);
 
-		foreach (Text text in menuOptions) {
+		foreach (Text text in _menuOptions) {
 			text.color = transparent;
 		}
 	}
 
-	protected void ShowUI() {
-		foreach (Text text in menuOptions) {
+	protected void ShowUI()
+	{
+		foreach (Text text in _menuOptions)
+		{
 			text.color = _baseColor;
 		}
 	}

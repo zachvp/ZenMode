@@ -12,8 +12,16 @@ public class ZMPauseMenu : ZMTextMenu
 		if (Application.loadedLevel == ZMSceneIndexList.INDEX_LOBBY) {
 			ZMLobbyController.PauseGameEvent += HandlePauseGameLobbyEvent;
 		}
+		else if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
+			ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+		}
 
 		AcceptInputEvents();
+	}
+
+	void OnDestroy()
+	{
+		ZMGameStateController.GameEndEvent -= HandleGameEndEvent;
 	}
 
 	private void HandlePauseGameLobbyEvent(int playerIndex)
@@ -79,5 +87,12 @@ public class ZMPauseMenu : ZMTextMenu
 	{
 		ToggleActive(false);
 		MatchStateManager.ResumeMatch();
+	}
+
+	private void HandleGameEndEvent()
+	{		
+		HideUI();
+		
+		ToggleActive(false);
 	}
 }
