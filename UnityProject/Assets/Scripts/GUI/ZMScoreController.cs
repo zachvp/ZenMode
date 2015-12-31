@@ -63,7 +63,7 @@ namespace ZMPlayer
 
 			ZMPedestalController.DeactivateEvent += HandlePedestalDeactivation;
 
-			ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+			ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
 		}
 
 		void HandleGameEndEvent()

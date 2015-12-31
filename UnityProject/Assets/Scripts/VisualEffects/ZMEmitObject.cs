@@ -17,7 +17,7 @@ public class ZMEmitObject : ZMPlayerItem
 	{
 		base.Awake();
 
-		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+		ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
 	}
 
 	void Start()

@@ -7,7 +7,7 @@ public class ZMGameEndMenu : ZMTextMenu
 	{
 		base.Awake();
 
-		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+		ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
 	}
 
 	protected override void HandleMenuSelection()

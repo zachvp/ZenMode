@@ -25,8 +25,8 @@ public class ZMTimedCounter : MonoBehaviour {
 	{
 		_value = startValue;
 
-		ZMGameStateController.StartGameEvent += StartTimer;
-		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+		ZMGameStateController.Instance.StartGameEvent += StartTimer;
+		ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
 
 		MatchStateManager.OnMatchPause += PauseTimer;
 		MatchStateManager.OnMatchResume += StartTimer;

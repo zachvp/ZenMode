@@ -12,7 +12,7 @@ public class ZMStatDisplay : MonoBehaviour {
 	{
 		_allPlayerInfo = new ZMPlayerInfo[Constants.MAX_PLAYERS];
 
-		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+		ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
 
 		gameObject.SetActive(false);
 	}

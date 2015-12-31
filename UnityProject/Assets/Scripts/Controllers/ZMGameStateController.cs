@@ -12,11 +12,11 @@ public class ZMGameStateController : MonoBehaviour
 	private int _playerCount;
 
 	public enum GameState { NEUTRAL, BEGIN, PAUSE, PAUSED, RESUME, RESET };
-	private static GameState _gameState; public static GameState Game_State { get { return _gameState; } }
-
 	public enum MatchState { PRE_MATCH, BEGIN_COUNTDOWN, MATCH, POST_MATCH, GARBAGE };
-	private static MatchState _matchState; public static MatchState Match_State { get { return _matchState; } }
 
+	public GameState gameState { get; private set; }
+	public MatchState matchState { get; private set; }
+	
 	private const float END_GAME_DELAY = 1.0f;
 
 	private const string kEndGameMethodName		    = "EndGame";
@@ -34,19 +34,34 @@ public class ZMGameStateController : MonoBehaviour
 	// constants
 	private Vector3 outputTextPositionUpOffset = new Vector3 (0, 109, 0);
 	
-	// delegates
-	public static EventHandler<ZMGameStateController, ZMPlayerController> SpawnObjectEvent;
+	// Events.
+	public EventHandler<ZMGameStateController, ZMPlayerController> SpawnObjectEvent;
 
-	public static EventHandler StartGameEvent;
-	public static EventHandler ResetGameEvent;
-	public static EventHandler GameEndEvent;
-	public static EventHandler QuitMatchEvent;
+	public EventHandler StartGameEvent;
+	public EventHandler ResetGameEvent;
+	public EventHandler GameEndEvent;
+	public EventHandler QuitMatchEvent;
 
 	// HACKS!
 	private string _victoryMessage;
 
+	public static ZMGameStateController Instance
+	{
+		get
+		{
+			if (_instance == null) { Debug.LogError("ZMGameStateController: Instance does not exist in scene."); }
+
+			return _instance;
+		}
+	}
+
+	private static ZMGameStateController _instance;
+
 	void Awake()
 	{
+		if (_instance != null) { Debug.LogError("ZMGameStateController: Another instance already exists in the scene."); }
+
+		_instance = this;
 		_spawnpoints = new List<Transform>();
 		_objectsToSpawn = new Queue<ZMPlayerController>(Constants.MAX_PLAYERS);
 		_players =  new List<ZMPlayerController>(Constants.MAX_PLAYERS);
@@ -109,29 +124,22 @@ public class ZMGameStateController : MonoBehaviour
 	
 	void OnDestroy()
 	{
-		SpawnObjectEvent    = null;
-		StartGameEvent      = null;
-		GameEndEvent	    = null;
-		ResetGameEvent 		= null;
-		QuitMatchEvent		= null;
-
-		_gameState = GameState.NEUTRAL;
-		_matchState = MatchState.PRE_MATCH;
+		_instance = null;
 		MatchStateManager.Clear();
 	}
 
 	void Update()
 	{
 		/** State check **/
-		if (_matchState == MatchState.PRE_MATCH)
+		if (matchState == MatchState.PRE_MATCH)
 		{
 			_outputText.text = "Get Ready";
 		}
-		else if (_matchState == MatchState.BEGIN_COUNTDOWN)
+		else if (matchState == MatchState.BEGIN_COUNTDOWN)
 		{
 			BeginGame();
 		}
-		else if (_matchState == MatchState.POST_MATCH)
+		else if (matchState == MatchState.POST_MATCH)
 		{
 			float maxScore = 0.0f;
 
@@ -144,45 +152,45 @@ public class ZMGameStateController : MonoBehaviour
 				}
 			}
 
-			_matchState = MatchState.GARBAGE;
+			matchState = MatchState.GARBAGE;
 
 			if (!IsInvoking(kEndGameMethodName)) { Invoke(kEndGameMethodName, END_GAME_DELAY); }
 		}
 
-		if (_gameState == GameState.RESUME)
+		if (gameState == GameState.RESUME)
 		{
-			if (_matchState != MatchState.POST_MATCH)
+			if (matchState != MatchState.POST_MATCH)
 			{
-				_gameState = GameState.NEUTRAL;
+				gameState = GameState.NEUTRAL;
 				_outputText.text = "";
 			}
 		}
-		else if (_gameState == GameState.PAUSE)
+		else if (gameState == GameState.PAUSE)
 		{
-			if (_matchState != MatchState.POST_MATCH && _matchState != MatchState.PRE_MATCH)
+			if (matchState != MatchState.POST_MATCH && matchState != MatchState.PRE_MATCH)
 			{
-				_gameState = GameState.PAUSED;
+				gameState = GameState.PAUSED;
 
 				PauseGame();
 			}
 		}
-		else if (_gameState == GameState.RESET)
+		else if (gameState == GameState.RESET)
 		{
-			_gameState = GameState.NEUTRAL;
+			gameState = GameState.NEUTRAL;
 			ResetGame();
 		}
 	}
 
 	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
 	{
-		if (waypointMovement.CompareTag("MainCamera")) { _matchState = MatchState.BEGIN_COUNTDOWN; }
+		if (waypointMovement.CompareTag("MainCamera")) { matchState = MatchState.BEGIN_COUNTDOWN; }
 	}
 	
 	void HandleGameTimerEndedEvent()
 	{
-		if (_matchState != MatchState.POST_MATCH)
+		if (matchState != MatchState.POST_MATCH)
 		{
-			_matchState = MatchState.POST_MATCH;
+			matchState = MatchState.POST_MATCH;
 			audio.PlayOneShot(audioComplete, 2.0f);
 			_outputText.text = _victoryMessage;
 		}
@@ -207,31 +215,31 @@ public class ZMGameStateController : MonoBehaviour
 	
 	private void HandleOnMatchPause()
 	{
-		if (_gameState == GameState.PAUSE || _gameState == GameState.PAUSED)
+		if (gameState == GameState.PAUSE || gameState == GameState.PAUSED)
 		{
-			_gameState = GameState.RESUME;
+			gameState = GameState.RESUME;
 		}
-		else if (_matchState != MatchState.PRE_MATCH)
+		else if (matchState != MatchState.PRE_MATCH)
 		{
-			_gameState = GameState.PAUSE;
+			gameState = GameState.PAUSE;
 		}
 	}
 	
 	private void HandleOnMatchResume()
 	{
-		_gameState = GameState.RESUME;
+		gameState = GameState.RESUME;
 	}
 
 	private void HandleMaxScoreReached(ZMScoreController scoreController)
 	{
-		_matchState = MatchState.POST_MATCH;
+		matchState = MatchState.POST_MATCH;
 		audio.PlayOneShot(audioComplete, 2.0f);
 	}
 	
 	private void BeginGame()
 	{
 		_outputText.text = "Begin!";
-		_matchState = MatchState.MATCH;
+		matchState = MatchState.MATCH;
 		
 		Notifier.SendEventNotification(StartGameEvent);
 		MatchStateManager.StartMatch();
@@ -258,7 +266,7 @@ public class ZMGameStateController : MonoBehaviour
 
 	private void SpawnObject()
 	{
-		if (_matchState == MatchState.POST_MATCH) { return; }
+		if (matchState == MatchState.POST_MATCH) { return; }
 
 		float maximumDistance = float.MinValue;
 		int targetIndex = 0;

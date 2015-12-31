@@ -11,8 +11,9 @@ public class ZMLightPulse : MonoBehaviour {
 
 	private bool _pulsing; public bool Pulsing { get { return _pulsing; } set { _pulsing = value; } }
 
-	void Awake() {
-		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+	void Awake()
+	{
+		ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
 	}
 
 	void HandleGameEndEvent ()

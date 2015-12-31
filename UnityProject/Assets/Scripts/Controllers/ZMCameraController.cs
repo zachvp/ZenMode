@@ -25,8 +25,8 @@ public class ZMCameraController : MonoBehaviour {
 
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 
-		ZMGameStateController.StartGameEvent += HandleStartGameEvent;
-		ZMGameStateController.GameEndEvent   += HandleGameEndEvent;
+		ZMGameStateController.Instance.StartGameEvent += HandleStartGameEvent;
+		ZMGameStateController.Instance.GameEndEvent   += HandleGameEndEvent;
 
 		MatchStateManager.OnMatchPause += HandlePauseGameEvent;
 

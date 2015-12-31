@@ -44,7 +44,8 @@ public class ZMPedestalController : MonoBehaviour {
 		ZMScoreController.CanScoreEvent 	     += HandleCanScoreEvent;
 		ZMScoreController.StopScoreEvent   	     += HandleStopScoreEvent;
 		ZMScoreController.MinScoreReached	     += HandleMinScoreReached;
-		ZMGameStateController.SpawnObjectEvent   += HandleSpawnObjectEvent;
+
+		ZMGameStateController.Instance.SpawnObjectEvent   += HandleSpawnObjectEvent;
 
 		Disable();
 	}

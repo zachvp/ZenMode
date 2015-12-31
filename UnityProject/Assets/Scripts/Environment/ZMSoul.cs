@@ -24,7 +24,7 @@ public class ZMSoul : MonoBehaviour
 		ZMScoreController.CanScoreEvent += HandleCanScoreEvent;
 		ZMScoreController.StopScoreEvent += HandleStopScoreEvent;
 
-		ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+		ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
 
 		MatchStateManager.OnMatchPause += HandlePauseGameEvent;
 		MatchStateManager.OnMatchResume += HandleResumeGameEvent;

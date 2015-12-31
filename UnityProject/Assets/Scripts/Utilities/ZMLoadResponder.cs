@@ -6,18 +6,13 @@ public class ZMLoadResponder : MonoBehaviour {
 		ZMMainMenuController.LoadGameEvent += HandleLoadGameEvent;
 
 		if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
-			ZMGameStateController.ResetGameEvent += HandleResetGameEvent;
-			ZMGameStateController.QuitMatchEvent += HandleLoadGameEvent;
+			ZMGameStateController.Instance.ResetGameEvent += HandleResetGameEvent;
+			ZMGameStateController.Instance.QuitMatchEvent += HandleLoadGameEvent;
 		}
 	}
 
 	void Start() {
 		gameObject.SetActive(false);
-	}
-
-	void OnDestroy() {
-		ZMMainMenuController.LoadGameEvent -= HandleLoadGameEvent;
-		ZMGameStateController.QuitMatchEvent -= HandleLoadGameEvent;
 	}
 
 	void HandleResetGameEvent ()

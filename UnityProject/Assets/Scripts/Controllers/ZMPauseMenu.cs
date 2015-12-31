@@ -13,15 +13,10 @@ public class ZMPauseMenu : ZMTextMenu
 			ZMLobbyController.PauseGameEvent += HandlePauseGameLobbyEvent;
 		}
 		else if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
-			ZMGameStateController.GameEndEvent += HandleGameEndEvent;
+			ZMGameStateController.Instance.GameEndEvent += HandleGameEndEvent;
 		}
 
 		AcceptInputEvents();
-	}
-
-	void OnDestroy()
-	{
-		ZMGameStateController.GameEndEvent -= HandleGameEndEvent;
 	}
 
 	private void HandlePauseGameLobbyEvent(int playerIndex)
