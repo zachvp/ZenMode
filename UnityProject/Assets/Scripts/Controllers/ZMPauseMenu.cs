@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 using Core;
+using ZMPlayer;
 
 public class ZMPauseMenu : ZMTextMenu
 {
+	public static EventHandler<ZMPlayerInfo> OnPlayerPauseGame;
+
 	private bool _active;
 
 	protected override void Awake()
 	{
-		base.Awake ();
+		base.Awake();
 
 		if (Application.loadedLevel == ZMSceneIndexList.INDEX_LOBBY) {
 			ZMLobbyController.PauseGameEvent += HandlePauseGameLobbyEvent;
@@ -16,7 +19,13 @@ public class ZMPauseMenu : ZMTextMenu
 			MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 		}
 
+		_playerInfo = GetComponent<ZMPlayerInfo>();
 		AcceptInputEvents();
+	}
+
+	void OnDestroy()
+	{
+		OnPlayerPauseGame = null;
 	}
 
 	private void HandlePauseGameLobbyEvent(int playerIndex)
@@ -32,6 +41,7 @@ public class ZMPauseMenu : ZMTextMenu
 		}
 		else
 		{
+			_playerInfo.ID = controlIndex;
 			PauseGame();
 		}
 	}
@@ -81,7 +91,8 @@ public class ZMPauseMenu : ZMTextMenu
 	private void PauseGame()
 	{
 		ShowMenu();
-				
+
+		Notifier.SendEventNotification(OnPlayerPauseGame, _playerInfo);
 		MatchStateManager.PauseMatch();
 	}
 	

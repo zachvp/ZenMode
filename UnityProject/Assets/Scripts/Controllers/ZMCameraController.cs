@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Core;
+using ZMConfiguration;
 
 public class ZMCameraController : MonoBehaviour
 {
@@ -22,8 +23,7 @@ public class ZMCameraController : MonoBehaviour
 
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 
-		ZMGameStateController.Instance.StartGameEvent += HandleStartGameEvent;
-
+		MatchStateManager.OnMatchStart += HandleStartGameEvent;
 		MatchStateManager.OnMatchEnd   += HandleGameEndEvent;
 		MatchStateManager.OnMatchPause += HandlePauseGameEvent;
 
@@ -90,7 +90,8 @@ public class ZMCameraController : MonoBehaviour
 	
 	private void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
 	{
-		if (waypointMovement.name.Equals("Main Camera")) {
+		if (waypointMovement.CompareTag(Tags.kMainCamera))
+		{
 			Zoom(endZoom);
 			_speed = 1.0f;
 		}

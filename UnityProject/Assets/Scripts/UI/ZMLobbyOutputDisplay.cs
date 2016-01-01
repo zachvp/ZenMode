@@ -1,18 +1,19 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class ZMPauseOutput : MonoBehaviour {
-
+public class ZMLobbyOutputDisplay : MonoBehaviour
+{
 	public Text text;
 
-	void Awake () {
+	void Awake()
+	{
 		text.enabled = false;
 
 		ZMLobbyController.PauseGameEvent += HandlePauseGameEvent;
 		ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
 	}
 
-	void HandleResumeGameEvent ()
+	void HandleResumeGameEvent()
 	{
 		text.enabled = false;
 	}

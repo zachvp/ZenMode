@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using Core;
 
@@ -18,6 +20,7 @@ namespace ZMConfiguration
 		public const string kScoreGui				= "ScoreGui";
 		public const string kScoreStatus			= "ScoreStatus";
 		public const string kOutput					= "Output";
+		public const string kMainCamera				= "MainCamera";
 	}
 
 	public static class Settings
@@ -75,6 +78,20 @@ namespace Core
 		public static Color GetRGB(Color lhs, Color rhs)
 		{
 			return new Color(rhs.r, rhs.g, rhs.b, lhs.a);
+		}
+
+		public static IEnumerator ExecuteAfterDelay(EventHandler method, float delay)
+		{
+			yield return new WaitForSeconds(delay);
+
+			method();
+		}
+
+		public static IEnumerator ExecuteAfterDelay<T1>(EventHandler<T1> method, float delay, T1 param1)
+		{
+			yield return new WaitForSeconds(delay);
+			
+			method(param1);
 		}
 	}
 }

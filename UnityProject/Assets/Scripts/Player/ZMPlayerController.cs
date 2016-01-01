@@ -963,7 +963,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_spriteRenderer.enabled = true;
 		light.enabled = true;
 
-		transform.position = ZMGameStateController.Instance.GetSpawnPosition();
+		transform.position = ZMSpawnManager.Instance.GetSpawnPosition();
 
 		EnablePlayer();
 		SetMovementDirection(transform.position.x < 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);

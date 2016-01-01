@@ -29,6 +29,11 @@ public class ZMPlayerItem : MonoBehaviour
 		if (text != null) { text.color = _playerInfo.standardColor; }
 	}
 
+	public virtual void ConfigureItemWithID(int id)
+	{
+		ConfigureItemWithID(null, id);
+	}
+
 	protected virtual void Awake()
 	{
 		AcceptPlayerEvents();

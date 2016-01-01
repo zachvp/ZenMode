@@ -1,26 +1,27 @@
 ﻿using UnityEngine;
-using System.Collections;
+using Core;
 
-public class ZMLoadResponder : MonoBehaviour {
-	void Awake () {
+public class ZMLoadResponder : MonoBehaviour
+{
+	void Awake ()
+	{
 		ZMMainMenuController.LoadGameEvent += HandleLoadGameEvent;
 
-		if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
-			ZMGameStateController.Instance.ResetGameEvent += HandleResetGameEvent;
-			ZMGameStateController.Instance.QuitMatchEvent += HandleLoadGameEvent;
-		}
+		MatchStateManager.OnMatchReset += HandleResetGameEvent;
+		MatchStateManager.OnMatchExit += HandleLoadGameEvent;
 	}
 
-	void Start() {
+	void Start()
+	{
 		gameObject.SetActive(false);
 	}
 
-	void HandleResetGameEvent ()
+	private void HandleResetGameEvent()
 	{
 		gameObject.SetActive(true);
 	}
 
-	void HandleLoadGameEvent()
+	private void HandleLoadGameEvent()
 	{
 		gameObject.SetActive(true);
 	}

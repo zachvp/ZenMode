@@ -82,9 +82,9 @@ public class ZMPlayerManager : MonoBehaviour
 			_players[player.PlayerInfo.ID].transform.position = _playerStartPoints[player.PlayerInfo.ID].position;
 
 			_scores[player.PlayerInfo.ID] = score;
-			score.ConfigureItemWithID(null, player.PlayerInfo.ID);
+			score.ConfigureItemWithID(player.PlayerInfo.ID);
 
-			input.ConfigureItemWithID(null, player.PlayerInfo.ID);
+			input.ConfigureItemWithID(player.PlayerInfo.ID);
 		}
 
 		Notifier.SendEventNotification(OnAllPlayersSpawned);

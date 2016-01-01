@@ -25,7 +25,6 @@ public class ZMPlayerItemCreation : MonoBehaviour
 			for (int c = 0; c < components.Length; ++c)
 			{
 				components[c].ConfigureItemWithID(transform, i);
-//				item.ConfigureItemWithID(transform, i);
 			}
 		}
 	}

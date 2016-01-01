@@ -68,9 +68,9 @@ namespace ZMPlayer
 			enabled = false;
 		}
 
-		public override void ConfigureItemWithID(Transform parent, int id)
+		public override void ConfigureItemWithID(int id)
 		{
-			base.ConfigureItemWithID(parent, id);
+			base.ConfigureItemWithID(id);
 
 			GameObject[] scoreObjects = GameObject.FindGameObjectsWithTag(Tags.kPlayerTag);
 

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using Core;
 
 public class ZMStageSoundCues : MonoBehaviour {
 	public AudioClip focusOnPlayer;
@@ -17,14 +17,14 @@ public class ZMStageSoundCues : MonoBehaviour {
 		ZMWaypointMovement.AtPathNodeEvent += HandleAtPathNodeEvent;
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 
-		ZMGameStateController.Instance.StartGameEvent += HandleStartGameEvent;
+		MatchStateManager.OnMatchStart += HandleStartGameEvent;
 
 		ZMPedestalController.DeactivateEvent += HandleDeactivateEvent;
 	}
 
 	void HandleDeactivateEvent (ZMPedestalController pedestalController)
 	{
-		if (ZMGameStateController.Instance.matchState == ZMGameStateController.MatchState.MATCH)
+		if (MatchStateManager.IsMain())
 		{ 
 			int index = Random.Range(0, zenPop.Length - 1);
 

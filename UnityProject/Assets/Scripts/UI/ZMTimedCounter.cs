@@ -21,12 +21,11 @@ public class ZMTimedCounter : MonoBehaviour {
 
 	public delegate void GameTimerEndedAction(); public static event GameTimerEndedAction GameTimerEndedEvent;
 	
-	void Awake ()
+	void Awake()
 	{
 		_value = startValue;
 
-		ZMGameStateController.Instance.StartGameEvent += StartTimer;
-
+		MatchStateManager.OnMatchStart += StartTimer;
 		MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 		MatchStateManager.OnMatchPause += PauseTimer;
 		MatchStateManager.OnMatchResume += StartTimer;
@@ -80,7 +79,7 @@ public class ZMTimedCounter : MonoBehaviour {
 		UpdateText();
 
 		enabled = true;
-		InvokeRepeating (kCountMethodName, 0.1f, timeIncrement);
+		InvokeRepeating(kCountMethodName, 0.01f, timeIncrement);
 	}
 
 	private void Count()

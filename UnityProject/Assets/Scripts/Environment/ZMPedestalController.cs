@@ -48,11 +48,6 @@ public class ZMPedestalController : ZMPlayerItem
 		Disable();
 	}
 
-	public override void ConfigureItemWithID (Transform parent, int id)
-	{
-		base.ConfigureItemWithID (parent, id);
-	}
-
 	protected void Start()
 	{
 		currentTimer = RESPAWN_TIME;
