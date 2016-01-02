@@ -153,9 +153,6 @@ public class ZMPlayerController : ZMPlayerItem
 		MatchStateManager.OnMatchStart += HandleOnMatchStart;
 		MatchStateManager.OnMatchEnd += HandleOnMatchPause;
 
-		// Set original facing direction.
-		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
-
 		// load resources
 		_upperBodyTemplate = Resources.Load(kBodyUpperHalfPath, typeof(GameObject)) as GameObject;
 		_lowerBodyTemplate = Resources.Load(kBodyLowerHalfPath, typeof(GameObject)) as GameObject;
@@ -203,6 +200,9 @@ public class ZMPlayerController : ZMPlayerItem
 		kDeathStrings[36] = "YUUUUS";
 		kDeathStrings[37] = "YEESSS";
 		kDeathStrings[38] = "NOICE";
+
+		// Set original facing direction.
+		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
 
 		_baseColor = light.color;
 		_goreEmitter.renderer.material.color = _baseColor;
@@ -864,6 +864,9 @@ public class ZMPlayerController : ZMPlayerItem
 		_moveModState = MoveModState.RESPAWN;
 		_controlModState = ControlModState.NEUTRAL;
 		_controlMoveState = ControlMoveState.NEUTRAL;
+
+		Notifier.SendEventNotification(PlayerDeathEvent, this);
+
 		CancelInvoke(kMethodNameEndLunge);
 		CancelInvoke("ResetControlModState");
 		CancelInvoke(kMethodNameEnablePlayer);
@@ -879,7 +882,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 		ZMAddForce upperBody = body.GetComponent<ZMAddForce>();
 		upperBody.ParticleColor = light.color;
-		upperBody.AddForce(new Vector2(killer.runSpeed / 13, 0));
+		upperBody.AddForce(new Vector2(killer.runSpeed / 12, 0));
 
 		// load and instantiate the body's lower half
 		body = GameObject.Instantiate(_lowerBodyTemplate) as GameObject;
@@ -887,7 +890,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 		ZMAddForce lowerBody = body.GetComponent<ZMAddForce>();
 		lowerBody.ParticleColor = light.color;
-		lowerBody.AddForce(new Vector2(killer.runSpeed / 13, 0));
+		lowerBody.AddForce(new Vector2(killer.runSpeed / 12, 0));
 
 		// Set player states
 		_playerInPath = false;
@@ -901,11 +904,13 @@ public class ZMPlayerController : ZMPlayerItem
 		_goreEmitter.Play();
 
 		// Handle taunt text.
-		if (_tauntText) {
+		if (_tauntText)
+		{
 			_tauntText.gameObject.SetActive (true);
 			_tauntText.text = kDeathStrings [Random.Range (0, kDeathStrings.Length)];
 			_tauntText.transform.rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, Random.Range (-20, 20)));
 			_tauntText.transform.position = new Vector3 (Random.Range (-100, 100), Random.Range (-100, 100), 0.0f);
+
 			StartCoroutine (ScaleTauntText (new Vector3 (1.5f, 1.5f, 1.5f), Vector3.one, 0.05f));
 			Invoke ("HideTauntText", 0.5f);
 		}
@@ -913,24 +918,17 @@ public class ZMPlayerController : ZMPlayerItem
 
 	private void KillOpponent(ZMPlayerController playerController) 
 	{
-		if (playerController.IsAbleToDie()) {
+		if (playerController.IsAbleToDie())
+		{
 			playerController.KillSelf(this);
 
 			if (PlayerKillEvent != null) {
 				PlayerKillEvent(this);
 			}
 
-			if (PlayerDeathEvent != null) {
-				PlayerDeathEvent(playerController);
-			}
-
 			// add the stat
 			ZMStatTracker.Instance.Kills.Add(_playerInfo);
 		}
-
-		// apply "forces" to each of the players
-//		runSpeed *= -0.4f;
-		//playerController.AddVelocity(_velocity);
 	}
 
 	private void DisableInputWithCallbackDelay(float delay)

@@ -15,7 +15,7 @@ public class ZMCameraOpeningMovement : ZMWaypointMovement
 
 		for (int i = 0; i < Settings.MatchPlayerCount.value; ++i)
 		{
-			_waypoints[i] = Instantiate(startPoints[i]) as Transform;
+			_waypoints[i] = startPoints[i];
 			_waypoints[i].position += offset;
 		}
 
