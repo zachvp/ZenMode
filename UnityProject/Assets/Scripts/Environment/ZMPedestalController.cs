@@ -51,6 +51,7 @@ public class ZMPedestalController : ZMPlayerItem
 	protected void Start()
 	{
 		currentTimer = RESPAWN_TIME;
+
 		timerText.text = currentTimer.ToString();
 	}
 
@@ -81,12 +82,12 @@ public class ZMPedestalController : ZMPlayerItem
 		ZMPlayerManager.Instance.OnPlayerDeath += HandlePlayerDeathEvent;
 		ZMPlayerManager.Instance.OnPlayerRespawn += HandleSpawnObjectEvent;
 	}
-
+	
 	private void CountdownText()
 	{
 		if (currentTimer > 0) {
 			currentTimer--;
-			timerText.text = currentTimer.ToString ();
+			timerText.text = currentTimer.ToString();
 			Invoke ("CountdownText", 1.0f);
 		}
 	}
@@ -96,6 +97,8 @@ public class ZMPedestalController : ZMPlayerItem
 	{
 		_scoreState = ScoreState.SCORING_ENABLED;
 		renderer.enabled = true;
+
+		timerText.renderer.material.color = Color.white;
 		zenAbsorbEffect.Play();
 
 		if (timerText.renderer.enabled == false) {
@@ -130,7 +133,8 @@ public class ZMPedestalController : ZMPlayerItem
 		}
 	}
 
-	private void MoveToLocation(Vector3 location) {
+	private void MoveToLocation(Vector3 location)
+	{
 		Vector3 newLocation = new Vector3(location.x, location.y, transform.position.z);
 
 		gameObject.transform.position = newLocation;

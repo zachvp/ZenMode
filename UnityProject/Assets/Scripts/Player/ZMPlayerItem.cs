@@ -13,9 +13,6 @@ public class ZMPlayerItem : MonoBehaviour
 	public virtual void ConfigureItemWithID(Transform parent, int id)
 	{
 		_playerInfo = GetComponent<ZMPlayerInfo>();
-		var renderer = GetComponent<Renderer>();
-		var light = GetComponent<Light>();
-		var text = GetComponent<Text>();
 				
 		_playerInfo.ID = id;
 		_playerInfo.standardColor = Configuration.PlayerColors[id];
@@ -24,9 +21,29 @@ public class ZMPlayerItem : MonoBehaviour
 		if (_playerController == null) { _playerController = ZMPlayerManager.Instance.Players[_playerInfo.ID]; }
 
 		if (parent != null) { transform.SetParent(parent); }
+
+		ConfigureHierarchyColor();
+	}
+
+	private void ConfigureHierarchyColor()
+	{
+		var hierarchy = Utilities.GetAllInHierarchy(transform);
+
+		for (int i = 0; i < hierarchy.Length; ++i)
+		{
+			ConfigureItemColor(hierarchy[i].gameObject);
+		}
+	}
+
+	private void ConfigureItemColor(GameObject item)
+	{
+		var renderer = item.GetComponent<Renderer>();
+		var light = item.GetComponent<Light>();
+		var graphic = item.GetComponent<MaskableGraphic>();
+
 		if (renderer != null) { renderer.material.color = Utilities.GetRGB(renderer.material.color, _playerInfo.standardColor); }
 		if (light != null) { light.color = _playerInfo.lightColor; }
-		if (text != null) { text.color = _playerInfo.standardColor; }
+		if (graphic != null) { graphic.color = _playerInfo.standardColor; }
 	}
 
 	public virtual void ConfigureItemWithID(int id)

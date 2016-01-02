@@ -65457,7 +65457,7 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 388707198}
   m_GameObject: {fileID: 783128186}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
@@ -65476,7 +65476,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 3:00
+  m_Text: 0
 --- !u!222 &783128189
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -81904,6 +81904,10 @@ Prefab:
     - target: {fileID: 425578, guid: c1ad8d972d5974878852c4028cb8968b, type: 2}
       propertyPath: m_RootOrder
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2025578, guid: c1ad8d972d5974878852c4028cb8968b, type: 2}
+      propertyPath: orthographic size
+      value: 432
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c1ad8d972d5974878852c4028cb8968b, type: 2}

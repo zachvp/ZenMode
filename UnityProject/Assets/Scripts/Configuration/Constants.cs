@@ -93,5 +93,22 @@ namespace Core
 			
 			method(param1);
 		}
+
+		public static Transform[] GetAllInHierarchy(Transform root)
+		{
+			var transforms = new List<Transform>(root.childCount);
+
+			transforms.Add(root);
+			
+			for (int i = 0; i < root.childCount; ++i)
+			{
+				var child = root.GetChild(i);
+				
+				if (child.childCount > 0) { transforms.AddRange(GetAllInHierarchy(child)); }
+				else { transforms.Add(child); }
+			}
+
+			return transforms.ToArray();
+		}
 	}
 }
