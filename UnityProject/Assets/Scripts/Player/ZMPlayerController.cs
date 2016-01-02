@@ -810,7 +810,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_controller.enabled = true;
 		enabled = true;
 
-		_animator.SetBool ("didBecomeActive", true);
+		_animator.SetBool("didBecomeActive", true);
 	}
 
 	public void DisablePlayer()
