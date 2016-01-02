@@ -97,9 +97,9 @@ public class ZMLobbyScoreController : ZMPlayerItem
 		}
 	}
 	
-	private void HandlePlayerDeathEvent(ZMPlayerController playerController)
+	private void HandlePlayerDeathEvent(ZMPlayerInfo info)
 	{
-		if(_playerInfo == playerController.PlayerInfo)
+		if(_playerInfo == info)
 		{
 			_targetAlive = false;
 		}

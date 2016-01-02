@@ -117,7 +117,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 	// Delegates
 	public EventHandler<ZMPlayerController> PlayerKillEvent;
-	public EventHandler<ZMPlayerController> PlayerDeathEvent;
+	public EventHandler<ZMPlayerInfo> PlayerDeathEvent;
 	public EventHandler<ZMPlayerController> PlayerRespawnEvent;
 	public EventHandler<ZMPlayerController> PlayerEliminatedEvent;
 	public EventHandler<ZMPlayerController, float> PlayerRecoilEvent;
@@ -233,9 +233,7 @@ public class ZMPlayerController : ZMPlayerItem
 			if (IsPerformingPlunge()) {
 				audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 
-				if (PlayerLandPlungeEvent != null) {
-					PlayerLandPlungeEvent();
-				}
+				Notifier.SendEventNotification(PlayerLandPlungeEvent);
 			}
 
 			_canAirLunge = true;
@@ -324,9 +322,7 @@ public class ZMPlayerController : ZMPlayerItem
 				Invoke("EndStunBeginParry", PARRY_STUN_WINDOW);
 				DisableInputWithCallbackDelay(PARRY_STUN_WINDOW + PARRY_TIME);
 
-				if (PlayerParryEvent != null) {
-					PlayerParryEvent(this, PARRY_STUN_WINDOW + PARRY_TIME);
-				}
+				Notifier.SendEventNotification(PlayerParryEvent, this, PARRY_STUN_WINDOW + PARRY_TIME);
 			}
 		} else if (IsTouchingEitherSide()) {
 			if (!_controller.isGrounded && _moveModState == MoveModState.NEUTRAL) {
@@ -429,9 +425,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			DisableInputWithCallbackDelay(RECOIL_STUN_TIME);
 
-			if (PlayerRecoilEvent != null) {
-				PlayerRecoilEvent(this, RECOIL_STUN_TIME);
-			}
+			Notifier.SendEventNotification(PlayerRecoilEvent, this, RECOIL_STUN_TIME);
 		} else if (_moveModState == MoveModState.RECOILING) {
 			_moveModState = MoveModState.NEUTRAL;
 			_controlModState = ControlModState.NEUTRAL;
@@ -450,9 +444,8 @@ public class ZMPlayerController : ZMPlayerItem
 			Invoke("ResetMoveModState", STUN_TIME);
 			DisableInputWithCallbackDelay(STUN_TIME);
 
-			if (PlayerStunEvent != null) {
-				PlayerStunEvent(this, STUN_TIME);
-			}
+
+			Notifier.SendEventNotification(PlayerStunEvent, this, STUN_TIME);
 		} else if (_moveModState == MoveModState.WALL_SLIDE) {
 			// Wall slide.
 			if (_velocity.y < 1.0f &&  _controlMoveState == ControlMoveState.MOVING) {
@@ -794,9 +787,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			_moveModState = MoveModState.ELIMINATED;
 
-			if (PlayerEliminatedEvent != null) {
-				PlayerEliminatedEvent(this);
-			}
+			Notifier.SendEventNotification(PlayerEliminatedEvent, this);
 		}
 	}
 
@@ -865,7 +856,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_controlModState = ControlModState.NEUTRAL;
 		_controlMoveState = ControlMoveState.NEUTRAL;
 
-		Notifier.SendEventNotification(PlayerDeathEvent, this);
+		Notifier.SendEventNotification(PlayerDeathEvent, _playerInfo);
 
 		CancelInvoke(kMethodNameEndLunge);
 		CancelInvoke("ResetControlModState");
@@ -922,9 +913,7 @@ public class ZMPlayerController : ZMPlayerItem
 		{
 			playerController.KillSelf(this);
 
-			if (PlayerKillEvent != null) {
-				PlayerKillEvent(this);
-			}
+			Notifier.SendEventNotification(PlayerKillEvent, this);
 
 			// add the stat
 			ZMStatTracker.Instance.Kills.Add(_playerInfo);
@@ -968,9 +957,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 		if (!MatchStateManager.IsPause() && !MatchStateManager.IsEnd()) { AcceptInputEvents(); }
 
-		if (PlayerRespawnEvent != null) {
-			PlayerRespawnEvent(this);
-		}
+		Notifier.SendEventNotification(PlayerRespawnEvent, this);
 	}
 
 	private void Recoil()

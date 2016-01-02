@@ -133,8 +133,8 @@ public class ZMCrownManager : MonoBehaviour
 		}
 	}
 	
-	private void HandlePlayerDeathEvent (ZMPlayerController playerController)
+	private void HandlePlayerDeathEvent(ZMPlayerInfo info)
 	{
-		_crowns[playerController.PlayerInfo.ID].SetActive(false);
+		_crowns[info.ID].SetActive(false);
 	}
 }

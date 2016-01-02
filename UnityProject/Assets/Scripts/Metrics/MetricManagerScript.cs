@@ -28,12 +28,7 @@ public class MetricManagerScript : MonoBehaviour
 
 	private void AcceptPlayerEvents()
 	{
-		var players = ZMPlayerManager.Instance.Players;
-
-		for (int i = 0; i < players.Length; ++i)
-		{
-			players[i].PlayerDeathEvent += HandlePlayerDeathEvent;
-		}
+		ZMPlayerManager.Instance.OnPlayerDeath += HandlePlayerDeathEvent;
 	}
 
 	private void HandleAddPositionEvent(int player, Vector3 position)
@@ -41,10 +36,8 @@ public class MetricManagerScript : MonoBehaviour
 		createText += "Player " + player.ToString() + " Position: " + position.ToString() + "\n";
 	}
 
-	private void HandlePlayerDeathEvent(ZMPlayerController playerController)
+	private void HandlePlayerDeathEvent(ZMPlayerInfo info)
 	{
-		int playerNum = playerController.GetComponent<ZMPlayerInfo>().ID;
-
-		createText += "Player " + playerNum.ToString() + " Death: " + playerController.gameObject.transform.position.ToString() + "\n";
+		createText += "Player " + info.ID.ToString() + " Death: " + info.transform.position.ToString() + "\n";
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using ZMPlayer;
 
 public class ZMLobbyRespawnController : MonoBehaviour {
 	public Transform[] spawnpoints;
@@ -14,9 +15,9 @@ public class ZMLobbyRespawnController : MonoBehaviour {
 		}
 	}
 
-	void HandlePlayerDeathEvent (ZMPlayerController playerController)
+	void HandlePlayerDeathEvent(ZMPlayerInfo info)
 	{
-		StartCoroutine(SpawnPlayer(playerController));
+		StartCoroutine(SpawnPlayer(info.GetComponent<ZMPlayerController>()));
 	}
 
 	IEnumerator SpawnPlayer(ZMPlayerController playerController)

@@ -21,7 +21,7 @@ public class ZMDeathCover : ZMPlayerItem
 		_playerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
 	}
 
-	private void HandlePlayerRespawnEvent (ZMPlayerController playerController)
+	private void HandlePlayerRespawnEvent(ZMPlayerController playerController)
 	{
 		if (_playerInfo == playerController.PlayerInfo)
 		{
@@ -29,9 +29,9 @@ public class ZMDeathCover : ZMPlayerItem
 		}
 	}
 
-	private void HandlePlayerDeathEvent (ZMPlayerController playerController)
+	private void HandlePlayerDeathEvent(ZMPlayerInfo info)
 	{
-		if (_playerInfo == playerController.PlayerInfo)
+		if (_playerInfo == info)
 		{
 			_spriteRenderer.enabled = true;
 			gameObject.SetActive(true);

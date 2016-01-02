@@ -215,9 +215,9 @@ namespace ZMPlayer
 		private bool IsMaxed() { return _goalState == GoalState.MAX || _goalState == GoalState.MAXED; }
 
 		// event handlers
-		private void HandlePlayerDeathEvent (ZMPlayerController playerController)
+		private void HandlePlayerDeathEvent(ZMPlayerInfo info)
 		{
-			if (_playerInfo == playerController.PlayerInfo)
+			if (_playerInfo == info)
 			{
 				_targetState = TargetState.DEAD;
 			}

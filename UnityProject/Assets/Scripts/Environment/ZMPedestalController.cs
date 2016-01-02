@@ -140,11 +140,11 @@ public class ZMPedestalController : ZMPlayerItem
 	public bool IsDiabled() { return _scoreState == ScoreState.SCORING_DISABLED; }
 
 	// event handlers
-	private void HandlePlayerDeathEvent(ZMPlayerController playerController)
+	private void HandlePlayerDeathEvent(ZMPlayerInfo info)
 	{
-		if (_playerInfo == playerController.PlayerInfo)
+		if (_playerInfo == info)
 		{
-			var scoreController = playerController.GetComponent<ZMScoreController>();
+			var scoreController = ZMPlayerManager.Instance.Scores[info.ID];
 
 			if (scoreController.TotalScore <= 0) { return; }
 
@@ -152,10 +152,19 @@ public class ZMPedestalController : ZMPlayerItem
 			transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
 			_shouldScale = true;
 
-			MoveToLocation(playerController.transform.position);
+			MoveToLocation(scoreController.transform.position);
 			Enable();
 
 			if (IsInvoking(kDisableMethodName)) { CancelInvoke(kDisableMethodName); }
+		}
+	}
+
+	
+	private void HandleSpawnObjectEvent(ZMPlayerController playerController)
+	{
+		if (_playerInfo == playerController.PlayerInfo)
+		{
+			Invoke(kDisableMethodName, lingerAfterSpawnTime);
 		}
 	}
 
@@ -207,13 +216,5 @@ public class ZMPedestalController : ZMPlayerItem
 	void HandleStopScoreEvent (ZMScoreController scoreController)
 	{
 		_scoringAgents.Remove(scoreController);
-	}
-
-	void HandleSpawnObjectEvent(ZMPlayerController playerController)
-	{
-		if (_playerInfo == playerController.PlayerInfo)
-		{
-			Invoke(kDisableMethodName, lingerAfterSpawnTime);
-		}
 	}
 }

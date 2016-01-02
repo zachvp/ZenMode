@@ -1,11 +1,20 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using ZMConfiguration;
+using ZMPlayer;
 
 [RequireComponent(typeof(Text))]
 public class ZMPlayerLabelController : ZMFudgeParentToObject
 {
 	private Text _text;
+
+	protected override void Awake()
+	{
+		base.Awake();
+
+		ZMPlayerManager.Instance.OnPlayerDeath += HandleOnPlayerDeath;
+		ZMPlayerManager.Instance.OnPlayerRespawn += HandleOnPlayerRespawn;
+	}
 
 	protected void Start()
 	{
@@ -27,5 +36,15 @@ public class ZMPlayerLabelController : ZMFudgeParentToObject
 		base.InitData(controller);
 
 		_text = GetComponent<Text>();
+	}
+
+	private void HandleOnPlayerDeath(ZMPlayerInfo info)
+	{
+		if (_playerInfo == info) { _text.enabled = false; }
+	}
+
+	private void HandleOnPlayerRespawn(ZMPlayerController controller)
+	{
+		if (_playerInfo == controller.PlayerInfo) { _text.enabled = true; }
 	}
 }

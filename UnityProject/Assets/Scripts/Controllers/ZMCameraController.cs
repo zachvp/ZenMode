@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Core;
 using ZMConfiguration;
+using ZMPlayer;
 
 public class ZMCameraController : MonoBehaviour
 {
@@ -102,7 +103,7 @@ public class ZMCameraController : MonoBehaviour
 		Shake(10);
 	}
 	
-	private void HandlePlayerDeathEvent(ZMPlayerController controller)
+	private void HandlePlayerDeathEvent(ZMPlayerInfo info)
 	{
 		Shake(25);
 	}

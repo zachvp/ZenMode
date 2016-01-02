@@ -15,7 +15,7 @@ public class ZMPlayerManager : MonoBehaviour
 	public Transform[] PlayerStartPoints { get { return _playerStartPoints; } }
 
 	public EventHandler OnAllPlayersSpawned;
-	public EventHandler<ZMPlayerController> OnPlayerDeath;
+	public EventHandler<ZMPlayerInfo> OnPlayerDeath;
 	public EventHandler<ZMPlayerController> OnPlayerRespawn;
 	public EventHandler<ZMPlayerController> OnPlayerCreate;
 
@@ -92,19 +92,14 @@ public class ZMPlayerManager : MonoBehaviour
 		MatchStateManager.OnMatchReset += OnDestroy;
 	}
 
-	protected virtual void Start()
-	{
-
-	}
-
 	protected virtual void OnDestroy()
 	{
 		_instance = null;
 	}
 
-	private void SendDeathEvent(ZMPlayerController controller)
+	private void SendDeathEvent(ZMPlayerInfo info)
 	{
-		Notifier.SendEventNotification(OnPlayerDeath, controller);
+		Notifier.SendEventNotification(OnPlayerDeath, info);
 	}
 
 	private void SendRespawnEvent(ZMPlayerController controller)
