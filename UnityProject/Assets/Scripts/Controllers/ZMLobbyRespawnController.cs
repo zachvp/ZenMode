@@ -1,30 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
+using ZMConfiguration;
 using ZMPlayer;
 
-public class ZMLobbyRespawnController : MonoBehaviour {
-	public Transform[] spawnpoints;
-
-	void Awake ()
+public class ZMLobbyRespawnController : ZMSpawnManager
+{
+	protected override void Awake()
 	{
-		var players = ZMPlayerManager.Instance.Players;
+		base.Awake();
 
-		for (int i = 0; i < players.Length; ++i)
-		{
-			players[i].PlayerDeathEvent += HandlePlayerDeathEvent;
-		}
+		_respawnDelay = Constants.LOBBY_RESPAWN_TIME;
 	}
 
-	void HandlePlayerDeathEvent(ZMPlayerInfo info)
+	protected override void SpawnPlayer(ZMPlayerController playerController)
 	{
-		StartCoroutine(SpawnPlayer(info.GetComponent<ZMPlayerController>()));
-	}
-
-	IEnumerator SpawnPlayer(ZMPlayerController playerController)
-	{
-		yield return new WaitForSeconds(0.75f);
-
-		playerController.transform.position = spawnpoints[playerController.PlayerInfo.ID].position;
-		playerController.EnablePlayer();
+		playerController.Respawn(GetPlayerSpawnPosition(playerController.PlayerInfo));
 	}
 }

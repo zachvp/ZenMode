@@ -11,8 +11,8 @@ public class ZMScoreResponder : MonoBehaviour
 	{
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
-		ZMScoreController.CanScoreEvent += HandleCanScoreEvent;
-		ZMScoreController.StopScoreEvent += HandleStopScoreEvent;
+		ZMStageScoreController.CanScoreEvent += HandleCanScoreEvent;
+		ZMStageScoreController.OnStopScore += HandleStopScoreEvent;
 	}
 
 	void Start()

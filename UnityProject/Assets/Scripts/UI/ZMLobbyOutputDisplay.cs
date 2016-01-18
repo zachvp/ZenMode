@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Text))]
 public class ZMLobbyOutputDisplay : MonoBehaviour
 {
-	public Text text;
+	private Text _text;
 
 	void Awake()
 	{
-		text.enabled = false;
+		_text = GetComponent<Text>();
+		_text.enabled = false;
 
 		ZMLobbyController.PauseGameEvent += HandlePauseGameEvent;
 		ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
@@ -15,12 +17,12 @@ public class ZMLobbyOutputDisplay : MonoBehaviour
 
 	void HandleResumeGameEvent()
 	{
-		text.enabled = false;
+		_text.enabled = false;
 	}
 
 	void HandlePauseGameEvent (int playerIndex)
 	{
-		text.text = "P" + (playerIndex + 1) + " PAUSED";
-		text.enabled = true;
+		_text.text = "P" + (playerIndex + 1) + " PAUSED";
+		_text.enabled = true;
 	}
 }

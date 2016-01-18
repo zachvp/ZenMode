@@ -112,6 +112,20 @@ public class ZMWaypointMovement : MonoBehaviour
 
 	protected virtual void InitData() { }
 
+	// TODO: Move this to Utilities class.
+	protected Transform[] GetWaypoints(string tag)
+	{
+		var waypoints = GameObject.FindGameObjectsWithTag(tag);
+		var transforms = new Transform[waypoints.Length];
+
+		for (int i = 0; i < waypoints.Length; ++i)
+		{
+			transforms[i] = waypoints[i].transform;
+		}
+
+		return transforms;
+	}
+
 	private void Stop()
 	{
 		_moveState = MoveState.STOPPED;

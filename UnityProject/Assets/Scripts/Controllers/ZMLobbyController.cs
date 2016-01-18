@@ -5,9 +5,12 @@ using ZMPlayer;
 using Core;
 using ZMConfiguration;
 
-public class ZMLobbyController : MonoBehaviour {
+public class ZMLobbyController : MonoBehaviour
+{
 	public GameObject loadScreen;
 	public Text message;
+
+	public static int CurrentJoinCount { get { return _currentJoinCount; } }
 
 	public static EventHandler<int> PlayerJoinedEvent;
 
@@ -15,32 +18,31 @@ public class ZMLobbyController : MonoBehaviour {
 	public static EventHandler<int> DropOutEvent;
 	public static EventHandler<int> PauseGameEvent;
 	public static EventHandler ResumeGameEvent;
-	
+
+	private static int _currentJoinCount; // i.e. how many  have pressed a button to join
+	private static int _currentReadyCount; // i.e. how many have actually readied up
+
 	private int _requiredPlayerCount;
-	private int _currentJoinCount; // i.e. how many  have pressed a button to join
-	private int _currentReadyCount; // i.e. how many have actually readied up
 
 	private bool _paused;
-	int _playerPauseIndex;
+	private int _playerPauseIndex;
 
 	private bool[] _joinedPlayers;
 	private bool[] _readyPlayers;
 
 	// pause menu options
 	private const int RESUME_OPTION   = 0;
-//	private const int DROP_OUT_OPTION = 1
 	private const int QUIT_OPTION 	  = 1;
 
-	void Awake() {
-		_currentJoinCount = 0;
-		_currentReadyCount = 0;
-		_paused = false;
+	// TODO: Make this a MonoSingleton.
+	void Awake()
+	{
 		_joinedPlayers = new bool[Constants.MAX_PLAYERS];
 		_readyPlayers = new bool[Constants.MAX_PLAYERS];
 
 		message.text = "";
 
-		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
+		ZMLobbyScoreController.OnMaxScoreReached += HandleMaxScoreReachedEvent;
 
 		ZMGameInputManager.StartInputEvent		 += HandleStartInputEvent;
 		ZMGameInputManager.AnyInputEvent 		 += HandleMainInputEvent;
@@ -88,25 +90,15 @@ public class ZMLobbyController : MonoBehaviour {
 		Application.LoadLevel(ZMSceneIndexList.INDEX_MAIN_MENU);
 	}
 
-	void HandleMainInputEvent (int controlIndex)
+	void HandleMainInputEvent(int controlIndex)
 	{
 		if (!_joinedPlayers[controlIndex])
 		{
-			if (controlIndex > 0 && !_joinedPlayers[controlIndex - 1])
-			{
-				message.text = "Player " + controlIndex + " must join first!";
-				if (IsInvoking("ClearMessage")) { CancelInvoke("ClearMessage"); }
-				Invoke ("ClearMessage", 2f);
-
-				return;
-			}
-
-			_currentJoinCount += 1;
-
-			Notifier.SendEventNotification(PlayerJoinedEvent, controlIndex);
+			_joinedPlayers[_currentJoinCount] = true;
+			Notifier.SendEventNotification(PlayerJoinedEvent, _currentJoinCount);
 
 			_requiredPlayerCount += 1;
-			_joinedPlayers[controlIndex] = true;
+			_currentJoinCount += 1;
 		}
 	}
 
@@ -144,27 +136,32 @@ public class ZMLobbyController : MonoBehaviour {
 		}
 	}
 
-	private void HandleMaxScoreReachedEvent(ZMLobbyScoreController scoreController) {
+	private void HandleMaxScoreReachedEvent(ZMPlayerInfo info)
+	{
 		_currentReadyCount += 1;
-		_readyPlayers[scoreController.PlayerInfo.ID] = true;
+		_readyPlayers[info.ID] = true;
 
-		Notifier.SendEventNotification(PlayerReadyEvent, scoreController.PlayerInfo);
+		Notifier.SendEventNotification(PlayerReadyEvent, info);
 
-		if(_currentReadyCount > 1 && _currentReadyCount == _requiredPlayerCount) {
+		if (_currentReadyCount > 1 && _currentReadyCount == _requiredPlayerCount)
+		{
 			Invoke("LoadLevel", 1.0f);
 			Invoke("ShowLoadScreen", 0.5f);
 		}
 	}
 
-	void ShowLoadScreen() {
+	void ShowLoadScreen()
+	{
 		loadScreen.SetActive(true);
 	}
 
-	void LoadLevel() {
+	void LoadLevel()
+	{
 		Application.LoadLevel(ZMSceneIndexList.INDEX_STAGE);
 	}
 
-	void ClearMessage() {
+	void ClearMessage()
+	{
 		message.text = "";
 	}
 }

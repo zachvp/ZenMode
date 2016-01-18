@@ -28,7 +28,7 @@ public class ZMGameStateController : MonoBehaviour
 
 		_instance = this;
 
-		ZMScoreController.MaxScoreReached += HandleMaxScoreReached;
+		ZMScoreController.OnMaxScoreReached += HandleMaxScoreReached;
 
 		ZMTimedCounter.GameTimerEndedEvent += HandleGameTimerEndedEvent;
 
@@ -66,7 +66,7 @@ public class ZMGameStateController : MonoBehaviour
 		ResetGame();
 	}
 
-	private void HandleMaxScoreReached(ZMScoreController scoreController)
+	private void HandleMaxScoreReached(ZMPlayerInfo info)
 	{
 		StartCoroutine(Utilities.ExecuteAfterDelay(EndGame, END_GAME_DELAY));
 

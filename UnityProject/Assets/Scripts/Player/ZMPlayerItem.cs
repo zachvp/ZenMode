@@ -10,6 +10,17 @@ public class ZMPlayerItem : MonoBehaviour
 	protected ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
 	protected ZMPlayerController _playerController;
 
+	protected virtual void Awake()
+	{
+		ZMPlayerController.OnPlayerCreate += HandlePlayerCreate;
+		AcceptPlayerEvents();
+	}
+
+	protected virtual void HandlePlayerCreate(ZMPlayerController controller)
+	{
+		if (_playerInfo == controller.PlayerInfo) { _playerController = controller; }
+	}
+
 	public virtual void ConfigureItemWithID(Transform parent, int id)
 	{
 		_playerInfo = GetComponent<ZMPlayerInfo>();
@@ -49,11 +60,6 @@ public class ZMPlayerItem : MonoBehaviour
 	public virtual void ConfigureItemWithID(int id)
 	{
 		ConfigureItemWithID(null, id);
-	}
-
-	protected virtual void Awake()
-	{
-		AcceptPlayerEvents();
 	}
 	
 	// Override this to listen to player events.

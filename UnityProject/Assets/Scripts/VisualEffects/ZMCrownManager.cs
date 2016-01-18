@@ -104,13 +104,8 @@ public class ZMCrownManager : MonoBehaviour
 
 	private void AcceptPlayerEvents()
 	{
-		var players = ZMPlayerManager.Instance.Players;
-		
-		for (int i = 0; i < players.Length; ++i)
-		{
-			players[i].PlayerDeathEvent += HandlePlayerDeathEvent;
-			players[i].PlayerRespawnEvent += HandlePlayerRespawnEvent;
-		}
+		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
+		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
 
 		enabled = true;
 	}

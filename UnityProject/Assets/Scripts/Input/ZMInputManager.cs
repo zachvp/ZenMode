@@ -50,6 +50,8 @@ public class ZMInputManager : MonoBehaviour
 
 	public EventHandler<ZMInput> OnSlashKey;
 
+	public EventHandler<ZMInput> OnAnyKeyPressed;
+
 	// Defines the method type for all keyboard handling.
 	private delegate bool KeyAction(KeyCode code);
 	
@@ -138,25 +140,36 @@ public class ZMInputManager : MonoBehaviour
 
 	private void BroadcastKeyboardEvents(KeyAction action, ZMInput.State state)
 	{
-		if (action(KeyCode.LeftArrow))  { Notifier.SendEventNotification(OnLeftArrowKey, GetInputForKeyCode(KeyCode.LeftArrow, state)); }
-		if (action(KeyCode.RightArrow)) { Notifier.SendEventNotification(OnRightArrowKey, GetInputForKeyCode(KeyCode.RightArrow, state)); }
-		if (action(KeyCode.UpArrow))    { Notifier.SendEventNotification(OnUpArrowKey, GetInputForKeyCode(KeyCode.UpArrow, state)); }
-		if (action(KeyCode.DownArrow))  { Notifier.SendEventNotification(OnDownArrowKey, GetInputForKeyCode(KeyCode.DownArrow, state)); }
+		CheckKey(KeyCode.LeftArrow, action, state, OnLeftArrowKey);
+		CheckKey(KeyCode.RightArrow, action, state, OnRightArrowKey);
+		CheckKey(KeyCode.UpArrow, action, state, OnUpArrowKey);
+		CheckKey(KeyCode.DownArrow, action, state, OnDownArrowKey);
 
-		if (action(KeyCode.W)) { Notifier.SendEventNotification(OnWKey, GetInputForKeyCode(KeyCode.W, state)); }
-		if (action(KeyCode.A)) { Notifier.SendEventNotification(OnAKey, GetInputForKeyCode(KeyCode.A, state)); }
-		if (action(KeyCode.S)) { Notifier.SendEventNotification(OnSKey, GetInputForKeyCode(KeyCode.S, state)); }
-		if (action(KeyCode.D)) { Notifier.SendEventNotification(OnDKey, GetInputForKeyCode(KeyCode.D, state)); }
-		if (action(KeyCode.E)) { Notifier.SendEventNotification(OnEKey, GetInputForKeyCode(KeyCode.E, state)); }
-		if (action(KeyCode.Q)) { Notifier.SendEventNotification(OnQKey, GetInputForKeyCode(KeyCode.Q, state)); }
-		if (action(KeyCode.R)) { Notifier.SendEventNotification(OnRKey, GetInputForKeyCode(KeyCode.R, state)); }
+		CheckKey(KeyCode.W, action, state, OnWKey);
+		CheckKey(KeyCode.A, action, state, OnAKey);
+		CheckKey(KeyCode.S, action, state, OnSKey);
+		CheckKey(KeyCode.D, action, state, OnDKey);
+		CheckKey(KeyCode.E, action, state, OnEKey);
+		CheckKey(KeyCode.Q, action, state, OnQKey);
+		CheckKey(KeyCode.R, action, state, OnRKey);
 
-		if (action(KeyCode.Space))  	{ Notifier.SendEventNotification(OnSpacebarKey, GetInputForKeyCode(KeyCode.Space, state)); }
-		if (action(KeyCode.RightShift)) { Notifier.SendEventNotification(OnRightShiftKey, GetInputForKeyCode(KeyCode.RightShift, state)); }
-		if (action(KeyCode.Return)) 	{ Notifier.SendEventNotification(OnReturnKey, GetInputForKeyCode(KeyCode.Return, state)); }
-		if (action(KeyCode.Escape))     { Notifier.SendEventNotification(OnEscapeKey, GetInputForKeyCode(KeyCode.Escape, state)); }
+		CheckKey(KeyCode.Space, action, state, OnSpacebarKey);
+		CheckKey(KeyCode.RightShift, action, state, OnRightShiftKey);
+		CheckKey(KeyCode.Return, action, state, OnReturnKey);
+		CheckKey(KeyCode.Escape, action, state, OnEscapeKey);
 
-		if (action(KeyCode.Slash)) { Notifier.SendEventNotification(OnSlashKey, GetInputForKeyCode(KeyCode.Slash, state)); }
+		CheckKey(KeyCode.Slash, action, state, OnSlashKey);
+	}
+
+	private void CheckKey(KeyCode code, KeyAction action, ZMInput.State state, EventHandler<ZMInput> eventHandler)
+	{
+		if (action(code))
+		{
+			var input = GetInputForKeyCode(code, state);
+
+			Notifier.SendEventNotification(eventHandler, input);
+			Notifier.SendEventNotification(OnAnyKeyPressed, input);
+		}
 	}
 
 	private int GetIDForKeyCode(KeyCode code)

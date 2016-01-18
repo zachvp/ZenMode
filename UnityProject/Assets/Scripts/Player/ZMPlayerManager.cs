@@ -14,10 +14,8 @@ public class ZMPlayerManager : MonoBehaviour
 	public ZMScoreController[] Scores { get { return _scores; } }
 	public Transform[] PlayerStartPoints { get { return _playerStartPoints; } }
 
+	// These should be moved int a StagePlayerManager class.
 	public EventHandler OnAllPlayersSpawned;
-	public EventHandler<ZMPlayerInfo> OnPlayerDeath;
-	public EventHandler<ZMPlayerController> OnPlayerRespawn;
-	public EventHandler<ZMPlayerController> OnPlayerCreate;
 
 	protected ZMPlayerController[] _players;
 	protected ZMScoreController[] _scores;
@@ -42,50 +40,13 @@ public class ZMPlayerManager : MonoBehaviour
 	
 	protected virtual void Awake()
 	{
-		if (debug)
-		{
-			Settings.MatchPlayerCount.value = debugPlayerCount;
-		}
+		if (debug) { Settings.MatchPlayerCount.value = debugPlayerCount; }
 
-		_players = new ZMPlayerController[Settings.MatchPlayerCount.value];
-		_scores = new ZMScoreController[Settings.MatchPlayerCount.value];
+		ConfigureMonoSingleton();
+		InitPlayerData(Settings.MatchPlayerCount.value);
+		GetPlayerStartpoints();
 
-		// TODO: Should be assert.
-		if (_instance != null)
-		{
-			Debug.LogError("ZMPlayerManager: More than one instance exists in the scene.");
-		}
-
-		_instance = this;
-
-		var playerStartpoints = GameObject.FindGameObjectsWithTag(Tags.kPlayerStartPositionTag);
-		_playerStartPoints = new Transform[playerStartpoints.Length];
-		
-		for (int i = 0; i < playerStartpoints.Length; ++i)
-		{
-			var playerInfo = playerStartpoints[i].GetComponent<ZMPlayerInfo>();
-			
-			_playerStartPoints[playerInfo.ID] = playerInfo.transform;
-		}
-
-		for (int i = 0; i < Settings.MatchPlayerCount.value; ++i)
-		{
-			var player = ZMPlayerController.Instantiate(playerTemplate) as ZMPlayerController;
-			var score = player.GetComponent<ZMScoreController>();
-			var input = player.GetComponent<ZMPlayerInputController>();
-
-			player.ConfigureItemWithID(transform, i);
-			player.PlayerDeathEvent += SendDeathEvent;
-			player.PlayerRespawnEvent += SendRespawnEvent;
-
-			_players[player.PlayerInfo.ID] = player;
-			_players[player.PlayerInfo.ID].transform.position = _playerStartPoints[player.PlayerInfo.ID].position;
-
-			_scores[player.PlayerInfo.ID] = score;
-			score.ConfigureItemWithID(player.PlayerInfo.ID);
-
-			input.ConfigureItemWithID(player.PlayerInfo.ID);
-		}
+		for (int i = 0; i < Settings.MatchPlayerCount.value; ++i) { CreatePlayer(i); }
 
 		Notifier.SendEventNotification(OnAllPlayersSpawned);
 
@@ -97,13 +58,53 @@ public class ZMPlayerManager : MonoBehaviour
 		_instance = null;
 	}
 
-	private void SendDeathEvent(ZMPlayerInfo info)
+	// Allocate space for player array data.
+	protected virtual void InitPlayerData(int size)
 	{
-		Notifier.SendEventNotification(OnPlayerDeath, info);
+		_players = new ZMPlayerController[size];
+		_scores = new ZMScoreController[size];
 	}
 
-	private void SendRespawnEvent(ZMPlayerController controller)
+	protected void ConfigureMonoSingleton()
 	{
-		Notifier.SendEventNotification(OnPlayerRespawn, controller);
+		// TODO: Should be assert.
+		if (_instance != null)
+		{
+			Debug.LogError("ZMPlayerManager: More than one instance exists in the scene.");
+		}
+		
+		_instance = this;
+	}
+
+	protected ZMPlayerController CreatePlayer(int id)
+	{
+		var player = ZMPlayerController.Instantiate(playerTemplate) as ZMPlayerController;
+		var score = player.GetComponent<ZMScoreController>();
+		var input = player.GetComponent<ZMPlayerInputController>();
+		
+		player.ConfigureItemWithID(transform, id);
+		
+		_players[player.PlayerInfo.ID] = player;
+		_players[player.PlayerInfo.ID].transform.position = _playerStartPoints[player.PlayerInfo.ID].position;
+		
+		_scores[player.PlayerInfo.ID] = score;
+		score.ConfigureItemWithID(player.PlayerInfo.ID);
+		
+		input.ConfigureItemWithID(player.PlayerInfo.ID);
+
+		return player;
+	}
+
+	protected void GetPlayerStartpoints()
+	{
+		var playerStartpoints = GameObject.FindGameObjectsWithTag(Tags.kPlayerStartPositionTag);
+		_playerStartPoints = new Transform[playerStartpoints.Length];
+		
+		for (int i = 0; i < playerStartpoints.Length; ++i)
+		{
+			var playerInfo = playerStartpoints[i].GetComponent<ZMPlayerInfo>();
+			
+			_playerStartPoints[playerInfo.ID] = playerInfo.transform;
+		}
 	}
 }

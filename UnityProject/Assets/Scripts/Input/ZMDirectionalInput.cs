@@ -12,6 +12,14 @@ public class ZMDirectionalInput : ZMPlayerItem
 		AcceptKeyboardEvents();
 	}
 
+	public override void ConfigureItemWithID(int id)
+	{
+		base.ConfigureItemWithID(id);
+
+		AcceptGamepadEvents();
+		AcceptKeyboardEvents();
+	}
+
 	// Initialization.
 	protected virtual void AcceptGamepadEvents()
 	{

@@ -9,23 +9,40 @@ public class ZMPlayerItemCreation : MonoBehaviour
 {
 	// The object to create.
 	[SerializeField] private ZMPlayerItem template;
+	[SerializeField] private Transform startTransform;
 
 	protected virtual void Awake()
 	{
-		SpawnItems();
+		ZMPlayerController.OnPlayerCreate += HandlePlayerCreate;
+	}
+
+	private void HandlePlayerCreate(ZMPlayerController controller)
+	{
+		SpawnItem(controller.PlayerInfo.ID);
 	}
 
 	private void SpawnItems()
 	{
 		for (int i = 0; i < Settings.MatchPlayerCount.value; ++i)
 		{
-			var item = ZMPlayerItem.Instantiate(template) as ZMPlayerItem;
-			var components = item.GetComponents<ZMPlayerItem>();
-
-			for (int c = 0; c < components.Length; ++c)
-			{
-				components[c].ConfigureItemWithID(transform, i);
-			}
+			SpawnItem(i);
 		}
+	}
+
+	private ZMPlayerItem SpawnItem(int id)
+	{
+		ZMPlayerItem item;
+
+		if (startTransform == null) { item = ZMPlayerItem.Instantiate(template) as ZMPlayerItem; }
+		else { item = ZMPlayerItem.Instantiate(template, startTransform.position, Quaternion.identity) as ZMPlayerItem; }
+
+		var components = item.GetComponents<ZMPlayerItem>();
+				
+		for (int c = 0; c < components.Length; ++c)
+		{
+			components[c].ConfigureItemWithID(transform, id);
+		}
+
+		return item;
 	}
 }

@@ -10,16 +10,14 @@ public class ZMFudgeParentToObject : ZMPlayerItem
 	{
 		base.ConfigureItemWithID(parent, id);
 
-		InitData(ZMPlayerManager.Instance.Players[_playerInfo.ID]);
+		_parent = ZMPlayerManager.Instance.Players[id].transform;
 	}
 
 	protected virtual void Update()
 	{
-		transform.position = _parent.position + offset;
-	}
-
-	protected virtual void InitData(ZMPlayerController controller)
-	{
-		_parent = controller.transform;
+		if (_parent)
+		{
+			transform.position = _parent.position + offset;
+		}
 	}
 }

@@ -17,8 +17,8 @@ public class ZMDeathCover : ZMPlayerItem
 
 	protected override void AcceptPlayerEvents()
 	{
-		_playerController.PlayerDeathEvent += HandlePlayerDeathEvent;
-		_playerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
+		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
+		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
 	}
 
 	private void HandlePlayerRespawnEvent(ZMPlayerController playerController)

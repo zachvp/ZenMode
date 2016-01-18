@@ -20,12 +20,13 @@ public class ZMColorFade : MonoBehaviour {
 
 		_baseColor = _image.color;
 
-		ZMScoreController.CanScoreEvent += HandleCanScoreEvent;
-		ZMScoreController.StopScoreEvent += HandleStopScoreEvent;
-		ZMScoreController.MinScoreReached += HandleMinScoreReached;
+		ZMScoreController.OnStopScore += HandleStopScoreEvent;
+
+		ZMStageScoreController.CanScoreEvent += HandleCanScoreEvent;
+		ZMStageScoreController.MinScoreReached += HandleMinScoreReached;
 	}
 
-	void HandleStopScoreEvent (ZMPlayer.ZMScoreController scoreController)
+	void HandleStopScoreEvent(ZMScoreController scoreController)
 	{
 		if (_playerInfo == scoreController.PlayerInfo)
 		{
@@ -33,7 +34,7 @@ public class ZMColorFade : MonoBehaviour {
 		}
 	}
 
-	void HandleCanScoreEvent (ZMPlayer.ZMScoreController scoreController)
+	void HandleCanScoreEvent(ZMScoreController scoreController)
 	{
 		if (_playerInfo == scoreController.PlayerInfo)
 		{
@@ -43,7 +44,7 @@ public class ZMColorFade : MonoBehaviour {
 		}
 	}
 
-	void HandleMinScoreReached (ZMPlayer.ZMScoreController scoreController)
+	void HandleMinScoreReached(ZMScoreController scoreController)
 	{
 		if (_playerInfo == scoreController.PlayerInfo)
 		{

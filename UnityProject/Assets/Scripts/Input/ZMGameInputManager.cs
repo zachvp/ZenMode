@@ -23,15 +23,8 @@ public class ZMGameInputManager : MonoBehaviour
 		ZMInputManager.Instance.OnStartButton += HandleOnStartButton;
 		ZMInputManager.Instance.OnEscapeKey   += HandleOnStartButton;
 		
-		ZMInputManager.Instance.OnAnyButton   += HandleOnAnyButton;
-	}
-	
-	private void ClearInputEvents()
-	{
-		ZMInputManager.Instance.OnStartButton -= HandleOnStartButton;
-		ZMInputManager.Instance.OnEscapeKey   -= HandleOnStartButton;
-		
-		ZMInputManager.Instance.OnAnyButton   -= HandleOnAnyButton;
+		ZMInputManager.Instance.OnAnyButton   	+= HandleOnAnyButton;
+		ZMInputManager.Instance.OnAnyKeyPressed += HandleOnAnyButton;
 	}
 
 	private void HandleOnStartButton(ZMInput input)

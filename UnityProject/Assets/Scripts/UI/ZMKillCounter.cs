@@ -16,12 +16,12 @@ public class ZMKillCounter : ZMPlayerItem
 		_text = GetComponent<Text>();
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
-		_playerController.PlayerKillEvent += HandlePlayerKillEvent;
+		ZMPlayerController.PlayerKillEvent += HandlePlayerKillEvent;
 
 		UpdateUI();
 	}
 
-	private void HandlePlayerKillEvent (ZMPlayerController killer)
+	private void HandlePlayerKillEvent(ZMPlayerController killer)
 	{
 		if (_playerInfo == killer.PlayerInfo)
 		{

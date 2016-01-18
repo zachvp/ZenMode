@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
-using System.Collections;
+using ZMPlayer;
 
-public class ZMLobbySoundCues : MonoBehaviour {
+public class ZMLobbySoundCues : MonoBehaviour
+{
 	public AudioClip readyUpClip;
 	
-	void Awake () {
-		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
+	void Awake()
+	{
+		ZMLobbyScoreController.OnMaxScoreReached += HandleMaxScoreReachedEvent;
 	}
 
-	void HandleMaxScoreReachedEvent (ZMLobbyScoreController waypointMovement)
+	void HandleMaxScoreReachedEvent(ZMPlayerInfo info)
 	{
 		audio.PlayOneShot(readyUpClip);
 	}

@@ -6,7 +6,7 @@ TagManager:
   - Pedestal
   - WarpVolume
   - Spawnpoint
-  - PedestalWaypoint
+  - OrbWaypoint
   - LobbyController
   - ThrowingKnife
   - ClashEffect

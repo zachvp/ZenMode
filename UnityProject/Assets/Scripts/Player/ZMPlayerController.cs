@@ -79,7 +79,6 @@ public class ZMPlayerController : ZMPlayerItem
 	private const string kMethodNameEndLunge 	  			= "EndLunge";
 	private const string kEndParryMethodName				= "EndParry";
 	private const string kGameStateControllerName 			= "GameController";
-	private const string kRespawnMethodName 	  			= "Respawn";
 
 	// Public references.
 	public GameObject _effectJumpObject;
@@ -116,15 +115,15 @@ public class ZMPlayerController : ZMPlayerItem
 	public Material _materialFlash;
 
 	// Delegates
-	public EventHandler<ZMPlayerController> PlayerKillEvent;
-	public EventHandler<ZMPlayerInfo> PlayerDeathEvent;
-	public EventHandler<ZMPlayerController> PlayerRespawnEvent;
-	public EventHandler<ZMPlayerController> PlayerEliminatedEvent;
-	public EventHandler<ZMPlayerController, float> PlayerRecoilEvent;
-	public EventHandler<ZMPlayerController, float> PlayerStunEvent;
-	public EventHandler<ZMPlayerController, float> PlayerParryEvent;
-
-	public EventHandler PlayerLandPlungeEvent;
+	public static EventHandler<ZMPlayerController> OnPlayerCreate;
+	public static EventHandler<ZMPlayerController> PlayerKillEvent;
+	public static EventHandler<ZMPlayerInfo> PlayerDeathEvent;
+	public static EventHandler<ZMPlayerController> PlayerRespawnEvent;
+	public static EventHandler<ZMPlayerController> PlayerEliminatedEvent;
+	public static EventHandler<ZMPlayerController, float> PlayerRecoilEvent;
+	public static EventHandler<ZMPlayerController, float> PlayerStunEvent;
+	public static EventHandler<ZMPlayerController, float> PlayerParryEvent;
+	public static EventHandler PlayerLandPlungeEvent;
 
 	// Debug
 	private SpriteRenderer _spriteRenderer;
@@ -146,7 +145,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_controller.onTriggerEnterEvent += onTriggerEnterEvent;
 		_controller.onTriggerExitEvent += onTriggerExitEvent;
 
-		ZMScoreController.MinScoreReached += HandleMinScoreReached;
+		ZMStageScoreController.MinScoreReached += HandleMinScoreReached;
 
 		MatchStateManager.OnMatchPause += HandleOnMatchPause;
 		MatchStateManager.OnMatchResume += HandleOnMatchResume;
@@ -209,6 +208,8 @@ public class ZMPlayerController : ZMPlayerItem
 		_goreEmitter.startColor = _baseColor;
 
 		_materialDefault = renderer.material;
+
+		Notifier.SendEventNotification(OnPlayerCreate, this);
 	}
 
 	void Update()
@@ -526,13 +527,24 @@ public class ZMPlayerController : ZMPlayerItem
 	
 	private void OnDestroy()
 	{
-		ZMScoreController.MinScoreReached -= HandleMinScoreReached;
+		ZMStageScoreController.MinScoreReached -= HandleMinScoreReached;
+
+		OnPlayerCreate = null;
+		OnPlayerCreate = null;
+		PlayerKillEvent = null;
+		PlayerDeathEvent = null;
+		PlayerRespawnEvent = null;
+		PlayerEliminatedEvent = null;
+		PlayerRecoilEvent = null;
+		PlayerStunEvent = null;
+		PlayerParryEvent = null;
+		PlayerLandPlungeEvent = null;
 
 		Resources.UnloadUnusedAssets();
 	}
 	
 	// Setup.
-	private void AcceptInputEvents()
+	protected void AcceptInputEvents()
 	{
 		_inputController.OnMoveRightEvent += MoveRightEvent;
 		_inputController.OnMoveLeftEvent  += MoveLeftEvent;
@@ -543,7 +555,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_inputController.OnParryEvent     += ParryEvent;
 	}
 	
-	private void ClearInputEvents()
+	protected void ClearInputEvents()
 	{
 		_inputController.OnMoveRightEvent -= MoveRightEvent;
 		_inputController.OnMoveLeftEvent  -= MoveLeftEvent;
@@ -791,8 +803,17 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 	}
 
+	public void Respawn(Vector3 position)
+	{
+		Reset();
+		
+		transform.position = position;
+		
+		Notifier.SendEventNotification(PlayerRespawnEvent, this);
+	}
+
 	// Player state utility methods
-	public void EnablePlayer()
+	protected void EnablePlayer()
 	{
 		if (_moveModState == MoveModState.ELIMINATED) return;
 
@@ -804,7 +825,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_animator.SetBool("didBecomeActive", true);
 	}
 
-	public void DisablePlayer()
+	protected void DisablePlayer()
 	{
 		_controller.enabled = false;
 		enabled = false;
@@ -835,7 +856,7 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 	}
 
-	void CheckSkidding() {
+	private void CheckSkidding() {
 		if (_controller.isGrounded) {
 			int direction = (_movementDirection == MovementDirectionState.FACING_RIGHT ? 1 : -1);
 			Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 0.0f : 180.0f), 0.0f));
@@ -887,7 +908,6 @@ public class ZMPlayerController : ZMPlayerItem
 		_playerInPath = false;
 
 		ClearInputEvents();
-		Invoke(kRespawnMethodName, RESPAWN_TIME);
 
 		audio.PlayOneShot(_audioGore[Random.Range (0, _audioGore.Length)]);
 		audio.PlayOneShot(_audioHurt[Random.Range (0, _audioHurt.Length)]);
@@ -941,23 +961,19 @@ public class ZMPlayerController : ZMPlayerItem
 		_tauntText.gameObject.SetActive (false);
 	}
 
-	private void Respawn()
+	private void Reset()
 	{
 		_controlModState = ControlModState.NEUTRAL;
 		_controlMoveState = ControlMoveState.NEUTRAL;
-		runSpeed = 0;
+		runSpeed = 0.0f;
 
 		_spriteRenderer.enabled = true;
 		light.enabled = true;
-
-		transform.position = ZMSpawnManager.Instance.GetSpawnPosition();
 
 		EnablePlayer();
 		SetMovementDirection(transform.position.x < 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
 
 		if (!MatchStateManager.IsPause() && !MatchStateManager.IsEnd()) { AcceptInputEvents(); }
-
-		Notifier.SendEventNotification(PlayerRespawnEvent, this);
 	}
 
 	private void Recoil()

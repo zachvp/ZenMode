@@ -40,10 +40,9 @@ public class ZMPedestalController : ZMPlayerItem
 		_baseScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
 
 		// event handler subscriptions
-		ZMScoreController.UpdateScoreEvent       += HandleUpdateScoreEvent;
-		ZMScoreController.CanScoreEvent 	     += HandleCanScoreEvent;
-		ZMScoreController.StopScoreEvent   	     += HandleStopScoreEvent;
-		ZMScoreController.MinScoreReached	     += HandleMinScoreReached;
+		ZMStageScoreController.CanScoreEvent 	     += HandleCanScoreEvent;
+		ZMStageScoreController.OnStopScore   	     += HandleStopScoreEvent;
+		ZMStageScoreController.MinScoreReached	     += HandleMinScoreReached;
 
 		Disable();
 	}
@@ -79,8 +78,8 @@ public class ZMPedestalController : ZMPlayerItem
 
 	protected override void AcceptPlayerEvents()
 	{
-		ZMPlayerManager.Instance.OnPlayerDeath += HandlePlayerDeathEvent;
-		ZMPlayerManager.Instance.OnPlayerRespawn += HandleSpawnObjectEvent;
+		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
+		ZMPlayerController.PlayerRespawnEvent += HandleSpawnObjectEvent;
 	}
 	
 	private void CountdownText()
@@ -201,14 +200,6 @@ public class ZMPedestalController : ZMPlayerItem
 		}
 
 		_zenPopSystems.Clear();
-	}
-
-	void HandleUpdateScoreEvent(ZMScoreController scoreController) {
-		float scoreSum = 0;
-
-		foreach (ZMScoreController agent in _scoringAgents) {
-			scoreSum += agent.TotalScore;
-		}
 	}
 
 	void HandleCanScoreEvent(ZMScoreController scoreController) {

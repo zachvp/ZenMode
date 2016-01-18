@@ -20,9 +20,9 @@ public class ZMSoul : MonoBehaviour
 	{
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
-		ZMScoreController.MinScoreReached += HandleMinScoreReached;
-		ZMScoreController.CanScoreEvent += HandleCanScoreEvent;
-		ZMScoreController.StopScoreEvent += HandleStopScoreEvent;
+		ZMStageScoreController.MinScoreReached += HandleMinScoreReached;
+		ZMStageScoreController.CanScoreEvent += HandleCanScoreEvent;
+		ZMStageScoreController.OnStopScore += HandleStopScoreEvent;
 
 		MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 		MatchStateManager.OnMatchPause += HandlePauseGameEvent;

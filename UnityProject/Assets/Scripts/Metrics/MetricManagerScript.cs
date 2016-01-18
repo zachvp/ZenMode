@@ -28,7 +28,7 @@ public class MetricManagerScript : MonoBehaviour
 
 	private void AcceptPlayerEvents()
 	{
-		ZMPlayerManager.Instance.OnPlayerDeath += HandlePlayerDeathEvent;
+		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
 	}
 
 	private void HandleAddPositionEvent(int player, Vector3 position)

@@ -22,12 +22,15 @@ public class ZMScoreDisplayManager : MonoBehaviour
 		}
 	}
 
-	private static ZMScoreDisplayManager _instance;
+	protected static ZMScoreDisplayManager _instance;
+
+	protected float _initialSliderValue;
+	protected float _maxSliderValue;
 
 	private Slider[] _scoreSliders;
 	private Text[] _scoreStatuses;
 
-	void Awake()
+	protected virtual void Awake()
 	{
 		_scoreSliders = new Slider[Constants.MAX_PLAYERS];
 		_scoreStatuses = new Text[Constants.MAX_PLAYERS];
@@ -40,8 +43,26 @@ public class ZMScoreDisplayManager : MonoBehaviour
 		
 		_instance = this;
 
+		_maxSliderValue = ZMScoreController.MAX_SCORE;
+
+		ZMScoreController.MinScoreReached += EliminateScore;
+		ZMScoreController.OnUpdateScore += UpdateScore;
+	}
+
+	protected virtual void Start()
+	{
+		ConfigureScoreSliders();
+		ConfigureScoreStatuses();
+	}
+
+	void OnDestroy()
+	{
+		_instance = null;
+	}
+
+	protected void ConfigureScoreSliders()
+	{
 		var sliderObjects = GameObject.FindGameObjectsWithTag(Tags.kScoreGui);
-		var statusObjects = GameObject.FindGameObjectsWithTag(Tags.kScoreStatus);
 		
 		for (int i = 0; i < sliderObjects.Length; ++i)
 		{
@@ -49,9 +70,14 @@ public class ZMScoreDisplayManager : MonoBehaviour
 			
 			_scoreSliders[info.ID] = sliderObjects[i].GetComponent<Slider>();
 			_scoreSliders[info.ID].handleRect = null;
-			_scoreSliders[info.ID].maxValue = ZMScoreController.MAX_SCORE;
-			_scoreSliders[info.ID].value = Settings.MatchPlayerCount.value > 2 ? ZMScoreController.MAX_SCORE / 2f : ZMScoreController.MAX_SCORE / Settings.MatchPlayerCount.value;
+			_scoreSliders[info.ID].maxValue = _maxSliderValue;
+			_scoreSliders[info.ID].value = _initialSliderValue;
 		}
+	}
+	
+	protected void ConfigureScoreStatuses()
+	{
+		var statusObjects = GameObject.FindGameObjectsWithTag(Tags.kScoreStatus);
 		
 		for (int i = 0; i < statusObjects.Length; ++i)
 		{
@@ -60,23 +86,51 @@ public class ZMScoreDisplayManager : MonoBehaviour
 			_scoreStatuses[info.ID] = statusObjects[i].GetComponent<Text>();
 			_scoreStatuses[info.ID].text = "";
 		}
+	}
 
-		ZMScoreController.MinScoreReached += EliminateScore;
-		ZMScoreController.UpdateScoreEvent += UpdateScore;
+	protected void ActivateScoreBars()
+	{
+		for (int i = 0; i < _scoreSliders.Length; ++i)
+		{
+			_scoreSliders[i].gameObject.SetActive(true);
+		}
+	}
+
+	protected void ActivateScoreBar(ZMPlayerInfo info)
+	{
+		ActivateScoreBar(info.ID);
+	}
+
+	protected void ActivateScoreBar(int id)
+	{
+		_scoreSliders[id].gameObject.SetActive(true);
+	}
+
+	protected void DeactivateScoreBars()
+	{
+		for (int i = 0; i < _scoreSliders.Length; ++i)
+		{
+			_scoreSliders[i].gameObject.SetActive(false);
+		}
 	}
 	
-	void OnDestroy()
+	protected void DeactivateScoreBar(ZMPlayerInfo info)
 	{
-		_instance = null;
+		DeactivateScoreBar(info.ID);
 	}
 
-	private void EliminateScore(ZMScoreController controller)
+	protected void DeactivateScoreBar(int id)
+	{
+		_scoreSliders[id].gameObject.SetActive(false);
+	}
+	
+	protected void EliminateScore(ZMScoreController controller)
 	{
 		_scoreStatuses[controller.PlayerInfo.ID].text = "ELIMINATED!";
 	}
 
-	private void UpdateScore(ZMScoreController controller)
+	protected void UpdateScore(ZMPlayerInfo info, float amount)
 	{		
-		_scoreSliders[controller.PlayerInfo.ID].value = controller.TotalScore;
+		_scoreSliders[info.ID].value = amount;
 	}
 }

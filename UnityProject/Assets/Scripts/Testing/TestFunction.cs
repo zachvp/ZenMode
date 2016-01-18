@@ -4,11 +4,11 @@ using ZMConfiguration;
 
 public class TestFunction : MonoBehaviour
 {
-	Vector3[] guiSlots = new Vector3[8];
+//	Vector3[] guiSlots = new Vector3[8];
 
 	void Start()
 	{
-		var camera = GameObject.FindGameObjectWithTag(Tags.kMainCamera).GetComponent<Camera>();
+//		var camera = GameObject.FindGameObjectWithTag(Tags.kMainCamera).GetComponent<Camera>();
 
 	}
 

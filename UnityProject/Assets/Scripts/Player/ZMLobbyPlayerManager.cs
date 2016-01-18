@@ -1,43 +1,41 @@
 ﻿using UnityEngine;
 using ZMConfiguration;
+using ZMPlayer;
 
 public class ZMLobbyPlayerManager : ZMPlayerManager
 {
-	private bool[] _readiedPlayers;
-	private static int _playerCount; public static int PlayerCount { get { return _playerCount; } }
+	private static int _playerReadyCount; public static int PlayerReadyCount { get { return _playerReadyCount; } }
+	private static int _playerJoinCount; public static int PlayerJoinCount  { get { return _playerJoinCount; } }
 	
 	protected override void Awake()
 	{
-		base.Awake ();
+		if (debug) { _playerReadyCount = debugPlayerCount; }
 
-		if (_readiedPlayers == null) { _readiedPlayers = new bool[Constants.MAX_PLAYERS]; }
-
-		if (debug)
-		{
-			_playerCount = debugPlayerCount;
-		}
-		else
-		{
-			_playerCount = 0;
-		}
+		ConfigureMonoSingleton();
+		InitPlayerData(Constants.MAX_PLAYERS);
+		GetPlayerStartpoints();
 
 		ZMLobbyController.PlayerReadyEvent += HandlePlayerReadyEvent;
 		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
+		ZMLobbyController.PlayerJoinedEvent += HandlePlayerDropIn;
+	}
 
-		for (int i = 0; i < _players.Length; ++i)
-		{
-			_players[i].PlayerKillEvent += HandlePlayerKillEvent;
-		}
+	// Creates the proper player-character.
+	private void HandlePlayerDropIn(int id)
+	{
+		_players[_playerJoinCount] = CreatePlayer(_playerJoinCount);
+
+		_playerJoinCount += 1;
 	}
 
 	private void HandleDropOutEvent(int playerIndex)
 	{
-		_playerCount -= 1;
+		_playerJoinCount -= 1;
 	}
 
-	private void HandlePlayerReadyEvent (ZMPlayer.ZMPlayerInfo playerTag)
+	private void HandlePlayerReadyEvent(ZMPlayer.ZMPlayerInfo playerTag)
 	{
-		_playerCount += 1;
+		_playerReadyCount += 1;
 	}
 
 	private void HandlePlayerKillEvent(ZMPlayerController killer)

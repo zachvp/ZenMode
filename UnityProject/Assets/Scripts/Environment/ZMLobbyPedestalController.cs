@@ -1,33 +1,31 @@
 ﻿using UnityEngine;
-using System.Collections;
+using Core;
+using ZMPlayer;
+using ZMConfiguration;
 
-public class ZMLobbyPedestalController : MonoBehaviour {
-	// ID
-	private ZMPlayer.ZMPlayerInfo _playerInfo; public ZMPlayer.ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
+public class ZMLobbyPedestalController : ZMPlayerItem
+{
+	public static EventHandler<ZMPlayerInfo> ActivateEvent;
 
-	public delegate void ActivateAction(ZMLobbyPedestalController lobbyPedestalController); public static event ActivateAction ActivateEvent;
+	protected override void Awake()
+	{
+		base.Awake();
 
-	// Use this for initialization
-	void Awake() {
-		gameObject.SetActive(false);
-
-		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
-
-		ZMLobbyScoreController.MaxScoreReachedEvent += HandleMaxScoreReachedEvent;
+		ZMScoreController.OnMaxScoreReached += HandleMaxScoreReachedEvent;
 		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 	}
 
-	void OnDestroy() {
+	void OnDestroy()
+	{
 		ActivateEvent = null;
 	}
 
-	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
+	void HandleAtPathEndEvent(ZMWaypointMovement waypointMovement)
 	{
-		if (waypointMovement.gameObject.Equals(gameObject)) {
-			if (ActivateEvent != null) {
-				ActivateEvent(this);
-			}
+		if (gameObject == waypointMovement.gameObject)
+		{
+			Notifier.SendEventNotification(ActivateEvent, _playerInfo);
 		}
 	}
 
@@ -39,28 +37,8 @@ public class ZMLobbyPedestalController : MonoBehaviour {
 		}
 	}
 
-	void HandleMaxScoreReachedEvent(ZMLobbyScoreController lobbyScoreController)
+	void HandleMaxScoreReachedEvent(ZMPlayerInfo info)
 	{
-		if (lobbyScoreController.GetComponent<ZMPlayer.ZMPlayerInfo>() == _playerInfo) {
-
-			GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-			
-			foreach (GameObject player in players)
-			{
-				var playerController = player.GetComponent<ZMPlayerController>();
-
-				if (playerController.PlayerInfo == _playerInfo)
-				{
-					playerController.DisablePlayer();
-					playerController.renderer.enabled = false;
-					playerController.transform.position = new Vector3(9000.0f, 9000.0f, 9000.0f);
-
-					break;
-				}
-			}
-
-			gameObject.SetActive(false);
-
-		}
+		if (_playerInfo == info) { gameObject.SetActive(false); }
 	}
 }

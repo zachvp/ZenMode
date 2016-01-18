@@ -9,6 +9,9 @@ namespace ZMConfiguration
 	public static class Constants
 	{
 		public const int MAX_PLAYERS = 4;
+
+		public const float STAGE_RESPAWN_TIME = 5.0f;
+		public const float LOBBY_RESPAWN_TIME = 0.75f;
 	}
 
 	public static class Tags
@@ -53,15 +56,15 @@ namespace ZMConfiguration
 			Utilities.GetNormalizedColor(50, 200, 70),
 			Utilities.GetNormalizedColor(50, 110, 250),
 			Utilities.GetNormalizedColor(255, 145, 50),
-			Utilities.GetNormalizedColor(55, 200, 30)
+			Utilities.GetNormalizedColor(255, 56, 240)
 		};
 
 		public static readonly Color[] PlayerLightColors = new Color[Constants.MAX_PLAYERS]
 		{
 			Utilities.GetNormalizedColor(10, 185, 0),
 			Utilities.GetNormalizedColor(0, 120, 255),
-			Utilities.GetNormalizedColor(255, 145, 50),
-			Utilities.GetNormalizedColor(55, 200, 30)
+			Utilities.GetNormalizedColor(255, 75, 0),
+			Utilities.GetNormalizedColor(255, 56, 240)
 		};
 	}	
 }
