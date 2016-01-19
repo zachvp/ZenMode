@@ -45122,6 +45122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   template: {fileID: 11402620, guid: d579c40c9f27e4e8189a8342f248724c, type: 2}
+  startTransform: {fileID: 0}
 --- !u!1 &520509787
 GameObject:
   m_ObjectHideFlags: 0
@@ -50605,6 +50606,7 @@ MonoBehaviour:
   endZoom: 432
   zoomAtStart: 1
   zoomDelay: 1
+  startZoom: 200
 --- !u!114 &581343255
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103841,6 +103843,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   template: {fileID: 11485450, guid: 2c3c5291504e0564ba62544d40dd03d1, type: 2}
+  startTransform: {fileID: 0}
 --- !u!1 &1395894399
 GameObject:
   m_ObjectHideFlags: 0
@@ -106623,6 +106626,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   template: {fileID: 11466392, guid: 31f4316b588f10f46a5df4522ddb8946, type: 2}
+  startTransform: {fileID: 0}
 --- !u!1001 &1452733972
 Prefab:
   m_ObjectHideFlags: 0
@@ -142600,6 +142604,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 114950bddf97742c48a9cb44efec5a21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  respawnTag: Spawnpoint
 --- !u!4 &1956798039
 Transform:
   m_ObjectHideFlags: 0
@@ -148445,6 +148450,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   template: {fileID: 11482802, guid: c83c589a9911a4666be8684cd8eab305, type: 2}
+  startTransform: {fileID: 0}
 --- !u!1 &2019552571
 GameObject:
   m_ObjectHideFlags: 0

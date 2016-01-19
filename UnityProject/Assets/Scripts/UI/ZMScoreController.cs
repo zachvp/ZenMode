@@ -33,9 +33,14 @@ public class ZMScoreController : ZMPlayerItem
 
 		base.Awake();
 
-		_totalScore = 0;
-
 		_allScoreControllers = new List<ZMScoreController>();
+	}
+
+	protected virtual void Start()
+	{
+		var initialScore = MAX_SCORE / 2.0f;
+
+		SetScore(initialScore);
 	}
 
 	protected virtual void OnDestroy()

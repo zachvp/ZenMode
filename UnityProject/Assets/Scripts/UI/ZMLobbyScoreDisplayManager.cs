@@ -15,10 +15,8 @@ public class ZMLobbyScoreDisplayManager : ZMScoreDisplayManager
 		ZMPlayerController.OnPlayerCreate += HandlePlayerCreate;
 	}
 
-	protected override void Start()
+	protected void Start()
 	{
-		base.Start();
-
 		DeactivateScoreBars();
 	}
 

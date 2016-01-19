@@ -24,7 +24,6 @@ public class ZMScoreDisplayManager : MonoBehaviour
 
 	protected static ZMScoreDisplayManager _instance;
 
-	protected float _initialSliderValue;
 	protected float _maxSliderValue;
 
 	private Slider[] _scoreSliders;
@@ -47,10 +46,7 @@ public class ZMScoreDisplayManager : MonoBehaviour
 
 		ZMScoreController.MinScoreReached += EliminateScore;
 		ZMScoreController.OnUpdateScore += UpdateScore;
-	}
 
-	protected virtual void Start()
-	{
 		ConfigureScoreSliders();
 		ConfigureScoreStatuses();
 	}
@@ -71,7 +67,7 @@ public class ZMScoreDisplayManager : MonoBehaviour
 			_scoreSliders[info.ID] = sliderObjects[i].GetComponent<Slider>();
 			_scoreSliders[info.ID].handleRect = null;
 			_scoreSliders[info.ID].maxValue = _maxSliderValue;
-			_scoreSliders[info.ID].value = _initialSliderValue;
+			_scoreSliders[info.ID].value = 0.0f;
 		}
 	}
 	

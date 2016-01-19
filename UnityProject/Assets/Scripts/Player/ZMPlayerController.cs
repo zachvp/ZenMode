@@ -530,7 +530,6 @@ public class ZMPlayerController : ZMPlayerItem
 		ZMStageScoreController.MinScoreReached -= HandleMinScoreReached;
 
 		OnPlayerCreate = null;
-		OnPlayerCreate = null;
 		PlayerKillEvent = null;
 		PlayerDeathEvent = null;
 		PlayerRespawnEvent = null;

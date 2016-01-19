@@ -22,17 +22,12 @@ public class ZMLobbyScoreController : ZMScoreController
 		base.Awake();
 
 		_targetAlive = true;
+		_basePosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 
-//		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
 		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
 		ZMLobbyPedestalController.ActivateEvent += HandleActivateEvent;
 
 		AcceptPlayerEvents();
-	}
-
-	protected void Start()
-	{
-		_basePosition = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
 	}
 
 	void OnTriggerStay2D(Collider2D collider)
