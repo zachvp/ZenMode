@@ -35,16 +35,7 @@ public class ZMSoul : MonoBehaviour
 	{
 		_particles.renderer.material.color = Utilities.GetRGB(_particles.renderer.material.color, _playerInfo.standardColor);
 
-		GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-		
-		foreach (GameObject player in players) {
-			ZMScoreController scoreController = player.GetComponent<ZMScoreController>();
-			
-			if (_playerInfo == scoreController.PlayerInfo)
-			{
-				_scoreController = scoreController;
-			}
-		}
+		_scoreController = ZMPlayerManager.Instance.Scores[_playerInfo.ID];
 	}
 
 	void OnDestroy()
