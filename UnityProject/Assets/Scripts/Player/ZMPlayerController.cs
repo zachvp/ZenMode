@@ -837,15 +837,12 @@ public class ZMPlayerController : ZMPlayerItem
 
 	private void SetMovementDirection(MovementDirectionState direction)
 	{
-		MovementDirectionState previousDirection = _movementDirection;
+		var previousDirection = _movementDirection;
+		var angle = (direction == MovementDirectionState.FACING_LEFT ? 180 : 0);
 
 		_movementDirection = direction;
-		
-		// Modify x-scale and flip our sprite based on our direction.
-		float scaleFactor = (direction == MovementDirectionState.FACING_LEFT ? -1 : 1);
-		transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * scaleFactor,
-		                                   transform.localScale.y,
-		                                   transform.localScale.z);
+
+		transform.localRotation = Quaternion.Euler(0, angle, 0);
 
 		if (!previousDirection.Equals(_movementDirection)) {
 			Vector3 shiftedPos = transform.position;
