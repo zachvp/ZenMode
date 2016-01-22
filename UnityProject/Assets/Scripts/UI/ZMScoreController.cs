@@ -38,9 +38,7 @@ public class ZMScoreController : ZMPlayerItem
 
 	protected virtual void Start()
 	{
-		var initialScore = MAX_SCORE / 2.0f;
-
-		SetScore(initialScore);
+		InitScore();
 	}
 
 	protected virtual void OnDestroy()
@@ -60,6 +58,13 @@ public class ZMScoreController : ZMPlayerItem
 		{
 			_allScoreControllers.Add(scoreObject.GetComponent<ZMScoreController>());
 		}
+	}
+
+	protected virtual void InitScore()
+	{
+		var initialScore = MAX_SCORE / 2.0f;
+		
+		SetScore(initialScore);
 	}
 	
 	public void SetScore(float newScore)

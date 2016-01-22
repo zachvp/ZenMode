@@ -49,6 +49,11 @@ public class ZMLobbyScoreController : ZMScoreController
 		}
 	}
 
+	protected override void InitScore()
+	{
+		SetScore(0.0f);
+	}
+
 	protected override void AcceptPlayerEvents()
 	{
 		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;

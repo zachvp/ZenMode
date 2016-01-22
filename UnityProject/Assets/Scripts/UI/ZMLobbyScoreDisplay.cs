@@ -1,4 +1,7 @@
 using UnityEngine;
+using UnityEngine.UI;
+using ZMConfiguration;
+using ZMPlayer;
 
 public class ZMLobbyScoreDisplay : ZMScoreDisplay
 {
@@ -6,7 +9,7 @@ public class ZMLobbyScoreDisplay : ZMScoreDisplay
 	{
 		base.Awake();
 
-		_maxSliderValue = 100.0f;
+		DeactivateScoreBar(_playerInfo);
 
 		ZMLobbyScoreController.OnUpdateScore += UpdateScore;
 		ZMLobbyScoreController.OnMaxScoreReached += DeactivateScoreBar;
@@ -15,14 +18,17 @@ public class ZMLobbyScoreDisplay : ZMScoreDisplay
 		ZMPlayerController.OnPlayerCreate += HandlePlayerCreate;
 	}
 
-	protected void Start()
+	protected override void ConfigureScoreSlider()
 	{
-		DeactivateScoreBar(_playerInfo);
+		_scoreSlider.maxValue = 100.0f;
 	}
 
 	private void HandlePlayerCreate(ZMPlayerController controller)
 	{
-		ActivateScoreBar(_playerInfo);
-		UpdateScore(controller.PlayerInfo, 0.0f);
+		if (_playerInfo == controller.PlayerInfo)
+		{
+			ActivateScoreBar(_playerInfo);
+			UpdateScore(controller.PlayerInfo, 0.0f);
+		}
 	}
 }

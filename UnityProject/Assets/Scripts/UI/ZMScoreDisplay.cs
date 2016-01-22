@@ -4,39 +4,24 @@ using ZMConfiguration;
 using ZMPlayer;
 
 [RequireComponent(typeof(Slider))]
-public class ZMScoreDisplay : MonoBehaviour
+public abstract class ZMScoreDisplay : MonoBehaviour
 {
 	protected ZMPlayerInfo _playerInfo;
 	protected Slider _scoreSlider;
-	protected Text _scoreStatus;
-
-	protected float _maxSliderValue;
-
+	
 	protected virtual void Awake()
 	{
-		_maxSliderValue = ZMScoreController.MAX_SCORE;
-
-		_scoreSlider = GetComponent<Slider>();
-		_scoreStatus = GetComponentInChildren<Text>();
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
-		ZMScoreController.MinScoreReached += EliminateScore;
-		ZMScoreController.OnUpdateScore += UpdateScore;
-
+		GetDisplayElements();
 		ConfigureScoreSlider();
-		ConfigureScoreStatuses();
+
+		ZMScoreController.OnUpdateScore += UpdateScore;
 	}
 
-	protected void ConfigureScoreSlider()
+	protected virtual void GetDisplayElements()
 	{
-		_scoreSlider.handleRect = null;
-		_scoreSlider.maxValue = _maxSliderValue;
-		_scoreSlider.value = 0.0f;
-	}
-	
-	protected void ConfigureScoreStatuses()
-	{
-		_scoreStatus.text = "";
+		_scoreSlider = GetComponent<Slider>();
 	}
 
 	protected void ActivateScoreBar(ZMPlayerInfo info)
@@ -49,13 +34,10 @@ public class ZMScoreDisplay : MonoBehaviour
 		if (_playerInfo == info) { gameObject.SetActive(false); }
 	}
 	
-	protected void EliminateScore(ZMScoreController controller)
-	{
-		if (_playerInfo == controller.PlayerInfo) { _scoreStatus.text = "ELIMINATED!"; }
-	}
-
 	protected void UpdateScore(ZMPlayerInfo info, float amount)
 	{		
-		if (_playerInfo == info) { _scoreSlider.value = amount; }
+		if (_playerInfo == info && _scoreSlider) { _scoreSlider.value = amount; }
 	}
+
+	protected abstract void ConfigureScoreSlider();
 }

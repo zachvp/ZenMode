@@ -33,7 +33,7 @@ GameObject:
   - 61: {fileID: 6137656}
   m_Layer: 5
   m_Name: LobbyOrbMessage
-  m_TagString: Untagged
+  m_TagString: ScoreStatus
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
