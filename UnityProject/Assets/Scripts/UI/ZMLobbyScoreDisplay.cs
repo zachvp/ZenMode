@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ZMLobbyScoreDisplayManager : ZMScoreDisplay
+public class ZMLobbyScoreDisplay : ZMScoreDisplay
 {
 	protected override void Awake()
 	{
@@ -17,12 +17,12 @@ public class ZMLobbyScoreDisplayManager : ZMScoreDisplay
 
 	protected void Start()
 	{
-		DeactivateScoreBars();
+		DeactivateScoreBar(_playerInfo);
 	}
 
 	private void HandlePlayerCreate(ZMPlayerController controller)
 	{
-		ActivateScoreBar(controller.PlayerInfo);
+		ActivateScoreBar(_playerInfo);
 		UpdateScore(controller.PlayerInfo, 0.0f);
 	}
 }

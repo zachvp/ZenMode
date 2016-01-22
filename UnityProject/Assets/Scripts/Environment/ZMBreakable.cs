@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
+using ZMPlayer;
 
-public class ZMBreakable : MonoBehaviour {
+public class ZMBreakable : MonoBehaviour
+{
 	public ParticleSystem destructionEffect;
 
 	private bool _handlingCollision;
@@ -14,9 +15,9 @@ public class ZMBreakable : MonoBehaviour {
 
 	}
 
-	void HandleDropOutEvent(int playerIndex)
+	void HandleDropOutEvent(ZMPlayerInfo info)
 	{
-		if (_playerInfo.ID == playerIndex)
+		if (_playerInfo == info)
 		{
 			Debug.Log(_playerInfo.ID.ToString() + ": droppped out");
 			gameObject.SetActive(true);

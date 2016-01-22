@@ -11,6 +11,7 @@ GameObject:
   - 114: {fileID: 11453744}
   - 114: {fileID: 11453750}
   - 114: {fileID: 11421230}
+  - 114: {fileID: 11435600}
   m_Layer: 5
   m_Name: StageScoreBar
   m_TagString: ScoreGui
@@ -77,7 +78,6 @@ GameObject:
   - 224: {fileID: 22472548}
   - 222: {fileID: 22272548}
   - 114: {fileID: 11472550}
-  - 114: {fileID: 11472548}
   m_Layer: 5
   m_Name: ScoreStatus
   m_TagString: ScoreStatus
@@ -99,6 +99,17 @@ MonoBehaviour:
   looping: 0
   fadeSpeed: 3
   fadeColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &11435600
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 153744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f745eb2b80be94838b9a63f5c15627d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11453744
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -195,18 +206,6 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 153744}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e950e28a513cd540881118fcdedf4f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 0
---- !u!114 &11472548
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 172548}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e950e28a513cd540881118fcdedf4f3, type: 3}

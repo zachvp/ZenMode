@@ -71,9 +71,9 @@ public class ZMLobbyScoreController : ZMScoreController
 		}
 	}
 	
-	private void HandleDropOutEvent(int playerIndex)
+	private void HandleDropOutEvent(ZMPlayerInfo info)
 	{
-		if (playerIndex == _playerInfo.ID)
+		if (_playerInfo == info)
 		{
 			transform.position = _basePosition;
 			gameObject.SetActive(false);

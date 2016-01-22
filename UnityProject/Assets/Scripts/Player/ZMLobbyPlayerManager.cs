@@ -28,12 +28,12 @@ public class ZMLobbyPlayerManager : ZMPlayerManager
 		_playerJoinCount += 1;
 	}
 
-	private void HandleDropOutEvent(int playerIndex)
+	private void HandleDropOutEvent(ZMPlayerInfo info)
 	{
 		_playerJoinCount -= 1;
 	}
 
-	private void HandlePlayerReadyEvent(ZMPlayer.ZMPlayerInfo playerTag)
+	private void HandlePlayerReadyEvent(ZMPlayerInfo playerTag)
 	{
 		_playerReadyCount += 1;
 	}

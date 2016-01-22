@@ -1,7 +1,7 @@
 using UnityEngine;
 using Core;
 
-public class ZMMainMenuController : MonoBehaviour
+public class ZMMainMenuController : ZMTextMenu
 {
 	// Delegates.
 	public static EventHandler LoadGameEvent;
@@ -12,21 +12,19 @@ public class ZMMainMenuController : MonoBehaviour
 	private const int CREDITS_OPTION	 = 2;
 	private const int QUIT_OPTION 		 = 3;
 
-	// Use this for initialization
-	void Awake ()
-	{
-		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
-		ZMTextMenu.SelectOptionEvent += HandleSelectOptionEvent;
-	}
-
 	void OnDestroy()
 	{
 		LoadGameEvent = null;
 	}
 
-	private void HandleSelectOptionEvent(int optionIndex)
+	protected override void AcceptActivationEvents()
 	{
-		switch(optionIndex)
+		ZMGameInputManager.StartInputEvent += HandleStartInputEvent;
+	}
+
+	protected override void HandleMenuSelection()
+	{
+		switch(_selectedIndex)
 		{
 			case START_OPTION :
 			{
@@ -45,7 +43,7 @@ public class ZMMainMenuController : MonoBehaviour
 			}
 			case QUIT_OPTION :
 			{
-				QuitGame();
+				SceneManager.QuitGame();
 				break;
 			}
 			default :
@@ -56,12 +54,7 @@ public class ZMMainMenuController : MonoBehaviour
 		}
 	}
 
-	void QuitGame()
-	{
-		Application.Quit();
-	}
-
-	void HandleStartInputEvent(int controlIndex)
+	private void HandleStartInputEvent(int controlIndex)
 	{
 		BeginGame();
 	}

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using ZMPlayer;
 
 public class ZMHandlePlayerJoin : MonoBehaviour {
 	public string methodAction;
@@ -16,12 +17,9 @@ public class ZMHandlePlayerJoin : MonoBehaviour {
 		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
 	}
 
-	void HandleDropOutEvent (int playerIndex)
+	void HandleDropOutEvent(ZMPlayerInfo info)
 	{
-		if (_playerInfo.ID == playerIndex)
-		{
-			_sent = false;
-		}
+		if (_playerInfo == info) { _sent = false; }
 	}
 
 	void HandlePlayerJoinedEvent(int controlIndex)

@@ -15,7 +15,7 @@ public class ZMLobbyController : MonoBehaviour
 	public static EventHandler<int> PlayerJoinedEvent;
 
 	public static EventHandler<ZMPlayerInfo> PlayerReadyEvent;
-	public static EventHandler<int> DropOutEvent;
+	public static EventHandler<ZMPlayerInfo> DropOutEvent;
 	public static EventHandler<int> PauseGameEvent;
 	public static EventHandler ResumeGameEvent;
 
@@ -103,7 +103,10 @@ public class ZMLobbyController : MonoBehaviour
 		}
 	}
 
-	void HandleSelectDropOutEvent() {
+	void HandleSelectDropOutEvent()
+	{
+		var droppedPlayer = ZMLobbyPlayerManager.Instance.Players[_playerPauseIndex];
+
 		_joinedPlayers[_playerPauseIndex] = false;
 		_currentJoinCount -= 1;
 
@@ -112,10 +115,10 @@ public class ZMLobbyController : MonoBehaviour
 			_currentReadyCount -= 1;
 		}
 
-		Notifier.SendEventNotification(DropOutEvent, _playerPauseIndex);
+		Notifier.SendEventNotification(DropOutEvent, droppedPlayer.PlayerInfo);
 	}
 
-	void HandleSelectResumeEvent ()
+	void HandleSelectResumeEvent()
 	{
 		_paused = false;
 

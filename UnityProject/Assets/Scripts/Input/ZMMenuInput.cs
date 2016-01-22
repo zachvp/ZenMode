@@ -22,7 +22,7 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 	{		
 		if (_canCycleSelection)
 		{
-			if (active)
+			if (gameObject.activeSelf)
 			{
 				if (_movement.y < -NAVIGATION_THRESHOLD)
 				{
@@ -68,7 +68,7 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 	
 	private void HandleOnSelect(ZMInput input)
 	{
-		if (input.Pressed && active)
+		if (input.Pressed && gameObject.activeSelf)
 		{
 			HandleMenuSelection();
 		}

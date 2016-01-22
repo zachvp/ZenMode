@@ -24,5 +24,10 @@ namespace Core
 		{
 			LoadScene(Application.loadedLevel);
 		}
+
+		public static void QuitGame()
+		{
+			Application.Quit();
+		}
 	}
 }
