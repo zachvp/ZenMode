@@ -20,7 +20,6 @@ public class ZMPauseMenu : ZMTextMenu
 		}
 
 		_playerInfo = GetComponent<ZMPlayerInfo>();
-		AcceptInputEvents();
 	}
 
 	void OnDestroy()

@@ -115,6 +115,7 @@ Prefab:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11447544, guid: fd4720bbad32f6044bab340809166127, type: 2}
+    - {fileID: 11459956, guid: fd4720bbad32f6044bab340809166127, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: fd4720bbad32f6044bab340809166127, type: 2}
   m_RootGameObject: {fileID: 1514860311}
   m_IsPrefabParent: 0
@@ -33401,6 +33402,10 @@ Prefab:
       propertyPath: id
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 172548, guid: 22bbe4f12b9f82e4bbcd7e1704a733dd, type: 2}
+      propertyPath: m_Name
+      value: ScoreStatusP2
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11453750, guid: 22bbe4f12b9f82e4bbcd7e1704a733dd, type: 2}
     - {fileID: 0}
@@ -57590,7 +57595,7 @@ GameObject:
   - 114: {fileID: 695262888}
   - 114: {fileID: 695262887}
   m_Layer: 5
-  m_Name: ScoreStatus
+  m_Name: ScoreStatusP3
   m_TagString: ScoreStatus
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84135,6 +84140,10 @@ Prefab:
       propertyPath: id
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 172548, guid: 22bbe4f12b9f82e4bbcd7e1704a733dd, type: 2}
+      propertyPath: m_Name
+      value: ScoreStatusP3
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11453750, guid: 22bbe4f12b9f82e4bbcd7e1704a733dd, type: 2}
     - {fileID: 0}
@@ -98147,6 +98156,10 @@ Prefab:
       propertyPath: id
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 172548, guid: 22bbe4f12b9f82e4bbcd7e1704a733dd, type: 2}
+      propertyPath: m_Name
+      value: ScoreStatusP3
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11453750, guid: 22bbe4f12b9f82e4bbcd7e1704a733dd, type: 2}
     - {fileID: 0}
@@ -100609,7 +100622,7 @@ GameObject:
   - 114: {fileID: 1304413498}
   - 114: {fileID: 1304413497}
   m_Layer: 5
-  m_Name: ScoreStatus
+  m_Name: ScoreStatusP2
   m_TagString: ScoreStatus
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109525,7 +109538,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 1514860312}
   - 114: {fileID: 1514860313}
-  - 114: {fileID: 1514860315}
   - 82: {fileID: 1514860316}
   m_Layer: 0
   m_Name: GameStateManager
@@ -109559,18 +109571,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioComplete: {fileID: 8300000, guid: b387ab8d6b25f43bd85346383b56cb55, type: 3}
---- !u!114 &1514860315
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11459956, guid: fd4720bbad32f6044bab340809166127,
-    type: 2}
-  m_PrefabInternal: {fileID: 460459}
-  m_GameObject: {fileID: 1514860311}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 536229b21385625449ade63f29b4a9d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!82 &1514860316
 AudioSource:
   m_ObjectHideFlags: 0
@@ -116295,7 +116295,7 @@ GameObject:
   - 114: {fileID: 1597930090}
   - 114: {fileID: 1597930089}
   m_Layer: 5
-  m_Name: ScoreStatus
+  m_Name: ScoreStatusP3
   m_TagString: ScoreStatus
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -148320,6 +148320,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 2016721858}
   - 114: {fileID: 2016721857}
+  - 114: {fileID: 2016721859}
   m_Layer: 0
   m_Name: InputManager
   m_TagString: Untagged
@@ -148351,6 +148352,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 12592188}
   m_RootOrder: 1
+--- !u!114 &2016721859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11405028, guid: 805f6df35090242ceb47952559f04bfb,
+    type: 2}
+  m_PrefabInternal: {fileID: 1374771455}
+  m_GameObject: {fileID: 2016721856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 536229b21385625449ade63f29b4a9d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2018379899
 Prefab:
   m_ObjectHideFlags: 0

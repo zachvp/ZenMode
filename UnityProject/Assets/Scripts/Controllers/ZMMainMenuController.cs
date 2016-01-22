@@ -24,25 +24,32 @@ public class ZMMainMenuController : MonoBehaviour
 		LoadGameEvent = null;
 	}
 
-	void HandleSelectOptionEvent(int optionIndex) {
-		switch(optionIndex) {
-			case START_OPTION : {
+	private void HandleSelectOptionEvent(int optionIndex)
+	{
+		switch(optionIndex)
+		{
+			case START_OPTION :
+			{
 				BeginGame();
 				break;
 			}
-			case HOW_TO_PLAY_OPTION : {
+			case HOW_TO_PLAY_OPTION :
+			{
 				Application.LoadLevel (ZMSceneIndexList.INDEX_HOW_TO_PLAY);
 				break;
 			}
-			case CREDITS_OPTION : {
+			case CREDITS_OPTION :
+			{
 				Application.LoadLevel(ZMSceneIndexList.INDEX_CREDITS);
 				break;
 			}
-			case QUIT_OPTION : {
+			case QUIT_OPTION :
+			{
 				QuitGame();
 				break;
 			}
-			default : {
+			default :
+			{
 				Debug.Log(gameObject.name + ": ERROR: no valid menu option selected!");
 				break;
 			}
