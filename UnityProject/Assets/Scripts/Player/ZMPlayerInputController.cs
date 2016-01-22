@@ -61,18 +61,28 @@ namespace ZMPlayer
 
 			var inputManager = ZMInputManager.Instance;
 
-			inputManager.OnWKey += HandleOnJump;
-			inputManager.OnUpArrowKey += HandleOnJump;
-
 			inputManager.OnSKey += HandleOnAttack;
 			inputManager.OnEKey += HandleOnAttack;
 			inputManager.OnQKey += HandleOnAttack;
-			inputManager.OnDownArrowKey += HandleOnAttack;
 			inputManager.OnRightShiftKey += HandleOnAttack;
 			inputManager.OnSlashKey += HandleOnAttack;
 		}
 
 		// Handlers.
+		protected override void HandleOnMoveUp(ZMInput input)
+		{
+			base.HandleOnMoveUp(input);
+
+			HandleOnJump(input);
+		}
+
+		protected override void HandleOnMoveDown(ZMInput input)
+		{
+			base.HandleOnMoveDown(input);
+
+			HandleOnAttack(input);
+		}
+
 		private void HandleOnJump(ZMInput input)
 		{
 			if (IsCorrectInputControl(input))

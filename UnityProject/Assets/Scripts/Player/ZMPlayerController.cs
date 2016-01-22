@@ -636,7 +636,10 @@ public class ZMPlayerController : ZMPlayerItem
 
 	private void JumpEvent()
 	{
-		if (_controller.isGrounded && _controlModState != ControlModState.JUMPING) { _controlModState = ControlModState.JUMPING; }
+		if (_controller.isGrounded) 
+		{
+			if (_controlModState != ControlModState.JUMPING) { _controlModState = ControlModState.JUMPING; }
+		}
 		else if (IsTouchingEitherSide() && _canWallJump) { _controlModState = ControlModState.WALL_JUMPING; }
 	}
 
@@ -700,7 +703,9 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 	}
 
-	void ResetControlModState() { _controlModState = ControlModState.NEUTRAL; }
+	void ResetControlModState() { 
+		_controlModState = ControlModState.NEUTRAL;
+	}
 
 	void ResetMoveModState() { _moveModState = MoveModState.NEUTRAL; }
 

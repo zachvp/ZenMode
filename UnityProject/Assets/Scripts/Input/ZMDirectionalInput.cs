@@ -81,7 +81,7 @@ public class ZMDirectionalInput : ZMPlayerItem
 		}
 	}
 	
-	private void HandleOnMoveUp(ZMInput input)
+	protected virtual void HandleOnMoveUp(ZMInput input)
 	{
 		if (IsCorrectInputControl(input))
 		{
@@ -96,7 +96,7 @@ public class ZMDirectionalInput : ZMPlayerItem
 		}
 	}
 	
-	private void HandleOnMoveDown(ZMInput input)
+	protected virtual void HandleOnMoveDown(ZMInput input)
 	{
 		if (IsCorrectInputControl(input))
 		{
