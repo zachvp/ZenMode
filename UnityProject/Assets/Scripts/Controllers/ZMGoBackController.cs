@@ -19,6 +19,6 @@ public class ZMGoBackController : MonoBehaviour
 	private void HandleGoBack(int ID)
 	{
 		audio.PlayOneShot(_audioBack);
-		Application.LoadLevel(ZMSceneIndexList.INDEX_MAIN_MENU);
+		SceneManager.LoadScene(ZMSceneIndexList.INDEX_MAIN_MENU);
 	}
 }

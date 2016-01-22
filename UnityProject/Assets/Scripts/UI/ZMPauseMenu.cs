@@ -45,17 +45,13 @@ public class ZMPauseMenu : ZMTextMenu
 		}
 	}
 
-	protected override void AcceptInputEvents()
+	protected override void AcceptActivationEvents()
 	{
-		base.AcceptInputEvents();
-
 		ZMGameInputManager.StartInputEvent += HandleTogglePause;
 	}
 
-	protected override void ClearInputEvents()
+	protected override void ClearActivationEvents()
 	{
-		base.ClearInputEvents();
-
 		ZMGameInputManager.StartInputEvent -= HandleTogglePause;
 	}
 

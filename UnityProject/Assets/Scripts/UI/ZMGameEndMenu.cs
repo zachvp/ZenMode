@@ -3,10 +3,8 @@ using Core;
 
 public class ZMGameEndMenu : ZMTextMenu
 {
-	protected override void Awake()
+	protected override void AcceptActivationEvents()
 	{
-		base.Awake();
-
 		MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 	}
 
@@ -26,10 +24,5 @@ public class ZMGameEndMenu : ZMTextMenu
 	{
 		AcceptInputEvents();
 		ShowMenu();
-	}
-
-	protected override bool IsCorrectInputControl (ZMInput input)
-	{
-		return base.IsCorrectInputControl (input);
 	}
 }

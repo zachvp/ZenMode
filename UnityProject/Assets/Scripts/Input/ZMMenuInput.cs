@@ -2,6 +2,7 @@
 
 public abstract class ZMMenuInput : ZMDirectionalInput
 {
+	public bool startActive;
 	private bool _canCycleSelection;
 	private int _delayFrame = 0;
 
@@ -14,23 +15,27 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 		base.Awake();
 
 		_canCycleSelection = true;
+		AcceptActivationEvents();
 	}
 
 	protected virtual void Update()
 	{		
 		if (_canCycleSelection)
 		{
-			if (_movement.y < -NAVIGATION_THRESHOLD)
+			if (active)
 			{
-				_canCycleSelection = false;
-				
-				HandleMenuNavigationForward();
-			}
-			else if (_movement.y > NAVIGATION_THRESHOLD)
-			{
-				_canCycleSelection = false;
-				
-				HandleMenuNavigationBackward();
+				if (_movement.y < -NAVIGATION_THRESHOLD)
+				{
+					_canCycleSelection = false;
+					
+					HandleMenuNavigationForward();
+				}
+				else if (_movement.y > NAVIGATION_THRESHOLD)
+				{
+					_canCycleSelection = false;
+					
+					HandleMenuNavigationBackward();
+				}
 			}
 		}
 		else
@@ -52,7 +57,7 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 		inputManager.OnAction1 += HandleOnSelect;
 		inputManager.OnReturnKey += HandleOnSelect;
 	}
-
+	
 	protected virtual void ClearInputEvents()
 	{
 		var inputManager = ZMInputManager.Instance;
@@ -63,11 +68,14 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 	
 	private void HandleOnSelect(ZMInput input)
 	{
-		if (input.Pressed)
+		if (input.Pressed && active)
 		{
 			HandleMenuSelection();
 		}
 	}
+
+	protected virtual void AcceptActivationEvents() { }
+	protected virtual void ClearActivationEvents()  { }
 
 	protected abstract void HandleMenuNavigationForward();
 	protected abstract void HandleMenuNavigationBackward();

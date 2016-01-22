@@ -88,7 +88,7 @@ public class ZMLobbyController : MonoBehaviour
 	void HandleSelectQuitEvent()
 	{
 		MatchStateManager.Clear();
-		Application.LoadLevel(ZMSceneIndexList.INDEX_MAIN_MENU);
+		SceneManager.LoadScene(ZMSceneIndexList.INDEX_MAIN_MENU);
 	}
 
 	void HandleMainInputEvent(int controlIndex)
@@ -159,7 +159,7 @@ public class ZMLobbyController : MonoBehaviour
 	void LoadLevel()
 	{
 		MatchStateManager.Clear();
-		Application.LoadLevel(ZMSceneIndexList.INDEX_STAGE);
+		SceneManager.LoadScene(ZMSceneIndexList.INDEX_STAGE);
 	}
 
 	void ClearMessage()

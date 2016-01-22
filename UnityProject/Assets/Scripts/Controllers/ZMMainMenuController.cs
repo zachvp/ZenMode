@@ -35,12 +35,12 @@ public class ZMMainMenuController : MonoBehaviour
 			}
 			case HOW_TO_PLAY_OPTION :
 			{
-				Application.LoadLevel (ZMSceneIndexList.INDEX_HOW_TO_PLAY);
+				SceneManager.LoadScene(ZMSceneIndexList.INDEX_HOW_TO_PLAY);
 				break;
 			}
 			case CREDITS_OPTION :
 			{
-				Application.LoadLevel(ZMSceneIndexList.INDEX_CREDITS);
+				SceneManager.LoadScene(ZMSceneIndexList.INDEX_CREDITS);
 				break;
 			}
 			case QUIT_OPTION :
@@ -78,6 +78,6 @@ public class ZMMainMenuController : MonoBehaviour
 
 	void LoadGame()
 	{
-		Application.LoadLevel(ZMSceneIndexList.INDEX_LOBBY);
+		SceneManager.LoadScene(ZMSceneIndexList.INDEX_LOBBY);
 	}
 }

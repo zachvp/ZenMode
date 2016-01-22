@@ -4,7 +4,6 @@ using Core;
 
 public class ZMTextMenu : ZMMenuInput
 {
-	public bool startActive;
 	public AudioClip[] _audioChoose;
 	public AudioClip[] _audioHighlight;
 

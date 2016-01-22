@@ -59,7 +59,7 @@ public class ZMGameStateController : MonoBehaviour
 	private void HandleSelectQuitEvent()
 	{	
 		MatchStateManager.Clear();
-		Application.LoadLevel(ZMSceneIndexList.INDEX_LOBBY);
+		SceneManager.LoadScene(ZMSceneIndexList.INDEX_LOBBY);
 	}
 	
 	private void HandleResetGame()
@@ -82,7 +82,7 @@ public class ZMGameStateController : MonoBehaviour
 	private void ResetGame()
 	{
 		MatchStateManager.Clear();
-		Application.LoadLevel(Application.loadedLevel);
+		SceneManager.ResetScene();
 	}
 
 	private void EndGame()
