@@ -575,6 +575,8 @@ public class ZMPlayerController : ZMPlayerItem
 
 	private void HandleOnMatchStart()
 	{
+		_animator.SetBool("didBecomeActive", true);
+
 		EnablePlayer();
 		AcceptInputEvents();
 	}
@@ -826,11 +828,12 @@ public class ZMPlayerController : ZMPlayerItem
 		_controller.enabled = true;
 		enabled = true;
 
-		_animator.SetBool("didBecomeActive", true);
+		_animator.enabled = true;
 	}
 
 	protected void DisablePlayer()
 	{
+		_animator.enabled = false;
 		_controller.enabled = false;
 		enabled = false;
 	}
