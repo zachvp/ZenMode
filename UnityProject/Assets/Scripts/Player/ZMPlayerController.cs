@@ -57,7 +57,7 @@ public class ZMPlayerController : ZMPlayerItem
 	// Player states.
 	private enum MovementDirectionState { FACING_LEFT, FACING_RIGHT };
 	private enum ControlMoveState 		{ NEUTRAL, MOVING };
-	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACK, ATTACKING, WALL_JUMPING, PLUNGE, PLUNGING, PARRY, PARRYING };
+	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACK, AIR_ATTACK, ATTACKING, WALL_JUMPING, PLUNGE, PLUNGING, PARRY, PARRYING };
 	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING_AIR, LUNGING_GROUND, WALL_SLIDE, RECOIL, RECOILING, STUN, STUNNED, DISABLE, DISABLED, PARRY_FACING, PARRY_AOE, RESPAWN, ELIMINATED };
 	private enum AbilityState 			{ NEUTRAL, SHOOTING };
 
@@ -236,8 +236,6 @@ public class ZMPlayerController : ZMPlayerItem
 
 				Notifier.SendEventNotification(PlayerLandPlungeEvent);
 			}
-
-			_canAirLunge = true;
 		}
 
 		// Horizontal movement.
@@ -282,60 +280,82 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 
 		// Update movement and ability state.
-		if (_controlModState == ControlModState.ATTACK) {
-			if (!IsPerformingLunge ()) {
-				if (_canLunge) {
-					if (_controller.isGrounded || (!_controller.isGrounded && _canAirLunge)) {
-						if (!_controller.isGrounded) {
-							_canAirLunge = false;
-						}
-						audio.PlayOneShot(_audioLunge[Random.Range (0, _audioLunge.Length)]);
-
-						_controlModState = ControlModState.ATTACKING;
-						_moveModState = MoveModState.LUNGE;
-
-						Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
-						Instantiate (_effectLungeObject, new Vector2 (transform.position.x - 3, transform.position.y - 10), rotation);
-					}
-					else if (!_controller.isGrounded && !_canAirLunge) {
-						audio.PlayOneShot(_audioLungeFail);
-					}
-				}
+		if (_controlModState == ControlModState.ATTACK)
+		{
+			if (!IsPerformingLunge() && _canLunge)
+			{
+				HorizontalAttack();
 			}
-		} else if (_controlModState == ControlModState.PLUNGE) {
+			else
+			{
+				audio.PlayOneShot(_audioLungeFail);
+			}
+		}
+		else if (_controlModState == ControlModState.AIR_ATTACK)
+		{
+			if (!IsPerformingLunge() && _canLunge && _canAirLunge)
+			{
+				_canAirLunge = false;
+				HorizontalAttack();
+			}
+			else
+			{
+				audio.PlayOneShot(_audioLungeFail);
+			}
+		}
+		else if (_controlModState == ControlModState.PLUNGE)
+		{
 			_controlModState = ControlModState.PLUNGING;
-			if (!IsPerformingPlunge()) {
+
+			if (!IsPerformingPlunge())
+			{
 				audio.PlayOneShot(_audioPlunge[Random.Range (0, _audioPlunge.Length)]);
 				_moveModState = MoveModState.PLUNGE;
 			}
-		} else if (_controlModState == ControlModState.PARRY) {
+		}
+		else if (_controlModState == ControlModState.PARRY)
+		{
 			_controlModState = ControlModState.PARRYING;
 			_moveModState = MoveModState.PARRY_FACING;
 			_canStun = true;
 			_canLunge = false;
-			GameObject effect = Instantiate(_effectClashObject, new Vector2(transform.position.x, transform.position.y), transform.rotation) as GameObject;
+
+			GameObject effect = Instantiate(_effectClashObject,
+			                                new Vector2(transform.position.x, transform.position.y),
+			                                transform.rotation) as GameObject;
 			effect.transform.parent = transform;
 			effect.transform.localScale = new Vector3(0.66f, 0.66f, 1.0f);
+
 			renderer.material = _materialFlash;
 			audio.PlayOneShot(_audioParry);
 
-			if (_controller.isGrounded) {
+			if (_controller.isGrounded)
+			{
 				Invoke("EndStunBeginParry", PARRY_STUN_WINDOW);
 				DisableInputWithCallbackDelay(PARRY_STUN_WINDOW + PARRY_TIME);
 
 				Notifier.SendEventNotification(PlayerParryEvent, this, PARRY_STUN_WINDOW + PARRY_TIME);
 			}
-		} else if (IsTouchingEitherSide()) {
-			if (!_controller.isGrounded && _moveModState == MoveModState.NEUTRAL) {
-				_moveModState = MoveModState.WALL_SLIDE;
+		}
+		else if (_controlModState == ControlModState.NEUTRAL)
+		{
+			if (_controller.isGrounded) { _canAirLunge = true; }
+
+			if (IsTouchingEitherSide())
+			{
+				if (!_controller.isGrounded && _moveModState == MoveModState.NEUTRAL) { _moveModState = MoveModState.WALL_SLIDE; }
 			}
 		}
 
-		if (_moveModState == MoveModState.PLUNGE) {
+		if (_moveModState == MoveModState.PLUNGE)
+		{
 			_moveModState = MoveModState.PLUNGING;
 			Plunge();
-		} else if (_moveModState == MoveModState.PLUNGING) {
-			if (_controller.isGrounded) {
+		}
+		else if (_moveModState == MoveModState.PLUNGING)
+		{
+			if (_controller.isGrounded)
+			{
 				Instantiate(_effectPlungeObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 
 				// AOE Check:
@@ -343,18 +363,25 @@ public class ZMPlayerController : ZMPlayerItem
 
 				// Check right:
 				RaycastHit2D recoilAOE = CheckRight(new Vector2(EDGE_OFFSET, -16.0f), AOE_RANGE, _controller.specialInteractibleMask);
-				if (recoilAOE) {
+				if (recoilAOE)
+				{
 					playerController = recoilAOE.collider.GetComponent<ZMPlayerController>();
-					if (playerController != null) {
+
+					if (playerController != null)
+					{
 						playerController._movementDirection = MovementDirectionState.FACING_LEFT;
 						playerController._moveModState = MoveModState.RECOIL;
 					}
 				}
 				// Check left:
 				recoilAOE = CheckLeft(new Vector2(-EDGE_OFFSET, -16.0f), AOE_RANGE, _controller.specialInteractibleMask);
-				if (recoilAOE) {
+
+				if (recoilAOE)
+				{
 					playerController = recoilAOE.collider.GetComponent<ZMPlayerController>();
-					if (playerController != null) {
+
+					if (playerController != null)
+					{
 						playerController._movementDirection = MovementDirectionState.FACING_RIGHT;
 						playerController._moveModState = MoveModState.RECOIL;
 					}
@@ -366,21 +393,31 @@ public class ZMPlayerController : ZMPlayerItem
 				Invoke(kMethodNameEnablePlayer, PARRY_TIME_LUNGE);
 				Invoke("ResetControlModState", PARRY_TIME_LUNGE + 0.02f);
 			}
-		} else if (_moveModState == MoveModState.LUNGE) {
+		}
+		else if (_moveModState == MoveModState.LUNGE)
+		{
 			_moveModState = _controller.isGrounded ? MoveModState.LUNGING_GROUND : MoveModState.LUNGING_AIR;
 
 			RaycastHit2D checkPlayer;
-			if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
-				if (checkPlayer = CheckRight(145f, _controller.specialInteractibleMask)) {
-					if (checkPlayer.collider.CompareTag(kPlayerTag) && !_playerInPath) {
+
+			if (_movementDirection == MovementDirectionState.FACING_RIGHT)
+			{
+				if (checkPlayer = CheckRight(145f, _controller.specialInteractibleMask))
+				{
+					if (checkPlayer.collider.CompareTag(kPlayerTag) && !_playerInPath)
+					{
 						_playerInPath = true;
 					}
 				}
 
 				LungeRight();
-			} else if (_movementDirection == MovementDirectionState.FACING_LEFT) {
-				if (checkPlayer = CheckLeft(145f, _controller.specialInteractibleMask)) {
-					if (checkPlayer.collider.CompareTag(kPlayerTag) && !_playerInPath) {
+			}
+			else if (_movementDirection == MovementDirectionState.FACING_LEFT)
+			{
+				if (checkPlayer = CheckLeft(145f, _controller.specialInteractibleMask))
+				{
+					if (checkPlayer.collider.CompareTag(kPlayerTag) && !_playerInPath)
+					{
 						_playerInPath = true;
 					}
 				}
@@ -389,9 +426,7 @@ public class ZMPlayerController : ZMPlayerItem
 			}
 
 			// End the lunge after a delay
-			if (IsInvoking(kMethodNameEndLunge)) {
-				CancelInvoke(kMethodNameEndLunge);
-			}
+			if (IsInvoking(kMethodNameEndLunge)) { CancelInvoke(kMethodNameEndLunge); }
 			Invoke (kMethodNameEndLunge, LUNGE_TIME);
 		}
 
@@ -652,7 +687,8 @@ public class ZMPlayerController : ZMPlayerItem
 			var forward = new Vector2(direction, 0);
 			RaycastHit2D hit;
 
-			_controlModState = ControlModState.ATTACK;
+			if (_controller.isGrounded) { _controlModState = ControlModState.ATTACK; }
+			else { _controlModState = ControlModState.AIR_ATTACK; }
 
 			if (direction != 0)
 			{
@@ -703,6 +739,18 @@ public class ZMPlayerController : ZMPlayerItem
 		{
 			_controlModState = ControlModState.PARRY;
 		}
+	}
+
+	private void HorizontalAttack()
+	{
+		// Attack
+		audio.PlayOneShot(_audioLunge[Random.Range (0, _audioLunge.Length)]);
+		
+		_controlModState = ControlModState.ATTACKING;
+		_moveModState = MoveModState.LUNGE;
+		
+		var rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
+		Instantiate(_effectLungeObject, new Vector2 (transform.position.x - 3, transform.position.y - 10), rotation);
 	}
 
 	void ResetControlModState() { 

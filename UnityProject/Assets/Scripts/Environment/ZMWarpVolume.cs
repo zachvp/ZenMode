@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
-public class ZMWarpVolume : MonoBehaviour {
+public class ZMWarpVolume : MonoBehaviour
+{
 	public ZMWarpVolume sibling;
 
 	private float _siblingAxisThreshold;
@@ -12,44 +12,54 @@ public class ZMWarpVolume : MonoBehaviour {
 	private PositionHorizontalRelativeToSibling _relativeHorizontalPosition;
 	private PositionVerticalRelativeToSibling _relativeVerticalPosition;
 
-	void Awake() {
+	void Awake()
+	{
 		_siblingAxisThreshold = 64.0f;
 		_relativeHorizontalPosition = PositionHorizontalRelativeToSibling.NEUTRAL;
 		_relativeVerticalPosition = PositionVerticalRelativeToSibling.NEUTRAL;
 	}
 
-	void Start() {
-		float selfPos, siblingPos;
-		selfPos = transform.position.x;
-		siblingPos = sibling.transform.position.x;
+	void Start()
+	{
+		var selfPos = transform.position.x;
+		var siblingPos = sibling.transform.position.x;
 
-		if (Mathf.Abs(selfPos - siblingPos) > _siblingAxisThreshold) {
+		if (Mathf.Abs(selfPos - siblingPos) > _siblingAxisThreshold)
+		{
 			_relativeHorizontalPosition = selfPos < siblingPos ? PositionHorizontalRelativeToSibling.LEFT 
 															   : PositionHorizontalRelativeToSibling.RIGHT;
 		}
 
-
 		selfPos = transform.position.y;
 		siblingPos = sibling.transform.position.y;
-		if (Mathf.Abs(selfPos - siblingPos) > _siblingAxisThreshold) {
+
+		if (Mathf.Abs(selfPos - siblingPos) > _siblingAxisThreshold)
+		{
 			_relativeVerticalPosition = selfPos < siblingPos ? PositionVerticalRelativeToSibling.BELOW 
 															   : PositionVerticalRelativeToSibling.ABOVE;
 		}
+
+		Debug.Log(string.Format("{0} forward: {1}"), name, transform.forward);
 	}
 
-	// public methods
-	public void Warp(GameObject warpObject) {
-		Vector3 spawnPosition = sibling.transform.position;
+	public void Warp(GameObject warpObject)
+	{
 		float offset;
+		var spawnPosition = sibling.transform.position;
 
-		if (_relativeHorizontalPosition != PositionHorizontalRelativeToSibling.NEUTRAL) {
+		if (_relativeHorizontalPosition != PositionHorizontalRelativeToSibling.NEUTRAL)
+		{
 			offset = _siblingAxisThreshold / 2.0f + 1.0f;
 			offset *= _relativeHorizontalPosition == PositionHorizontalRelativeToSibling.LEFT ? -1 : 1;
+
 			spawnPosition.x += offset;
 			spawnPosition.y = warpObject.transform.position.y;
-		} else if (_relativeVerticalPosition != PositionVerticalRelativeToSibling.NEUTRAL) {
+		}
+		else if (_relativeVerticalPosition != PositionVerticalRelativeToSibling.NEUTRAL)
+		{
 			offset = _siblingAxisThreshold + 1.0f;
 			offset *= _relativeVerticalPosition == PositionVerticalRelativeToSibling.BELOW ? -1 : 1;
+
 			spawnPosition.y += offset;
 			spawnPosition.x = warpObject.transform.position.x;
 		}

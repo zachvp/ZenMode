@@ -12,6 +12,9 @@ namespace ZMConfiguration
 
 		public const float STAGE_RESPAWN_TIME = 5.0f;
 		public const float LOBBY_RESPAWN_TIME = 0.75f;
+
+		// The unit direction of the stage origin "plane" (line, whatever).
+		public const Vector2 STAGE_ORIGIN_LINE = new Vector2(1.0f, 0.0f);
 	}
 
 	public static class Tags
