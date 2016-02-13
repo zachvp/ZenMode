@@ -14,7 +14,7 @@ namespace ZMConfiguration
 		public const float LOBBY_RESPAWN_TIME = 0.75f;
 
 		// The unit direction of the stage origin "plane" (line, whatever).
-		public const Vector2 STAGE_ORIGIN_LINE = new Vector2(1.0f, 0.0f);
+		public static readonly Vector2 STAGE_ORIGIN_LINE = new Vector2(1.0f, 0.0f);
 	}
 
 	public static class Tags
@@ -27,6 +27,7 @@ namespace ZMConfiguration
 		public const string kScoreStatus			= "ScoreStatus";
 		public const string kOutput					= "Output";
 		public const string kMainCamera				= "MainCamera";
+		public const string kWarpVolume				= "WarpVolume";
 	}
 
 	public static class Settings

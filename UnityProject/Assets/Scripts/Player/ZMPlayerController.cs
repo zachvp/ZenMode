@@ -134,6 +134,7 @@ public class ZMPlayerController : ZMPlayerItem
 		base.Awake();
 
 		_moveModState = MoveModState.NEUTRAL;
+		transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 
 		GetComponentReferences();
 
