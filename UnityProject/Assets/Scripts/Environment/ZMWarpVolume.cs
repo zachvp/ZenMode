@@ -3,6 +3,7 @@
 public class ZMWarpVolume : MonoBehaviour
 {
 	public ZMWarpVolume Sibling { get { return _sibling; } }
+	public Vector3 ForwardPrime { get { return _forwardPrime; } }
 
 	private ZMWarpVolume _sibling;
 	private Vector3 _forwardPrime;
@@ -15,11 +16,11 @@ public class ZMWarpVolume : MonoBehaviour
 	
 	void Start()
 	{
+		_forwardPrime = ComputeForwardPrime();
+
 		// Cast a ray along forward vector to find the most immediate warp volume.
 		var dir = new Vector2(_forwardPrime.x, _forwardPrime.y);
 		var casts = CheckDirection(dir);
-
-		_forwardPrime = ComputeForwardPrime();
 
 		for (int i = 0; i < casts.Length; ++i)
 		{
@@ -33,22 +34,25 @@ public class ZMWarpVolume : MonoBehaviour
 //				Debug.Log(string.Format("{0} found sibling: {1}", name, checkSibling.name));
 			}
 		}
-
-		// Kind of a brittle system, but works for now.
-		// Depends on X-axis in editor be pointed in proper forward direction.
-//		var fudge = 0.1f;
-//		var threshhold = 0.99;
-//
-//		_isLeft = Vector3.Dot(Vector3.right, _forwardPrime) + fudge > threshhold;
-//		_isBelow = Vector3.Dot(Vector3.up, _forwardPrime) + fudge > threshhold;
 	}
 
 	// TODO: Warp object should be transform instead.
-	public void Warp(GameObject warpObject)
+	public Vector3 GetWarpPosition(BoxCollider2D warpCollider)
 	{
-		var toWarpObj = warpObject.transform - transform;
+		// Vector from the warp volume position to the object to warp.
+		var toWarpObj = warpCollider.transform.position - transform.position;
 
+		// Projected vector of toWarpObj onto this warp volume's up axis.
+		var axisOffset = Vector3.Dot(toWarpObj, transform.up) * transform.up;
 
+		// Need to offset the object by its own scale and the sibling scale so warp object does not spawn intersecting
+		// the sibling volume.
+		var scaleOffset = Sibling.transform.localScale.x + warpCollider.size.x;
+		var totalOffset = scaleOffset * Sibling.ForwardPrime + axisOffset;
+
+		return Sibling.transform.position + totalOffset;
+		// Warp the object to this volume's sibling using the previous offset calculations.
+//		warpObject.transform.position = Sibling.transform.position + totalOffset;
 	}
 
 	public static Vector3 ExtractTranslationFromMatrix(ref Matrix4x4 matrix)

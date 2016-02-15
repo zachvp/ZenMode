@@ -4,14 +4,15 @@ using System.Collections.Generic;
 public class ZMWarpController : MonoBehaviour {
 	public LayerMask triggerMask = 0;
 
-	private enum CheckDirection { UP, DOWN, LEFT, RIGHT, NONE };
-	private RaycastHit2D _check;
 	private List<ZMWarpVolume> _warpVolumes;
+	private BoxCollider2D _collider;
+
 	private const string kWarpVolumeTag = "WarpVolume";
 
 	void Awake()
 	{
 		_warpVolumes = new List<ZMWarpVolume>();
+		_collider = GetComponent<BoxCollider2D>();
 	}
 
 	public void OnTriggerEnterCC2D(Collider2D other)
@@ -19,9 +20,13 @@ public class ZMWarpController : MonoBehaviour {
 		if (other.CompareTag(kWarpVolumeTag))
 		{
 			ZMWarpVolume warpVolume = other.GetComponent<ZMWarpVolume>();
-			warpVolume.Warp(gameObject);
-
-			_warpVolumes.Add(warpVolume.Sibling);
+			if (!_warpVolumes.Contains(warpVolume))
+			{
+//				warpVolume.Warp(gameObject);
+				transform.position = warpVolume.GetWarpPosition(_collider);
+				
+				_warpVolumes.Add(warpVolume);
+			}
 		}
 	}
 
@@ -30,6 +35,7 @@ public class ZMWarpController : MonoBehaviour {
 		if (other.CompareTag(kWarpVolumeTag))
 		{
 			ZMWarpVolume warpVolume = other.GetComponent<ZMWarpVolume>();
+
 			_warpVolumes.Remove(warpVolume);
 		}
 	}
