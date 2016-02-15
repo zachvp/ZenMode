@@ -7,13 +7,7 @@ public class ZMWarpVolume : MonoBehaviour
 
 	private ZMWarpVolume _sibling;
 	private Vector3 _forwardPrime;
-
-	private const float _siblingAxisThreshold = 64.0f;
-
-	// Position relative to sibling.
-	private bool _isLeft,
-				 _isBelow;
-	
+		
 	void Start()
 	{
 		_forwardPrime = ComputeForwardPrime();
@@ -31,12 +25,10 @@ public class ZMWarpVolume : MonoBehaviour
 			{
 				// Found the sibling volume.
 				_sibling = checkSibling;
-//				Debug.Log(string.Format("{0} found sibling: {1}", name, checkSibling.name));
 			}
 		}
 	}
 
-	// TODO: Warp object should be transform instead.
 	public Vector3 GetWarpPosition(BoxCollider2D warpCollider)
 	{
 		// Vector from the warp volume position to the object to warp.
@@ -50,20 +42,8 @@ public class ZMWarpVolume : MonoBehaviour
 		var scaleOffset = Sibling.transform.localScale.x + warpCollider.size.x;
 		var totalOffset = scaleOffset * Sibling.ForwardPrime + axisOffset;
 
+		// Return the final calculated offset from sibling based on previous calculations.
 		return Sibling.transform.position + totalOffset;
-		// Warp the object to this volume's sibling using the previous offset calculations.
-//		warpObject.transform.position = Sibling.transform.position + totalOffset;
-	}
-
-	public static Vector3 ExtractTranslationFromMatrix(ref Matrix4x4 matrix)
-	{
-		Vector3 translate;
-
-		translate.x = matrix.m03;
-		translate.y = matrix.m13;
-		translate.z = matrix.m23;
-
-		return translate;
 	}
 
 	RaycastHit2D[] CheckDirection(Vector2 dir)

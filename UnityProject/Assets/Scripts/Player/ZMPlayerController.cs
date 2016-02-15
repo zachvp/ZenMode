@@ -836,11 +836,6 @@ public class ZMPlayerController : ZMPlayerItem
 	
 	void onTriggerExitEvent( Collider2D collider )
 	{
-		ZMWarpController warpController = GetComponent<ZMWarpController>();
-		if (warpController != null) {
-			warpController.OnTriggerExitCC2D(collider);
-		}
-
 		if (collider.CompareTag ("Grass")) {
 			collider.GetComponent<ZMGrassController>().GrassExit();
 		}
