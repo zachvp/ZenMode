@@ -51,7 +51,7 @@ public class ZMTextMenu : ZMMenuInput
 
 	protected override void HandleMenuNavigationForward()
 	{
-		audio.PlayOneShot(_audioHighlight[Random.Range (0, _audioHighlight.Length)], 0.5f);
+		GetComponent<AudioSource>().PlayOneShot(_audioHighlight[Random.Range (0, _audioHighlight.Length)], 0.5f);
 		_selectedIndex += 1;
 		_selectedIndex %= _optionsSize;
 		
@@ -60,7 +60,7 @@ public class ZMTextMenu : ZMMenuInput
 	
 	protected override void HandleMenuNavigationBackward()
 	{
-		audio.PlayOneShot(_audioHighlight[Random.Range (0, _audioHighlight.Length)], 0.5f);
+		GetComponent<AudioSource>().PlayOneShot(_audioHighlight[Random.Range (0, _audioHighlight.Length)], 0.5f);
 		_selectedIndex -= 1;
 		_selectedIndex = _selectedIndex < 0 ? _optionsSize - 1 : _selectedIndex;
 		
@@ -69,7 +69,7 @@ public class ZMTextMenu : ZMMenuInput
 	
 	protected override void HandleMenuSelection()
 	{
-		audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
+		GetComponent<AudioSource>().PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
 		Notifier.SendEventNotification(SelectOptionEvent, _selectedIndex);
 	}
 	

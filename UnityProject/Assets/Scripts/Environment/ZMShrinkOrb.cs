@@ -19,7 +19,7 @@ public class ZMShrinkOrb : MonoBehaviour
 			Vector3 newScale = transform.localScale;
 
 			newScale = Vector3.Lerp(newScale, Vector3.zero, _shrinkRate);
-			light.range = Mathf.Lerp(light.range, 0, _shrinkRate);
+			GetComponent<Light>().range = Mathf.Lerp(GetComponent<Light>().range, 0, _shrinkRate);
 
 			transform.localScale = newScale;
 

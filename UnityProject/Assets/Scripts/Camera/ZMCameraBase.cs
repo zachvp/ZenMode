@@ -42,9 +42,9 @@ public class ZMCameraBase : MonoBehaviour
 	{
 		if (_isZooming)
 		{
-			camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, _zoomTargetSize, _speed * Time.deltaTime);
+			GetComponent<Camera>().orthographicSize = Mathf.Lerp(GetComponent<Camera>().orthographicSize, _zoomTargetSize, _speed * Time.deltaTime);
 			
-			if (Mathf.Abs(camera.orthographicSize - _zoomTargetSize) < 1f)
+			if (Mathf.Abs(GetComponent<Camera>().orthographicSize - _zoomTargetSize) < 1f)
 			{
 				_isZooming = false;
 				_speed = _baseSpeed;
@@ -101,7 +101,7 @@ public class ZMCameraBase : MonoBehaviour
 	
 	private void MoveTo(Vector3 position)
 	{
-		camera.transform.position = new Vector3(position.x, position.y, _startPosition.z);
+		GetComponent<Camera>().transform.position = new Vector3(position.x, position.y, _startPosition.z);
 	}
 	
 	private void HandlePlayerLandPlungeEvent()

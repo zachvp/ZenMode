@@ -8,7 +8,7 @@ public class ZMToggleWithPedestal : MonoBehaviour {
 		ZMPedestalController.ActivateEvent += HandleActivateEvent;
 		ZMPedestalController.DeactivateEvent += HandleDeactivateEvent;
 
-		light.enabled = false;
+		GetComponent<Light>().enabled = false;
 	}
 	
 	// Update is called once per frame
@@ -22,6 +22,6 @@ public class ZMToggleWithPedestal : MonoBehaviour {
 	}
 
 	void HandleDeactivateEvent(ZMPedestalController pedestalController) {
-		light.enabled = false;
+		GetComponent<Light>().enabled = false;
 	}
 }

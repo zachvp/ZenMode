@@ -1,24 +1,33 @@
 ﻿using UnityEngine;
-using System.Collections;
+using Core;
 
-public class ZMPersistentMusicController : MonoBehaviour {
+[RequireComponent(typeof(AudioSource))]
+public class ZMPersistentMusicController : MonoBehaviour
+{
 	private static bool AudioBegin;
+
+	private AudioSource _audio;
 	
 	void Awake()
 	{
-		if (!AudioBegin) {
-			audio.Play ();
-			AudioBegin = true;
-			DontDestroyOnLoad (gameObject);
-		}
-	}
-	
-	void Update () {
-		if (Application.loadedLevel == ZMSceneIndexList.INDEX_STAGE)
+		_audio = GetComponent<AudioSource>();
+
+		if (!AudioBegin)
 		{
-			audio.Stop();
+			_audio.Play();
+			AudioBegin = true;
+			DontDestroyOnLoad(gameObject);
+		}
+
+		SceneManager.OnLoadScene += HandleOnLoadScene;
+	}
+
+	private void HandleOnLoadScene()
+	{
+		if (SceneManager.CurrentSceneIndex == ZMSceneIndexList.INDEX_STAGE)
+		{
+			_audio.Stop();
 			AudioBegin = false;
 		}
-		
 	}
 }

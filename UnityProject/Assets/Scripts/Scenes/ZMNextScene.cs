@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using Core;
 
-public class ZMNextScene : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-		Screen.showCursor = false;
-		SceneManager.LoadScene(Application.loadedLevel + 1);
+public class ZMNextScene : MonoBehaviour
+{
+	void Start ()
+	{
+		Cursor.visible = false;
+		SceneManager.LoadNextScene();
 	}
 }

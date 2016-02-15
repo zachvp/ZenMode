@@ -17,36 +17,41 @@ public class ZMAddForce : MonoBehaviour {
 	private static float BaseEmissionRate = 0;
 
 	void Start () {
-		renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 1);
+		GetComponent<Renderer>().material.color = new Color(GetComponent<Renderer>().material.color.r, GetComponent<Renderer>().material.color.g, GetComponent<Renderer>().material.color.b, 1);
 
-		rigidbody2D.AddForce(force);
-		rigidbody2D.AddTorque(torque);
+		GetComponent<Rigidbody2D>().AddForce(force);
+		GetComponent<Rigidbody2D>().AddTorque(torque);
 
 		_familyParticleSystem = GetComponentInChildren<ParticleSystem>();
 
 		if (BaseEmissionRate == 0) {
-			BaseEmissionRate = _familyParticleSystem.emissionRate;;
+			BaseEmissionRate = _familyParticleSystem.emission.rate.curveScalar;
 		}
 
 		_sprayRate = BaseEmissionRate;
-		_familyParticleSystem.renderer.material.color = _particleColor;
+		_familyParticleSystem.GetComponent<Renderer>().material.color = _particleColor;
 
 		Invoke ("Despawn", LIFETIME);
 	}
 
-	void Update() {
-		if (_sprayRate > MIN_SPRAY_RATE) {
-			_sprayRate -= DISSAPATE_RATE * Time.deltaTime;
-			_familyParticleSystem.emissionRate = _sprayRate;
+	void Update()
+	{
+		if (_sprayRate > MIN_SPRAY_RATE)
+		{
+			var rate = _familyParticleSystem.emission.rate;
 
-			_familyParticleSystem.renderer.material.color = _particleColor;
+			_sprayRate -= DISSAPATE_RATE * Time.deltaTime;
+			rate.curveScalar = _sprayRate;
+
+			_familyParticleSystem.GetComponent<Renderer>().material.color = _particleColor;
 			_familyParticleSystem.startColor = _particleColor;
 		}
 
-		if (_despawning) {
-			renderer.material.color = Color.Lerp(renderer.material.color, Color.clear, FADE_SPEED * Time.deltaTime);
+		if (_despawning)
+		{
+			GetComponent<Renderer>().material.color = Color.Lerp(GetComponent<Renderer>().material.color, Color.clear, FADE_SPEED * Time.deltaTime);
 
-			if (renderer.material.color.a < 0.05f) {
+			if (GetComponent<Renderer>().material.color.a < 0.05f) {
 				Destroy(gameObject);
 			}
 		}
@@ -57,6 +62,6 @@ public class ZMAddForce : MonoBehaviour {
 	}
 
 	public void AddForce(Vector2 force) {
-		rigidbody2D.AddForce(force);
+		GetComponent<Rigidbody2D>().AddForce(force);
 	}
 }

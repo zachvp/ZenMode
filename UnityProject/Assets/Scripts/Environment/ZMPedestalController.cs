@@ -95,20 +95,20 @@ public class ZMPedestalController : ZMPlayerItem
 	public void Enable()
 	{
 		_scoreState = ScoreState.SCORING_ENABLED;
-		renderer.enabled = true;
+		GetComponent<Renderer>().enabled = true;
 
-		timerText.renderer.material.color = Color.white;
+		timerText.GetComponent<Renderer>().material.color = Color.white;
 		zenAbsorbEffect.Play();
 
-		if (timerText.renderer.enabled == false) {
+		if (timerText.GetComponent<Renderer>().enabled == false) {
 			currentTimer = RESPAWN_TIME;
 			timerText.text = RESPAWN_TIME.ToString();
-			timerText.renderer.enabled = true;
+			timerText.GetComponent<Renderer>().enabled = true;
 			Invoke ("CountdownText", 1.0f);
 		}
 
-		if (light != null)
-			light.enabled = true;
+		if (GetComponent<Light>() != null)
+			GetComponent<Light>().enabled = true;
 
 		// notify event handlers
 		if (ActivateEvent != null) {
@@ -119,12 +119,12 @@ public class ZMPedestalController : ZMPlayerItem
 	private void Disable()
 	{
 		_scoreState = ScoreState.SCORING_DISABLED;
-		renderer.enabled = false;
+		GetComponent<Renderer>().enabled = false;
 		zenAbsorbEffect.Stop();
-		timerText.renderer.enabled = false;
+		timerText.GetComponent<Renderer>().enabled = false;
 
-		if (light != null) {
-			light.enabled = false;
+		if (GetComponent<Light>() != null) {
+			GetComponent<Light>().enabled = false;
 		}
 
 		if (DeactivateEvent != null) {
@@ -175,7 +175,7 @@ public class ZMPedestalController : ZMPlayerItem
 	{
 		if (_playerInfo == scoreController.PlayerInfo)
 		{
-			zenPop.renderer.material.color = renderer.material.color;
+			zenPop.GetComponent<Renderer>().material.color = GetComponent<Renderer>().material.color;
 
 			_zenPopSystems.Add(ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem);
 			_zenPopSystems.Add(ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem);

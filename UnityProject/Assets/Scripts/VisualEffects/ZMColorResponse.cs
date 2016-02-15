@@ -11,18 +11,18 @@ public class ZMColorResponse : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		_baseColor = renderer.material.color;
+		_baseColor = GetComponent<Renderer>().material.color;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		//Ray ray = new Ray(); 
 		if (_state == State.AWAKE) {
-			renderer.material.color = _paintedColor;
+			GetComponent<Renderer>().material.color = _paintedColor;
 		}
 
 		if (_state == State.ALIVE) {
-			renderer.material.color = Color.Lerp(renderer.material.color, _baseColor, 0.05f);
+			GetComponent<Renderer>().material.color = Color.Lerp(GetComponent<Renderer>().material.color, _baseColor, 0.05f);
 		}
 	}
 

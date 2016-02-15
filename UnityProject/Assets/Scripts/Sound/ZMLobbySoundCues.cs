@@ -12,6 +12,6 @@ public class ZMLobbySoundCues : MonoBehaviour
 
 	void HandleMaxScoreReachedEvent(ZMPlayerInfo info)
 	{
-		audio.PlayOneShot(readyUpClip);
+		GetComponent<AudioSource>().PlayOneShot(readyUpClip);
 	}
 }

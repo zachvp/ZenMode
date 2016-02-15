@@ -31,7 +31,7 @@ public class ZMAnalogMovement : ZMDirectionalInput
 
 	protected virtual void Start()
 	{
-		if (renderer != null) { _baseColor = Utilities.GetRGB(renderer.material.color, _playerInfo.standardColor); }
+		if (GetComponent<Renderer>() != null) { _baseColor = Utilities.GetRGB(GetComponent<Renderer>().material.color, _playerInfo.standardColor); }
 	}
 
 	void Update()
@@ -45,7 +45,7 @@ public class ZMAnalogMovement : ZMDirectionalInput
 
 			_forward = (_deltaPos - _forward) * _slowFactor;
 
-			rigidbody2D.velocity = _forward * _movementSpeed;
+			GetComponent<Rigidbody2D>().velocity = _forward * _movementSpeed;
 		}
 	}
 
@@ -59,9 +59,9 @@ public class ZMAnalogMovement : ZMDirectionalInput
 
 			surfaceNormalHack = collider.GetComponent<ZMSurfaceNormalHack>();
 			normal = surfaceNormalHack.normal;
-			reflection = rigidbody2D.velocity - 2 * normal * (Vector2.Dot(rigidbody2D.velocity, normal));
+			reflection = GetComponent<Rigidbody2D>().velocity - 2 * normal * (Vector2.Dot(GetComponent<Rigidbody2D>().velocity, normal));
 
-			rigidbody2D.velocity = Vector2.ClampMagnitude(reflection * bounce, _movementSpeed * 6);
+			GetComponent<Rigidbody2D>().velocity = Vector2.ClampMagnitude(reflection * bounce, _movementSpeed * 6);
 
 			_shouldBounce = true;
 			Invoke("CancelBounce", 0.2f);
@@ -73,7 +73,7 @@ public class ZMAnalogMovement : ZMDirectionalInput
 
 			_slowFactor = 0.4f;
 
-			if (renderer != null) { renderer.material.color = faded; }
+			if (GetComponent<Renderer>() != null) { GetComponent<Renderer>().material.color = faded; }
 		}
 	}
 
@@ -83,7 +83,7 @@ public class ZMAnalogMovement : ZMDirectionalInput
 		{
 			_slowFactor = 1f;
 
-			if (renderer != null) { renderer.material.color = _baseColor; }
+			if (GetComponent<Renderer>() != null) { GetComponent<Renderer>().material.color = _baseColor; }
 		}
 	}
 
@@ -96,13 +96,13 @@ public class ZMAnalogMovement : ZMDirectionalInput
 	private void Disable()
 	{
 		enabled = false;
-		_previousVelocity = rigidbody2D.velocity;
-		rigidbody2D.velocity = Vector2.zero;
+		_previousVelocity = GetComponent<Rigidbody2D>().velocity;
+		GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 	}
 	
 	private void Enable()
 	{
-		rigidbody2D.velocity = _previousVelocity;
+		GetComponent<Rigidbody2D>().velocity = _previousVelocity;
 		enabled = true;
 	}
 

@@ -12,10 +12,10 @@ public class ZMPauseMenu : ZMTextMenu
 	{
 		base.Awake();
 
-		if (Application.loadedLevel == ZMSceneIndexList.INDEX_LOBBY) {
+		if (SceneManager.CurrentSceneIndex == ZMSceneIndexList.INDEX_LOBBY) {
 			ZMLobbyController.PauseGameEvent += HandlePauseGameLobbyEvent;
 		}
-		else if (Application.loadedLevel > ZMSceneIndexList.INDEX_LOBBY) {
+		else if (SceneManager.CurrentSceneIndex > ZMSceneIndexList.INDEX_LOBBY) {
 			MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 		}
 

@@ -30,7 +30,7 @@ public class ZMHandlePlayerJoin : MonoBehaviour {
 			{
 				if (!_sent)
 				{
-					SendMessage(methodAction);
+					SendMessage(methodAction, SendMessageOptions.DontRequireReceiver);
 					_sent = true;
 				}
 			}

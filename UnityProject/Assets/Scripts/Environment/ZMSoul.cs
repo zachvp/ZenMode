@@ -33,7 +33,7 @@ public class ZMSoul : MonoBehaviour
 	
 	void Start()
 	{
-		_particles.renderer.material.color = Utilities.GetRGB(_particles.renderer.material.color, _playerInfo.standardColor);
+		_particles.GetComponent<Renderer>().material.color = Utilities.GetRGB(_particles.GetComponent<Renderer>().material.color, _playerInfo.standardColor);
 
 		_scoreController = ZMPlayerManager.Instance.Scores[_playerInfo.ID];
 	}
@@ -46,10 +46,10 @@ public class ZMSoul : MonoBehaviour
 	void Update()
 	{
 		if (_fadingIn) {
-			if (audio.volume < 0.75f) { audio.volume += 0.02f; }
+			if (GetComponent<AudioSource>().volume < 0.75f) { GetComponent<AudioSource>().volume += 0.02f; }
 		} else {
-			if (audio.volume > 0) { audio.volume -= 0.02f; }
-			else { audio.Stop(); }
+			if (GetComponent<AudioSource>().volume > 0) { GetComponent<AudioSource>().volume -= 0.02f; }
+			else { GetComponent<AudioSource>().Stop(); }
 		}
 	}
 
@@ -71,7 +71,7 @@ public class ZMSoul : MonoBehaviour
 	{
 		StopLoop();
 		
-		if (audio.isPlaying) {
+		if (GetComponent<AudioSource>().isPlaying) {
 			_playingSound = true;
 		} else {
 			_playingSound = false;
@@ -92,7 +92,7 @@ public class ZMSoul : MonoBehaviour
 	{
 		if (_playerInfo == scoreController.PlayerInfo)
 		{
-			audio.Stop();
+			GetComponent<AudioSource>().Stop();
 			
 			if (SoulDestroyedEvent != null) {
 				SoulDestroyedEvent(this);
@@ -115,8 +115,8 @@ public class ZMSoul : MonoBehaviour
 	private void PlayLoop() {
 		_fadingIn = true;
 
-		audio.volume = 0;
-		audio.Play();
+		GetComponent<AudioSource>().volume = 0;
+		GetComponent<AudioSource>().Play();
 	}
 
 	private void StopLoop() {

@@ -50,7 +50,7 @@ public class ZMTimedCounter : MonoBehaviour {
 			if (juicy) {
 				if (_value <= 30) {
 					counterUIText.color = new Color(0.905f, 0.698f, 0.635f, 0.75f);
-					audio.PlayOneShot(audioTick, (_value <= 10 ? 1.5f : 0.66f));
+					GetComponent<AudioSource>().PlayOneShot(audioTick, (_value <= 10 ? 1.5f : 0.66f));
 				} else {
 					counterUIText.color = new Color(1.000f, 1.000f, 1.000f, 0.75f);
 				}

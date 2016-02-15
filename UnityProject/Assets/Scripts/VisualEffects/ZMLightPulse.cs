@@ -23,12 +23,12 @@ public class ZMLightPulse : MonoBehaviour {
 
 
 	void Start () {
-		_baseIntensity = light.intensity;
+		_baseIntensity = GetComponent<Light>().intensity;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		light.intensity = 6.0f + 3.0f * Mathf.Sin( _theta);
+		GetComponent<Light>().intensity = 6.0f + 3.0f * Mathf.Sin( _theta);
 
 		_theta += interval;
 		_theta %= 2 * Mathf.PI;
@@ -40,6 +40,6 @@ public class ZMLightPulse : MonoBehaviour {
 
 	void SetPulsingOff() {
 		_pulsing = false;
-		light.intensity = _baseIntensity;
+		GetComponent<Light>().intensity = _baseIntensity;
 	}
 }

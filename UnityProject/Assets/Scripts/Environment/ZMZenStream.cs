@@ -15,14 +15,16 @@ public class ZMZenStream : MonoBehaviour {
 	}
 
 	void Start () {
-		_particleSystem.renderer.sortingLayerName = "Foreground";
+		_particleSystem.GetComponent<Renderer>().sortingLayerName = "Foreground";
 	}
 
 	private void HandleActivateEvent(ZMPedestalController pedestalController)
 	{
 		if (_playerInfo == pedestalController.PlayerInfo)
 		{
-			_particleSystem.enableEmission = true;
+			var emission = _particleSystem.emission;
+
+			emission.enabled = false;
 		}
 	}
 
@@ -30,7 +32,7 @@ public class ZMZenStream : MonoBehaviour {
 	{
 		if (_playerInfo == pedestalController.PlayerInfo)
 		{
-			_particleSystem.enableEmission = false;
+//			_particleSystem.emission = true;
 		}
 	}
 

@@ -28,7 +28,7 @@ public class ZMStageSoundCues : MonoBehaviour {
 		{ 
 			int index = Random.Range(0, zenPop.Length - 1);
 
-			audio.PlayOneShot(zenPop[index]);
+			GetComponent<AudioSource>().PlayOneShot(zenPop[index]);
 		}
 	}
 
@@ -36,7 +36,7 @@ public class ZMStageSoundCues : MonoBehaviour {
 	{
 		if (waypointMovement.CompareTag("MainCamera")) {
 			// start the intro
-			audio.PlayOneShot(battleIntro);
+			GetComponent<AudioSource>().PlayOneShot(battleIntro);
 			Invoke(kPlayMainBattleTrackMethodName, battleIntro.length);
 		}
 
@@ -44,7 +44,7 @@ public class ZMStageSoundCues : MonoBehaviour {
 
 	void HandleStartGameEvent ()
 	{
-		audio.PlayOneShot(matchStart, 0.5f);
+		GetComponent<AudioSource>().PlayOneShot(matchStart, 0.5f);
 	}
 
 	void HandleAtPathNodeEvent (ZMWaypointMovement waypointMovement, int index) {
@@ -54,11 +54,11 @@ public class ZMStageSoundCues : MonoBehaviour {
 	}
 
 	void SwitchFocus() {
-		audio.PlayOneShot (focusOnPlayer);
+		GetComponent<AudioSource>().PlayOneShot (focusOnPlayer);
 	}
 
 	private void PlayMainBattleTrack() {
-		audio.Play();
-		audio.loop = true;
+		GetComponent<AudioSource>().Play();
+		GetComponent<AudioSource>().loop = true;
 	}
 }

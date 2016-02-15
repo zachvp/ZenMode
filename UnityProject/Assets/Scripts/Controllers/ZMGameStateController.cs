@@ -53,7 +53,7 @@ public class ZMGameStateController : MonoBehaviour
 	{
 		StartCoroutine(Utilities.ExecuteAfterDelay(EndGame, END_GAME_DELAY));
 
-		audio.PlayOneShot(audioComplete, 2.0f);
+		GetComponent<AudioSource>().PlayOneShot(audioComplete, 2.0f);
 	}
 	
 	private void HandleSelectQuitEvent()
@@ -71,7 +71,7 @@ public class ZMGameStateController : MonoBehaviour
 	{
 		StartCoroutine(Utilities.ExecuteAfterDelay(EndGame, END_GAME_DELAY));
 
-		audio.PlayOneShot(audioComplete, 2.0f);
+		GetComponent<AudioSource>().PlayOneShot(audioComplete, 2.0f);
 	}
 	
 	private void BeginGame()

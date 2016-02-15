@@ -8,8 +8,8 @@ public class ZMDisableRenderer : MonoBehaviour {
 		Image image = GetComponent<Image>();
 		Text text = GetComponent<Text>();
 
-		if (renderer != null) {
-			renderer.enabled = false;
+		if (GetComponent<Renderer>() != null) {
+			GetComponent<Renderer>().enabled = false;
 		}
 
 		if (image != null) {

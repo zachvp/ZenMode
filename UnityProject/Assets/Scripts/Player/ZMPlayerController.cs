@@ -206,11 +206,11 @@ public class ZMPlayerController : ZMPlayerItem
 		// Set original facing direction.
 		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
 
-		_baseColor = light.color;
-		_goreEmitter.renderer.material.color = _baseColor;
+		_baseColor = GetComponent<Light>().color;
+		_goreEmitter.GetComponent<Renderer>().material.color = _baseColor;
 		_goreEmitter.startColor = _baseColor;
 
-		_materialDefault = renderer.material;
+		_materialDefault = GetComponent<Renderer>().material;
 
 		Notifier.SendEventNotification(OnPlayerCreate, this);
 	}
@@ -228,14 +228,14 @@ public class ZMPlayerController : ZMPlayerItem
 		if (_controller.isGrounded) {
 			// Landing.
 			if (_velocity.y < -1) {
-				audio.PlayOneShot(_audioLand[Random.Range (0, _audioLand.Length)], 0.5f);
+				GetComponent<AudioSource>().PlayOneShot(_audioLand[Random.Range (0, _audioLand.Length)], 0.5f);
 				Instantiate(_effectLandObject, new Vector2(transform.position.x - 3, transform.position.y - 8), transform.rotation);
 			}
 
 			_velocity.y = 0;
 
 			if (IsPerformingPlunge()) {
-				audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
+				GetComponent<AudioSource>().PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 
 				Notifier.SendEventNotification(PlayerLandPlungeEvent);
 			}
@@ -258,7 +258,7 @@ public class ZMPlayerController : ZMPlayerItem
 				_framesUntilStep++;
 				if (_framesUntilStep >= FRAMES_PER_STEP) {
 					_framesUntilStep = 0;
-					audio.PlayOneShot(_audioStep[Random.Range (0, _audioStep.Length)], 0.25f);
+					GetComponent<AudioSource>().PlayOneShot(_audioStep[Random.Range (0, _audioStep.Length)], 0.25f);
 				}
 			}
 		}
@@ -278,7 +278,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			_velocity.y = JUMP_HEIGHT;
 
-			audio.PlayOneShot(_audioJump[Random.Range (0, _audioJump.Length)]);
+			GetComponent<AudioSource>().PlayOneShot(_audioJump[Random.Range (0, _audioJump.Length)]);
 			Instantiate(_effectJumpObject, new Vector2(transform.position.x - 3, transform.position.y - 8), transform.rotation);
 		}
 
@@ -291,7 +291,7 @@ public class ZMPlayerController : ZMPlayerItem
 			}
 			else
 			{
-				audio.PlayOneShot(_audioLungeFail);
+				GetComponent<AudioSource>().PlayOneShot(_audioLungeFail);
 			}
 		}
 		else if (_controlModState == ControlModState.AIR_ATTACK)
@@ -303,7 +303,7 @@ public class ZMPlayerController : ZMPlayerItem
 			}
 			else
 			{
-				audio.PlayOneShot(_audioLungeFail);
+				GetComponent<AudioSource>().PlayOneShot(_audioLungeFail);
 			}
 		}
 		else if (_controlModState == ControlModState.PLUNGE)
@@ -312,7 +312,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			if (!IsPerformingPlunge())
 			{
-				audio.PlayOneShot(_audioPlunge[Random.Range (0, _audioPlunge.Length)]);
+				GetComponent<AudioSource>().PlayOneShot(_audioPlunge[Random.Range (0, _audioPlunge.Length)]);
 				_moveModState = MoveModState.PLUNGE;
 			}
 		}
@@ -329,8 +329,8 @@ public class ZMPlayerController : ZMPlayerItem
 			effect.transform.parent = transform;
 			effect.transform.localScale = new Vector3(0.66f, 0.66f, 1.0f);
 
-			renderer.material = _materialFlash;
-			audio.PlayOneShot(_audioParry);
+			GetComponent<Renderer>().material = _materialFlash;
+			GetComponent<AudioSource>().PlayOneShot(_audioParry);
 
 			if (_controller.isGrounded)
 			{
@@ -436,7 +436,7 @@ public class ZMPlayerController : ZMPlayerItem
 		if (_movementDirection == MovementDirectionState.FACING_RIGHT && (_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND)) {
 			RaycastHit2D hit = CheckRight (4, _controller.platformMask);
 			if (hit && !hit.collider.CompareTag("Breakable")) {
-				audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
+				GetComponent<AudioSource>().PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 				Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, 90.0f));
 				Instantiate(_effectPlungeObject, new Vector2(transform.position.x - 18, transform.position.y), rotation);
 				EndLunge ();
@@ -445,7 +445,7 @@ public class ZMPlayerController : ZMPlayerItem
 		if (_movementDirection == MovementDirectionState.FACING_LEFT && (_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND)) {
 			RaycastHit2D hit = CheckLeft (4, _controller.platformMask);
 			if (hit && !hit.collider.CompareTag("Breakable")) {
-				audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
+				GetComponent<AudioSource>().PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 				Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, 270.0f));
 				Instantiate(_effectPlungeObject, new Vector2(transform.position.x + 14, transform.position.y), rotation);
 				EndLunge ();
@@ -454,7 +454,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 		
 		if (_moveModState == MoveModState.RECOIL) {
-			audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
+			GetComponent<AudioSource>().PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 			Instantiate(_effectClashObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 			_moveModState = MoveModState.RECOILING;
 
@@ -475,7 +475,7 @@ public class ZMPlayerController : ZMPlayerItem
 			_moveModState = MoveModState.STUNNED;
 			_controlModState = ControlModState.NEUTRAL;
 			_controlMoveState = ControlMoveState.NEUTRAL;
-			audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
+			GetComponent<AudioSource>().PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 
 			if (IsInvoking(kMethodNameEndLunge)) CancelInvoke(kMethodNameEndLunge);
 
@@ -503,7 +503,7 @@ public class ZMPlayerController : ZMPlayerItem
 				if (IsMovingLeft () || IsMovingRight()) {
 					if (!_controller.isGrounded) {
 						_velocity.y = JUMP_HEIGHT;
-						audio.PlayOneShot(_audioJump[Random.Range (0, _audioJump.Length)]);
+						GetComponent<AudioSource>().PlayOneShot(_audioJump[Random.Range (0, _audioJump.Length)]);
 						Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
 						float offset = (_movementDirection == MovementDirectionState.FACING_RIGHT ? 12.0f : -12.0f);
 						Instantiate (_effectSkidObject, new Vector2 (transform.position.x + offset, transform.position.y - 20), rotation);
@@ -525,13 +525,13 @@ public class ZMPlayerController : ZMPlayerItem
 
 		// Update visuals.
 		if (!_controller.isGrounded && !_canAirLunge) {
-			Color color = renderer.material.color;
+			Color color = GetComponent<Renderer>().material.color;
 			color.a = 0.5f;
-			renderer.material.color = color;
+			GetComponent<Renderer>().material.color = color;
 		} else {
-			Color color = renderer.material.color;
+			Color color = GetComponent<Renderer>().material.color;
 			color.a = 1.0f;
-			renderer.material.color = color;
+			GetComponent<Renderer>().material.color = color;
 		}
 
 		// Update and apply velocity.
@@ -747,7 +747,7 @@ public class ZMPlayerController : ZMPlayerItem
 	private void HorizontalAttack()
 	{
 		// Attack
-		audio.PlayOneShot(_audioLunge[Random.Range (0, _audioLunge.Length)]);
+		GetComponent<AudioSource>().PlayOneShot(_audioLunge[Random.Range (0, _audioLunge.Length)]);
 		
 		_controlModState = ControlModState.ATTACKING;
 		_moveModState = MoveModState.LUNGE;
@@ -769,7 +769,7 @@ public class ZMPlayerController : ZMPlayerItem
 			if (_moveModState == MoveModState.RESPAWN) {
 				if (Mathf.Abs(runSpeed) > FRICTION) {
 					runSpeed *= -0.9f;
-					audio.PlayOneShot(_audioBash[Random.Range(0, _audioBash.Length)], runSpeed / RUN_SPEED_MAX);
+					GetComponent<AudioSource>().PlayOneShot(_audioBash[Random.Range(0, _audioBash.Length)], runSpeed / RUN_SPEED_MAX);
 				}
 			}
 		}
@@ -803,10 +803,10 @@ public class ZMPlayerController : ZMPlayerItem
 						} else if (otherPlayer._moveModState == MoveModState.PARRY_FACING && IsOpposingDirection(otherPlayer)) {
 							if (otherPlayer._canStun) {
 								_moveModState = MoveModState.STUN;
-								audio.PlayOneShot(_audioRecoil);
+								GetComponent<AudioSource>().PlayOneShot(_audioRecoil);
 							} else {
 								_moveModState = MoveModState.RECOIL;
-								audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
+								GetComponent<AudioSource>().PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 							}
 						} else if (otherPlayer._moveModState == MoveModState.PARRY_AOE) {
 							_moveModState = MoveModState.RECOIL;
@@ -934,8 +934,8 @@ public class ZMPlayerController : ZMPlayerItem
 		CancelInvoke(kMethodNameEnablePlayer);
 
 		// Handle death visuals here
-		this.renderer.material.color = Color.red;
-		light.enabled = false;
+		this.GetComponent<Renderer>().material.color = Color.red;
+		GetComponent<Light>().enabled = false;
 		_spriteRenderer.enabled = false;
 
 		// load and instantiate the body's upper half
@@ -943,7 +943,7 @@ public class ZMPlayerController : ZMPlayerItem
 		body.transform.position = transform.position;
 
 		ZMAddForce upperBody = body.GetComponent<ZMAddForce>();
-		upperBody.ParticleColor = light.color;
+		upperBody.ParticleColor = GetComponent<Light>().color;
 		upperBody.AddForce(new Vector2(killer.runSpeed / 12, 0));
 
 		// load and instantiate the body's lower half
@@ -951,7 +951,7 @@ public class ZMPlayerController : ZMPlayerItem
 		body.transform.position = transform.position;
 
 		ZMAddForce lowerBody = body.GetComponent<ZMAddForce>();
-		lowerBody.ParticleColor = light.color;
+		lowerBody.ParticleColor = GetComponent<Light>().color;
 		lowerBody.AddForce(new Vector2(killer.runSpeed / 12, 0));
 
 		// Set player states
@@ -959,9 +959,9 @@ public class ZMPlayerController : ZMPlayerItem
 
 		ClearInputEvents();
 
-		audio.PlayOneShot(_audioGore[Random.Range (0, _audioGore.Length)]);
-		audio.PlayOneShot(_audioHurt[Random.Range (0, _audioHurt.Length)]);
-		audio.PlayOneShot(_audioKill[Random.Range (0, _audioKill.Length)]);
+		GetComponent<AudioSource>().PlayOneShot(_audioGore[Random.Range (0, _audioGore.Length)]);
+		GetComponent<AudioSource>().PlayOneShot(_audioHurt[Random.Range (0, _audioHurt.Length)]);
+		GetComponent<AudioSource>().PlayOneShot(_audioKill[Random.Range (0, _audioKill.Length)]);
 		_goreEmitter.Play();
 
 		// Handle taunt text.
@@ -1018,7 +1018,7 @@ public class ZMPlayerController : ZMPlayerItem
 		runSpeed = 0.0f;
 
 		_spriteRenderer.enabled = true;
-		light.enabled = true;
+		GetComponent<Light>().enabled = true;
 
 		EnablePlayer();
 		SetMovementDirection(transform.position.x < 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
@@ -1071,18 +1071,18 @@ public class ZMPlayerController : ZMPlayerItem
 		_moveModState = MoveModState.NEUTRAL;
 		_controlModState = ControlModState.NEUTRAL;
 		_canLunge = true;
-		this.light.color = _baseColor;
+		this.GetComponent<Light>().color = _baseColor;
 	}
 
 	private void EndStunBeginParry() {
 		_canStun = false;
-		renderer.material = _materialDefault;
+		GetComponent<Renderer>().material = _materialDefault;
 		Invoke(kEndParryMethodName, PARRY_TIME);
 	}
 
 	private void EndStun() {
 		_canStun = false;
-		renderer.material = _materialDefault;
+		GetComponent<Renderer>().material = _materialDefault;
 		EndParry();
 	}
 

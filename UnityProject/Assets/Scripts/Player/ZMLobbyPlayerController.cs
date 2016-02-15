@@ -25,7 +25,7 @@ public class ZMLobbyPlayerController : ZMPlayerController
 		if (_playerInfo == info)
 		{
 			DisablePlayer();
-			renderer.enabled = false;
+			GetComponent<Renderer>().enabled = false;
 			gameObject.SetActive(false);
 		}
 	}
