@@ -13,6 +13,13 @@ public class ZMLobbyPlayerController : ZMPlayerController
 		ZMLobbyScoreController.OnMaxScoreReached += HandleLobbyMaxScoreReachedEvent;
 	}
 
+	protected override void Start()
+	{
+		base.Start();
+
+		_animator.SetBool("didBecomeActive", true);
+	}
+
 	private void HandleLobbyMaxScoreReachedEvent(ZMPlayerInfo info)
 	{
 		if (_playerInfo == info)

@@ -35,7 +35,6 @@ public class ZMPlayerController : ZMPlayerItem
 	private int FRAMES_PER_STEP = 30;
 
 	private CharacterController2D _controller;
-	private Animator _animator;
 	private ZMPlayerInputController _inputController;
 
 	private RaycastHit2D _lastControllerColliderHit;
@@ -79,6 +78,9 @@ public class ZMPlayerController : ZMPlayerItem
 	private const string kMethodNameEndLunge 	  			= "EndLunge";
 	private const string kEndParryMethodName				= "EndParry";
 	private const string kGameStateControllerName 			= "GameController";
+
+	// Protected references.
+	protected Animator _animator;
 
 	// Public references.
 	public GameObject _effectJumpObject;
@@ -158,7 +160,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_lowerBodyTemplate = Resources.Load(kBodyLowerHalfPath, typeof(GameObject)) as GameObject;
 	}
 
-	 protected void Start()
+	protected virtual void Start()
 	{
 		kDeathStrings = new string[39];
 		kDeathStrings[0] = "OOOAHH";

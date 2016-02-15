@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(BoxCollider2D))]
 public class ZMWarpController : MonoBehaviour
 {
-	public LayerMask triggerMask = 0;
-
 	private BoxCollider2D _collider;
 
 	private const string kWarpVolumeTag = "WarpVolume";
