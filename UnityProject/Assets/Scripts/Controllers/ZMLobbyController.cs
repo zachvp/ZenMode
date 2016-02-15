@@ -12,7 +12,7 @@ public class ZMLobbyController : MonoBehaviour
 
 	public static int CurrentJoinCount { get { return _currentJoinCount; } }
 
-	public static EventHandler<int> PlayerJoinedEvent;
+	public static EventHandler<int> OnPlayerJoinedEvent;
 
 	public static EventHandler<ZMPlayerInfo> PlayerReadyEvent;
 	public static EventHandler<ZMPlayerInfo> DropOutEvent;
@@ -45,7 +45,7 @@ public class ZMLobbyController : MonoBehaviour
 		ZMLobbyScoreController.OnMaxScoreReached += HandleMaxScoreReachedEvent;
 
 		ZMGameInputManager.StartInputEvent		 += HandleStartInputEvent;
-		ZMGameInputManager.AnyInputEvent 		 += HandleMainInputEvent;
+		ZMGameInputManager.AnyInputEvent 		 += HandleAnyInputEvent;
 
 		ZMPauseMenu.SelectOptionEvent += HandleSelectOptionEvent;
 	}
@@ -57,7 +57,7 @@ public class ZMLobbyController : MonoBehaviour
 
 	void OnDestroy()
 	{
-		PlayerJoinedEvent = null;
+		OnPlayerJoinedEvent = null;
 		PauseGameEvent    = null;
 		PlayerReadyEvent  = null;
 		ResumeGameEvent	  = null;
@@ -91,12 +91,12 @@ public class ZMLobbyController : MonoBehaviour
 		SceneManager.LoadScene(ZMSceneIndexList.INDEX_MAIN_MENU);
 	}
 
-	void HandleMainInputEvent(int controlIndex)
+	void HandleAnyInputEvent(int controlIndex)
 	{
 		if (!_joinedPlayers[controlIndex])
 		{
-			_joinedPlayers[_currentJoinCount] = true;
-			Notifier.SendEventNotification(PlayerJoinedEvent, _currentJoinCount);
+			_joinedPlayers[controlIndex] = true;
+			Notifier.SendEventNotification(OnPlayerJoinedEvent, controlIndex); // _currentJoinCount
 
 			_requiredPlayerCount += 1;
 			_currentJoinCount += 1;

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Core;
 using ZMPlayer;
 using ZMConfiguration;
@@ -12,7 +12,7 @@ public class ZMLobbyPedestalController : ZMPlayerItem
 		base.Awake();
 
 		ZMScoreController.OnMaxScoreReached += HandleMaxScoreReachedEvent;
-		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
+		ZMLobbyController.OnPlayerJoinedEvent += HandlePlayerJoinedEvent;
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 	}
 

@@ -5,15 +5,17 @@ using ZMPlayer;
 public class ZMOrbOpeningMovement : ZMWaypointMovement
 {
 	[SerializeField] private string destinationTag;
+
+	protected ZMPlayerInfo _playerInfo;
 	
 	protected override void InitData()
 	{
-		var playerInfo = GetComponent<ZMPlayerInfo>();
+		_playerInfo = GetComponent<ZMPlayerInfo>();
 
 		_waypointSize = 1;
 		_waypoints = new Transform[_waypointSize];
 
-		_waypoints[0] = GetWaypoint(destinationTag, playerInfo);
+		_waypoints[0] = GetWaypoint(destinationTag, _playerInfo);
 	}
 
 	private Transform GetWaypoint(string tag, ZMPlayerInfo info)

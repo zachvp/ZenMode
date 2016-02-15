@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using ZMPlayer;
 
+[RequireComponent(typeof(ZMPlayerInfo))]
 public class ZMOrbOpeningMovementLobby : ZMOrbOpeningMovement
 {
 	protected override void InitData()
 	{
-		GetComponent<ZMPlayerInfo>().ID = ZMLobbyController.CurrentJoinCount - 1;
+		base.InitData();
 
-		base.InitData ();
+		_playerInfo.ID = ZMLobbyPlayerManager.LatestJoinIndex;
 	}
 }

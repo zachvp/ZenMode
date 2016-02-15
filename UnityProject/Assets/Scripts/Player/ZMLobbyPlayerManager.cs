@@ -1,11 +1,14 @@
-﻿using UnityEngine;
+using UnityEngine;
 using ZMConfiguration;
 using ZMPlayer;
 
 public class ZMLobbyPlayerManager : ZMPlayerManager
 {
-	private static int _playerReadyCount; public static int PlayerReadyCount { get { return _playerReadyCount; } }
-	private static int _playerJoinCount; public static int PlayerJoinCount  { get { return _playerJoinCount; } }
+	public static int PlayerReadyCount { get { return _playerReadyCount; } }
+	public static int PlayerJoinCount  { get { return _playerJoinCount; } }
+
+	private static int _playerReadyCount;
+	private static int _playerJoinCount;
 	
 	protected override void Awake()
 	{
@@ -17,13 +20,13 @@ public class ZMLobbyPlayerManager : ZMPlayerManager
 
 		ZMLobbyController.PlayerReadyEvent += HandlePlayerReadyEvent;
 		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
-		ZMLobbyController.PlayerJoinedEvent += HandlePlayerDropIn;
+		ZMLobbyController.OnPlayerJoinedEvent += HandlePlayerDropIn;
 	}
 
 	// Creates the proper player-character.
 	private void HandlePlayerDropIn(int id)
 	{
-		_players[_playerJoinCount] = CreatePlayer(_playerJoinCount);
+		_players[_playerJoinCount] = CreatePlayer(id); // _playerJoinCount
 
 		_playerJoinCount += 1;
 	}

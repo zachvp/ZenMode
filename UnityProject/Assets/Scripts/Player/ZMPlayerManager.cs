@@ -13,12 +13,15 @@ public class ZMPlayerManager : MonoBehaviour
 	public ZMPlayerController[] Players { get { return _players; } }
 	public ZMScoreController[] Scores { get { return _scores; } }
 	public Transform[] PlayerStartPoints { get { return _playerStartPoints; } }
+	public static int LatestJoinIndex  { get { return _latestJoinIndex; } }
 
 	// These should be moved int a StagePlayerManager class.
 	public EventHandler OnAllPlayersSpawned;
 
 	protected ZMPlayerController[] _players;
 	protected ZMScoreController[] _scores;
+
+	private static int _latestJoinIndex;
 	
 	public static ZMPlayerManager Instance
 	{
@@ -91,6 +94,7 @@ public class ZMPlayerManager : MonoBehaviour
 		score.ConfigureItemWithID(player.PlayerInfo.ID);
 		
 		input.ConfigureItemWithID(player.PlayerInfo.ID);
+		_latestJoinIndex = id;
 
 		return player;
 	}

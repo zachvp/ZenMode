@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using ZMPlayer;
 
@@ -13,7 +13,7 @@ public class ZMHandlePlayerJoin : MonoBehaviour {
 	void Awake () {
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 
-		ZMLobbyController.PlayerJoinedEvent += HandlePlayerJoinedEvent;
+		ZMLobbyController.OnPlayerJoinedEvent += HandlePlayerJoinedEvent;
 		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
 	}
 
