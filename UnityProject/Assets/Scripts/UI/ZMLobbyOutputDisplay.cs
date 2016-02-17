@@ -10,9 +10,6 @@ public class ZMLobbyOutputDisplay : MonoBehaviour
 	{
 		_text = GetComponent<Text>();
 		_text.enabled = false;
-
-		ZMLobbyController.PauseGameEvent += HandlePauseGameEvent;
-		ZMLobbyController.ResumeGameEvent += HandleResumeGameEvent;
 	}
 
 	void HandleResumeGameEvent()

@@ -2,7 +2,9 @@
 
 public abstract class ZMMenuInput : ZMDirectionalInput
 {
-	public bool startActive;
+	[SerializeField] private bool _isSharedMenu;	// If true, anyone can affect input.
+	[SerializeField] protected bool _startActive;
+
 	private bool _canCycleSelection;
 	private int _delayFrame = 0;
 
@@ -50,25 +52,37 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 		}
 	}
 
+	protected override bool IsCorrectInputControl(ZMInput input)
+	{
+		return IsCorrectInputControl(input.ID);
+	}
+
+	protected bool IsCorrectInputControl(int id)
+	{
+		return (_isSharedMenu || id == _playerInfo.ID);
+	}
+
 	protected virtual void AcceptInputEvents()
 	{
 		var inputManager = ZMInputManager.Instance;
 		
-		inputManager.OnAction1 += HandleOnSelect;
-		inputManager.OnReturnKey += HandleOnSelect;
+		inputManager.OnAction1 	+= HandleOnSelect;
+		inputManager.OnEKey 	+= HandleOnSelect;
+		inputManager.OnSlashKey += HandleOnSelect;
 	}
 	
 	protected virtual void ClearInputEvents()
 	{
 		var inputManager = ZMInputManager.Instance;
 		
-		inputManager.OnAction1 -= HandleOnSelect;
-		inputManager.OnReturnKey -= HandleOnSelect;
+		inputManager.OnAction1 	-= HandleOnSelect;
+		inputManager.OnEKey 	-= HandleOnSelect;
+		inputManager.OnSlashKey -= HandleOnSelect;
 	}
 	
 	private void HandleOnSelect(ZMInput input)
 	{
-		if (input.Pressed && gameObject.activeSelf)
+		if (input.Pressed && IsCorrectInputControl(input) && gameObject.activeSelf)
 		{
 			HandleMenuSelection();
 		}

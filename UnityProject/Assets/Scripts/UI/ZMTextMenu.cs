@@ -2,21 +2,23 @@
 using UnityEngine.UI;
 using Core;
 
+[RequireComponent(typeof(AudioSource))]
 public class ZMTextMenu : ZMMenuInput
 {
-	public AudioClip[] _audioChoose;
-	public AudioClip[] _audioHighlight;
+	[SerializeField] private AudioClip[] _audioChoose;
+	[SerializeField] private AudioClip[] _audioHighlight;
+
+	public static EventHandler<int> SelectOptionEvent;
 
 	protected int _selectedIndex;
 
+	private AudioSource _audio;
 	private Text[] _menuOptions;
 	
 	private Color _baseColor;
 	private Color _selectedColor;
 
 	private int  _optionsSize;
-
-	public static EventHandler<int> SelectOptionEvent; 
 
 	protected override void Awake()
 	{
@@ -25,6 +27,11 @@ public class ZMTextMenu : ZMMenuInput
 		_menuOptions = new Text[transform.childCount];
 		_optionsSize = _menuOptions.Length;
 		_selectedColor = new Color(255, 255, 255, 255);
+
+		_audio = GetComponent<AudioSource>();
+
+		Debug.AssertFormat(_audioHighlight.Length > 0, "ZMTextMenu: Array empty.");
+		Debug.AssertFormat(_audioChoose.Length > 0, "ZMTextMenu: Array empty.");
 
 		AcceptInputEvents();
 
@@ -46,31 +53,43 @@ public class ZMTextMenu : ZMMenuInput
 		_baseColor = _menuOptions[0].color;
 
 		UpdateUI();
-		ToggleActive(startActive);
+		ToggleActive(_startActive);
 	}
 
 	protected override void HandleMenuNavigationForward()
 	{
-		GetComponent<AudioSource>().PlayOneShot(_audioHighlight[Random.Range (0, _audioHighlight.Length)], 0.5f);
 		_selectedIndex += 1;
 		_selectedIndex %= _optionsSize;
 		
 		UpdateUI();
+
+		if (_audioHighlight.Length > 0)
+		{
+			_audio.PlayOneShot(_audioHighlight[Random.Range (0, _audioHighlight.Length)], 0.5f);
+		}
 	}
 	
 	protected override void HandleMenuNavigationBackward()
 	{
-		GetComponent<AudioSource>().PlayOneShot(_audioHighlight[Random.Range (0, _audioHighlight.Length)], 0.5f);
 		_selectedIndex -= 1;
 		_selectedIndex = _selectedIndex < 0 ? _optionsSize - 1 : _selectedIndex;
 		
 		UpdateUI();
+
+		if (_audioHighlight.Length > 0)
+		{
+			_audio.PlayOneShot(_audioHighlight[Random.Range (0, _audioHighlight.Length)], 0.5f);
+		}
 	}
 	
 	protected override void HandleMenuSelection()
 	{
-		GetComponent<AudioSource>().PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
 		Notifier.SendEventNotification(SelectOptionEvent, _selectedIndex);
+
+		if (_audioChoose.Length > 0)
+		{
+			_audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
+		}
 	}
 	
 	private void UpdateUI()
@@ -98,17 +117,12 @@ public class ZMTextMenu : ZMMenuInput
 	{
 		Color transparent = new Color(_baseColor.r, _baseColor.g, _baseColor.b, 0);
 
-		foreach (Text text in _menuOptions) {
-			text.color = transparent;
-		}
+		foreach (Text text in _menuOptions) { text.color = transparent; }
 	}
 
 	protected void ShowUI()
 	{
-		foreach (Text text in _menuOptions)
-		{
-			text.color = _baseColor;
-		}
+		foreach (Text text in _menuOptions) { text.color = _baseColor; }
 	}
 
 	protected void ShowMenu()

@@ -1,14 +1,11 @@
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
 using ZMPlayer;
 using Core;
 using ZMConfiguration;
 
 public class ZMLobbyController : MonoBehaviour
 {
-	public GameObject loadScreen;
-	public Text message;
+	[SerializeField] private GameObject loadScreen;
 
 	public static int CurrentJoinCount { get { return _currentJoinCount; } }
 
@@ -16,38 +13,41 @@ public class ZMLobbyController : MonoBehaviour
 
 	public static EventHandler<ZMPlayerInfo> PlayerReadyEvent;
 	public static EventHandler<ZMPlayerInfo> DropOutEvent;
-	public static EventHandler<int> PauseGameEvent;
-	public static EventHandler ResumeGameEvent;
 
-	private static int _currentJoinCount; // i.e. how many  have pressed a button to join
-	private static int _currentReadyCount; // i.e. how many have actually readied up
+	public static ZMLobbyController Instance
+	{
+		get
+		{
+			Debug.Assert(_instance != null, "ZMLobbyController: no instance exists in the scene.");
+
+			return _instance;
+		}
+	}
+
+	private static ZMLobbyController _instance;
+
+	private static int _currentJoinCount;  // i.e. how many players have pressed a button to join
+	private static int _currentReadyCount; // i.e. how many players have actually readied up
 
 	private int _requiredPlayerCount;
 
 	private bool _paused;
-	private int _playerPauseIndex;
 
 	private bool[] _joinedPlayers;
 	private bool[] _readyPlayers;
 
-	// pause menu options
-	private const int RESUME_OPTION   = 0;
-	private const int QUIT_OPTION 	  = 1;
-
-	// TODO: Make this a MonoSingleton.
 	void Awake()
 	{
 		_joinedPlayers = new bool[Constants.MAX_PLAYERS];
 		_readyPlayers = new bool[Constants.MAX_PLAYERS];
 
-		message.text = "";
+		Debug.Assert(_instance == null, "ZMLobbyController: More than one instance exists in the scene.");
+
+		_instance = this;
 
 		ZMLobbyScoreController.OnMaxScoreReached += HandleMaxScoreReachedEvent;
 
-		ZMGameInputManager.StartInputEvent		 += HandleStartInputEvent;
-		ZMGameInputManager.AnyInputEvent 		 += HandleAnyInputEvent;
-
-		ZMPauseMenu.SelectOptionEvent += HandleSelectOptionEvent;
+		ZMGameInputManager.AnyInputEvent += HandleAnyInputEvent;
 	}
 
 	void Start()
@@ -58,86 +58,50 @@ public class ZMLobbyController : MonoBehaviour
 	void OnDestroy()
 	{
 		OnPlayerJoinedEvent = null;
-		PauseGameEvent    = null;
-		PlayerReadyEvent  = null;
-		ResumeGameEvent	  = null;
-		DropOutEvent	  = null;
+		PlayerReadyEvent 	= null;
+		DropOutEvent	  	= null;
+
+		_instance = null;
 	}
 
-	void HandleSelectOptionEvent(int optionIndex)
+	public bool IsPlayerJoined(int id)
 	{
-		Time.timeScale = 1;
+		if (!Utilities.IsValidArrayIndex(_joinedPlayers, id)) { return false; }
 
-		switch(optionIndex) {
-			case RESUME_OPTION: {
-				HandleSelectResumeEvent();
-				break;
-			}
-			/*case DROP_OUT_OPTION: {
-				HandleSelectDropOutEvent();
-				break;
-			}*/
-			case QUIT_OPTION: {
-				HandleSelectQuitEvent();
-				break;
-			}
-			default: break;
-		}
+		return _joinedPlayers[id];
 	}
 
-	void HandleSelectQuitEvent()
+	private void HandleAnyInputEvent(int controlIndex)
 	{
-		MatchStateManager.Clear();
-		SceneManager.LoadScene(ZMSceneIndexList.INDEX_MAIN_MENU);
-	}
+		if (!Utilities.IsValidArrayIndex(_joinedPlayers, controlIndex) || MatchStateManager.IsPause()) { return; }
 
-	void HandleAnyInputEvent(int controlIndex)
-	{
 		if (!_joinedPlayers[controlIndex])
 		{
 			_joinedPlayers[controlIndex] = true;
-			Notifier.SendEventNotification(OnPlayerJoinedEvent, controlIndex); // _currentJoinCount
+
+			Notifier.SendEventNotification(OnPlayerJoinedEvent, controlIndex);
 
 			_requiredPlayerCount += 1;
 			_currentJoinCount += 1;
+
+			if (!MatchStateManager.IsPreMatch()) { MatchStateManager.StartPreMatch(); }
 		}
 	}
 
-	void HandleSelectDropOutEvent()
+	private void HandleSelectDropOutEvent(int index)
 	{
-		var droppedPlayer = ZMLobbyPlayerManager.Instance.Players[_playerPauseIndex];
+		var droppedPlayer = ZMLobbyPlayerManager.Instance.Players[index];
 
-		_joinedPlayers[_playerPauseIndex] = false;
+		_joinedPlayers[index] = false;
 		_currentJoinCount -= 1;
 
-		if (_readyPlayers[_playerPauseIndex]) {
-			_readyPlayers[_playerPauseIndex] = false;
+		if (_readyPlayers[index])
+		{
+			_readyPlayers[index] = false;
 			_currentReadyCount -= 1;
 		}
 
 		Notifier.SendEventNotification(DropOutEvent, droppedPlayer.PlayerInfo);
-	}
-
-	void HandleSelectResumeEvent()
-	{
-		_paused = false;
-
-		Notifier.SendEventNotification(ResumeGameEvent);
-	}
-
-	void HandleStartInputEvent (int controlID)
-	{
-		if (_joinedPlayers[controlID])
-		{
-			if (!_paused) {
-				Time.timeScale = 0;
-
-				_playerPauseIndex = controlID;
-				_paused = true;
-
-				Notifier.SendEventNotification(PauseGameEvent, _playerPauseIndex);
-			}
-		}
 	}
 
 	private void HandleMaxScoreReachedEvent(ZMPlayerInfo info)
@@ -149,24 +113,19 @@ public class ZMLobbyController : MonoBehaviour
 
 		if (_currentReadyCount > 1 && _currentReadyCount == _requiredPlayerCount)
 		{
-			Invoke("LoadLevel", 1.0f);
+			Invoke("LoadLevel", 0.5f);
 			Invoke("ShowLoadScreen", 0.5f);
 		}
 	}
 
-	void ShowLoadScreen()
+	private void ShowLoadScreen()
 	{
 		loadScreen.SetActive(true);
 	}
 
-	void LoadLevel()
+	private void LoadLevel()
 	{
 		MatchStateManager.Clear();
 		SceneManager.LoadScene(ZMSceneIndexList.INDEX_STAGE);
-	}
-
-	void ClearMessage()
-	{
-		message.text = "";
 	}
 }

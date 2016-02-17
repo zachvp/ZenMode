@@ -4,20 +4,15 @@ using ZMPlayer;
 
 public class ZMPauseMenu : ZMTextMenu
 {
+	[SerializeField] private GameObject _overlay;
+
 	public static EventHandler<ZMPlayerInfo> OnPlayerPauseGame;
 
-	private bool _active;
+	protected bool _active;
 
 	protected override void Awake()
 	{
 		base.Awake();
-
-		if (SceneManager.CurrentSceneIndex == ZMSceneIndexList.INDEX_LOBBY) {
-			ZMLobbyController.PauseGameEvent += HandlePauseGameLobbyEvent;
-		}
-		else if (SceneManager.CurrentSceneIndex > ZMSceneIndexList.INDEX_LOBBY) {
-			MatchStateManager.OnMatchEnd += HandleGameEndEvent;
-		}
 
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 	}
@@ -27,18 +22,16 @@ public class ZMPauseMenu : ZMTextMenu
 		OnPlayerPauseGame = null;
 	}
 
-	private void HandlePauseGameLobbyEvent(int playerIndex)
-	{
-		ShowMenu();
-	}
-
 	private void HandleTogglePause(int controlIndex)
 	{
-		if (_active)
+		// Bail out if the match hasn't started yet
+		if (!IsAbleToPause(controlIndex)) { return; }
+
+		if (_active && IsCorrectInputControl(controlIndex))
 		{
 			ResumeGame();
 		}
-		else
+		else if (!_active)
 		{
 			_playerInfo.ID = controlIndex;
 			PauseGame();
@@ -55,35 +48,16 @@ public class ZMPauseMenu : ZMTextMenu
 		ZMGameInputManager.StartInputEvent -= HandleTogglePause;
 	}
 
-	protected override void HandleMenuSelection()
-	{
-		base.HandleMenuSelection();
-
-		ToggleActive(false);
-
-		if (_selectedIndex == 0)
-		{
-			MatchStateManager.ResumeMatch();
-		}
-		else if (_selectedIndex == 1)
-		{
-			MatchStateManager.ResetMatch();
-		}
-		else if (_selectedIndex == 2)
-		{
-			MatchStateManager.ExitMatch();
-		}
-	}
-
 	protected override void ToggleActive(bool active)
 	{
 		base.ToggleActive(active);
 
 		_active = active;
 		gameObject.SetActive(_active);
+		_overlay.SetActive(_active);	// TODO: NOT WORKING??
 	}
 
-	private void PauseGame()
+	protected void PauseGame()
 	{
 		ShowMenu();
 
@@ -91,17 +65,14 @@ public class ZMPauseMenu : ZMTextMenu
 		MatchStateManager.PauseMatch();
 	}
 	
-	private void ResumeGame()
+	protected void ResumeGame()
 	{
 		ToggleActive(false);
 		MatchStateManager.ResumeMatch();
 	}
 
-	private void HandleGameEndEvent()
+	protected virtual bool IsAbleToPause(int controlIndex)
 	{
-		ClearInputEvents();
-		HideUI();
-		
-		ToggleActive(false);
+		return !MatchStateManager.IsNone();
 	}
 }

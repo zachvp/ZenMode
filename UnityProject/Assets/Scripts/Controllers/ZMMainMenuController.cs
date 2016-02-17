@@ -61,7 +61,7 @@ public class ZMMainMenuController : ZMTextMenu
 
 	private void BeginGame()
 	{
-		Invoke("LoadGame", 0.5f);
+		Invoke("LoadGame", 0.2f);
 
 		if (LoadGameEvent != null)
 		{

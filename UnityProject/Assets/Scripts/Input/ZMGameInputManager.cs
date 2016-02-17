@@ -4,6 +4,7 @@ using ZMPlayer;
 
 public class ZMGameInputManager : MonoBehaviour
 {
+	// Sends integers instead of PlayerInfo because control ID could be -1.
 	public static EventHandler<int> StartInputEvent;
 	public static EventHandler<int> AnyInputEvent;
 
@@ -22,6 +23,7 @@ public class ZMGameInputManager : MonoBehaviour
 	{
 		ZMInputManager.Instance.OnStartButton += HandleOnStartButton;
 		ZMInputManager.Instance.OnEscapeKey   += HandleOnStartButton;
+		ZMInputManager.Instance.OnReturnKey   += HandleOnStartButton;
 		
 		ZMInputManager.Instance.OnAnyButton   	+= HandleOnAnyButton;
 		ZMInputManager.Instance.OnAnyKeyPressed += HandleOnAnyButton;

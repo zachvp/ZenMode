@@ -15,11 +15,11 @@
 		public static EventHandler OnMatchReset;
 		public static EventHandler OnMatchExit;
 
-		public static bool IsNone()  { return matchState == MatchState.NONE; }
-		public static bool IsBegin() { return matchState == MatchState.BEGIN; }
-		public static bool IsMain()  { return matchState == MatchState.MAIN; }
-		public static bool IsEnd()	  { return matchState == MatchState.END; }
-		public static bool IsPause()  { return matchState == MatchState.PAUSE; }
+		public static bool IsNone()  	{ return matchState == MatchState.NONE; }
+		public static bool IsPreMatch() { return matchState == MatchState.BEGIN; }
+		public static bool IsMain()  	{ return matchState == MatchState.MAIN; }
+		public static bool IsEnd()	  	{ return matchState == MatchState.END; }
+		public static bool IsPause()  	{ return matchState == MatchState.PAUSE; }
 
 		// Signals the period before the match starts.
 		public static void StartPreMatch()
