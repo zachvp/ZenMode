@@ -5338,6 +5338,10 @@ Prefab:
       propertyPath: startActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11486628, guid: 8556bb9b7691e49e5ae213e6d85599c6, type: 2}
+      propertyPath: _isSharedMenu
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11486626, guid: 8556bb9b7691e49e5ae213e6d85599c6, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 8556bb9b7691e49e5ae213e6d85599c6, type: 2}
@@ -12198,7 +12202,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aacda468fbb8148c2be4ae8a01bcfe1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startActive: 0
+  _isSharedMenu: 0
+  _startActive: 0
   _audioChoose:
   - {fileID: 8300000, guid: 594d8400e4d7a4c46a3904097aba6b42, type: 3}
   - {fileID: 8300000, guid: e39166e2fc96b42d7ad0c9583d7da0a4, type: 3}

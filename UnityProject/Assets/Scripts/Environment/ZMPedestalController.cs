@@ -175,7 +175,7 @@ public class ZMPedestalController : ZMPlayerItem
 	{
 		if (_playerInfo == scoreController.PlayerInfo)
 		{
-			zenPop.GetComponent<Renderer>().material.color = GetComponent<Renderer>().material.color;
+			zenPop.GetComponent<Renderer>().sharedMaterial.color = GetComponent<Renderer>().material.color;
 
 			_zenPopSystems.Add(ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem);
 			_zenPopSystems.Add(ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem);

@@ -59,7 +59,7 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 
 	protected bool IsCorrectInputControl(int id)
 	{
-		return (_isSharedMenu || id == _playerInfo.ID);
+		return _playerInfo == null ? false : (_isSharedMenu || id == _playerInfo.ID);
 	}
 
 	protected virtual void AcceptInputEvents()
