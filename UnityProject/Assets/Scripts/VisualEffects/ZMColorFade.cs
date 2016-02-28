@@ -27,17 +27,17 @@ public class ZMColorFade : MonoBehaviour
 		ZMStageScoreController.OnReachMinScore += HandleMinScoreReached;
 	}
 
-	void HandleStopScoreEvent(ZMScoreController scoreController)
+	void HandleStopScoreEvent(ZMPlayerInfo info)
 	{
-		if (_playerInfo == scoreController.PlayerInfo)
+		if (_playerInfo == info)
 		{
 			_fadingIn = false;
 		}
 	}
 
-	void HandleCanScoreEvent(ZMScoreController scoreController)
+	void HandleCanScoreEvent(ZMPlayerInfo info)
 	{
-		if (_playerInfo == scoreController.PlayerInfo)
+		if (_playerInfo == info)
 		{
 			_fadingIn = true;
 

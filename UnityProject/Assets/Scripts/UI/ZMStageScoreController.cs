@@ -6,8 +6,8 @@ using ZMPlayer;
 
 public class ZMStageScoreController : ZMScoreController
 {
-	public static EventHandler<ZMScoreController> CanScoreEvent;
-	public static EventHandler<ZMScoreController> CanDrainEvent;
+	public static EventHandler<ZMPlayerInfo> CanScoreEvent;
+	public static EventHandler<ZMPlayerInfo> CanDrainEvent;
 
 	// States
 	private enum ZoneState   { INACTIVE, ACTIVE };
@@ -47,14 +47,14 @@ public class ZMStageScoreController : ZMScoreController
 			{
 				_pointState = PointState.GAINING;
 				
-				Notifier.SendEventNotification(CanScoreEvent, this);
+				Notifier.SendEventNotification(CanScoreEvent, _playerInfo);
 			}
 		}
 		else if (_pointState != PointState.NEUTRAL)
 		{
 			_pointState = PointState.NEUTRAL;
 			
-			Notifier.SendEventNotification(OnStopScore, this);
+			Notifier.SendEventNotification(OnStopScore, _playerInfo);
 		}
 		
 		// state handling
@@ -80,7 +80,7 @@ public class ZMStageScoreController : ZMScoreController
 		}
 		else if (_pointState == PointState.LOSING)
 		{
-			Notifier.SendEventNotification(CanDrainEvent, this);
+			Notifier.SendEventNotification(CanDrainEvent, _playerInfo);
 		}
 		
 		// player score checks

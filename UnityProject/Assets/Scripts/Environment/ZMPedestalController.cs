@@ -21,7 +21,7 @@ public class ZMPedestalController : ZMPlayerItem
 	private bool _shouldScale;
 
 	// references
-	private HashSet<ZMScoreController> _scoringAgents;
+	private HashSet<ZMPlayerInfo> _scoringAgents;
 	private List<ParticleSystem> _zenPopSystems;
 
 	private const string kPedestalWaypointTag = "PedestalWaypoint";
@@ -35,7 +35,7 @@ public class ZMPedestalController : ZMPlayerItem
 	{
 		base.Awake();
 
-		_scoringAgents = new HashSet<ZMScoreController>();
+		_scoringAgents = new HashSet<ZMPlayerInfo>();
 		_zenPopSystems = new List<ParticleSystem>();
 		_baseScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
 
@@ -186,7 +186,8 @@ public class ZMPedestalController : ZMPlayerItem
 		}
 	}
 
-	void StopThePop() {
+	void StopThePop()
+	{
 		foreach (ParticleSystem system in _zenPopSystems) {
 			system.Stop();
 		}
@@ -194,22 +195,26 @@ public class ZMPedestalController : ZMPlayerItem
 		Invoke ("ClearThePop", 2);
 	}
 
-	void ClearThePop() {
-		foreach (ParticleSystem system in _zenPopSystems) {
+	void ClearThePop()
+	{
+		foreach (ParticleSystem system in _zenPopSystems)
+		{
 			Destroy(system);
 		}
 
 		_zenPopSystems.Clear();
 	}
 
-	void HandleCanScoreEvent(ZMScoreController scoreController) {
-		if (!_scoringAgents.Contains(scoreController)) {
-			_scoringAgents.Add(scoreController);
+	void HandleCanScoreEvent(ZMPlayerInfo info)
+	{
+		if (!_scoringAgents.Contains(info))
+		{
+			_scoringAgents.Add(info);
 		}
 	}
 
-	void HandleStopScoreEvent (ZMScoreController scoreController)
+	void HandleStopScoreEvent(ZMPlayerInfo info)
 	{
-		_scoringAgents.Remove(scoreController);
+		_scoringAgents.Remove(info);
 	}
 }

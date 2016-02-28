@@ -20,17 +20,17 @@ public class ZMScoreResponder : MonoBehaviour
 		gameObject.SetActive(!activeOnScore);
 	}
 
-	void HandleCanScoreEvent(ZMScoreController scoreController)
+	void HandleCanScoreEvent(ZMPlayerInfo info)
 	{
-		if (_playerInfo == scoreController.PlayerInfo)
+		if (_playerInfo == info)
 		{
 			gameObject.SetActive(activeOnScore);
 		}
 	}
 
-	void HandleStopScoreEvent (ZMScoreController scoreController)
+	void HandleStopScoreEvent(ZMPlayerInfo info)
 	{
-		if (_playerInfo == scoreController.PlayerInfo)
+		if (_playerInfo == info)
 		{
 			gameObject.SetActive(!activeOnScore);
 		}

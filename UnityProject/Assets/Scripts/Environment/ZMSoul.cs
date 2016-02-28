@@ -60,14 +60,15 @@ public class ZMSoul : MonoBehaviour
 		Invoke ("Deactivate", 0.2f);
 	}
 	
-	private void HandleResumeGameEvent ()
+	private void HandleResumeGameEvent()
 	{
-		if (_playingSound) {
+		if (_playingSound)
+		{
 			PlayLoop();
 		}
 	}
 	
-	private void HandlePauseGameEvent ()
+	private void HandlePauseGameEvent()
 	{
 		StopLoop();
 		
@@ -78,12 +79,12 @@ public class ZMSoul : MonoBehaviour
 		}
 	}
 	
-	private void HandleStopScoreEvent (ZMScoreController scoreController)
+	private void HandleStopScoreEvent(ZMPlayerInfo info)
 	{
 		StopLoop();
 	}
 	
-	private void HandleCanScoreEvent (ZMScoreController scoreController)
+	private void HandleCanScoreEvent(ZMPlayerInfo info)
 	{
 		PlayLoop();
 	}

@@ -10,7 +10,7 @@ public class ZMScoreController : ZMPlayerItem
 	// Events
 	public static EventHandler<ZMPlayerInfo> OnReachMaxScore;
 	public static EventHandler<ZMPlayerInfo> OnReachMinScore;
-	public static EventHandler<ZMScoreController> OnStopScore;
+	public static EventHandler<ZMPlayerInfo> OnStopScore;
 	public static EventHandler<ZMPlayerInfo, float> OnUpdateScore;
 
 	public const float MAX_SCORE = 1000.0f;	// TODO: Move to constants class and refactor.
