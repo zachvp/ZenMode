@@ -45,7 +45,7 @@ public class ZMDirectionalInput : ZMPlayerItem
 
 	private void HandleOnMove(ZMInput input, Vector2 amount)
 	{
-		if (IsCorrectInputControl(input))
+		if (IsValidInputControl(input))
 		{
 			_movement = amount;
 		}
@@ -53,7 +53,7 @@ public class ZMDirectionalInput : ZMPlayerItem
 	
 	private void HandleOnMoveLeft(ZMInput input)
 	{
-		if (IsCorrectInputControl(input))
+		if (IsValidInputControl(input))
 		{
 			if (input.Pressed || input.Held)
 			{
@@ -68,7 +68,7 @@ public class ZMDirectionalInput : ZMPlayerItem
 	
 	private void HandleOnMoveRight(ZMInput input)
 	{
-		if (IsCorrectInputControl(input))
+		if (IsValidInputControl(input))
 		{
 			if (input.Pressed || input.Held)
 			{
@@ -83,7 +83,7 @@ public class ZMDirectionalInput : ZMPlayerItem
 	
 	protected virtual void HandleOnMoveUp(ZMInput input)
 	{
-		if (IsCorrectInputControl(input))
+		if (IsValidInputControl(input))
 		{
 			if (input.Pressed || input.Held)
 			{
@@ -98,7 +98,7 @@ public class ZMDirectionalInput : ZMPlayerItem
 	
 	protected virtual void HandleOnMoveDown(ZMInput input)
 	{
-		if (IsCorrectInputControl(input))
+		if (IsValidInputControl(input))
 		{
 			if (input.Pressed || input.Held)
 			{
@@ -112,5 +112,5 @@ public class ZMDirectionalInput : ZMPlayerItem
 	}
 
 	// Should be overridden if used.
-	protected virtual bool IsCorrectInputControl(ZMInput input) { return true; }
+	protected virtual bool IsValidInputControl(ZMInput input) { return true; }
 }

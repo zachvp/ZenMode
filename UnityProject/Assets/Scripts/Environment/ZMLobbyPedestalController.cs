@@ -11,7 +11,7 @@ public class ZMLobbyPedestalController : ZMPlayerItem
 	{
 		base.Awake();
 
-		ZMScoreController.OnMaxScoreReached += HandleMaxScoreReachedEvent;
+		ZMScoreController.OnReachMaxScore += HandleMaxScoreReachedEvent;
 		ZMLobbyController.OnPlayerJoinedEvent += HandlePlayerJoinedEvent;
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 	}

@@ -8,8 +8,8 @@ using Core;
 public class ZMScoreController : ZMPlayerItem
 {
 	// Events
-	public static EventHandler<ZMPlayerInfo> OnMaxScoreReached;
-	public static EventHandler<ZMScoreController> MinScoreReached;
+	public static EventHandler<ZMPlayerInfo> OnReachMaxScore;
+	public static EventHandler<ZMPlayerInfo> OnReachMinScore;
 	public static EventHandler<ZMScoreController> OnStopScore;
 	public static EventHandler<ZMPlayerInfo, float> OnUpdateScore;
 
@@ -43,7 +43,7 @@ public class ZMScoreController : ZMPlayerItem
 
 	protected virtual void OnDestroy()
 	{
-		OnMaxScoreReached   = null;
+		OnReachMaxScore   = null;
 		OnUpdateScore   	= null;
 		OnStopScore	   		= null;
 	}

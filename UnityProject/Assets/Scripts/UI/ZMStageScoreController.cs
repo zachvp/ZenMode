@@ -87,8 +87,8 @@ public class ZMStageScoreController : ZMScoreController
 		if (_totalScore <= 0 && _goalState != GoalState.MIN)
 		{
 			_goalState = GoalState.MIN;
-			
-			Notifier.SendEventNotification(MinScoreReached, this);
+
+			Notifier.SendEventNotification(OnReachMinScore, _playerInfo);
 		}
 		
 		if (_totalScore >= MAX_SCORE && !IsMaxed())
@@ -96,12 +96,15 @@ public class ZMStageScoreController : ZMScoreController
 			_goalState = GoalState.MAX;
 		}
 		
-		// player score state checks
+		// Player score state checks
 		if (_goalState == GoalState.MAX)
 		{
 			_goalState = GoalState.MAXED;
-			
-			Notifier.SendEventNotification(OnMaxScoreReached, _playerInfo);
+
+			// Assumes total score clamped to max score.
+			if (_totalScore == MAX_SCORE) { MatchStateManager.EndMatch(); }
+
+			Notifier.SendEventNotification(OnReachMaxScore, _playerInfo);
 		}
 	}
 
@@ -111,7 +114,7 @@ public class ZMStageScoreController : ZMScoreController
 
 		CanScoreEvent	   = null;
 		CanDrainEvent      = null;
-		MinScoreReached    = null;
+		OnReachMinScore    = null;
 	}
 
 	void OnTriggerStay2D(Collider2D collision)

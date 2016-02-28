@@ -17,6 +17,7 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 		base.Awake();
 
 		_canCycleSelection = true;
+
 		AcceptActivationEvents();
 	}
 
@@ -52,14 +53,20 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 		}
 	}
 
-	protected override bool IsCorrectInputControl(ZMInput input)
+	protected override bool IsValidInputControl(ZMInput input)
 	{
-		return IsCorrectInputControl(input.ID);
+		return IsValidInputControl(input.ID);
 	}
 
-	protected bool IsCorrectInputControl(int id)
+	protected bool IsValidInputControl(int id)
 	{
-		return _playerInfo == null ? false : (_isSharedMenu || id == _playerInfo.ID);
+		if (_playerInfo == null)
+		{
+			Debug.LogWarningFormat("MenuInput: {0}: player info is null.", name);
+			return false;
+		}
+
+		return _isSharedMenu || id == _playerInfo.ID;
 	}
 
 	protected virtual void AcceptInputEvents()
@@ -82,7 +89,7 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 	
 	private void HandleOnSelect(ZMInput input)
 	{
-		if (input.Pressed && IsCorrectInputControl(input) && gameObject.activeSelf)
+		if (input.Pressed && IsValidInputControl(input) && gameObject.activeSelf)
 		{
 			HandleMenuSelection();
 		}

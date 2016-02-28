@@ -148,7 +148,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_controller.onTriggerEnterEvent += onTriggerEnterEvent;
 		_controller.onTriggerExitEvent += onTriggerExitEvent;
 
-		ZMStageScoreController.MinScoreReached += HandleMinScoreReached;
+		ZMStageScoreController.OnReachMinScore += HandleMinScoreReached;
 
 		MatchStateManager.OnMatchPause += HandleOnMatchPause;
 		MatchStateManager.OnMatchResume += HandleOnMatchResume;
@@ -565,8 +565,6 @@ public class ZMPlayerController : ZMPlayerItem
 	
 	private void OnDestroy()
 	{
-		ZMStageScoreController.MinScoreReached -= HandleMinScoreReached;
-
 		OnPlayerCreate = null;
 		PlayerKillEvent = null;
 		PlayerDeathEvent = null;
@@ -843,9 +841,9 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 	}
 
-	void HandleMinScoreReached (ZMScoreController scoreController)
+	void HandleMinScoreReached(ZMPlayerInfo info)
 	{
-		if (_playerInfo == scoreController.PlayerInfo)
+		if (_playerInfo == info)
 		{
 			gameObject.SetActive(false);
 

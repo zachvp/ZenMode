@@ -45,7 +45,7 @@ public class ZMLobbyController : MonoBehaviour
 
 		_instance = this;
 
-		ZMLobbyScoreController.OnMaxScoreReached += HandleMaxScoreReachedEvent;
+		ZMLobbyScoreController.OnReachMaxScore += HandleMaxScoreReachedEvent;
 
 		ZMGameInputManager.AnyInputEvent += HandleAnyInputEvent;
 	}

@@ -25,11 +25,9 @@ public class ZMPauseMenuLobby : ZMPauseMenu
 		}
 	}
 
-	protected override bool IsAbleToPause(int controlIndex)
+	private bool IsAbleToPause(int controlIndex)
 	{
-		var parent = base.IsAbleToPause(controlIndex);
-
-		return parent && ZMLobbyController.Instance.IsPlayerJoined(controlIndex);
+		return ZMLobbyController.Instance.IsPlayerJoined(controlIndex);
 	}
 
 	private void HandleSelectQuitEvent()

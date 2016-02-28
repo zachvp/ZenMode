@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using Core;
+using ZMPlayer;
 
 [RequireComponent(typeof(AudioSource))]
 public class ZMTextMenu : ZMMenuInput
@@ -26,17 +27,20 @@ public class ZMTextMenu : ZMMenuInput
 
 		_menuOptions = new Text[transform.childCount];
 		_optionsSize = _menuOptions.Length;
-		_selectedColor = new Color(255, 255, 255, 255);
+		_selectedColor = Color.white;
 
 		_audio = GetComponent<AudioSource>();
+		_playerInfo = GetComponent<ZMPlayerInfo>();
 
 		Debug.AssertFormat(_audioHighlight.Length > 0, "ZMTextMenu: Array empty.");
 		Debug.AssertFormat(_audioChoose.Length > 0, "ZMTextMenu: Array empty.");
 
-		AcceptInputEvents();
-
-		AcceptGamepadEvents();
-		AcceptKeyboardEvents();
+		if (_startActive)
+		{
+			AcceptInputEvents();
+			AcceptGamepadEvents();
+			AcceptKeyboardEvents();
+		}
 	}
 
 	protected void Start()

@@ -28,7 +28,7 @@ public class ZMGameStateController : MonoBehaviour
 
 		_instance = this;
 
-		ZMScoreController.OnMaxScoreReached += HandleMaxScoreReached;
+		ZMScoreController.OnReachMaxScore += HandleMaxScoreReached;
 
 		ZMTimedCounter.GameTimerEndedEvent += HandleGameTimerEndedEvent;
 

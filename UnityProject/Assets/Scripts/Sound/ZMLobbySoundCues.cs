@@ -7,7 +7,7 @@ public class ZMLobbySoundCues : MonoBehaviour
 	
 	void Awake()
 	{
-		ZMLobbyScoreController.OnMaxScoreReached += HandleMaxScoreReachedEvent;
+		ZMLobbyScoreController.OnReachMaxScore += HandleMaxScoreReachedEvent;
 	}
 
 	void HandleMaxScoreReachedEvent(ZMPlayerInfo info)

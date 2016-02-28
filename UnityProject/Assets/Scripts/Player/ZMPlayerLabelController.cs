@@ -14,7 +14,7 @@ public class ZMPlayerLabelController : ZMFudgeParentToObject
 
 		_text = GetComponent<Text>();
 
-		ZMLobbyScoreController.OnMaxScoreReached += Deactivate;
+		ZMLobbyScoreController.OnReachMaxScore += Deactivate;
 
 		ZMPlayerController.PlayerDeathEvent += Deactivate;
 		ZMPlayerController.PlayerRespawnEvent += HandleOnPlayerRespawn;

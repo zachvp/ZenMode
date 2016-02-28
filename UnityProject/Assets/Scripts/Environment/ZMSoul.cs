@@ -20,7 +20,7 @@ public class ZMSoul : MonoBehaviour
 	{
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
-		ZMStageScoreController.MinScoreReached += HandleMinScoreReached;
+		ZMStageScoreController.OnReachMinScore += HandleMinScoreReached;
 		ZMStageScoreController.CanScoreEvent += HandleCanScoreEvent;
 		ZMStageScoreController.OnStopScore += HandleStopScoreEvent;
 
@@ -53,7 +53,7 @@ public class ZMSoul : MonoBehaviour
 		}
 	}
 
-	private void HandleGameEndEvent ()
+	private void HandleGameEndEvent()
 	{
 		enabled = false;
 		
@@ -88,9 +88,9 @@ public class ZMSoul : MonoBehaviour
 		PlayLoop();
 	}
 	
-	private void HandleMinScoreReached (ZMScoreController scoreController)
+	private void HandleMinScoreReached(ZMPlayerInfo info)
 	{
-		if (_playerInfo == scoreController.PlayerInfo)
+		if (_playerInfo == info)
 		{
 			GetComponent<AudioSource>().Stop();
 			
@@ -100,31 +100,37 @@ public class ZMSoul : MonoBehaviour
 		}
 	}
 
-	public void AddZen(float amount) {
+	public void AddZen(float amount)
+	{
 		_scoreController.AddToScore(amount);
 	}
 
-	public float GetZen() {
+	public float GetZen()
+	{
 		return _scoreController.TotalScore;
 	}
 
-	public void SetZen(float amount) {
+	public void SetZen(float amount)
+	{
 		_scoreController.SetScore(amount);
 	}
 
-	private void PlayLoop() {
+	private void PlayLoop()
+	{
 		_fadingIn = true;
 
 		GetComponent<AudioSource>().volume = 0;
 		GetComponent<AudioSource>().Play();
 	}
 
-	private void StopLoop() {
+	private void StopLoop()
+	{
 		_fadingIn = false;
 		_playingSound = false;
 	}
 
-	void Deactivate() {
+	void Deactivate()
+	{
 		gameObject.SetActive(false);
 	}
 }

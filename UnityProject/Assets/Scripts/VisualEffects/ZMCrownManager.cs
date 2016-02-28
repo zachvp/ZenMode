@@ -15,8 +15,6 @@ public class ZMCrownManager : MonoBehaviour
 
 	private static int _leadingPlayerIndex; public static int LeadingPlayerIndex { get { return _leadingPlayerIndex; } }
 
-	private bool _endGame;
-
 	void Awake()
 	{
 		_crowns = new GameObject[Settings.MatchPlayerCount.value];
@@ -110,19 +108,17 @@ public class ZMCrownManager : MonoBehaviour
 		enabled = true;
 	}
 	
-	private void HandleGameEndEvent ()
-	{
-		_endGame = true;
-		
+	private void HandleGameEndEvent()
+	{		
 		for (int i = 0; i < _crowns.Length; ++i)
 		{
 			if (_crowns[i] != null) { _crowns[i].SetActive(false); }
 		}
 	}
 	
-	private void HandlePlayerRespawnEvent (ZMPlayerController playerController)
+	private void HandlePlayerRespawnEvent(ZMPlayerController playerController)
 	{
-		if (!_endGame)
+		if (!MatchStateManager.IsEnd())
 		{
 			_crowns[playerController.PlayerInfo.ID].SetActive(true);
 		}

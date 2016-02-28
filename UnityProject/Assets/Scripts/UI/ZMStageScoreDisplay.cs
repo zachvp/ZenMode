@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using ZMPlayer;
 
 public class ZMStageScoreDisplay : ZMScoreDisplay
 {
@@ -9,7 +10,7 @@ public class ZMStageScoreDisplay : ZMScoreDisplay
 	{
 		base.Awake ();
 
-		ZMScoreController.MinScoreReached += EliminateScore;
+		ZMScoreController.OnReachMinScore += EliminateScore;
 
 		ConfigureScoreStatus();
 	}
@@ -31,8 +32,8 @@ public class ZMStageScoreDisplay : ZMScoreDisplay
 		_scoreSlider.maxValue = ZMScoreController.MAX_SCORE;
 	}
 
-	private void EliminateScore(ZMScoreController controller)
+	private void EliminateScore(ZMPlayerInfo info)
 	{
-		if (_playerInfo == controller.PlayerInfo) { _scoreStatus.text = "ELIMINATED!"; }
+		if (_playerInfo == info) { _scoreStatus.text = "ELIMINATED!"; }
 	}
 }

@@ -42,7 +42,7 @@ public class ZMLobbyScoreController : ZMScoreController
 			}
 			else if (!_readyFired)
 			{
-				Notifier.SendEventNotification(OnMaxScoreReached, _playerInfo);
+				Notifier.SendEventNotification(OnReachMaxScore, _playerInfo);
 
 				_readyFired = true;
 			}

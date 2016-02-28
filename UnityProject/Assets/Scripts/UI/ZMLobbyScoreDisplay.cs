@@ -12,7 +12,7 @@ public class ZMLobbyScoreDisplay : ZMScoreDisplay
 		DeactivateScoreBar(_playerInfo);
 
 		ZMLobbyScoreController.OnUpdateScore += UpdateScore;
-		ZMLobbyScoreController.OnMaxScoreReached += DeactivateScoreBar;
+		ZMLobbyScoreController.OnReachMaxScore += DeactivateScoreBar;
 		ZMLobbyController.DropOutEvent += DeactivateScoreBar;
 
 		ZMPlayerController.OnPlayerCreate += HandlePlayerCreate;

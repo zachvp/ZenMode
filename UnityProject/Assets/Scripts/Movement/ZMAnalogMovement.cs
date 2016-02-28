@@ -88,7 +88,7 @@ public class ZMAnalogMovement : ZMDirectionalInput
 	}
 
 
-	protected override bool IsCorrectInputControl(ZMInput input)
+	protected override bool IsValidInputControl(ZMInput input)
 	{
 		return _playerInfo.ID == input.ID;
 	}

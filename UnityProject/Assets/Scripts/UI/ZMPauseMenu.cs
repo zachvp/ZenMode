@@ -14,7 +14,8 @@ public class ZMPauseMenu : ZMTextMenu
 	{
 		base.Awake();
 
-		_playerInfo = GetComponent<ZMPlayerInfo>();
+		MatchStateManager.OnMatchStart += AcceptActivationEvents;
+		MatchStateManager.OnMatchEnd += ClearActivationEvents;
 	}
 
 	void OnDestroy()
@@ -25,9 +26,9 @@ public class ZMPauseMenu : ZMTextMenu
 	private void HandleTogglePause(int controlIndex)
 	{
 		// Bail out if the match hasn't started yet
-		if (!IsAbleToPause(controlIndex)) { return; }
+//		if (!IsAbleToPause(controlIndex)) { return; }
 
-		if (_active && IsCorrectInputControl(controlIndex))
+		if (_active && IsValidInputControl(controlIndex))
 		{
 			ResumeGame();
 		}
@@ -71,8 +72,8 @@ public class ZMPauseMenu : ZMTextMenu
 		MatchStateManager.ResumeMatch();
 	}
 
-	protected virtual bool IsAbleToPause(int controlIndex)
-	{
-		return !MatchStateManager.IsNone();
-	}
+//	protected virtual bool IsAbleToPause(int controlIndex)
+//	{
+//		return !MatchStateManager.IsNone() && !MatchStateManager.IsEnd();
+//	}
 }

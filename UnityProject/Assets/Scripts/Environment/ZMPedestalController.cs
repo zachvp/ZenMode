@@ -42,7 +42,7 @@ public class ZMPedestalController : ZMPlayerItem
 		// event handler subscriptions
 		ZMStageScoreController.CanScoreEvent 	     += HandleCanScoreEvent;
 		ZMStageScoreController.OnStopScore   	     += HandleStopScoreEvent;
-		ZMStageScoreController.MinScoreReached	     += HandleMinScoreReached;
+		ZMStageScoreController.OnReachMinScore	     += HandleMinScoreReached;
 
 		Disable();
 	}
@@ -171,9 +171,9 @@ public class ZMPedestalController : ZMPlayerItem
 		}
 	}
 
-	void HandleMinScoreReached(ZMScoreController scoreController)
+	void HandleMinScoreReached(ZMPlayerInfo info)
 	{
-		if (_playerInfo == scoreController.PlayerInfo)
+		if (_playerInfo == info)
 		{
 			zenPop.GetComponent<Renderer>().sharedMaterial.color = GetComponent<Renderer>().material.color;
 
@@ -182,7 +182,7 @@ public class ZMPedestalController : ZMPlayerItem
 			_zenPopSystems.Add(ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem);
 
 			Disable();
-			Invoke ("StopThePop", 0.08f);
+			Invoke("StopThePop", 0.08f);
 		}
 	}
 

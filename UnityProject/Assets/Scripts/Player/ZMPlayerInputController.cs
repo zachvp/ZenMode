@@ -85,7 +85,7 @@ namespace ZMPlayer
 
 		private void HandleOnJump(ZMInput input)
 		{
-			if (IsCorrectInputControl(input))
+			if (IsValidInputControl(input))
 			{
 				if (input.Pressed)
 				{
@@ -96,7 +96,7 @@ namespace ZMPlayer
 
 		private void HandleOnAttack(ZMInput input)
 		{
-			if (IsCorrectInputControl(input))
+			if (IsValidInputControl(input))
 			{
 				if (input.Pressed)
 				{
@@ -111,7 +111,7 @@ namespace ZMPlayer
 			}
 		}
 
-		protected override bool IsCorrectInputControl(ZMInput input)
+		protected override bool IsValidInputControl(ZMInput input)
 		{
 			return input.ID == -1 || input.ID == _playerInfo.ID;
 		}

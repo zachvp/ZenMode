@@ -2,7 +2,8 @@
 using UnityEngine.UI;
 using ZMPlayer;
 
-public class ZMColorFade : MonoBehaviour {
+public class ZMColorFade : MonoBehaviour
+{
 	public bool looping = false;
 	public float fadeSpeed = 3f;
 	public Color fadeColor = Color.white;
@@ -23,7 +24,7 @@ public class ZMColorFade : MonoBehaviour {
 		ZMScoreController.OnStopScore += HandleStopScoreEvent;
 
 		ZMStageScoreController.CanScoreEvent += HandleCanScoreEvent;
-		ZMStageScoreController.MinScoreReached += HandleMinScoreReached;
+		ZMStageScoreController.OnReachMinScore += HandleMinScoreReached;
 	}
 
 	void HandleStopScoreEvent(ZMScoreController scoreController)
@@ -44,9 +45,9 @@ public class ZMColorFade : MonoBehaviour {
 		}
 	}
 
-	void HandleMinScoreReached(ZMScoreController scoreController)
+	void HandleMinScoreReached(ZMPlayerInfo info)
 	{
-		if (_playerInfo == scoreController.PlayerInfo)
+		if (_playerInfo == info)
 		{
 			_image.enabled = false;
 		}

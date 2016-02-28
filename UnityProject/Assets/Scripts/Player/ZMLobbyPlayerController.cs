@@ -10,7 +10,7 @@ public class ZMLobbyPlayerController : ZMPlayerController
 		EnablePlayer();
 		AcceptInputEvents();
 
-		ZMLobbyScoreController.OnMaxScoreReached += HandleLobbyMaxScoreReachedEvent;
+		ZMLobbyScoreController.OnReachMaxScore += HandleLobbyMaxScoreReachedEvent;
 	}
 
 	protected override void Start()

@@ -20,7 +20,7 @@ public class ZMMatchOutputDisplay : MonoBehaviour
 
 		ZMPauseMenu.OnPlayerPauseGame += ShowPauseOutput;
 		ZMTimedCounter.GameTimerEndedEvent += ShowGameEndMessage;
-		ZMScoreController.OnMaxScoreReached += ShowGameEndMessage;
+		ZMScoreController.OnReachMaxScore += ShowGameEndMessage;
 
 		MatchStateManager.OnMatchResume += ClearText;
 		MatchStateManager.OnMatchStart += ShowStartMessage;
