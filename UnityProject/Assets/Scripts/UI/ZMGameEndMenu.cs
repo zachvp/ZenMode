@@ -23,6 +23,9 @@ public class ZMGameEndMenu : ZMTextMenu
 	private void HandleGameEndEvent()
 	{
 		AcceptInputEvents();
+		AcceptGamepadEvents();
+		AcceptKeyboardEvents();
+
 		ShowMenu();
 	}
 }

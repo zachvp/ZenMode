@@ -27,11 +27,7 @@ public class ZMPlayerManager : MonoBehaviour
 	{
 		get
 		{
-			// TODO: Should be assert.
-			if (_instance == null)
-			{
-				Debug.LogError("ZMPlayerManager: no instance exists in the scene.");
-			}
+			Debug.Assert(_instance != null, "ZMPlayerManager: no instance exists in the scene.");
 
 			return _instance;
 		}
@@ -43,7 +39,7 @@ public class ZMPlayerManager : MonoBehaviour
 	
 	protected virtual void Awake()
 	{
-		if (debug) { Settings.MatchPlayerCount.value = debugPlayerCount; }
+		if (debug) { ConfigureDebugSettings(); }
 
 		ConfigureMonoSingleton();
 		InitPlayerData(Settings.MatchPlayerCount.value);
@@ -70,11 +66,7 @@ public class ZMPlayerManager : MonoBehaviour
 
 	protected void ConfigureMonoSingleton()
 	{
-		// TODO: Should be assert.
-		if (_instance != null)
-		{
-			Debug.LogError("ZMPlayerManager: More than one instance exists in the scene.");
-		}
+		Debug.Assert(_instance == null, "ZMPlayerManager: More than one instance exists in the scene.");
 		
 		_instance = this;
 	}
@@ -110,5 +102,10 @@ public class ZMPlayerManager : MonoBehaviour
 			
 			_playerStartPoints[playerInfo.ID] = playerInfo.transform;
 		}
+	}
+
+	private void ConfigureDebugSettings()
+	{
+		Settings.MatchPlayerCount.value = debugPlayerCount;
 	}
 }

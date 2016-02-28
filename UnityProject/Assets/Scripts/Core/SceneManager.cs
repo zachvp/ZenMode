@@ -7,14 +7,13 @@ namespace Core
 		public static int CurrentSceneIndex { get { return _currentSceneIndex; } }
 		public static string CurrentSceneName { get { return _currentSceneName; } } 
 
-		private static int _currentSceneIndex;
-		private static string _currentSceneName;
+		private static int _currentSceneIndex { get { return GetCurrentSceneIndex(); } }
+		private static string _currentSceneName { get { return GetCurrentSceneName(); } }
 
 		public static EventHandler OnLoadScene;
 
 		public static void LoadScene(string name)
 		{
-			_currentSceneName = name;
 			Notifier.SendEventNotification(OnLoadScene);
 
 			UnityEngine.SceneManagement.SceneManager.LoadScene(name);
@@ -22,7 +21,6 @@ namespace Core
 
 		public static void LoadScene(int sceneIndex)
 		{
-			_currentSceneIndex = sceneIndex;
 			Notifier.SendEventNotification(OnLoadScene);
 
 			UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
@@ -46,6 +44,20 @@ namespace Core
 		public static void QuitGame()
 		{
 			Application.Quit();
+		}
+
+		private static int GetCurrentSceneIndex()
+		{
+			var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+
+			return scene.buildIndex;
+		}
+
+		private static string GetCurrentSceneName()
+		{
+			var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+
+			return scene.name;
 		}
 	}
 }
