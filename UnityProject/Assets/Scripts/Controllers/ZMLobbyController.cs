@@ -7,7 +7,7 @@ public class ZMLobbyController : MonoBehaviour
 {
 	[SerializeField] private GameObject loadScreen;
 
-	public static int CurrentJoinCount { get { return _currentJoinCount; } }
+	public static int CurrentJoinCount { get { return LobbyPlayer.JoinCount; } }
 
 	public static EventHandler<int> OnPlayerJoinedEvent;
 
@@ -26,29 +26,63 @@ public class ZMLobbyController : MonoBehaviour
 
 	private static ZMLobbyController _instance;
 
-	private static int _currentJoinCount;  // i.e. how many players have pressed a button to join
-	private static int _currentReadyCount; // i.e. how many players have actually readied up
-
 	private int _requiredPlayerCount;
 
 	private bool _paused;
 
-	private bool[] _joinedPlayers;
-	private bool[] _readyPlayers;
-
 	class LobbyPlayer
 	{
-		public enum State { NONE, JOINED, READY, DROPPED }
-		public State state { get; private set; }
+		public static int JoinCount { get { return GetStateCount(State.JOINED); } }
+		public static int ReadyCount { get { return GetStateCount(State.READY); } }
+
+		private static int[] _stateCounts = new int[(int) State.COUNT];
+
+		private enum State { NONE, JOINED, READY, DROPPED, COUNT }
+		private State _state;
+
+		public void SetNone() 	 { UpdateStates(State.NONE); }
+		public void SetJoined()  { UpdateStates(State.JOINED); }
+		public void SetReady() 	 { UpdateStates(State.READY); }
+		public void SetDropped() { UpdateStates(State.DROPPED); }
+
+		public bool IsNone 	  { get { return _state == State.NONE; } }
+		public bool IsJoined  { get { return _state == State.JOINED; } }
+		public bool IsReady   { get { return _state == State.READY; } }
+		public bool IsDropped { get { return _state == State.DROPPED; } }
+
+		public static LobbyPlayer[] CreateArray(int size)
+		{
+			var array = new LobbyPlayer[size];
+
+			for (int i = 0; i < size; ++i) { array[i] = LobbyPlayer.Create(); }
+
+			return array;
+		}
+
+		public static LobbyPlayer Create()
+		{
+			return new LobbyPlayer();
+		}
+
+		private void UpdateStates(State current)
+		{
+			_stateCounts[(int) _state]  -= 1;
+			_stateCounts[(int) current] += 1;
+
+			_state = current;
+		}
+
+		private static int GetStateCount(State state)
+		{
+			return _stateCounts[(int) state];
+		}
 	}
 
 	private LobbyPlayer[] _players;
 
 	void Awake()
 	{
-		_players = new LobbyPlayer[Constants.MAX_PLAYERS];
-		_joinedPlayers = new bool[Constants.MAX_PLAYERS];
-		_readyPlayers = new bool[Constants.MAX_PLAYERS];
+		_players = LobbyPlayer.CreateArray(Constants.MAX_PLAYERS);
 
 		Debug.Assert(_instance == null, "ZMLobbyController: More than one instance exists in the scene.");
 
@@ -74,23 +108,22 @@ public class ZMLobbyController : MonoBehaviour
 
 	public bool IsPlayerJoined(int id)
 	{
-		if (!Utilities.IsValidArrayIndex(_joinedPlayers, id)) { return false; }
+		if (!Utilities.IsValidArrayIndex(_players, id)) { return false; }
 
-		return _joinedPlayers[id];
+		return _players[id].IsJoined;
 	}
 
 	private void HandleAnyInputEvent(int controlIndex)
 	{
-		if (!Utilities.IsValidArrayIndex(_joinedPlayers, controlIndex) || MatchStateManager.IsPause()) { return; }
+		if (!Utilities.IsValidArrayIndex(_players, controlIndex) || MatchStateManager.IsPause()) { return; }
 
-		if (!_joinedPlayers[controlIndex])
+		if (_players[controlIndex].IsNone)
 		{
-			_joinedPlayers[controlIndex] = true;
+			_players[controlIndex].SetJoined();
 
 			Notifier.SendEventNotification(OnPlayerJoinedEvent, controlIndex);
 
 			_requiredPlayerCount += 1;
-			_currentJoinCount += 1;
 
 			if (!MatchStateManager.IsPreMatch()) { MatchStateManager.StartPreMatch(); }
 		}
@@ -100,26 +133,18 @@ public class ZMLobbyController : MonoBehaviour
 	{
 		var index = info.ID;
 
-		_joinedPlayers[index] = false;
-		_currentJoinCount -= 1;
-
-		if (_readyPlayers[index])
-		{
-			_readyPlayers[index] = false;
-			_currentReadyCount -= 1;
-		}
+		_players[index].SetDropped();
 
 		Notifier.SendEventNotification(OnPlayerDropOut, info);
 	}
 
 	private void HandleMaxScoreReachedEvent(ZMPlayerInfo info)
 	{
-		_currentReadyCount += 1;
-		_readyPlayers[info.ID] = true;
+		_players[info.ID].SetReady();
 
 		Notifier.SendEventNotification(PlayerReadyEvent, info);
 
-		if (_currentReadyCount > 1 && _currentReadyCount == _requiredPlayerCount)
+		if (LobbyPlayer.ReadyCount > 1 && LobbyPlayer.ReadyCount == _requiredPlayerCount)
 		{
 			Invoke("LoadLevel", 0.5f);
 			Invoke("ShowLoadScreen", 0.5f);
