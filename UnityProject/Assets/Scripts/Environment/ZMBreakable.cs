@@ -7,6 +7,7 @@ using ZMPlayer;
 public class ZMBreakable : MonoBehaviour
 {
 	[SerializeField] private ParticleSystem effectTemplate;
+	[SerializeField] private bool destroyOnJoin;
 
 	private ParticleSystem destructionEffect;
 	private Renderer _renderer;
@@ -16,6 +17,8 @@ public class ZMBreakable : MonoBehaviour
 	private bool _handlingCollision;
 	private ZMPlayerInfo _playerInfo;
 
+	private bool _active;
+
 	void Awake()
 	{
 		_playerInfo = GetComponent<ZMPlayerInfo>();
@@ -23,17 +26,32 @@ public class ZMBreakable : MonoBehaviour
 		_collider = GetComponent<Collider2D>();
 		_childCollider = transform.GetChild(0).GetComponent<Collider2D>();
 
+		_active = true;
+
 		ZMLobbyController.OnPlayerDropOut += HandleDropOutEvent;
+		ZMLobbyController.OnPlayerJoinedEvent += HandlePlayerJoinedEvent;
 	}
 
 	public void HandleCollision(ZMPlayerInfo playerInfo)
 	{
 		if (_playerInfo == playerInfo)
 		{
-			if (!_handlingCollision)
+			if (!_handlingCollision && _active)
+			{
+				_handlingCollision = true;
+				
+				Break();
+			}
+		}
+	}
+
+	private void HandlePlayerJoinedEvent(int controlIndex)
+	{
+		if (_playerInfo.ID == controlIndex )
+		{
+			if (destroyOnJoin)
 			{
 				Break();
-				_handlingCollision = true;
 			}
 		}
 	}
@@ -42,7 +60,6 @@ public class ZMBreakable : MonoBehaviour
 	{
 		if (_playerInfo == info)
 		{
-			Debug.Log(_playerInfo.ID.ToString() + ": droppped out");
 			SetActive(true);
 		}
 	}
@@ -55,8 +72,7 @@ public class ZMBreakable : MonoBehaviour
 
 	private void Break()
 	{
-		destructionEffect = Instantiate(effectTemplate) as ParticleSystem;
-		destructionEffect.transform.position = transform.position;
+		destructionEffect = Instantiate(effectTemplate, transform.position, Quaternion.identity) as ParticleSystem;
 		destructionEffect.Play();
 		
 		Invoke("StopGibs", 0.1f);
@@ -71,5 +87,6 @@ public class ZMBreakable : MonoBehaviour
 		_childCollider.enabled = active;
 
 		_handlingCollision = active;
+		_active = active;
 	}
 }
