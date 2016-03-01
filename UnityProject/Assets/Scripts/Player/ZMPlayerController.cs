@@ -620,7 +620,7 @@ public class ZMPlayerController : ZMPlayerItem
 	private void HandleOnMatchPause()
 	{
 		DisablePlayer();
-		
+
 		ClearInputEvents();
 	}
 	

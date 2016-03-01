@@ -13,7 +13,7 @@ public class ZMPauseMenuLobby : ZMPauseMenu
 
 		if (_selectedIndex == RESUME_OPTION)
 		{
-			Invoke("ResumeGame", 0.1f);
+			ResumeGame();
 		}
 		else if (_selectedIndex == QUIT_OPTION)
 		{
