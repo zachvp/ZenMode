@@ -38,8 +38,6 @@ public class ZMTextMenu : ZMMenuInput
 		if (_startActive)
 		{
 			AcceptInputEvents();
-			AcceptGamepadEvents();
-			AcceptKeyboardEvents();
 		}
 	}
 

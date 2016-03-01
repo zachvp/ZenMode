@@ -43,6 +43,40 @@ public class ZMDirectionalInput : ZMPlayerItem
 		inputManager.OnUpArrowKey += HandleOnMoveUp;
 	}
 
+	protected void AcceptInputEvents()
+	{
+		AcceptGamepadEvents();
+		AcceptKeyboardEvents();
+	}
+
+	protected virtual void ClearGamePadEvents()
+	{
+		var inputManager = ZMInputManager.Instance;
+
+		inputManager.OnLeftAnalogStickMove -= HandleOnMove;
+	}
+
+	protected virtual void ClearKeyboardEvents()
+	{
+		var inputManager = ZMInputManager.Instance;
+
+		inputManager.OnAKey -= HandleOnMoveLeft;
+		inputManager.OnDKey -= HandleOnMoveRight;
+		inputManager.OnLeftArrowKey -= HandleOnMoveLeft;
+		inputManager.OnRightArrowKey -= HandleOnMoveRight;
+
+		inputManager.OnSKey -= HandleOnMoveDown;
+		inputManager.OnDownArrowKey -= HandleOnMoveDown;
+		inputManager.OnWKey -= HandleOnMoveUp;
+		inputManager.OnUpArrowKey -= HandleOnMoveUp;
+	}
+
+	protected void ClearInputEvents()
+	{
+		ClearGamePadEvents();
+		ClearKeyboardEvents();
+	}
+
 	private void HandleOnMove(ZMInput input, Vector2 amount)
 	{
 		if (IsValidInputControl(input))

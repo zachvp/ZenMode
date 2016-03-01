@@ -69,20 +69,40 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 		return _isSharedMenu || id == _playerInfo.ID;
 	}
 
-	protected virtual void AcceptInputEvents()
+	protected override void AcceptGamepadEvents()
 	{
+		base.AcceptGamepadEvents();
+
 		var inputManager = ZMInputManager.Instance;
 		
 		inputManager.OnAction1 	+= HandleOnSelect;
+	}
+
+	protected override void AcceptKeyboardEvents()
+	{
+		base.AcceptKeyboardEvents();
+
+		var inputManager = ZMInputManager.Instance;
+
 		inputManager.OnEKey 	+= HandleOnSelect;
 		inputManager.OnSlashKey += HandleOnSelect;
 	}
-	
-	protected virtual void ClearInputEvents()
+
+	protected override void ClearGamePadEvents()
 	{
+		base.ClearGamePadEvents();
+
+		var inputManager = ZMInputManager.Instance;
+
+		inputManager.OnAction1 	-= HandleOnSelect;
+	}
+
+	protected override void ClearKeyboardEvents()
+	{
+		base.ClearKeyboardEvents();
+
 		var inputManager = ZMInputManager.Instance;
 		
-		inputManager.OnAction1 	-= HandleOnSelect;
 		inputManager.OnEKey 	-= HandleOnSelect;
 		inputManager.OnSlashKey -= HandleOnSelect;
 	}

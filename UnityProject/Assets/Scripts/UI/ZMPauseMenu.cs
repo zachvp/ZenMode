@@ -14,7 +14,6 @@ public class ZMPauseMenu : ZMTextMenu
 	{
 		base.Awake();
 
-		MatchStateManager.OnMatchStart += AcceptActivationEvents;
 		MatchStateManager.OnMatchEnd += ClearActivationEvents;
 	}
 
@@ -27,11 +26,13 @@ public class ZMPauseMenu : ZMTextMenu
 	{
 		if (_active && IsValidInputControl(controlIndex))
 		{
+			ClearInputEvents();
 			ResumeGame();
 		}
 		else if (!_active)
 		{
 			_playerInfo.ID = controlIndex;
+			AcceptInputEvents();
 			PauseGame();
 		}
 	}
@@ -53,7 +54,7 @@ public class ZMPauseMenu : ZMTextMenu
 
 		_active = active;
 		gameObject.SetActive(_active);
-		_overlay.SetActive(_active);	// TODO: NOT WORKING??
+		_overlay.SetActive(_active);
 	}
 
 	protected void PauseGame()
