@@ -11,7 +11,7 @@ public class ZMLobbyPlayerController : ZMPlayerController
 		AcceptInputEvents();
 
 		ZMLobbyScoreController.OnReachMaxScore += HandleLobbyMaxScoreReachedEvent;
-		ZMPauseMenuLobby.OnPlayerDropOut += HandleOnPlayerDropOut;
+		ZMLobbyController.OnPlayerDropOut += HandleOnPlayerDropOut;
 	}
 
 	protected override void Start()

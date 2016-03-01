@@ -19,7 +19,7 @@ public class ZMLobbyPlayerManager : ZMPlayerManager
 		GetPlayerStartpoints();
 
 		ZMLobbyController.PlayerReadyEvent += HandlePlayerReadyEvent;
-		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
+		ZMLobbyController.OnPlayerDropOut += HandleDropOutEvent;
 		ZMLobbyController.OnPlayerJoinedEvent += HandlePlayerDropIn;
 	}
 

@@ -24,7 +24,7 @@ public class ZMLobbyScoreController : ZMScoreController
 		_targetAlive = true;
 		_basePosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 
-		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
+		ZMLobbyController.OnPlayerDropOut += HandleDropOutEvent;
 		ZMLobbyPedestalController.ActivateEvent += HandleActivateEvent;
 
 		AcceptPlayerEvents();

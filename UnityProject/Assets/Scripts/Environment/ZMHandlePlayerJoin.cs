@@ -2,7 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using ZMPlayer;
 
-public class ZMHandlePlayerJoin : MonoBehaviour {
+public class ZMHandlePlayerJoin : MonoBehaviour
+{
 	public string methodAction;
 	public bool sendOnce = true;
 
@@ -14,15 +15,19 @@ public class ZMHandlePlayerJoin : MonoBehaviour {
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 
 		ZMLobbyController.OnPlayerJoinedEvent += HandlePlayerJoinedEvent;
-		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
+		ZMLobbyController.OnPlayerDropOut += HandleDropOutEvent;
 	}
 
-	void HandleDropOutEvent(ZMPlayerInfo info)
+	private void HandleDropOutEvent(ZMPlayerInfo info)
 	{
-		if (_playerInfo == info) { _sent = false; }
+		if (_playerInfo == info)
+		{
+			_sent = false;
+			Disable();
+		}
 	}
 
-	void HandlePlayerJoinedEvent(int controlIndex)
+	private void HandlePlayerJoinedEvent(int controlIndex)
 	{
 		if (_playerInfo.ID == controlIndex )
 		{
@@ -41,22 +46,23 @@ public class ZMHandlePlayerJoin : MonoBehaviour {
 		}
 	}
 
-	void Disable() {
+	private void Disable()
+	{
 		gameObject.SetActive(false);
 	}
 
-	void Enable() {
+	private void Enable()
+	{
 		Image image = GetComponent<Image>();
 		Text text = GetComponent<Text>();
 
 		gameObject.SetActive(true);
 
-		if (image != null) {
-			image.enabled = true;
-		}
+		if (image != null) { image.enabled = true; }
 
-		if (text != null) {
-			Color visible = new Color(text.color.r, text.color.g, text.color.b, 1);
+		if (text != null)
+		{
+			var visible = new Color(text.color.r, text.color.g, text.color.b, 1);
 
 			text.color = visible;
 		}

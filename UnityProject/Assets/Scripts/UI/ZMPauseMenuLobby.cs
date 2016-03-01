@@ -9,8 +9,6 @@ public class ZMPauseMenuLobby : ZMPauseMenu
 	private const int DROP_OPTION 	  = 1;
 	private const int QUIT_OPTION 	  = 2;
 
-	public static EventHandler<ZMPlayerInfo> OnPlayerDropOut;
-
 	protected override void HandleMenuSelection()
 	{
 		base.HandleMenuSelection();
@@ -22,7 +20,7 @@ public class ZMPauseMenuLobby : ZMPauseMenu
 		else if (_selectedIndex == DROP_OPTION)
 		{
 			Debug.Log("TEST: DROP");
-			Notifier.SendEventNotification(OnPlayerDropOut, _playerInfo);
+			ZMLobbyController.Instance.PlayerDidDropOut(_playerInfo);
 			ResumeGame();
 		}
 		else if (_selectedIndex == QUIT_OPTION)
@@ -37,7 +35,7 @@ public class ZMPauseMenuLobby : ZMPauseMenu
 
 	protected override bool IsAbleToPause()
 	{
-		return ZMLobbyController.Instance.IsPlayerJoined(_playerInfo.ID);
+		return ZMLobbyController.Instance.IsPlayerJoined(_playerInfo.ID) || MatchStateManager.IsPause();
 	}
 
 	private void HandleSelectQuitEvent()

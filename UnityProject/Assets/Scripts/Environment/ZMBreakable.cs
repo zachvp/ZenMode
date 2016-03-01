@@ -3,7 +3,9 @@ using ZMPlayer;
 
 public class ZMBreakable : MonoBehaviour
 {
-	public ParticleSystem destructionEffect;
+	[SerializeField] private ParticleSystem effectTemplate;
+
+	private ParticleSystem destructionEffect;
 
 	private bool _handlingCollision;
 	private ZMPlayer.ZMPlayerInfo _playerInfo;
@@ -11,7 +13,7 @@ public class ZMBreakable : MonoBehaviour
 	void Awake() {
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 
-		ZMLobbyController.DropOutEvent += HandleDropOutEvent;
+		ZMLobbyController.OnPlayerDropOut += HandleDropOutEvent;
 
 	}
 
@@ -36,20 +38,21 @@ public class ZMBreakable : MonoBehaviour
 		}
 	}
 
-	void StopGibs() {
+	void StopGibs()
+	{
 		destructionEffect.Stop();
-		Destroy(destructionEffect.gameObject, 0.8f);
-		//Destroy(gameObject, 0.2f);
+		Destroy(destructionEffect.gameObject, 0.4f);
 
 		_handlingCollision = false;
 	}
 
-	void Break() {
-		destructionEffect = Instantiate(destructionEffect) as ParticleSystem;
+	void Break()
+	{
+		destructionEffect = Instantiate(effectTemplate) as ParticleSystem;
 		destructionEffect.transform.position = transform.position;
 		destructionEffect.Play();
 		
-		Invoke ("StopGibs", 0.1f);
+		Invoke("StopGibs", 0.1f);
 		
 		gameObject.SetActive(false);
 	}

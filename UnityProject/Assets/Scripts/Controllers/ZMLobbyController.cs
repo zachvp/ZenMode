@@ -12,7 +12,7 @@ public class ZMLobbyController : MonoBehaviour
 	public static EventHandler<int> OnPlayerJoinedEvent;
 
 	public static EventHandler<ZMPlayerInfo> PlayerReadyEvent;
-	public static EventHandler<ZMPlayerInfo> DropOutEvent;
+	public static EventHandler<ZMPlayerInfo> OnPlayerDropOut;
 
 	public static ZMLobbyController Instance
 	{
@@ -36,8 +36,17 @@ public class ZMLobbyController : MonoBehaviour
 	private bool[] _joinedPlayers;
 	private bool[] _readyPlayers;
 
+	class LobbyPlayer
+	{
+		public enum State { NONE, JOINED, READY, DROPPED }
+		public State state { get; private set; }
+	}
+
+	private LobbyPlayer[] _players;
+
 	void Awake()
 	{
+		_players = new LobbyPlayer[Constants.MAX_PLAYERS];
 		_joinedPlayers = new bool[Constants.MAX_PLAYERS];
 		_readyPlayers = new bool[Constants.MAX_PLAYERS];
 
@@ -46,7 +55,6 @@ public class ZMLobbyController : MonoBehaviour
 		_instance = this;
 
 		ZMLobbyScoreController.OnReachMaxScore += HandleMaxScoreReachedEvent;
-
 		ZMGameInputManager.AnyInputEvent += HandleAnyInputEvent;
 	}
 
@@ -59,7 +67,7 @@ public class ZMLobbyController : MonoBehaviour
 	{
 		OnPlayerJoinedEvent = null;
 		PlayerReadyEvent 	= null;
-		DropOutEvent	  	= null;
+		OnPlayerDropOut 	= null;
 
 		_instance = null;
 	}
@@ -88,9 +96,9 @@ public class ZMLobbyController : MonoBehaviour
 		}
 	}
 
-	private void HandleSelectDropOutEvent(int index)
+	public void PlayerDidDropOut(ZMPlayerInfo info)
 	{
-		var droppedPlayer = ZMLobbyPlayerManager.Instance.Players[index];
+		var index = info.ID;
 
 		_joinedPlayers[index] = false;
 		_currentJoinCount -= 1;
@@ -101,7 +109,7 @@ public class ZMLobbyController : MonoBehaviour
 			_currentReadyCount -= 1;
 		}
 
-		Notifier.SendEventNotification(DropOutEvent, droppedPlayer.PlayerInfo);
+		Notifier.SendEventNotification(OnPlayerDropOut, info);
 	}
 
 	private void HandleMaxScoreReachedEvent(ZMPlayerInfo info)
