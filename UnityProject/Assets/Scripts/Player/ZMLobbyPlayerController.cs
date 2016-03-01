@@ -11,6 +11,7 @@ public class ZMLobbyPlayerController : ZMPlayerController
 		AcceptInputEvents();
 
 		ZMLobbyScoreController.OnReachMaxScore += HandleLobbyMaxScoreReachedEvent;
+		ZMPauseMenuLobby.OnPlayerDropOut += HandleOnPlayerDropOut;
 	}
 
 	protected override void Start()
@@ -25,6 +26,17 @@ public class ZMLobbyPlayerController : ZMPlayerController
 		if (_playerInfo == info)
 		{
 			DisablePlayer();
+			GetComponent<Renderer>().enabled = false;
+			gameObject.SetActive(false);
+		}
+	}
+
+	private void HandleOnPlayerDropOut(ZMPlayerInfo info)
+	{
+		if (_playerInfo == info)
+		{
+			DisablePlayer();
+			ClearInputEvents();
 			GetComponent<Renderer>().enabled = false;
 			gameObject.SetActive(false);
 		}

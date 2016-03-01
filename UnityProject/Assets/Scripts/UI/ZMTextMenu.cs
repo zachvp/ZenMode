@@ -9,8 +9,6 @@ public class ZMTextMenu : ZMMenuInput
 	[SerializeField] private AudioClip[] _audioChoose;
 	[SerializeField] private AudioClip[] _audioHighlight;
 
-	public static EventHandler<int> SelectOptionEvent;
-
 	protected int _selectedIndex;
 
 	private AudioSource _audio;
@@ -86,8 +84,6 @@ public class ZMTextMenu : ZMMenuInput
 	
 	protected override void HandleMenuSelection()
 	{
-		Notifier.SendEventNotification(SelectOptionEvent, _selectedIndex);
-
 		if (_audioChoose.Length > 0)
 		{
 			_audio.PlayOneShot(_audioChoose[Random.Range (0, _audioChoose.Length)], 1.0f);
