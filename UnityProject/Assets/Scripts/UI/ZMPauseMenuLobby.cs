@@ -19,7 +19,6 @@ public class ZMPauseMenuLobby : ZMPauseMenu
 		}
 		else if (_selectedIndex == DROP_OPTION)
 		{
-			Debug.Log("TEST: DROP");
 			ZMLobbyController.Instance.PlayerDidDropOut(_playerInfo);
 			ResumeGame();
 		}

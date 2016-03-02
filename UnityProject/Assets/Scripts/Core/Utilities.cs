@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -55,6 +56,19 @@ namespace Core
 			if (warn) { Debug.LogWarningFormat("Utilities: index {0} outside of array {1}", index, array); }
 
 			return result;
+		}
+
+		public static void SetVisible(GameObject g, bool visible)
+		{
+			var renderer = g.GetComponent<Renderer>();
+			var graphics = g.GetComponents<MaskableGraphic>();
+
+			for (int i = 0; i < graphics.Length; ++i)
+			{
+				graphics[i].enabled = visible;
+			}
+
+			if (renderer != null) { renderer.enabled = visible; }
 		}
 	}
 }

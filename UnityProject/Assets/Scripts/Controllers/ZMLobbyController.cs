@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using ZMPlayer;
 using Core;
 using ZMConfiguration;
@@ -37,15 +38,15 @@ public class ZMLobbyController : MonoBehaviour
 
 		private static int[] _stateCounts = new int[(int) State.COUNT];
 
-		private enum State { NONE, JOINED, READY, DROPPED, COUNT }
+		private enum State { WAITING, JOINED, READY, DROPPED, COUNT }
 		private State _state;
 
-		public void SetNone() 	 { UpdateStates(State.NONE); }
+		public void SetWaiting() { UpdateStates(State.WAITING); }
 		public void SetJoined()  { UpdateStates(State.JOINED); }
 		public void SetReady() 	 { UpdateStates(State.READY); }
 		public void SetDropped() { UpdateStates(State.DROPPED); }
 
-		public bool IsNone 	  { get { return _state == State.NONE; } }
+		public bool IsNone 	  { get { return _state == State.WAITING; } }
 		public bool IsJoined  { get { return _state == State.JOINED; } }
 		public bool IsReady   { get { return _state == State.READY; } }
 		public bool IsDropped { get { return _state == State.DROPPED; } }
@@ -133,9 +134,17 @@ public class ZMLobbyController : MonoBehaviour
 	{
 		var index = info.ID;
 
+		// Drop player for half a second, then set to waiting.
 		_players[index].SetDropped();
 
+		StartCoroutine(Utilities.ExecuteAfterDelay(SetReady, 0.25f, info.ID));
+
 		Notifier.SendEventNotification(OnPlayerDropOut, info);
+	}
+
+	private void SetReady(int index)
+	{
+		_players[index].SetWaiting();
 	}
 
 	private void HandleMaxScoreReachedEvent(ZMPlayerInfo info)
