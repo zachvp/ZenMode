@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
+using ZMPlayer;
+using ZMConfiguration;
 
 public class ZMShrinkOrb : MonoBehaviour
 {
 	public float _shrinkRate = 0.04f;
 	private bool _shrinking;
-	private ZMPlayer.ZMPlayerInfo _playerInfo;
+	private ZMPlayerInfo _playerInfo;
 
 	void Awake ()
 	{
-		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
+		_playerInfo = GetComponent<ZMPlayerInfo>();
 		ZMWaypointMovement.AtPathNodeEvent += HandleAtPathNodeEvent;
+		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 	}
 
 	void Update()
@@ -32,6 +35,15 @@ public class ZMShrinkOrb : MonoBehaviour
 		if (index - 1 == _playerInfo.ID)
 		{
 			SendMessage("Stop");
+			_shrinking = true;
+		}
+	}
+
+	private void HandleAtPathEndEvent(ZMWaypointMovement movement)
+	{
+		if (movement.CompareTag(Tags.kMainCamera))
+		{
+			SendMessage("Stop", SendMessageOptions.DontRequireReceiver);
 			_shrinking = true;
 		}
 	}

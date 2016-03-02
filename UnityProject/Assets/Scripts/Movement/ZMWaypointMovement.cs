@@ -22,7 +22,7 @@ public class ZMWaypointMovement : MonoBehaviour
 	private float _distanceTraveled;
 	private Vector3 _targetPosition;
 
-	void Awake()
+	protected virtual void Awake()
 	{
 		enabled = false;
 
@@ -35,7 +35,6 @@ public class ZMWaypointMovement : MonoBehaviour
 			else
 			{
 				Move(0);
-				_moveState = MoveState.MOVE;
 			}
 		}
 		else
@@ -55,7 +54,6 @@ public class ZMWaypointMovement : MonoBehaviour
 		AtPathEndEvent 	   = null;
 	}
 	
-	// Update is called once per frame
 	void FixedUpdate()
 	{
 		// state sets
@@ -131,14 +129,14 @@ public class ZMWaypointMovement : MonoBehaviour
 		_moveState = MoveState.STOPPED;
 	}
 
-	private void Move(int index)
+	protected void Move(int index)
 	{
 		_waypointIndex = index;
+		Move();
 	}
 
 	private void Move()
 	{
-		_waypointIndex = 0;
 		_moveState = MoveState.MOVE;
 		enabled = true;
 	}

@@ -4,6 +4,13 @@ using ZMPlayer;
 
 public class ZMCameraOpeningMovement : ZMWaypointMovement
 {
+	protected override void Awake ()
+	{
+		base.Awake ();
+
+		Debug.Log("\tAWAKE");
+	}
+
 	protected override void InitData()
 	{
 		var startPoints = ZMPlayerManager.Instance.PlayerStartPoints;
@@ -20,5 +27,14 @@ public class ZMCameraOpeningMovement : ZMWaypointMovement
 		}
 
 		_waypoints[Settings.MatchPlayerCount.value] = GameObject.FindGameObjectWithTag(Tags.kCameraFocusBase).transform;
+
+		#if DEBUG
+		ZMDebugHacks.OnSkipIntro += HandleSkipIntro;
+		#endif
+	}
+
+	private void HandleSkipIntro()
+	{
+		Move(_waypointSize - 1);
 	}
 }
