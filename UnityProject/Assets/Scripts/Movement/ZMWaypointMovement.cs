@@ -88,6 +88,7 @@ public class ZMWaypointMovement : MonoBehaviour
 			if ((_targetPosition - transform.position).sqrMagnitude < 4.0f * 4.0f)
 			{
 				_moveState = MoveState.AT_TARGET;
+				transform.position = _targetPosition;
 			}
 		}
 		else if (_moveState == MoveState.AT_TARGET)
