@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-public class ZMGrowShrink : MonoBehaviour {
+public class ZMGrowShrink : MonoBehaviour
+{
 	public bool startEnabled = true;
 	public float rate = 100.0f;
 	public float minScale = 0.5f;
@@ -13,17 +14,14 @@ public class ZMGrowShrink : MonoBehaviour {
 
 	private bool _enabled;
 
-	// Use this for initialization
-	void Awake () {
+	void Awake ()
+	{
 		_enabled = startEnabled;
-	}
-
-	void Start() {
 		_baseScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	void Update ()
+	{
 		if (_enabled) {
 			_modScale = transform.localScale;
 

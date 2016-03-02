@@ -13,6 +13,7 @@ GameObject:
   - 114: {fileID: 11491536}
   - 114: {fileID: 11464874}
   - 114: {fileID: 11470226}
+  - 114: {fileID: 11448262}
   m_Layer: 5
   m_Name: P1Marker
   m_TagString: Untagged
@@ -53,6 +54,17 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: P1
+--- !u!114 &11448262
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 126958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d5be9c62c4144c1384183ee40b42bf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11464874
 MonoBehaviour:
   m_ObjectHideFlags: 1

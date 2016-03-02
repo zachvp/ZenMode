@@ -70,5 +70,42 @@ namespace Core
 
 			if (renderer != null) { renderer.enabled = visible; }
 		}
+
+		public static void SetEnabledHierarchy(GameObject g, bool enabled)
+		{
+			SetEnabled(g, enabled);
+			SetEnabledChildren(g, enabled);
+		}
+
+		public static void SetEnabledChildren(GameObject g, bool enabled)
+		{
+			for (int i = 0; i < g.transform.childCount; ++i)
+			{
+				var child = g.transform.GetChild(i);
+
+				SetEnabled(child.gameObject, enabled);
+			}
+		}
+
+		public static void SetEnabled(GameObject g, bool enabled)
+		{
+			var components = g.GetComponents<MonoBehaviour>();
+			var particles = g.GetComponent<ParticleSystem>();
+
+			for (int i = 0; i < components.Length; ++i)
+			{
+				var component = components[i];
+
+				// Don't know why it's possible to get Text here since it's not a Monobehaviour
+				// so have to do this dumb check...
+				if (component.GetType() != typeof(Text)) { component.enabled = enabled; }
+			}
+
+			if (particles != null)
+			{
+				if (enabled) { particles.Play(); }
+				else { particles.Pause(); }
+			}
+		}
 	}
 }
