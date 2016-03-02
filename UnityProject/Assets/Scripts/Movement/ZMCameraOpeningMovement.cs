@@ -4,13 +4,6 @@ using ZMPlayer;
 
 public class ZMCameraOpeningMovement : ZMWaypointMovement
 {
-	protected override void Awake ()
-	{
-		base.Awake ();
-
-		Debug.Log("\tAWAKE");
-	}
-
 	protected override void InitData()
 	{
 		var startPoints = ZMPlayerManager.Instance.PlayerStartPoints;
