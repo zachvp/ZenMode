@@ -31,6 +31,7 @@ GameObject:
   - 222: {fileID: 22294868}
   - 114: {fileID: 11494872}
   - 114: {fileID: 11448896}
+  - 114: {fileID: 11427006}
   m_Layer: 5
   m_Name: KillLabel
   m_TagString: Untagged
@@ -49,7 +50,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51361f95f2e294674a8ffbe2b04b7964, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _activeOnJoin: 1
+  _activateOnJoin: 1
+  _deactivateOnJoin: 0
+  _activateOnDrop: 0
+  _deactivateOnDrop: 1
+--- !u!114 &11427006
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 194868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e950e28a513cd540881118fcdedf4f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 0
 --- !u!114 &11448896
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -61,7 +77,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51361f95f2e294674a8ffbe2b04b7964, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _activeOnJoin: 1
+  _activateOnJoin: 1
+  _deactivateOnJoin: 0
+  _activateOnDrop: 0
+  _deactivateOnDrop: 1
 --- !u!114 &11494866
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -206,7 +225,15 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: _activateOnJoin
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: _deactivateOnDrop
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 194868}

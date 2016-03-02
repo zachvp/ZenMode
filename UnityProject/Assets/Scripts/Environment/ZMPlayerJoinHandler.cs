@@ -6,24 +6,30 @@ using Core;
 public class ZMPlayerJoinHandler : MonoBehaviour
 {
 	// TODO: Make configurable. Should be able to say what happens to object on join & drop out.
-	[SerializeField] private bool _activeOnJoin;
+	[SerializeField] protected bool _activateOnJoin;
+	[SerializeField] protected bool _deactivateOnJoin;
+
+	[SerializeField] protected bool _activateOnDrop;
+	[SerializeField] protected bool _deactivateOnDrop;
 
 	protected ZMPlayerInfo _playerInfo;
 
 	protected virtual void Awake()
 	{
 		_playerInfo = GetComponent<ZMPlayerInfo>();
-		Utilities.SetVisible(gameObject, !_activeOnJoin);
+		Utilities.SetVisible(gameObject, !_activateOnJoin);
 
 		ZMLobbyController.OnPlayerJoinedEvent += HandleJoinedEvent;
 		ZMLobbyController.OnPlayerDropOut += HandleDropOutEvent;
+
+		Debug.AssertFormat(VerifySettings(), "{0}: Unable to use given editor settings.", name);
 	}
 
 	private void HandleDropOutEvent(ZMPlayerInfo info)
 	{
 		if (_playerInfo == info)
 		{
-			Utilities.SetVisible(gameObject, !_activeOnJoin);
+			SetActive(_activateOnDrop || !_deactivateOnDrop);
 
 			HandleDropOutEvent();
 		}
@@ -33,10 +39,24 @@ public class ZMPlayerJoinHandler : MonoBehaviour
 	{
 		if (_playerInfo.ID == controlIndex )
 		{
-			Utilities.SetVisible(gameObject, _activeOnJoin);
+			SetActive(_activateOnJoin || !_deactivateOnJoin);
 
 			HandleJoinedEvent();
 		}
+	}
+
+	private bool VerifySettings()
+	{
+		var anyjoin = _activateOnJoin || _deactivateOnJoin;
+		var anydrop = _activateOnDrop || _deactivateOnDrop;
+
+		return (!anyjoin  || (_activateOnJoin ^ _deactivateOnJoin)) &&
+			   (!anydrop) || (_activateOnDrop ^ _deactivateOnDrop);
+	}
+
+	protected virtual void SetActive(bool active)
+	{
+		Utilities.SetVisible(gameObject, active);
 	}
 
 	protected virtual void HandleDropOutEvent() { }

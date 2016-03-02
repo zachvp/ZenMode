@@ -14,10 +14,7 @@ public class ZMPlayerLabelController : ZMFudgeParentToObject
 
 		_text = GetComponent<Text>();
 
-		ZMLobbyScoreController.OnReachMaxScore += Deactivate;
-
-		ZMPlayerController.PlayerDeathEvent += Deactivate;
-		ZMPlayerController.PlayerRespawnEvent += HandleOnPlayerRespawn;
+		AcceptEvents();
 	}
 
 	public override void ConfigureItemWithID(Transform parent, int id)
@@ -30,7 +27,27 @@ public class ZMPlayerLabelController : ZMFudgeParentToObject
 
 	private void Deactivate(ZMPlayerInfo info)
 	{
-		if (_playerInfo == info) { _text.enabled = false; }
+		ClearEvents();
+		Destroy(gameObject);
+		//if (_playerInfo == info) { _text.enabled = false; }
+	}
+
+	private void AcceptEvents()
+	{
+		ZMLobbyScoreController.OnReachMaxScore += Deactivate;
+		ZMLobbyController.OnPlayerDropOut += Deactivate;
+
+		ZMPlayerController.PlayerDeathEvent += Deactivate;
+		ZMPlayerController.PlayerRespawnEvent += HandleOnPlayerRespawn;
+	}
+
+	private void ClearEvents()
+	{
+		ZMLobbyScoreController.OnReachMaxScore -= Deactivate;
+		ZMLobbyController.OnPlayerDropOut -= Deactivate;
+
+		ZMPlayerController.PlayerDeathEvent -= Deactivate;
+		ZMPlayerController.PlayerRespawnEvent -= HandleOnPlayerRespawn;
 	}
 
 	private void HandleOnPlayerRespawn(ZMPlayerController controller)

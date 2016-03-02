@@ -77,7 +77,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51361f95f2e294674a8ffbe2b04b7964, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _activeOnJoin: 0
+  _activateOnJoin: 0
+  _deactivateOnJoin: 1
+  _activateOnDrop: 1
+  _deactivateOnDrop: 0
 --- !u!114 &11491536
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -119,7 +122,15 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: _deactivateOnJoin
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: _activateOnDrop
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 126958}
