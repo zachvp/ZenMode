@@ -17,21 +17,30 @@ public class ZMKillCounter : ZMPlayerItem
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
 		ZMPlayerController.PlayerKillEvent += HandlePlayerKillEvent;
+		ZMLobbyController.OnPlayerDropOut += HandleDropOutEvent;
 
-		UpdateUI();
+		UpdateUI(0);
+	}
+
+	private void HandleDropOutEvent(ZMPlayerInfo info)
+	{
+		if (_playerInfo == info)
+		{
+			UpdateUI(0);
+		}
 	}
 
 	private void HandlePlayerKillEvent(ZMPlayerController killer)
 	{
 		if (_playerInfo == killer.PlayerInfo)
 		{
-			_kills += 1;
-			UpdateUI();
+			UpdateUI(_kills + 1);
 		}
 	}
 
-	private void UpdateUI()
+	private void UpdateUI(int kills)
 	{
+		_kills = kills;
 		_text.text = _kills.ToString();
 	}
 }
