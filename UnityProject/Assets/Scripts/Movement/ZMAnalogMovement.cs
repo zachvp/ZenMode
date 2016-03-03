@@ -53,18 +53,8 @@ public class ZMAnalogMovement : ZMDirectionalInput
 	{
 		if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Barrier")))
 		{
-			ZMSurfaceNormalHack surfaceNormalHack;
-			Vector2 reflection;
-			Vector2 normal;
-
-			surfaceNormalHack = collider.GetComponent<ZMSurfaceNormalHack>();
-			normal = surfaceNormalHack.normal;
-			reflection = GetComponent<Rigidbody2D>().velocity - 2 * normal * (Vector2.Dot(GetComponent<Rigidbody2D>().velocity, normal));
-
-			GetComponent<Rigidbody2D>().velocity = Vector2.ClampMagnitude(reflection * bounce, _movementSpeed * 6);
-
 			_shouldBounce = true;
-			Invoke("CancelBounce", 0.2f);
+			Invoke("CancelBounce", 0.25f);
 		}
 		else if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Ground")))
 		{

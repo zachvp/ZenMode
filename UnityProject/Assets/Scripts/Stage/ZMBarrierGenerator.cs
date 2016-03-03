@@ -11,11 +11,6 @@ public class ZMBarrierGenerator : MonoBehaviour
 		ZMCameraController.OnCameraStart += HandleCameraStart;
 	}
 
-	void Start()
-	{
-//		CreateBarriers(ZMStageInfo.Instance.StageRect);
-	}
-
 	private void HandleCameraStart(Camera camera)
 	{
 		CreateBarriers(ZMStageInfo.Instance.StageRect);
@@ -23,10 +18,6 @@ public class ZMBarrierGenerator : MonoBehaviour
 
 	private void CreateBarriers(Rect area)
 	{
-		// TODO: Rect area not initialized.
-		// TODO: barriers is returning null.
-
-//		var barriers =  Utilities.InstantiateObjects(_barrierTemplate, 4) as BoxCollider2D[];
 		CreateLeftBarrier(area);
 		CreateRightBarrier(area);
 		CreateTopBarrier(area);
@@ -58,7 +49,6 @@ public class ZMBarrierGenerator : MonoBehaviour
 		barrier.right = Vector3.down;
 		barrier.position = new Vector3(barrier.position.x, area.yMax, barrier.position.z);
 		barrier.localScale = new Vector3(barrier.localScale.x, area.size.x, barrier.localScale.z);
-//		barrier.localScale = new Vector3(area.size.x, barrier.localScale.y, barrier.localScale.z);
 	}
 
 	private void CreateBottomBarrier(Rect area)
@@ -68,13 +58,14 @@ public class ZMBarrierGenerator : MonoBehaviour
 		barrier.right = -Vector3.down;
 		barrier.position = new Vector3(barrier.position.x, area.yMin, barrier.position.z);
 		barrier.localScale = new Vector3(barrier.localScale.x, area.size.x, barrier.localScale.z);
-//		barrier.localScale = new Vector3(area.size.x, barrier.localScale.y, barrier.localScale.z);
 	}
 
 	private Transform CreateBarrier()
 	{
 		var origin = Collider2D.Instantiate(_barrierTemplate, Vector3.zero, Quaternion.identity) as Collider2D;
 		var barrier = origin.transform;
+
+		barrier.transform.parent = transform;
 
 		return barrier;
 	}
