@@ -27,6 +27,7 @@ namespace ZMConfiguration
 		public const string kOutput					= "Output";
 		public const string kMainCamera				= "MainCamera";
 		public const string kWarpVolume				= "WarpVolume";
+		public const string kOrigin					= "Origin";
 	}
 
 	public static class Settings

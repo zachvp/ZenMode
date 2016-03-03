@@ -2,6 +2,7 @@
 using Core;
 using ZMConfiguration;
 
+[RequireComponent(typeof(Camera))]
 public class ZMCameraController : ZMCameraBase
 {
 	private float _totalDistance;
