@@ -5,11 +5,16 @@ using ZMConfiguration;
 [RequireComponent(typeof(Camera))]
 public class ZMCameraController : ZMCameraBase
 {
+	public static EventHandler<Camera> OnCameraStart;
+
+	private Camera _camera;
 	private float _totalDistance;
 
 	protected override void Awake()
 	{
 		base.Awake();
+
+		_camera = GetComponent<Camera>();
 
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 
@@ -18,6 +23,13 @@ public class ZMCameraController : ZMCameraBase
 		MatchStateManager.OnMatchPause += HandleStopShake;
 
 		AcceptPlayerEvents();
+	}
+
+	protected override void Start()
+	{
+		base.Start();
+
+		Notifier.SendEventNotification(OnCameraStart, _camera);
 	}
 	
 	private void HandleStartGameEvent()

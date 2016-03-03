@@ -4,8 +4,10 @@ using ZMConfiguration;
 
 public class ZMStageInfo : MonoBehaviour
 {
-	public Rect stageRect { get { return _stageRect; } }
-	public Transform origin { get { return _origin; } }
+	public Rect StageRect { get { return _stageRect; } }
+	public Transform Origin { get { return _origin; } }
+
+	private Camera _camera;
 
 	public static ZMStageInfo Instance
 	{
@@ -25,12 +27,13 @@ public class ZMStageInfo : MonoBehaviour
 	{
 		Debug.Assert(_instance == null, "ZMStageInfo: Instance already exists in scene.");
 		_instance = this;
+
+		ZMCameraController.OnCameraStart += HandleCameraStart;
 	}
 
 	void Start()
 	{
 		_origin = GameObject.FindGameObjectWithTag(Tags.kOrigin).transform;
-		_stageRect = GetStageRect(_origin);
 	}
 
 	void OnDestroy()
@@ -38,19 +41,23 @@ public class ZMStageInfo : MonoBehaviour
 		_instance = null;
 	}
 
-	void OnDrawGizmos()
+//	void OnDrawGizmos()
+//	{
+//		if (_stageRect != null)
+//		{
+//			Gizmos.color = Color.green;
+//			Gizmos.DrawWireCube(_stageRect.center, new Vector3(_stageRect.size.x, _stageRect.size.y, 4.0f));
+//		}
+//	}
+
+	private void HandleCameraStart(Camera camera)
 	{
-		if (_stageRect != null)
-		{
-			Gizmos.color = Color.green;
-			Gizmos.DrawWireCube(_stageRect.center, new Vector3(_stageRect.size.x, _stageRect.size.y, 4.0f));
-		}
+		_stageRect = GetStageRect(camera, _origin);
 	}
 
-	private Rect GetStageRect(Transform origin)
+	private Rect GetStageRect(Camera camera, Transform origin)
 	{
 		// Get screen dimensions.
-		var camera = GameObject.FindGameObjectWithTag(Tags.kMainCamera).GetComponent<Camera>();
 		var height = 2.0f * camera.orthographicSize;
 		var width = height * Screen.width / Screen.height;
 		var size = new Vector2(width, height);

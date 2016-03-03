@@ -107,5 +107,18 @@ namespace Core
 				else { particles.Pause(); }
 			}
 		}
+
+		// TODO: Fix =/
+//		public static UnityEngine.Object[] InstantiateObjects(UnityEngine.Object template, int count)
+//		{
+//			var result = new UnityEngine.Object[count];
+//
+//			for (int i = 0; i < result.Length; ++i)
+//			{
+//				result[i] = UnityEngine.Object.Instantiate(template, Vector3.zero, Quaternion.identity);
+//			}
+//
+//			return result;
+//		}
 	}
 }
