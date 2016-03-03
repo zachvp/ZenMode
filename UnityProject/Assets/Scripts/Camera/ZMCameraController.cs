@@ -31,6 +31,11 @@ public class ZMCameraController : ZMCameraBase
 
 		Notifier.SendEventNotification(OnCameraStart, _camera);
 	}
+
+	protected void OnDestroy()
+	{
+		OnCameraStart = null;
+	}
 	
 	private void HandleStartGameEvent()
 	{
