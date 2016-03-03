@@ -2,18 +2,15 @@
 using ZMPlayer;
 using Core;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class ZMAnalogMovement : ZMDirectionalInput
 {
 	public float _movementSpeed = 100;
-	[Range (0, 10)] public float bounce = 1;
 
-	private Vector3 _deltaPos;
-	private Vector3 _forward;
-
+	private Rigidbody2D _rigidbody;
+	private Renderer _renderer;
 	private Vector2 _previousVelocity;
-
 	private bool _shouldBounce;
-
 	private float _slowFactor;
 	
 	private Color _baseColor;
@@ -23,6 +20,8 @@ public class ZMAnalogMovement : ZMDirectionalInput
 		base.Awake();
 
 		_playerInfo = GetComponent<ZMPlayerInfo>();
+		_rigidbody = GetComponent<Rigidbody2D>();
+		_renderer = GetComponent<Renderer>();
 		_slowFactor = 1;
 
 		MatchStateManager.OnMatchPause += Disable;
@@ -31,21 +30,24 @@ public class ZMAnalogMovement : ZMDirectionalInput
 
 	protected virtual void Start()
 	{
-		if (GetComponent<Renderer>() != null) { _baseColor = Utilities.GetRGB(GetComponent<Renderer>().material.color, _playerInfo.standardColor); }
+		if (_renderer != null)
+		{
+			_baseColor = Utilities.GetRGB(_renderer.material.color, _playerInfo.standardColor);
+		}
 	}
 
 	void Update()
 	{
 		if (!_shouldBounce)
 		{
-			_deltaPos = transform.position;
-			_forward = new Vector3(_deltaPos.x, _deltaPos.y, _deltaPos.z);
+			var deltaPos = transform.position;
+			var forward = new Vector3(deltaPos.x, deltaPos.y, deltaPos.z);
 
-			_deltaPos += new Vector3 (_movement.x, _movement.y, 0.0f);
+			deltaPos += new Vector3 (_movement.x, _movement.y, 0.0f);
 
-			_forward = (_deltaPos - _forward) * _slowFactor;
+			forward = (deltaPos - forward) * _slowFactor;
 
-			GetComponent<Rigidbody2D>().velocity = _forward * _movementSpeed;
+			_rigidbody.velocity = forward * _movementSpeed;
 		}
 	}
 
@@ -58,12 +60,12 @@ public class ZMAnalogMovement : ZMDirectionalInput
 		}
 		else if (collider.gameObject.layer.Equals(LayerMask.NameToLayer("Ground")))
 		{
-			Color faded = _baseColor;
+			var faded = _baseColor;
 			faded.a = 0.3f;
 
 			_slowFactor = 0.4f;
 
-			if (GetComponent<Renderer>() != null) { GetComponent<Renderer>().material.color = faded; }
+			if (_renderer != null) { _renderer.material.color = faded; }
 		}
 	}
 
@@ -73,7 +75,7 @@ public class ZMAnalogMovement : ZMDirectionalInput
 		{
 			_slowFactor = 1f;
 
-			if (GetComponent<Renderer>() != null) { GetComponent<Renderer>().material.color = _baseColor; }
+			if (_renderer != null) { _renderer.material.color = _baseColor; }
 		}
 	}
 
@@ -86,13 +88,13 @@ public class ZMAnalogMovement : ZMDirectionalInput
 	private void Disable()
 	{
 		enabled = false;
-		_previousVelocity = GetComponent<Rigidbody2D>().velocity;
-		GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+		_previousVelocity = _rigidbody.velocity;
+		_rigidbody.velocity = Vector2.zero;
 	}
 	
 	private void Enable()
 	{
-		GetComponent<Rigidbody2D>().velocity = _previousVelocity;
+		_rigidbody.velocity = _previousVelocity;
 		enabled = true;
 	}
 
