@@ -4,29 +4,15 @@ using UnityEngine.UI;
 using ZMPlayer;
 using ZMConfiguration;
 
-public class ZMGameStateController : MonoBehaviour
+public class ZMGameStateController : MonoSingleton<ZMGameStateController>
 {
 	[SerializeField] private AudioClip audioComplete;
 	
 	private const float END_GAME_DELAY = 1.0f;
-	
-	public static ZMGameStateController Instance
+
+	protected override void Awake()
 	{
-		get
-		{
-			if (_instance == null) { Debug.LogError("ZMGameStateController: Instance does not exist in scene."); }
-
-			return _instance;
-		}
-	}
-
-	private static ZMGameStateController _instance;
-
-	void Awake()
-	{
-		if (_instance != null) { Debug.LogError("ZMGameStateController: Another instance already exists in the scene."); }
-
-		_instance = this;
+		base.Awake();
 
 		ZMScoreController.OnReachMaxScore += HandleMaxScoreReached;
 
@@ -38,9 +24,10 @@ public class ZMGameStateController : MonoBehaviour
 		MatchStateManager.OnMatchExit += HandleSelectQuitEvent;
 	}
 	
-	void OnDestroy()
+	protected override void OnDestroy()
 	{
-		_instance = null;
+		base.OnDestroy();
+
 		MatchStateManager.Clear();
 	}
 

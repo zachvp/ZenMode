@@ -3,7 +3,7 @@ using Core;
 using ZMConfiguration;
 using ZMPlayer;
 
-public class ZMPlayerManager : MonoBehaviour
+public class ZMPlayerManager : MonoSingleton<ZMPlayerManager>
 {
 	[SerializeField] private ZMPlayerController playerTemplate;
 
@@ -23,25 +23,14 @@ public class ZMPlayerManager : MonoBehaviour
 
 	private static int _latestJoinIndex;
 	
-	public static ZMPlayerManager Instance
-	{
-		get
-		{
-			Debug.Assert(_instance != null, "ZMPlayerManager: no instance exists in the scene.");
-
-			return _instance;
-		}
-	}
-
-	protected static ZMPlayerManager _instance;
-
 	private Transform[] _playerStartPoints;
 	
-	protected virtual void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
+
 		if (debug) { ConfigureDebugSettings(); }
 
-		ConfigureMonoSingleton();
 		InitPlayerData(Settings.MatchPlayerCount.value);
 		GetPlayerStartpoints();
 
@@ -52,23 +41,11 @@ public class ZMPlayerManager : MonoBehaviour
 		MatchStateManager.OnMatchReset += OnDestroy;
 	}
 
-	protected virtual void OnDestroy()
-	{
-		_instance = null;
-	}
-
 	// Allocate space for player array data.
 	protected virtual void InitPlayerData(int size)
 	{
 		_players = new ZMPlayerController[size];
 		_scores = new ZMScoreController[size];
-	}
-
-	protected void ConfigureMonoSingleton()
-	{
-		Debug.Assert(_instance == null, "ZMPlayerManager: More than one instance exists in the scene.");
-		
-		_instance = this;
 	}
 
 	protected ZMPlayerController CreatePlayer(int id)

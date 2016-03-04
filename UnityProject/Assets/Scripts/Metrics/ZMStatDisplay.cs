@@ -28,8 +28,8 @@ public class ZMStatDisplay : MonoBehaviour {
 
 	void HandleGameEndEvent ()
 	{
-		int[] maxKills = ZMStatTracker.Instance.Kills.GetMax();
-		int[] maxGrassCuts = ZMStatTracker.Instance.GrassCuts.GetMax();
+		int[] maxKills = ZMStatTracker.Kills.GetMax();
+		int[] maxGrassCuts = ZMStatTracker.GrassCuts.GetMax();
 		
 		killCount.text = string.Format("Player {0} kills: {1}", maxKills[0] + 1, maxKills[1]);
 		grassCutCount.text = string.Format("Player {0} grass cuts: {1}", maxGrassCuts[0] + 1, maxGrassCuts[1]);

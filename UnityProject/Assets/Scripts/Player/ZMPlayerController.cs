@@ -530,23 +530,16 @@ public class ZMPlayerController : ZMPlayerItem
 				}
 			}
 		} else if (IsAttacking() || IsPerformingPlunge()) {
-			var totalDist = Vector3.Distance(transform.position, _posPrevious);
 			var dist = 0.0f;
-//			var ratio = 0.0f;
 			var lerpPos = _posPrevious;
 			var mult = 0.5f;
 
-//			while (dist < totalDist)
-//			for (int i = 0; i < 1; ++i)
 			if (_fadeSpawnIndex == _fadeSpawnCycleLen)
 			{
 				// ZVP
 				var fadeObject = Instantiate(_fadeEffect, lerpPos, transform.rotation) as SpriteRenderer;
 
 				lerpPos = Vector3.Lerp(lerpPos, transform.position, mult * Time.deltaTime);
-//				ratio = dist / totalDist * Time.deltaTime;
-
-//				Debug.LogFormat("\tDIST: {0}", dist);
 
 				fadeObject.sprite = _spriteRenderer.sprite;
 
@@ -1021,7 +1014,7 @@ public class ZMPlayerController : ZMPlayerItem
 			Notifier.SendEventNotification(PlayerKillEvent, this);
 
 			// add the stat
-			ZMStatTracker.Instance.Kills.Add(_playerInfo);
+			ZMStatTracker.Kills.Add(_playerInfo);
 		}
 	}
 

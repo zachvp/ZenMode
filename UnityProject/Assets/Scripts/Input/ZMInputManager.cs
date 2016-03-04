@@ -2,7 +2,7 @@
 using Core;
 using InControl;
 
-public class ZMInputManager : MonoBehaviour
+public class ZMInputManager : MonoSingleton<ZMInputManager>
 {
 	// Gamepad digital events.
 	public EventHandler<ZMInput> OnAction1;
@@ -55,26 +55,9 @@ public class ZMInputManager : MonoBehaviour
 	// Defines the method type for all keyboard handling.
 	private delegate bool KeyAction(KeyCode code);
 	
-	public static ZMInputManager Instance
+	protected override void Awake()
 	{
-		get
-		{
-			if (_instance == null) { Debug.LogError("ZMInputManager: no instance exists in the scene."); }
-			
-			return _instance;
-		}
-	}
-
-	private static ZMInputManager _instance;
-
-	void Awake()
-	{
-		if (_instance != null)
-		{
-			Debug.LogError("ZMInputManager: More than one error exists in the scene.");
-		}
-
-		_instance = this;
+		base.Awake();
 
 		Debug.LogFormat("devices: {0}", InputManager.Devices.Count);
 	}
@@ -94,11 +77,6 @@ public class ZMInputManager : MonoBehaviour
 		BroadcastKeyboardEvents(Input.GetKeyDown, ZMInput.State.PRESSED);
 		BroadcastKeyboardEvents(Input.GetKey, ZMInput.State.HELD);
 		BroadcastKeyboardEvents(Input.GetKeyUp, ZMInput.State.RELEASED);
-	}
-
-	void OnDestroy()
-	{
-		_instance = null;
 	}
 
 	private void BroadcastDigitalGamepadEvents(InputDevice device, int controlIndex)

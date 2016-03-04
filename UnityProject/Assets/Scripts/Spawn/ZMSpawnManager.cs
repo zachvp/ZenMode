@@ -4,7 +4,7 @@ using ZMConfiguration;
 using ZMPlayer;
 using Core;
 
-public class ZMSpawnManager : MonoBehaviour
+public class ZMSpawnManager : MonoSingleton<ZMSpawnManager>
 {
 	[SerializeField] private string respawnTag = Tags.kSpawnpointTag;
 
@@ -12,23 +12,10 @@ public class ZMSpawnManager : MonoBehaviour
 
 	protected float _respawnDelay;
 
-	public static ZMSpawnManager Instance
+	protected override void Awake()
 	{
-		get
-		{
-			if (_instance == null) { Debug.LogError("ZMSpawnManager: Instance does not exist in scene."); }
-			
-			return _instance;
-		}
-	}
-	
-	private static ZMSpawnManager _instance;
+		base.Awake();
 
-	protected virtual void Awake()
-	{
-		if (_instance != null) { Debug.LogError("ZMSpawnManager: Another instance already exists in the scene."); }
-		
-		_instance = this;
 		_respawnDelay = Constants.STAGE_RESPAWN_TIME;
 
 		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
@@ -40,11 +27,6 @@ public class ZMSpawnManager : MonoBehaviour
 		_spawnpoints = new Transform[spawnPoints.Length];
 		
 		for (int i = 0; i < spawnPoints.Length; ++i) { _spawnpoints[i] = spawnPoints[i].transform; }
-	}
-
-	void OnDestroy()
-	{
-		_instance = null;
 	}
 
 	protected Vector3 GetFarthestSpawnPosition()

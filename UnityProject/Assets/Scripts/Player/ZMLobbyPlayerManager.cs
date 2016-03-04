@@ -14,7 +14,6 @@ public class ZMLobbyPlayerManager : ZMPlayerManager
 	{
 		if (debug) { _playerReadyCount = debugPlayerCount; }
 
-		ConfigureMonoSingleton();
 		InitPlayerData(Constants.MAX_PLAYERS);
 		GetPlayerStartpoints();
 

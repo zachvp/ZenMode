@@ -2,31 +2,19 @@
 using UnityEngine.UI;
 using ZMConfiguration;
 
-public class ZMStageInfo : MonoBehaviour
+public class ZMStageInfo : MonoSingleton<ZMStageInfo>
 {
 	public Rect StageRect { get { return _stageRect; } }
 	public Transform Origin { get { return _origin; } }
 
 	private Camera _camera;
 
-	public static ZMStageInfo Instance
-	{
-		get
-		{
-			Debug.Assert(_instance != null, "ZMStageInfo: Instance is null.");
-			return _instance;
-		}
-	}
-
-	private static ZMStageInfo _instance;
-
 	private Transform _origin;
 	private Rect _stageRect;
 
-	void Awake()
+	protected override void Awake()
 	{
-		Debug.Assert(_instance == null, "ZMStageInfo: Instance already exists in scene.");
-		_instance = this;
+		base.Awake();
 
 		ZMCameraController.OnCameraStart += HandleCameraStart;
 	}
@@ -34,11 +22,6 @@ public class ZMStageInfo : MonoBehaviour
 	void Start()
 	{
 		_origin = GameObject.FindGameObjectWithTag(Tags.kOrigin).transform;
-	}
-
-	void OnDestroy()
-	{
-		_instance = null;
 	}
 
 //	void OnDrawGizmos()

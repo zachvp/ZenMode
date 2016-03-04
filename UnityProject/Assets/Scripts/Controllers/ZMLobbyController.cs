@@ -4,7 +4,7 @@ using ZMPlayer;
 using Core;
 using ZMConfiguration;
 
-public class ZMLobbyController : MonoBehaviour
+public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 {
 	[SerializeField] private GameObject loadScreen;
 
@@ -14,18 +14,6 @@ public class ZMLobbyController : MonoBehaviour
 
 	public static EventHandler<ZMPlayerInfo> PlayerReadyEvent;
 	public static EventHandler<ZMPlayerInfo> OnPlayerDropOut;
-
-	public static ZMLobbyController Instance
-	{
-		get
-		{
-			Debug.Assert(_instance != null, "ZMLobbyController: no instance exists in the scene.");
-
-			return _instance;
-		}
-	}
-
-	private static ZMLobbyController _instance;
 
 	private int _requiredPlayerCount;
 
@@ -81,13 +69,11 @@ public class ZMLobbyController : MonoBehaviour
 
 	private LobbyPlayer[] _players;
 
-	void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
+
 		_players = LobbyPlayer.CreateArray(Constants.MAX_PLAYERS);
-
-		Debug.Assert(_instance == null, "ZMLobbyController: More than one instance exists in the scene.");
-
-		_instance = this;
 
 		ZMLobbyScoreController.OnReachMaxScore += HandleMaxScoreReachedEvent;
 		ZMGameInputManager.AnyInputEvent += HandleAnyInputEvent;
@@ -98,13 +84,13 @@ public class ZMLobbyController : MonoBehaviour
 		loadScreen.SetActive(false);
 	}
 
-	void OnDestroy()
+	protected override void OnDestroy()
 	{
+		base.OnDestroy();
+
 		OnPlayerJoinedEvent = null;
 		PlayerReadyEvent 	= null;
 		OnPlayerDropOut 	= null;
-
-		_instance = null;
 	}
 
 	public bool IsPlayerJoined(int id)
