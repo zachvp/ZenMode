@@ -3,8 +3,9 @@ using UnityEngine.UI;
 
 public class ZMFadeInOut : MonoBehaviour
 {
-	public bool startVisible = true;
-	[SerializeField] private bool destroyOnFadeComplete = false;
+	[SerializeField] private bool startVisible = true;
+	[SerializeField] private bool startFading = true;
+	[SerializeField] private bool destroyOnFadeComplete;
 
 	[Range (0.001f, 1.0f)] public float maxAlpha = 1;
 	[Range (0.001f, 1.0f)] public float minAlpha = 0;
@@ -15,7 +16,7 @@ public class ZMFadeInOut : MonoBehaviour
 	private Image _image;
 	private SpriteRenderer _renderer;
 
-	private bool _fadingIn = true;
+	private bool _fadingIn;
 	private int _currentFrame;
 	private int _fadeFrame;
 
@@ -27,6 +28,7 @@ public class ZMFadeInOut : MonoBehaviour
 
 		_currentFrame = 0;
 		_fadeFrame = 2;
+		_fadingIn = startFading;
 
 		_fadeColor.a = startVisible ? 1.0f : 0.0f;
 
@@ -34,11 +36,13 @@ public class ZMFadeInOut : MonoBehaviour
 		if (_renderer != null) { _fadeColor = _renderer.color; }
 
 		maxAlpha = Mathf.Min(maxAlpha, 1.0f);
+		minAlpha = Mathf.Max(minAlpha, 0.0f);
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		if (_fadingIn) {
+	void Update ()
+	{
+		if (_fadingIn)
+		{
 			if (_fadeColor.a < maxAlpha) {
 				if (_currentFrame > _fadeFrame) {
 					_fadeColor.a += (fadeSpeed * Time.deltaTime) / 10.0f;

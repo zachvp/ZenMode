@@ -75,6 +75,8 @@ public class ZMInputManager : MonoBehaviour
 		}
 
 		_instance = this;
+
+		Debug.LogFormat("devices: {0}", InputManager.Devices.Count);
 	}
 
 	void Update()

@@ -6,6 +6,7 @@ using ZMPlayer;
 using Core;
 
 [RequireComponent(typeof(ZMPlayerInputController))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class ZMPlayerController : ZMPlayerItem
 {
 	// Movement constants.
@@ -36,6 +37,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 	private CharacterController2D _controller;
 	private ZMPlayerInputController _inputController;
+//	private BoxCollider2D _collider;
 
 	private RaycastHit2D _lastControllerColliderHit;
 	private RaycastHit2D _checkTouchingLeft;
@@ -91,6 +93,7 @@ public class ZMPlayerController : ZMPlayerItem
 	public GameObject _effectPlungeObject;
 	public ParticleSystem _goreEmitter;
 	public Text _tauntText;
+	public SpriteRenderer _fadeEffect;
 
 	// Sound resources.
 	public AudioClip[] _audioJump;
@@ -131,12 +134,16 @@ public class ZMPlayerController : ZMPlayerItem
 	private SpriteRenderer _spriteRenderer;
 	private Color _baseColor;
 
+	private Vector3 _posPrevious;
+	private int _fadeSpawnCycleLen;
+	private int _fadeSpawnIndex;
+
 	protected override void Awake()
 	{
 		base.Awake();
 
 		_moveModState = MoveModState.NEUTRAL;
-		transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+		_fadeSpawnCycleLen = 2;
 
 		GetComponentReferences();
 
@@ -147,6 +154,8 @@ public class ZMPlayerController : ZMPlayerItem
 		_controller.onControllerCollidedEvent += onControllerCollider;
 		_controller.onTriggerEnterEvent += onTriggerEnterEvent;
 		_controller.onTriggerExitEvent += onTriggerExitEvent;
+
+		_fadeEffect.color = _spriteRenderer.color;
 
 		ZMStageScoreController.OnReachMinScore += HandleMinScoreReached;
 
@@ -452,7 +461,6 @@ public class ZMPlayerController : ZMPlayerItem
 			}
 		}
 
-		
 		if (_moveModState == MoveModState.RECOIL) {
 			GetComponent<AudioSource>().PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 			Instantiate(_effectClashObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
@@ -521,6 +529,32 @@ public class ZMPlayerController : ZMPlayerItem
 					}
 				}
 			}
+		} else if (IsAttacking() || IsPerformingPlunge()) {
+			var totalDist = Vector3.Distance(transform.position, _posPrevious);
+			var dist = 0.0f;
+//			var ratio = 0.0f;
+			var lerpPos = _posPrevious;
+			var mult = 0.5f;
+
+//			while (dist < totalDist)
+//			for (int i = 0; i < 1; ++i)
+			if (_fadeSpawnIndex == _fadeSpawnCycleLen)
+			{
+				// ZVP
+				var fadeObject = Instantiate(_fadeEffect, lerpPos, transform.rotation) as SpriteRenderer;
+
+				lerpPos = Vector3.Lerp(lerpPos, transform.position, mult * Time.deltaTime);
+//				ratio = dist / totalDist * Time.deltaTime;
+
+//				Debug.LogFormat("\tDIST: {0}", dist);
+
+				fadeObject.sprite = _spriteRenderer.sprite;
+
+				dist += Vector3.Distance(transform.position, lerpPos);
+				_fadeSpawnIndex = 0;
+			}
+
+			_fadeSpawnIndex += 1;
 		}
 
 		// Update visuals.
@@ -540,7 +574,9 @@ public class ZMPlayerController : ZMPlayerItem
 		if (IsPerformingLunge ()) {
 			_velocity.y = 0.0f;
 		}
-		_controller.move( _velocity * Time.deltaTime );
+
+		_posPrevious = transform.position;
+		_controller.move(_velocity * Time.deltaTime);
 
 		// Update animation states.
 		if (_movementDirection == MovementDirectionState.FACING_LEFT) {
@@ -607,6 +643,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_controller = GetComponent<CharacterController2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _inputController = GetComponent<ZMPlayerInputController>();
+//		_collider = GetComponent<BoxCollider2D>();
     }
 
 	private void HandleOnMatchStart()

@@ -267,6 +267,7 @@ MonoBehaviour:
   _effectPlungeObject: {fileID: 186170, guid: 915da6d3d9b4542f9b1853b021021d77, type: 2}
   _goreEmitter: {fileID: 19801110}
   _tauntText: {fileID: 0}
+  _fadeEffect: {fileID: 21222662, guid: a25f0d9847d3e4802b9ccd591ccc2f45, type: 2}
   _audioJump:
   - {fileID: 8300000, guid: 05fc314cbf0524b2996a454678982d2d, type: 3}
   - {fileID: 8300000, guid: 3d73eee8c8fef460aba5dfbacdcae461, type: 3}
@@ -1987,6 +1988,11 @@ Prefab:
       propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: _fadeEffect
+      value: 
+      objectReference: {fileID: 21222662, guid: a25f0d9847d3e4802b9ccd591ccc2f45,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 101110}
