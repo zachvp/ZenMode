@@ -15,6 +15,10 @@ public class ZMDebugHacks : MonoBehaviour
 		{
 			MatchStateManager.EndMatch();
 		}
+		else if (Input.GetKeyDown(KeyCode.Alpha3))
+		{
+			ZMAudioManager.Instance.PlayOneShot("sword_1");
+		}
 	}
 
 	void OnDestroy()
