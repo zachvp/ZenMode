@@ -9,20 +9,22 @@ public class ZMLoadResponder : MonoBehaviour
 
 		MatchStateManager.OnMatchReset += HandleResetGameEvent;
 		MatchStateManager.OnMatchExit += HandleLoadGameEvent;
-	}
 
-	void Start()
-	{
-		gameObject.SetActive(false);
+		SetActive(false);
 	}
 
 	private void HandleResetGameEvent()
 	{
-		gameObject.SetActive(true);
+		SetActive(true);
 	}
 
 	private void HandleLoadGameEvent()
 	{
-		gameObject.SetActive(true);
+		SetActive(true);
+	}
+
+	private void SetActive(bool active)
+	{
+		gameObject.SetActive(active);
 	}
 }

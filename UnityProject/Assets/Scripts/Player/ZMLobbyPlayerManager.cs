@@ -9,13 +9,15 @@ public class ZMLobbyPlayerManager : ZMPlayerManager
 
 	private static int _playerReadyCount;
 	private static int _playerJoinCount;
-	
-	protected override void Awake()
+
+	// Called in ZMPlayerManager Awake().
+	// Allows for special lobby-only initialization.
+	protected override void Init()
 	{
 		if (debug) { _playerReadyCount = debugPlayerCount; }
 
 		InitPlayerData(Constants.MAX_PLAYERS);
-		GetPlayerStartpoints();
+		InitPlayerStartpoints();
 
 		ZMLobbyController.PlayerReadyEvent += HandlePlayerReadyEvent;
 		ZMLobbyController.OnPlayerDropOut += HandleDropOutEvent;

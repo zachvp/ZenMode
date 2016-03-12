@@ -29,13 +29,16 @@ public class ZMPlayerManager : MonoSingleton<ZMPlayerManager>
 	{
 		base.Awake();
 
+		Init();
+	}
+
+	// Handles all initializing for this class and sublasses.
+	protected virtual void Init()
+	{
 		if (debug) { ConfigureDebugSettings(); }
 
 		InitPlayerData(Settings.MatchPlayerCount.value);
-		GetPlayerStartpoints();
-
-		for (int i = 0; i < Settings.MatchPlayerCount.value; ++i) { CreatePlayer(i); }
-
+		CreateAllPlayers();
 		Notifier.SendEventNotification(OnAllPlayersSpawned);
 
 		MatchStateManager.OnMatchReset += OnDestroy;
@@ -46,6 +49,13 @@ public class ZMPlayerManager : MonoSingleton<ZMPlayerManager>
 	{
 		_players = new ZMPlayerController[size];
 		_scores = new ZMScoreController[size];
+
+		InitPlayerStartpoints();
+	}
+
+	protected virtual void CreateAllPlayers()
+	{
+		for (int i = 0; i < Settings.MatchPlayerCount.value; ++i) { CreatePlayer(i); }
 	}
 
 	protected ZMPlayerController CreatePlayer(int id)
@@ -68,7 +78,7 @@ public class ZMPlayerManager : MonoSingleton<ZMPlayerManager>
 		return player;
 	}
 
-	protected void GetPlayerStartpoints()
+	protected void InitPlayerStartpoints()
 	{
 		var playerStartpoints = GameObject.FindGameObjectsWithTag(Tags.kPlayerStartPositionTag);
 		_playerStartPoints = new Transform[playerStartpoints.Length];
