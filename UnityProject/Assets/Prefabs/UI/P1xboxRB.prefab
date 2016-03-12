@@ -11,7 +11,6 @@ GameObject:
   - 222: {fileID: 22213108}
   - 114: {fileID: 11413114}
   - 114: {fileID: 11413116}
-  - 114: {fileID: 11413112}
   - 114: {fileID: 11413110}
   - 114: {fileID: 11413108}
   m_Layer: 5
@@ -44,19 +43,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
---- !u!114 &11413112
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 113108}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f81721f5b13dbb445bced111010230f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  methodAction: Enable
-  sendOnce: 1
 --- !u!114 &11413114
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -70,6 +56,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: 3785c54f27855054c8d789899e9e1313, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 30449412e82e0d74a8a3228b9d7dc66f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
@@ -90,9 +82,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startVisible: 0
+  startFading: 1
   destroyOnFadeComplete: 0
   maxAlpha: 1
-  minAlpha: .5
+  minAlpha: 0.5
   fadeSpeed: 10
 --- !u!222 &22213108
 CanvasRenderer:
@@ -108,15 +101,15 @@ RectTransform:
   m_GameObject: {fileID: 113108}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .507573724, y: .507573724, z: .507573724}
+  m_LocalScale: {x: 0.5075737, y: 0.5075737, z: 0.5075737}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_AnchorMin: {x: .5, y: .5}
-  m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: -855, y: 49.9000015}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -855, y: 49.9}
   m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: .5, y: .5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -128,4 +121,3 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 113108}
   m_IsPrefabParent: 1
-  m_IsExploded: 1
