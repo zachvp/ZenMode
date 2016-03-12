@@ -26,11 +26,6 @@ namespace Core
 			UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
 		}
 
-		public static void LoadSceneAsync(int sceneIndex)
-		{
-			UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
-		}
-
 		public static void LoadNextScene()
 		{
 			LoadScene(_currentSceneIndex + 1);

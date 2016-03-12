@@ -24,7 +24,7 @@ public class ZMPersistentMusicController : MonoBehaviour
 
 	private void HandleOnLoadScene()
 	{
-		if (SceneManager.CurrentSceneIndex == ZMSceneIndexList.INDEX_STAGE)
+		if (SceneManager.CurrentSceneIndex + 1 == ZMSceneIndexList.INDEX_STAGE)
 		{
 			_audio.Stop();
 			AudioBegin = false;
