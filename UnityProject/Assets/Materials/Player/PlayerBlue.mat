@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: TestGreen
+  m_Name: PlayerBlue
   m_Shader: {fileID: 30, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
@@ -22,17 +22,9 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
-    m_Floats:
-      data:
-        first:
-          name: _InvFade
-        second: 1
+    m_Floats: {}
     m_Colors:
       data:
         first:
           name: _Color
-        second: {r: 0.19607843, g: 0.78431374, b: 0.27450982, a: 0.3137255}
-      data:
-        first:
-          name: _TintColor
-        second: {r: 0, g: 0.60784316, b: 0.078431375, a: 0.5019608}
+        second: {r: 0.12408088, g: 0.30977428, b: 0.99264705, a: 0.58431375}
