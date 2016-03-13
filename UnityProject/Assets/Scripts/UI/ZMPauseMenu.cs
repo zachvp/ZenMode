@@ -4,8 +4,6 @@ using ZMPlayer;
 
 public class ZMPauseMenu : ZMTextMenu
 {
-	[SerializeField] private GameObject _overlay;
-
 	public static EventHandler<ZMPlayerInfo> OnPlayerPauseGame;
 
 	protected bool _active;
@@ -52,7 +50,6 @@ public class ZMPauseMenu : ZMTextMenu
 
 		_active = active;
 		gameObject.SetActive(_active);
-		_overlay.SetActive(_active);
 	}
 
 	protected void PauseGame()
