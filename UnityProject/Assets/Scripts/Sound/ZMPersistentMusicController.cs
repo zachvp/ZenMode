@@ -17,9 +17,8 @@ public class ZMPersistentMusicController : MonoBehaviour
 			_audio.Play();
 			AudioBegin = true;
 			DontDestroyOnLoad(gameObject);
+			SceneManager.OnLoadScene += HandleOnLoadScene;
 		}
-
-		SceneManager.OnLoadScene += HandleOnLoadScene;
 	}
 
 	private void HandleOnLoadScene()
