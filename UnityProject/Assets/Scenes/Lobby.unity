@@ -5771,6 +5771,7 @@ GameObject:
   - 224: {fileID: 517283402}
   - 222: {fileID: 517283404}
   - 114: {fileID: 517283403}
+  - 114: {fileID: 517283405}
   m_Layer: 5
   m_Name: PauseOverlay
   m_TagString: Untagged
@@ -5831,6 +5832,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 517283401}
+--- !u!114 &517283405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 517283401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d74d8668809444f60b880dccb5a7c6a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _activeOnPause: 1
 --- !u!1001 &525006170
 Prefab:
   m_ObjectHideFlags: 0
@@ -8257,6 +8270,10 @@ Prefab:
     - target: {fileID: 128172, guid: ac5d1e981251b40b1842a2055dc9c791, type: 2}
       propertyPath: m_Name
       value: P2ActivationVolume
+      objectReference: {fileID: 0}
+    - target: {fileID: 11454890, guid: ac5d1e981251b40b1842a2055dc9c791, type: 2}
+      propertyPath: id
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ac5d1e981251b40b1842a2055dc9c791, type: 2}
@@ -12759,6 +12776,10 @@ Prefab:
       propertyPath: m_LocalScale.x
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 11454890, guid: ac5d1e981251b40b1842a2055dc9c791, type: 2}
+      propertyPath: id
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ac5d1e981251b40b1842a2055dc9c791, type: 2}
   m_IsPrefabParent: 0
@@ -15063,7 +15084,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: fc1370c6186304d1688c3e45c9e10e20, type: 3}
   - {fileID: 8300000, guid: d5835c99a585b496394459e9b7a86c51, type: 3}
   - {fileID: 8300000, guid: 9a2c6c86099714997b72a38742f15cba, type: 3}
-  _overlay: {fileID: 517283401}
 --- !u!82 &1442205926
 AudioSource:
   m_ObjectHideFlags: 0
@@ -21492,6 +21512,10 @@ Prefab:
     - target: {fileID: 428172, guid: ac5d1e981251b40b1842a2055dc9c791, type: 2}
       propertyPath: m_LocalScale.x
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11454890, guid: ac5d1e981251b40b1842a2055dc9c791, type: 2}
+      propertyPath: id
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ac5d1e981251b40b1842a2055dc9c791, type: 2}

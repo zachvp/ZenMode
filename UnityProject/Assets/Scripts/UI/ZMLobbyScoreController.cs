@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using ZMPlayer;
 using Core;
+using ZMConfiguration;
 
 public class ZMLobbyScoreController : ZMScoreController
 {
@@ -32,10 +33,15 @@ public class ZMLobbyScoreController : ZMScoreController
 
 	void OnTriggerStay2D(Collider2D collider)
 	{
+		// Bail if the collider isn't an orb.
+		if (!collider.CompareTag(Tags.kPedestal)) { return; }
+
 		var info = collider.GetComponent<ZMPlayerInfo>();
 
 		if (_playerInfo == info)
 		{
+			Debug.LogFormat("{0} overlapping {1}", name, info.name);
+
 			if (_totalScore < maxScore)
 			{
 				if (_pedestalActive && _targetAlive) { AddToScore(scoreAmount); }

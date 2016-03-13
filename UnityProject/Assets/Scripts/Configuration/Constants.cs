@@ -28,6 +28,7 @@ namespace ZMConfiguration
 		public const string kMainCamera				= "MainCamera";
 		public const string kWarpVolume				= "WarpVolume";
 		public const string kOrigin					= "Origin";
+		public const string kPedestal				= "Pedestal";				// TODO: Change legacy name.
 	}
 
 	public static class Settings
