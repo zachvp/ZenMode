@@ -16,6 +16,7 @@ namespace ZMConfiguration
 		public static readonly Vector2 STAGE_ORIGIN_LINE = new Vector2(1.0f, 0.0f);
 	}
 
+	// TODO: Consistent naming (remove 'tag' suffix from variable names).
 	public static class Tags
 	{
 		public const string kSpawnpointTag 			= "Spawnpoint";

@@ -120,7 +120,7 @@ public class ZMPlayerController : ZMPlayerItem
 	public Material _materialFlash;
 
 	// Delegates
-	public static EventHandler<ZMPlayerController> OnPlayerCreate;
+	public static EventHandler<ZMPlayerInfo> OnPlayerCreate;
 	public static EventHandler<ZMPlayerController> PlayerKillEvent;
 	public static EventHandler<ZMPlayerInfo> PlayerDeathEvent;
 	public static EventHandler<ZMPlayerController> PlayerRespawnEvent;
@@ -221,7 +221,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 		_materialDefault = GetComponent<Renderer>().material;
 
-		Notifier.SendEventNotification(OnPlayerCreate, this);
+		Notifier.SendEventNotification(OnPlayerCreate, _playerInfo);
 	}
 
 	void Update()

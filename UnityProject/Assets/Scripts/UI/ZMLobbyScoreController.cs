@@ -40,8 +40,6 @@ public class ZMLobbyScoreController : ZMScoreController
 
 		if (_playerInfo == info)
 		{
-			Debug.LogFormat("{0} overlapping {1}", name, info.name);
-
 			if (_totalScore < maxScore)
 			{
 				if (_pedestalActive && _targetAlive) { AddToScore(scoreAmount); }

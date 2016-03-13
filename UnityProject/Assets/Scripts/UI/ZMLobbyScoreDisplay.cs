@@ -23,12 +23,12 @@ public class ZMLobbyScoreDisplay : ZMScoreDisplay
 		_scoreSlider.maxValue = 100.0f;
 	}
 
-	private void HandlePlayerCreate(ZMPlayerController controller)
+	private void HandlePlayerCreate(ZMPlayerInfo info)
 	{
-		if (_playerInfo == controller.PlayerInfo)
+		if (_playerInfo == info)
 		{
 			ActivateScoreBar(_playerInfo);
-			UpdateScore(controller.PlayerInfo, 0.0f);
+			UpdateScore(info, 0.0f);
 		}
 	}
 }

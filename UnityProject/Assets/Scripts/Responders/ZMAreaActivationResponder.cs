@@ -1,33 +1,60 @@
 ﻿using UnityEngine;
 using ZMPlayer;
+using ZMConfiguration;
 
-public class ZMAreaActivationResponder : ZMPlayerItem
+public class ZMAreaActivationResponder : MonoBehaviour
 {
-	// Objects that will be activated when the trigger is entered
-	public GameObject[] activateObjects;
+	// Objects that will be activated when the trigger is entered.
+	[SerializeField] private GameObject[] _onPlayerCreateActivationObjects;
 
-	// Objects that will be deactivated when the trigger is entered
-	public GameObject[] deactivateObjects;
+	// Objects that will be deactivated when the trigger is entered.
+	[SerializeField] private GameObject[] _onPlayerEnterActivationObjects;
 
-	protected override void Awake()
+	private ZMPlayerInfo _playerInfo;
+
+	void Awake()
 	{
-		base.Awake();
+		_playerInfo = GetComponent<ZMPlayerInfo>();
 
-		ToggleObjectsActivation(activateObjects, false);
+		SetActive(_onPlayerCreateActivationObjects, false);
+		SetActive(_onPlayerEnterActivationObjects, false);
+
+		ZMPlayerController.OnPlayerCreate += HandlePlayerCreate;
+		ZMLobbyController.OnPlayerDropOut += HandlePlayerDropOut;
 	}
 
 	void OnTriggerEnter2D(Collider2D collider)
 	{
+		// Bail if something besides a player makes it's way in.
+		if (!collider.CompareTag(Tags.kPlayerTag)) { return; }
+
 		var checkPlayer = collider.GetComponent<ZMPlayerInfo>();
 
 		if (_playerInfo == checkPlayer)
 		{
-			ToggleObjectsActivation(activateObjects, true);
-			ToggleObjectsActivation(deactivateObjects, false);
+			SetActive(_onPlayerEnterActivationObjects, true);
+			SetActive(_onPlayerCreateActivationObjects, false);
 		}
 	}
 
-	private void ToggleObjectsActivation(GameObject[] objects, bool active)
+	private void HandlePlayerCreate(ZMPlayerInfo info)
+	{
+		if (_playerInfo == info)
+		{
+			SetActive(_onPlayerCreateActivationObjects, true);
+		}
+	}
+
+	private void HandlePlayerDropOut(ZMPlayerInfo info)
+	{
+		if (_playerInfo == info)
+		{
+			SetActive(_onPlayerCreateActivationObjects, false);
+			SetActive(_onPlayerEnterActivationObjects, false);
+		}
+	}
+
+	private void SetActive(GameObject[] objects, bool active)
 	{
 		for (int i = 0; i < objects.Length; ++i)
 		{
