@@ -78,7 +78,7 @@ MeshRenderer:
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
-  m_ReflectionProbeUsage: 1
+  m_ReflectionProbeUsage: 0
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
@@ -148,6 +148,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d731d588f13dab34f8144f56c012e7cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _activateOnJoin: 0
+  _deactivateOnJoin: 0
+  _activateOnDrop: 0
+  _deactivateOnDrop: 0
   effectTemplate: {fileID: 19894976, guid: 0109c2407877a9d4eaf854ddfc5a524b, type: 2}
 --- !u!198 &19853548
 ParticleSystem:
@@ -1701,6 +1705,10 @@ Prefab:
       value: 
       objectReference: {fileID: 19894976, guid: 0109c2407877a9d4eaf854ddfc5a524b,
         type: 2}
+    - target: {fileID: 0}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 153548}
