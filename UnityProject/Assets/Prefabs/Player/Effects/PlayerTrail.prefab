@@ -43,7 +43,7 @@ MonoBehaviour:
   startVisible: 1
   startFading: 1
   destroyOnFadeComplete: 1
-  maxAlpha: 0.9
+  maxAlpha: 0.5
   minAlpha: 0
   fadeSpeed: 90
 --- !u!212 &21222662
@@ -110,6 +110,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Color.b
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: maxAlpha
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
