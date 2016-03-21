@@ -16,7 +16,8 @@ public class ZMFadeIn : MonoBehaviour {
 	// references
 	private MaskableGraphic _maskableGraphic;
 
-	void Awake() {
+	void Awake()
+	{
 		Color baseColor;
 
 		_fading = true;
@@ -30,23 +31,23 @@ public class ZMFadeIn : MonoBehaviour {
 		_maskableGraphic.color = baseColor;
 	}
 
-	void Start () {
-		Color newcolor = _maskableGraphic.color;
+	void OnEnable()
+	{
+		var color = _maskableGraphic.color;
 
-		if (fadeMode == FadeMode.FADE_IN) { 
-			newcolor.a = 0;
-		}
+		if (fadeMode == FadeMode.FADE_IN) { color.a = 0; }
 
-		_maskableGraphic.color = newcolor;
+		_maskableGraphic.color = color;
 	}
 
-	void OnDestroy() {
+	void OnDestroy()
+	{
 		FadeLimitEvent = null;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		Color newcolor = _maskableGraphic.color;
+	void Update ()
+	{
+		var newcolor = _maskableGraphic.color;
 
 		if (fadeMode == FadeMode.FADE_IN) {
 			newcolor.a += interval;
