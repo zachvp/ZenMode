@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using Core;
 
-public class ZMPauseResponder : MonoBehaviour
+public class ZMPauseResponder : ZMResponder
 {
 	[SerializeField] private bool _activeOnPause;
 
-	void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
+
 		MatchStateManager.OnMatchPause += HandleMatchPause;
 		MatchStateManager.OnMatchResume += HandleMatchResume;
 
@@ -23,8 +25,5 @@ public class ZMPauseResponder : MonoBehaviour
 		SetActive(!_activeOnPause);
 	}
 
-	private void SetActive(bool active)
-	{
-		gameObject.SetActive(active);
-	}
+
 }

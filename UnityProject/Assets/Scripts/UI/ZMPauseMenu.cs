@@ -15,8 +15,10 @@ public class ZMPauseMenu : ZMTextMenu
 		MatchStateManager.OnMatchEnd += ClearActivationEvents;
 	}
 
-	void OnDestroy()
+	protected override void OnDestroy()
 	{
+		base.OnDestroy();
+
 		OnPlayerPauseGame = null;
 	}
 

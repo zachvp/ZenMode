@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
 using ZMPlayer;
 
-public class ZMScoreResponder : MonoBehaviour
+public class ZMScoreResponder : ZMResponder
 {
 	public bool activeOnScore = true;
 
 	private ZMPlayerInfo _playerInfo;
 
-	void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
+
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
 		ZMStageScoreController.CanScoreEvent += HandleCanScoreEvent;
@@ -17,14 +19,14 @@ public class ZMScoreResponder : MonoBehaviour
 
 	void Start()
 	{
-		gameObject.SetActive(!activeOnScore);
+		SetActive(!activeOnScore);
 	}
 
 	void HandleCanScoreEvent(ZMPlayerInfo info)
 	{
 		if (_playerInfo == info)
 		{
-			gameObject.SetActive(activeOnScore);
+			SetActive(activeOnScore);
 		}
 	}
 
@@ -32,7 +34,7 @@ public class ZMScoreResponder : MonoBehaviour
 	{
 		if (_playerInfo == info)
 		{
-			gameObject.SetActive(!activeOnScore);
+			SetActive(!activeOnScore);
 		}
 	}
 }

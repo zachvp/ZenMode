@@ -10,6 +10,8 @@ public class ZMGameEndMenu : ZMTextMenu
 
 	protected override void HandleMenuSelection()
 	{
+		base.HandleMenuSelection();
+
 		if (_selectedIndex == 0)
 		{
 			MatchStateManager.ResetMatch();
