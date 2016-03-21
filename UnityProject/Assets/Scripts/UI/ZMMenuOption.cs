@@ -24,13 +24,11 @@ public class ZMMenuOption : MonoBehaviour, IComparable
 
 	public void Hide()
 	{
-		Debug.LogFormat("ZMMenuOption: Hide");
 		_graphic.enabled = false;
 	}
 
 	public void Show()
 	{
-		Debug.LogFormat("ZMMenuOption: Show");
 		_graphic.enabled = true;
 	}
 

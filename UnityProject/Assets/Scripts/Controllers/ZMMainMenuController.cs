@@ -65,12 +65,9 @@ public class ZMMainMenuController : ZMTextMenu
 
 	private void BeginGame()
 	{
-		Invoke("LoadGame", 0.2f);
+		StartCoroutine(Utilities.ExecuteAfterDelay(LoadGame, 0.2f));
 
-		if (LoadGameEvent != null)
-		{
-			LoadGameEvent();
-		}
+		Notifier.SendEventNotification(LoadGameEvent);
 	}
 
 	void LoadGame()

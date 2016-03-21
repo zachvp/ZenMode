@@ -39,7 +39,7 @@ public class ZMPauseMenuLobby : ZMPauseMenu
 
 	private void HandleSelectQuitEvent()
 	{
-		MatchStateManager.Clear();
+		MatchStateManager.ExitMatch();
 		SceneManager.LoadScene(ZMSceneIndexList.INDEX_MAIN_MENU);
 	}
 }

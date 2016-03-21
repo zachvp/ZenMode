@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using Core;
 
-public class ZMLoadResponder : MonoBehaviour
+public class ZMLoadResponder : ZMResponder
 {
-	void Awake ()
+	protected override void Awake()
 	{
+		base.Awake();
+
 		ZMMainMenuController.LoadGameEvent += HandleLoadGameEvent;
 
 		MatchStateManager.OnMatchReset += HandleResetGameEvent;
@@ -21,10 +23,5 @@ public class ZMLoadResponder : MonoBehaviour
 	private void HandleLoadGameEvent()
 	{
 		SetActive(true);
-	}
-
-	private void SetActive(bool active)
-	{
-		gameObject.SetActive(active);
 	}
 }

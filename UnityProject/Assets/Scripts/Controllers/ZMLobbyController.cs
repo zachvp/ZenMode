@@ -141,8 +141,8 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 
 		if (LobbyPlayer.ReadyCount > 1 && LobbyPlayer.ReadyCount == _requiredPlayerCount)
 		{
-			Invoke("LoadLevel", 0.5f);
-			Invoke("ShowLoadScreen", 0.5f);
+			StartCoroutine(Utilities.ExecuteAfterDelay(LoadLevel, 0.5f));
+			StartCoroutine(Utilities.ExecuteAfterDelay(ShowLoadScreen, 0.5f));
 		}
 	}
 
@@ -153,7 +153,7 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 
 	private void LoadLevel()
 	{
-		MatchStateManager.Clear();
+//		MatchStateManager.ExitMatch();
 		SceneManager.LoadScene(ZMSceneIndexList.INDEX_STAGE);
 	}
 }

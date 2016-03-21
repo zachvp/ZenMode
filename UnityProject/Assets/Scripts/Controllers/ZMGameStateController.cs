@@ -23,13 +23,6 @@ public class ZMGameStateController : MonoSingleton<ZMGameStateController>
 		MatchStateManager.OnMatchReset += HandleResetGame;
 		MatchStateManager.OnMatchExit += HandleSelectQuitEvent;
 	}
-	
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
-
-		MatchStateManager.Clear();
-	}
 
 	private void HandleAtPathEndEvent(ZMWaypointMovement waypointMovement)
 	{
@@ -45,7 +38,6 @@ public class ZMGameStateController : MonoSingleton<ZMGameStateController>
 	
 	private void HandleSelectQuitEvent()
 	{	
-		MatchStateManager.Clear();
 		SceneManager.LoadScene(ZMSceneIndexList.INDEX_LOBBY);
 	}
 	
@@ -68,7 +60,6 @@ public class ZMGameStateController : MonoSingleton<ZMGameStateController>
 
 	private void ResetGame()
 	{
-		MatchStateManager.Clear();
 		SceneManager.ResetScene();
 	}
 

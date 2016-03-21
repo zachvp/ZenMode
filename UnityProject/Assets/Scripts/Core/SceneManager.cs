@@ -15,6 +15,7 @@ namespace Core
 		public static void LoadScene(string name)
 		{
 			Notifier.SendEventNotification(OnLoadScene);
+			MatchStateManager.Clear();
 
 			UnityEngine.SceneManagement.SceneManager.LoadScene(name);
 		}
@@ -22,6 +23,7 @@ namespace Core
 		public static void LoadScene(int sceneIndex)
 		{
 			Notifier.SendEventNotification(OnLoadScene);
+			MatchStateManager.Clear();
 
 			UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
 		}

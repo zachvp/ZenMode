@@ -64,9 +64,7 @@
 		public static void ResetMatch()
 		{
 			SetState(MatchState.BEGIN);
-			Notifier.SendEventNotification(OnMatchReset);
-			
-			ClearEventHandlers();
+			Notifier.SendEventNotification(OnMatchReset);			
 		}
 
 		public static void TogglePauseMatch()
@@ -83,8 +81,9 @@
 
 		public static void ExitMatch()
 		{
-			SetState(MatchState.NONE);
 			Notifier.SendEventNotification(OnMatchExit);
+
+			Clear();
 		}
 
 		// Clears the match state and event listeners. Think of this as a Destroy() lifecycle method.
