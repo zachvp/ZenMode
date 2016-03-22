@@ -6013,7 +6013,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22428980, guid: 9065499ef3f1f455cb2c987b70278ed2, type: 2}
       propertyPath: m_RootOrder
-      value: 10
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 22428980, guid: 9065499ef3f1f455cb2c987b70278ed2, type: 2}
       propertyPath: m_AnchoredPosition.x

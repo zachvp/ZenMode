@@ -153,7 +153,6 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 
 	private void LoadLevel()
 	{
-//		MatchStateManager.ExitMatch();
 		SceneManager.LoadScene(ZMSceneIndexList.INDEX_STAGE);
 	}
 }

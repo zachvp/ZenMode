@@ -5,21 +5,22 @@ using Core;
 
 public class ZMSoul : MonoBehaviour
 {
+	public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
+
 	private ZMScoreController _scoreController;
 
-	private ZMPlayerInfo _playerInfo; public ZMPlayerInfo PlayerInfo { get { return _playerInfo; } }
+	private ZMPlayerInfo _playerInfo;
 
-	public delegate void SoulDestroyedAction(ZMSoul soul); public static event SoulDestroyedAction SoulDestroyedEvent;
+	public static EventHandler<ZMSoul> SoulDestroyedEvent;
 
 	private bool _fadingIn;
 	private bool _playingSound;
 
 	private ParticleSystem _particles;
+	private AudioSource _audio;
 
 	void Awake()
 	{
-		_playerInfo = GetComponent<ZMPlayerInfo>();
-
 		ZMStageScoreController.OnReachMinScore += HandleMinScoreReached;
 		ZMStageScoreController.CanScoreEvent += HandleCanScoreEvent;
 		ZMStageScoreController.OnStopScore += HandleStopScoreEvent;
@@ -28,7 +29,9 @@ public class ZMSoul : MonoBehaviour
 		MatchStateManager.OnMatchPause += HandlePauseGameEvent;
 		MatchStateManager.OnMatchResume += HandleResumeGameEvent;
 
+		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_particles = GetComponentInChildren<ParticleSystem>();
+		_audio = GetComponent<AudioSource>();
 	}
 	
 	void Start()
@@ -45,11 +48,14 @@ public class ZMSoul : MonoBehaviour
 
 	void Update()
 	{
-		if (_fadingIn) {
-			if (GetComponent<AudioSource>().volume < 0.75f) { GetComponent<AudioSource>().volume += 0.02f; }
-		} else {
-			if (GetComponent<AudioSource>().volume > 0) { GetComponent<AudioSource>().volume -= 0.02f; }
-			else { GetComponent<AudioSource>().Stop(); }
+		if (_fadingIn)
+		{
+			if (_audio.volume < 0.75f) { _audio.volume += 0.02f; }
+		}
+		else
+		{
+			if (_audio.volume > 0) { _audio.volume -= 0.02f; }
+			else { _audio.Stop(); }
 		}
 	}
 
@@ -72,7 +78,7 @@ public class ZMSoul : MonoBehaviour
 	{
 		StopLoop();
 		
-		if (GetComponent<AudioSource>().isPlaying) {
+		if (_audio.isPlaying) {
 			_playingSound = true;
 		} else {
 			_playingSound = false;
@@ -93,11 +99,9 @@ public class ZMSoul : MonoBehaviour
 	{
 		if (_playerInfo == info)
 		{
-			GetComponent<AudioSource>().Stop();
-			
-			if (SoulDestroyedEvent != null) {
-				SoulDestroyedEvent(this);
-			}
+			_audio.Stop();
+
+			Notifier.SendEventNotification(SoulDestroyedEvent, this);
 		}
 	}
 
@@ -120,8 +124,8 @@ public class ZMSoul : MonoBehaviour
 	{
 		_fadingIn = true;
 
-		GetComponent<AudioSource>().volume = 0;
-		GetComponent<AudioSource>().Play();
+		_audio.volume = 0;
+		_audio.Play();
 	}
 
 	private void StopLoop()

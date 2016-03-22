@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using ZMPlayer;
+using Core;
 
 public class ZMPedestalController : ZMPlayerItem
 {
@@ -23,21 +24,26 @@ public class ZMPedestalController : ZMPlayerItem
 	// references
 	private HashSet<ZMPlayerInfo> _scoringAgents;
 	private List<ParticleSystem> _zenPopSystems;
+	private Light _light;
+	private ZMGrowShrink _growShrink;
 
 	private const string kPedestalWaypointTag = "PedestalWaypoint";
 	private const string kDisableMethodName   = "Disable";
 
 	// delegates
-	public delegate void ActivateAction(ZMPedestalController pedestalController); public static event ActivateAction ActivateEvent;
-	public delegate void DeactivateAction(ZMPedestalController pedestalController); public static event DeactivateAction DeactivateEvent;
+	public static EventHandler<ZMPedestalController> ActivateEvent;
+	public static EventHandler<ZMPedestalController> DeactivateEvent;
 
 	protected override void Awake()
 	{
 		base.Awake();
 
+		_light = GetComponent<Light>();
+		_growShrink = GetComponent<ZMGrowShrink>();
+
 		_scoringAgents = new HashSet<ZMPlayerInfo>();
 		_zenPopSystems = new List<ParticleSystem>();
-		_baseScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
+		_baseScale = transform.localScale;
 
 		// event handler subscriptions
 		ZMStageScoreController.CanScoreEvent 	     += HandleCanScoreEvent;
@@ -54,24 +60,24 @@ public class ZMPedestalController : ZMPlayerItem
 		timerText.text = currentTimer.ToString();
 	}
 
-	void FixedUpdate()
+	void Update()
 	{
-		if (IsEnabled() && _shouldScale)
-		{
-			Vector3 newScale = Vector3.Lerp(transform.localScale, _baseScale, 5.0f * Time.deltaTime);
-
-			transform.localScale = newScale;
-
-			if (Vector3.SqrMagnitude(transform.localScale - _baseScale) < 0.7f)
-			{
-				SendMessage("Resume");
-				_shouldScale = false;
-			}
-		}
+//		if (IsEnabled() && _shouldScale)
+//		{
+//			Vector3 newScale = Vector3.Lerp(transform.localScale, _baseScale, 5.0f * Time.deltaTime);
+//
+//			transform.localScale = newScale;
+//
+//			if (Vector3.SqrMagnitude(transform.localScale - _baseScale) < 0.7f)
+//			{
+//				_growShrink.Resume();
+//				_shouldScale = false;
+//			}
+//		}
 	}
 
-	void OnDestroy() {
-		// unsubscribe all event listeners
+	void OnDestroy()
+	{
 		ActivateEvent  	= null;
 		DeactivateEvent = null;
 	}
@@ -100,20 +106,18 @@ public class ZMPedestalController : ZMPlayerItem
 		timerText.GetComponent<Renderer>().material.color = Color.white;
 		zenAbsorbEffect.Play();
 
-		if (timerText.GetComponent<Renderer>().enabled == false) {
+		if (timerText.GetComponent<Renderer>().enabled == false)
+		{
 			currentTimer = RESPAWN_TIME;
 			timerText.text = RESPAWN_TIME.ToString();
 			timerText.GetComponent<Renderer>().enabled = true;
 			Invoke ("CountdownText", 1.0f);
 		}
 
-		if (GetComponent<Light>() != null)
-			GetComponent<Light>().enabled = true;
+		_light.enabled = true;
 
 		// notify event handlers
-		if (ActivateEvent != null) {
-			ActivateEvent(this);
-		}
+		Notifier.SendEventNotification(ActivateEvent, this);
 	}
 
 	private void Disable()
@@ -123,13 +127,9 @@ public class ZMPedestalController : ZMPlayerItem
 		zenAbsorbEffect.Stop();
 		timerText.GetComponent<Renderer>().enabled = false;
 
-		if (GetComponent<Light>() != null) {
-			GetComponent<Light>().enabled = false;
-		}
+		_light.enabled = false;
 
-		if (DeactivateEvent != null) {
-			DeactivateEvent(this);
-		}
+		Notifier.SendEventNotification(DeactivateEvent, this);
 	}
 
 	private void MoveToLocation(Vector3 location)
@@ -151,9 +151,10 @@ public class ZMPedestalController : ZMPlayerItem
 
 			if (scoreController.TotalScore <= 0) { return; }
 
-			SendMessage("Stop");
-			transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
-			_shouldScale = true;
+//			_growShrink.Resume();
+//			_growShrink.Stop();
+//			transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+//			_shouldScale = true;
 
 			MoveToLocation(scoreController.transform.position);
 			Enable();
@@ -188,19 +189,14 @@ public class ZMPedestalController : ZMPlayerItem
 
 	void StopThePop()
 	{
-		foreach (ParticleSystem system in _zenPopSystems) {
-			system.Stop();
-		}
+		foreach (ParticleSystem system in _zenPopSystems) { system.Stop(); }
 
 		Invoke ("ClearThePop", 2);
 	}
 
 	void ClearThePop()
 	{
-		foreach (ParticleSystem system in _zenPopSystems)
-		{
-			Destroy(system);
-		}
+		foreach (ParticleSystem system in _zenPopSystems) { Destroy(system); }
 
 		_zenPopSystems.Clear();
 	}
