@@ -19,7 +19,7 @@ public class ZMStageSoundCues : MonoBehaviour {
 
 		MatchStateManager.OnMatchStart += HandleStartGameEvent;
 
-		ZMPedestalController.DeactivateEvent += HandleDeactivateEvent;
+		ZMPedestalController.OnDeactivateEvent += HandleDeactivateEvent;
 	}
 
 	void HandleDeactivateEvent (ZMPedestalController pedestalController)

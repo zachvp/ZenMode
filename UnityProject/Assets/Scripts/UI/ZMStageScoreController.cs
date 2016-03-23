@@ -33,7 +33,7 @@ public class ZMStageScoreController : ZMScoreController
 		
 		ZMSoul.SoulDestroyedEvent += HandleSoulDestroyedEvent;
 		
-		ZMPedestalController.DeactivateEvent += HandlePedestalDeactivation;
+		ZMPedestalController.OnDeactivateEvent += HandlePedestalDeactivation;
 		
 		MatchStateManager.OnMatchEnd += HandleGameEndEvent;
 	}

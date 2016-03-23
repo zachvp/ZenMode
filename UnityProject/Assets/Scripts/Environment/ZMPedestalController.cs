@@ -12,9 +12,10 @@ public class ZMPedestalController : ZMPlayerItem
 	public float moveSpeed;
 	
 	private enum ScoreState { SCORING_ENABLED, SCORING_DISABLED };
-	private int RESPAWN_TIME = 5;
-	private int currentTimer;
-	private float lingerAfterSpawnTime = 0.0f;
+
+	private const int RESPAWN_TIME = 5;
+	private int _currentTimer;
+	private float _lingerAfterSpawnTime;
 	private ScoreState _scoreState;
 
 	// scaling
@@ -26,13 +27,14 @@ public class ZMPedestalController : ZMPlayerItem
 	private List<ParticleSystem> _zenPopSystems;
 	private Light _light;
 	private ZMGrowShrink _growShrink;
+	private Renderer _renderer;
 
 	private const string kPedestalWaypointTag = "PedestalWaypoint";
 	private const string kDisableMethodName   = "Disable";
 
 	// delegates
-	public static EventHandler<ZMPedestalController> ActivateEvent;
-	public static EventHandler<ZMPedestalController> DeactivateEvent;
+	public static EventHandler<ZMPedestalController> OnActivateEvent;
+	public static EventHandler<ZMPedestalController> OnDeactivateEvent;
 
 	protected override void Awake()
 	{
@@ -40,10 +42,12 @@ public class ZMPedestalController : ZMPlayerItem
 
 		_light = GetComponent<Light>();
 		_growShrink = GetComponent<ZMGrowShrink>();
+		_renderer = GetComponent<Renderer>();
 
 		_scoringAgents = new HashSet<ZMPlayerInfo>();
 		_zenPopSystems = new List<ParticleSystem>();
 		_baseScale = transform.localScale;
+		_currentTimer = RESPAWN_TIME;
 
 		// event handler subscriptions
 		ZMStageScoreController.CanScoreEvent 	     += HandleCanScoreEvent;
@@ -55,31 +59,34 @@ public class ZMPedestalController : ZMPlayerItem
 
 	protected void Start()
 	{
-		currentTimer = RESPAWN_TIME;
+		timerText.text = _currentTimer.ToString();
 
-		timerText.text = currentTimer.ToString();
+		_renderer.material.color = new Color(_playerInfo.standardColor.r,
+											 _playerInfo.standardColor.g,
+											 _playerInfo.standardColor.b,
+											 0.5f);
 	}
 
 	void Update()
 	{
-//		if (IsEnabled() && _shouldScale)
-//		{
-//			Vector3 newScale = Vector3.Lerp(transform.localScale, _baseScale, 5.0f * Time.deltaTime);
-//
-//			transform.localScale = newScale;
-//
-//			if (Vector3.SqrMagnitude(transform.localScale - _baseScale) < 0.7f)
-//			{
-//				_growShrink.Resume();
-//				_shouldScale = false;
-//			}
-//		}
+		if (IsEnabled() && _shouldScale)
+		{
+			Vector3 newScale = Vector3.Lerp(transform.localScale, _baseScale, 5.0f * Time.deltaTime);
+
+			transform.localScale = newScale;
+
+			if (Vector3.SqrMagnitude(transform.localScale - _baseScale) < 0.7f)
+			{
+				_growShrink.Resume();
+				_shouldScale = false;
+			}
+		}
 	}
 
 	void OnDestroy()
 	{
-		ActivateEvent  	= null;
-		DeactivateEvent = null;
+		OnActivateEvent   = null;
+		OnDeactivateEvent = null;
 	}
 
 	protected override void AcceptPlayerEvents()
@@ -88,11 +95,11 @@ public class ZMPedestalController : ZMPlayerItem
 		ZMPlayerController.PlayerRespawnEvent += HandleSpawnObjectEvent;
 	}
 	
-	private void CountdownText()
+	private void DecrementTimer()
 	{
-		if (currentTimer > 0) {
-			currentTimer--;
-			timerText.text = currentTimer.ToString();
+		if (_currentTimer > 0) {
+			_currentTimer--;
+			timerText.text = _currentTimer.ToString();
 			Invoke ("CountdownText", 1.0f);
 		}
 	}
@@ -101,14 +108,14 @@ public class ZMPedestalController : ZMPlayerItem
 	public void Enable()
 	{
 		_scoreState = ScoreState.SCORING_ENABLED;
-		GetComponent<Renderer>().enabled = true;
+		_renderer.enabled = true;
 
 		timerText.GetComponent<Renderer>().material.color = Color.white;
 		zenAbsorbEffect.Play();
 
 		if (timerText.GetComponent<Renderer>().enabled == false)
 		{
-			currentTimer = RESPAWN_TIME;
+			_currentTimer = RESPAWN_TIME;
 			timerText.text = RESPAWN_TIME.ToString();
 			timerText.GetComponent<Renderer>().enabled = true;
 			Invoke ("CountdownText", 1.0f);
@@ -117,19 +124,19 @@ public class ZMPedestalController : ZMPlayerItem
 		_light.enabled = true;
 
 		// notify event handlers
-		Notifier.SendEventNotification(ActivateEvent, this);
+		Notifier.SendEventNotification(OnActivateEvent, this);
 	}
 
 	private void Disable()
 	{
 		_scoreState = ScoreState.SCORING_DISABLED;
-		GetComponent<Renderer>().enabled = false;
+		_renderer.enabled = false;
 		zenAbsorbEffect.Stop();
 		timerText.GetComponent<Renderer>().enabled = false;
 
 		_light.enabled = false;
 
-		Notifier.SendEventNotification(DeactivateEvent, this);
+		Notifier.SendEventNotification(OnDeactivateEvent, this);
 	}
 
 	private void MoveToLocation(Vector3 location)
@@ -168,7 +175,7 @@ public class ZMPedestalController : ZMPlayerItem
 	{
 		if (_playerInfo == playerController.PlayerInfo)
 		{
-			Invoke(kDisableMethodName, lingerAfterSpawnTime);
+			Invoke(kDisableMethodName, _lingerAfterSpawnTime);
 		}
 	}
 
@@ -176,7 +183,7 @@ public class ZMPedestalController : ZMPlayerItem
 	{
 		if (_playerInfo == info)
 		{
-			zenPop.GetComponent<Renderer>().sharedMaterial.color = GetComponent<Renderer>().material.color;
+			zenPop.GetComponent<Renderer>().material.color = _renderer.material.color;
 
 			_zenPopSystems.Add(ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem);
 			_zenPopSystems.Add(ParticleSystem.Instantiate(zenPop, transform.position, transform.rotation) as ParticleSystem);

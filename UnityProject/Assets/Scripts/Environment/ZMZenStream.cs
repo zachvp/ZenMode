@@ -10,8 +10,8 @@ public class ZMZenStream : MonoBehaviour {
 		_particleSystem = GetComponent<ParticleSystem>();
 		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
 
-		ZMPedestalController.ActivateEvent += HandleActivateEvent;
-		ZMPedestalController.DeactivateEvent += HandleDeactivateEvent;
+		ZMPedestalController.OnActivateEvent += HandleActivateEvent;
+		ZMPedestalController.OnDeactivateEvent += HandleDeactivateEvent;
 	}
 
 	void Start () {

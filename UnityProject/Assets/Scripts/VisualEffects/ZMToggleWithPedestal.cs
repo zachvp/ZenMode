@@ -5,8 +5,8 @@ public class ZMToggleWithPedestal : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		ZMPedestalController.ActivateEvent += HandleActivateEvent;
-		ZMPedestalController.DeactivateEvent += HandleDeactivateEvent;
+		ZMPedestalController.OnActivateEvent += HandleActivateEvent;
+		ZMPedestalController.OnDeactivateEvent += HandleDeactivateEvent;
 
 		GetComponent<Light>().enabled = false;
 	}
