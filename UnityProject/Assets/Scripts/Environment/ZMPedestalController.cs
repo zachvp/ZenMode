@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using ZMPlayer;
@@ -15,7 +16,6 @@ public class ZMPedestalController : ZMPlayerItem
 
 	private const int RESPAWN_TIME = 5;
 	private int _currentTimer;
-	private float _lingerAfterSpawnTime;
 	private ScoreState _scoreState;
 
 	// scaling
@@ -158,7 +158,7 @@ public class ZMPedestalController : ZMPlayerItem
 
 			if (scoreController.TotalScore <= 0) { return; }
 
-//			_growShrink.Resume();
+			_growShrink.Resume();
 //			_growShrink.Stop();
 //			transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
 //			_shouldScale = true;
@@ -175,7 +175,7 @@ public class ZMPedestalController : ZMPlayerItem
 	{
 		if (_playerInfo == playerController.PlayerInfo)
 		{
-			Invoke(kDisableMethodName, _lingerAfterSpawnTime);
+			Invoke(kDisableMethodName, 0.01f);
 		}
 	}
 

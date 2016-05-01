@@ -1,54 +1,72 @@
 ﻿using UnityEngine;
+using System.Collections;
+using Core;
 
 public class ZMGrowShrink : MonoBehaviour
 {
-	public bool startEnabled = true;
-	public float rate = 10.0f;
-	public float minScale = 0.5f;
-	public float maxScale = 0.99f;
+	[SerializeField] private bool startEnabled;
+	[SerializeField] private float scaleTime = 2.0f;
+	[SerializeField] [Range(0.0f, 0.99f)] private float minScale = 0.5f;
+	[SerializeField] [Range(0f, 64.0f)] private float maxScale = 0.99f;
 
-	private Vector3 _baseScale;
+	private bool _isGrowing;
 
-	private enum State { NONE, GROWING, SHRINKING }
+	private Vector3 _minLocalScale;
+	private Vector3 _maxLocalScale;
 
-	private State _state;
-	private State _prevState;
+	private CoroutineCallback _scaleCoroutineCallback;
 
 	void Awake()
 	{
-		_baseScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
+		_minLocalScale = Vector3.Max(new Vector3(0.1f, 0.1f, 0.1f), minScale * transform.localScale);
+		_maxLocalScale = maxScale * transform.localScale;
+		_scaleCoroutineCallback = new CoroutineCallback(Scale);
+
 		enabled = startEnabled;
 	}
-	
-	void Update()
+
+	void Start()
 	{
-		var modScale = transform.localScale;
-		var modScaleMagnitude = Vector3.SqrMagnitude(modScale);
-		var baseScaleMagnitude = Vector3.SqrMagnitude(_baseScale);
-		var increment = new Vector3(1, 1, 0);
+		Scale();
+	}
 
-		increment *= rate * Time.deltaTime;
-
-		// Check if current scale is above or below specified threshold.
-		if (modScaleMagnitude > baseScaleMagnitude * (maxScale * maxScale))
+	private void Scale()
+	{		
+		if (_isGrowing)
 		{
-			_state = State.SHRINKING;
+			_scaleCoroutineCallback.coroutine = StartCoroutine(ScaleToTarget(transform.localScale,
+																			 _maxLocalScale, scaleTime));
 		}
-		else if (modScaleMagnitude < baseScaleMagnitude * (minScale * minScale))
+		else
 		{
-			_state = State.GROWING;
-		}
-
-		if (_state == State.SHRINKING)
-		{
-			modScale -= increment;
-		}
-		else if (_state == State.GROWING)
-		{
-			modScale += increment;
+			_scaleCoroutineCallback.coroutine = StartCoroutine(ScaleToTarget(transform.localScale,
+															   _minLocalScale, scaleTime));
 		}
 
-		transform.localScale = modScale;
+		// Flip the growing flag as this class just dumbly grows and shrinks.
+		_isGrowing = !_isGrowing;
+	}
+
+	// Scales this object's transform from the start scale to the end scale.
+	private IEnumerator ScaleToTarget(Vector3 start, Vector3 end, float totalTime)
+	{
+		// Initialize the t lerp parameter.
+		float t = 0;
+
+		while (t < totalTime)
+		{
+			// Each frame, this while loop will go through one iteration (note the yield return null).
+			// Each loop iteration interpolates the attached object's scale.
+			t += Time.deltaTime;
+			transform.localScale = Vector3.Lerp(start, end, t / totalTime);
+
+			yield return null;
+		} 
+
+		// Snap our scale to the desired scale.
+		// Flag that the object is fully scaled.
+		transform.localScale = end;
+		_scaleCoroutineCallback.OnFinished();
 	}
 
 	public void Stop()

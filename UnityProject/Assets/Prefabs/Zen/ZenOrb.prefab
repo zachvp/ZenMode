@@ -376,8 +376,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startEnabled: 0
-  rate: 0.2
-  minScale: 0.85
+  scaleTime: 1
+  minScale: 0.75
   maxScale: 0.9
 --- !u!114 &11466392
 MonoBehaviour:
@@ -2034,11 +2034,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: rate
-      value: 0.2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: minScale
-      value: 0.85
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Radius
@@ -2060,6 +2060,10 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
+    - target: {fileID: 0}
+      propertyPath: scaleTime
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 147288}

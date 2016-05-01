@@ -6,6 +6,17 @@ using System.Collections.Generic;
 
 namespace Core
 {
+	public class CoroutineCallback
+	{
+		public CoroutineCallback(EventHandler finishedCallback)
+		{
+			OnFinished = finishedCallback;
+		}
+
+		public Coroutine coroutine;
+		public EventHandler OnFinished;
+	}
+
 	public static class Utilities
 	{
 		public static Color GetNormalizedColor(float r, float g, float b)
