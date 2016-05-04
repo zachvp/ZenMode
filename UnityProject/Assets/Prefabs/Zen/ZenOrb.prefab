@@ -65,10 +65,10 @@ GameObject:
   - 114: {fileID: 11466394}
   - 82: {fileID: 8266394}
   - 114: {fileID: 11466392}
-  - 114: {fileID: 11466390}
   - 58: {fileID: 5866394}
   - 50: {fileID: 5066394}
   - 212: {fileID: 21236182}
+  - 114: {fileID: 11450176}
   m_Layer: 9
   m_Name: ZenOrb
   m_TagString: Pedestal
@@ -364,7 +364,7 @@ MonoBehaviour:
   zenPop: {fileID: 19856000, guid: 6016980194cf90a46b02d82fd2142375, type: 2}
   timerText: {fileID: 10247288}
   moveSpeed: 1.1
---- !u!114 &11466390
+--- !u!114 &11450176
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -372,13 +372,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 147288}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74d72472ddff974498c408df77efe285, type: 3}
+  m_Script: {fileID: 11500000, guid: d877f9c10d3f04baaa982c691e10f920, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startEnabled: 0
+  startEnabled: 1
   scaleTime: 1
-  minScale: 0.75
-  maxScale: 0.9
+  minScale: 0.5
+  maxScale: 0.99
 --- !u!114 &11466392
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2062,6 +2062,10 @@ Prefab:
       objectReference: {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
     - target: {fileID: 0}
       propertyPath: scaleTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: startEnabled
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

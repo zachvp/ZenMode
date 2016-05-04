@@ -26,7 +26,7 @@ public class ZMPedestalController : ZMPlayerItem
 	private HashSet<ZMPlayerInfo> _scoringAgents;
 	private List<ParticleSystem> _zenPopSystems;
 	private Light _light;
-	private ZMGrowShrink _growShrink;
+	private ZMScalePulse _growShrink;
 	private Renderer _renderer;
 
 	private const string kPedestalWaypointTag = "PedestalWaypoint";
@@ -41,7 +41,7 @@ public class ZMPedestalController : ZMPlayerItem
 		base.Awake();
 
 		_light = GetComponent<Light>();
-		_growShrink = GetComponent<ZMGrowShrink>();
+		_growShrink = GetComponent<ZMScalePulse>();
 		_renderer = GetComponent<Renderer>();
 
 		_scoringAgents = new HashSet<ZMPlayerInfo>();

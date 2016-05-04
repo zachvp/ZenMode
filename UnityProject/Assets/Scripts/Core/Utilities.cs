@@ -8,12 +8,14 @@ namespace Core
 {
 	public class CoroutineCallback
 	{
+		public CoroutineCallback() { }
+
 		public CoroutineCallback(EventHandler finishedCallback)
 		{
 			OnFinished = finishedCallback;
 		}
 
-		public Coroutine coroutine;
+		public Coroutine coroutine { get; set; }
 		public EventHandler OnFinished;
 	}
 

@@ -48,9 +48,8 @@ GameObject:
   - 114: {fileID: 11421020}
   - 108: {fileID: 10821022}
   - 114: {fileID: 11421022}
-  - 114: {fileID: 11421018}
-  - 114: {fileID: 11421014}
   - 114: {fileID: 11485450}
+  - 114: {fileID: 11420344}
   m_Layer: 9
   m_Name: ZenOrbCreationStage
   m_TagString: Untagged
@@ -223,7 +222,7 @@ Light:
   m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_AreaSize: {x: 1, y: 1}
---- !u!114 &11421014
+--- !u!114 &11420344
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -231,25 +230,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 173754}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74d72472ddff974498c408df77efe285, type: 3}
+  m_Script: {fileID: 11500000, guid: 5c691789721ab4db88f21b61de0dacf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startEnabled: 1
-  scaleTime: 1
-  minScale: 0.75
+  scaleTime: 2
+  minScale: 0.5
   maxScale: 0.99
---- !u!114 &11421018
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 173754}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f0dbcbdad5d89348b9c5ee71ab22715, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _shrinkRate: 0.06
+  shrinkRate: 0.4
 --- !u!114 &11421020
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1842,6 +1830,18 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: scaleTime
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: _shrinkRate
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: startEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: shrinkRate
+      value: 0.4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
