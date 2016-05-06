@@ -16,7 +16,7 @@ public class ZMGameStateController : MonoSingleton<ZMGameStateController>
 
 		ZMScoreController.OnReachMaxScore += HandleMaxScoreReached;
 
-		ZMTimedCounter.GameTimerEndedEvent += HandleGameTimerEndedEvent;
+		ZMTimedCounterStage.GameTimerEndedEvent += HandleGameTimerEndedEvent;
 
 		ZMCameraOpeningMovement.AtPathEndEvent += HandleAtPathEndEvent;
 

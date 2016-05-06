@@ -2,9 +2,11 @@
 using UnityEngine.UI;
 using Core;
 
-public class ZMTimedCounter : MonoBehaviour {
+public class ZMTimedCounterStage : MonoBehaviour
+{
 	public enum DisplayType { PLAIN, TIME };
 	public DisplayType displayType;
+
 	public int startValue;
 	public int min, max;
 	public int valueIncrement;
@@ -12,6 +14,7 @@ public class ZMTimedCounter : MonoBehaviour {
 	public bool shouldClearOnCompletion;
 	public bool start;
 	public bool juicy;
+
 	public Text counterUIText;
 	public string minMessage, maxMessage;
 	public AudioClip audioTick;

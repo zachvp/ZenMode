@@ -19,7 +19,7 @@ public class ZMMatchOutputDisplay : MonoBehaviour
 		output.text = "GET READY";
 
 		ZMPauseMenu.OnPlayerPauseGame += ShowPauseOutput;
-		ZMTimedCounter.GameTimerEndedEvent += ShowGameEndMessage;
+		ZMTimedCounterStage.GameTimerEndedEvent += ShowGameEndMessage;
 		ZMScoreController.OnReachMaxScore += ShowGameEndMessage;
 
 		MatchStateManager.OnMatchResume += ClearText;

@@ -9,7 +9,6 @@ public class ZMPedestalController : ZMPlayerItem
 {
 	public ParticleSystem zenAbsorbEffect;
 	public ParticleSystem zenPop;
-	public TextMesh timerText;
 	public float moveSpeed;
 	
 	private enum ScoreState { SCORING_ENABLED, SCORING_DISABLED };
@@ -59,8 +58,6 @@ public class ZMPedestalController : ZMPlayerItem
 
 	protected void Start()
 	{
-		timerText.text = _currentTimer.ToString();
-
 		_renderer.material.color = new Color(_playerInfo.standardColor.r,
 											 _playerInfo.standardColor.g,
 											 _playerInfo.standardColor.b,
@@ -94,15 +91,6 @@ public class ZMPedestalController : ZMPlayerItem
 		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
 		ZMPlayerController.PlayerRespawnEvent += HandleSpawnObjectEvent;
 	}
-	
-	private void DecrementTimer()
-	{
-		if (_currentTimer > 0) {
-			_currentTimer--;
-			timerText.text = _currentTimer.ToString();
-			Invoke ("CountdownText", 1.0f);
-		}
-	}
 
 	// public methods
 	public void Enable()
@@ -110,20 +98,10 @@ public class ZMPedestalController : ZMPlayerItem
 		_scoreState = ScoreState.SCORING_ENABLED;
 		_renderer.enabled = true;
 
-//		timerText.GetComponent<Renderer>().material.color = Color.white;
 		zenAbsorbEffect.Play();
-
-		if (timerText.GetComponent<Renderer>().enabled == false)
-		{
-			_currentTimer = RESPAWN_TIME;
-			timerText.text = RESPAWN_TIME.ToString();
-			timerText.GetComponent<Renderer>().enabled = true;
-			Invoke ("CountdownText", 1.0f);
-		}
 
 		_light.enabled = true;
 
-		// notify event handlers
 		Notifier.SendEventNotification(OnActivateEvent, this);
 	}
 
@@ -132,7 +110,6 @@ public class ZMPedestalController : ZMPlayerItem
 		_scoreState = ScoreState.SCORING_DISABLED;
 		_renderer.enabled = false;
 		zenAbsorbEffect.Stop();
-		timerText.GetComponent<Renderer>().enabled = false;
 
 		_light.enabled = false;
 
@@ -159,9 +136,6 @@ public class ZMPedestalController : ZMPlayerItem
 			if (scoreController.TotalScore <= 0) { return; }
 
 			_growShrink.Resume();
-//			_growShrink.Stop();
-//			transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
-//			_shouldScale = true;
 
 			MoveToLocation(scoreController.transform.position);
 			Enable();
