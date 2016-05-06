@@ -52,7 +52,7 @@ public class ZMPlayerItem : MonoBehaviour
 		var light = item.GetComponent<Light>();
 		var graphic = item.GetComponent<Graphic>();
 
-//		if (renderer != null) { renderer.color = Utilities.GetRGB(renderer.color, _playerInfo.standardColor); }
+		if (renderer != null) { renderer.color = Utilities.GetRGB(renderer.color, _playerInfo.standardColor); }
 		if (light != null) { light.color = _playerInfo.lightColor; }
 		if (graphic != null) { graphic.color = _playerInfo.standardColor; }
 	}
