@@ -110,7 +110,7 @@ public class ZMPedestalController : ZMPlayerItem
 		_scoreState = ScoreState.SCORING_ENABLED;
 		_renderer.enabled = true;
 
-		timerText.GetComponent<Renderer>().material.color = Color.white;
+//		timerText.GetComponent<Renderer>().material.color = Color.white;
 		zenAbsorbEffect.Play();
 
 		if (timerText.GetComponent<Renderer>().enabled == false)

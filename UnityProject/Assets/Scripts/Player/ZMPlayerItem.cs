@@ -42,7 +42,12 @@ public class ZMPlayerItem : MonoBehaviour
 
 		for (int i = 0; i < hierarchy.Length; ++i)
 		{
-			ConfigureItemColor(hierarchy[i].gameObject);
+			var checkVisualIgnore = hierarchy[i].GetComponent<ZMIgnoreVisualConfiguration>();
+
+			if (checkVisualIgnore == null)
+			{
+				ConfigureItemColor(hierarchy[i].gameObject);
+			}
 		}
 	}
 
