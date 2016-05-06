@@ -20,7 +20,7 @@ public class ZMMenuInputResponder : ZMResponder
 		if (!_isActive && _option == option)
 		{
 			Activate();
-			StartCoroutine(Utilities.ExecuteAfterDelay(Toggle, 0.2f));
+			Utilities.ExecuteAfterDelay(Toggle, 0.2f);
 		}
 	}
 

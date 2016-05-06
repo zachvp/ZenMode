@@ -220,6 +220,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_goreEmitter.startColor = _baseColor;
 
 		_materialDefault = GetComponent<Renderer>().material;
+		_materialDefault.color = Color.black;
 
 		Notifier.SendEventNotification(OnPlayerCreate, _playerInfo);
 	}

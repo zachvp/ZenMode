@@ -21,6 +21,13 @@ namespace Core
 
 	public static class Utilities
 	{
+		private static MonoBehaviour _monoBehavior;
+
+		public static void Init(MonoBehaviour behavior)
+		{
+			_monoBehavior = behavior;
+		}
+
 		public static Color GetNormalizedColor(float r, float g, float b)
 		{
 			return new Color(r / 255.0f, g / 255.0f, b / 255.0f);
@@ -31,20 +38,32 @@ namespace Core
 			return new Color(rhs.r, rhs.g, rhs.b, lhs.a);
 		}
 
-		public static IEnumerator ExecuteAfterDelay(EventHandler method, float delay)
+		// Execute a given method after a delay.
+		public static void ExecuteAfterDelay(EventHandler method, float delay)
+		{
+			_monoBehavior.StartCoroutine(ExecuteAfterDelayInternal(method, delay));
+		}
+
+		public static void ExecuteAfterDelay<T0>(EventHandler<T0> method, float delay, T0 param0)
+		{
+			_monoBehavior.StartCoroutine(ExecuteAfterDelayInternal(method, delay, param0));
+		}
+
+		private static IEnumerator ExecuteAfterDelayInternal(EventHandler method, float delay)
 		{
 			yield return new WaitForSeconds(delay);
 
 			method();
 		}
 
-		public static IEnumerator ExecuteAfterDelay<T1>(EventHandler<T1> method, float delay, T1 param1)
+		private static IEnumerator ExecuteAfterDelayInternal<T0>(EventHandler<T0> method, float delay, T0 param0)
 		{
 			yield return new WaitForSeconds(delay);
 
-			method(param1);
+			method(param0);
 		}
 
+		// Get all transforms in the root's hierarchy.
 		public static Transform[] GetAllInHierarchy(Transform root)
 		{
 			var transforms = new List<Transform>(root.childCount);

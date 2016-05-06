@@ -40,7 +40,7 @@ public class ZMMatchOutputDisplay : MonoBehaviour
 	private void ShowStartMessage()
 	{
 		output.text = "Begin!";
-		StartCoroutine(Utilities.ExecuteAfterDelay(ClearText, 1.0f));
+		Utilities.ExecuteAfterDelay(ClearText, 1.0f);
 	}
 
 	private void ShowGameEndMessage()

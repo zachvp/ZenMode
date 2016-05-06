@@ -123,7 +123,7 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 		// Drop player for half a second, then set to waiting.
 		_players[index].SetDropped();
 
-		StartCoroutine(Utilities.ExecuteAfterDelay(SetReady, 0.25f, info.ID));
+		Utilities.ExecuteAfterDelay(SetReady, 0.25f, info.ID);
 
 		Notifier.SendEventNotification(OnPlayerDropOut, info);
 	}
@@ -141,8 +141,8 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 
 		if (LobbyPlayer.ReadyCount > 1 && LobbyPlayer.ReadyCount == _requiredPlayerCount)
 		{
-			StartCoroutine(Utilities.ExecuteAfterDelay(LoadLevel, 0.5f));
-			StartCoroutine(Utilities.ExecuteAfterDelay(ShowLoadScreen, 0.5f));
+			Utilities.ExecuteAfterDelay(LoadLevel, 0.5f);
+			Utilities.ExecuteAfterDelay(ShowLoadScreen, 0.5f);
 		}
 	}
 

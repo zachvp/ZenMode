@@ -72,7 +72,7 @@ public class ZMSpawnManager : MonoSingleton<ZMSpawnManager>
 
 	protected virtual void HandlePlayerDeathEvent(ZMPlayerInfo info)
 	{
-		StartCoroutine(Utilities.ExecuteAfterDelay(SpawnPlayer, _respawnDelay, info.GetComponent<ZMPlayerController>()));
+		Utilities.ExecuteAfterDelay(SpawnPlayer, _respawnDelay, info.GetComponent<ZMPlayerController>());
 	}
 
 	protected virtual void SpawnPlayer(ZMPlayerController playerController)

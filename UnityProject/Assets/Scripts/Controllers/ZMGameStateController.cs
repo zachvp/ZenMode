@@ -31,7 +31,7 @@ public class ZMGameStateController : MonoSingleton<ZMGameStateController>
 	
 	private void HandleGameTimerEndedEvent()
 	{
-		StartCoroutine(Utilities.ExecuteAfterDelay(EndGame, END_GAME_DELAY));
+		Utilities.ExecuteAfterDelay(EndGame, END_GAME_DELAY);
 
 		GetComponent<AudioSource>().PlayOneShot(audioComplete, 2.0f);
 	}
@@ -48,7 +48,8 @@ public class ZMGameStateController : MonoSingleton<ZMGameStateController>
 
 	private void HandleMaxScoreReached(ZMPlayerInfo info)
 	{
-		StartCoroutine(Utilities.ExecuteAfterDelay(EndGame, END_GAME_DELAY));
+		Utilities.ExecuteAfterDelay(EndGame, END_GAME_DELAY);
+//		StartCoroutine(Utilities.ExecuteAfterDelay(EndGame, END_GAME_DELAY));
 
 		GetComponent<AudioSource>().PlayOneShot(audioComplete, 2.0f);
 	}
