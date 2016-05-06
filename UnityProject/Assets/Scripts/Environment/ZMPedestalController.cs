@@ -210,10 +210,7 @@ public class ZMPedestalController : ZMPlayerItem
 
 	void HandleCanScoreEvent(ZMPlayerInfo info)
 	{
-		if (!_scoringAgents.Contains(info))
-		{
-			_scoringAgents.Add(info);
-		}
+		_scoringAgents.Add(info);
 	}
 
 	void HandleStopScoreEvent(ZMPlayerInfo info)
