@@ -27,6 +27,7 @@ GameObject:
   - 23: {fileID: 2347286}
   - 102: {fileID: 10247288}
   - 114: {fileID: 11419054}
+  - 114: {fileID: 11464640}
   m_Layer: 9
   m_Name: TimerText
   m_TagString: Untagged
@@ -374,7 +375,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   zenAbsorbEffect: {fileID: 19847288}
   zenPop: {fileID: 19856000, guid: 6016980194cf90a46b02d82fd2142375, type: 2}
-  timerText: {fileID: 10247288}
   moveSpeed: 1.1
 --- !u!114 &11450176
 MonoBehaviour:
@@ -391,6 +391,21 @@ MonoBehaviour:
   scaleTime: 1
   minScale: 0.5
   maxScale: 0.99
+--- !u!114 &11464640
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 147284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d89ef4af5e7584066b393c72bcd120d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startValue: 5
+  timeIncrement: -1
+  min: 0
+  max: 5
 --- !u!114 &11466392
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2087,6 +2102,18 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_CharacterSize
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: startValue
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: timeIncrement
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: max
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

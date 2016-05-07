@@ -19,6 +19,47 @@ namespace Core
 		public EventHandler OnFinished;
 	}
 
+	public class DisplayText
+	{
+		private Text _textUI;
+		private TextMesh _textMesh;
+
+		public DisplayText(MonoBehaviour behavior)
+		{
+			_textUI = behavior.GetComponent<Text>();
+
+			if (_textUI == null) { _textMesh = behavior.GetComponent<TextMesh>(); }
+		}
+
+		public string Text
+		{
+			get
+			{
+				if (_textUI == null) { return _textMesh.text; }
+				else { return _textUI.text; }
+			}
+			set
+			{
+				if (_textUI == null) { _textMesh.text = value; }
+				else { _textUI.text = value; }
+			}
+		}
+
+		public Color DisplayColor
+		{
+			get
+			{
+				if (_textUI == null) { return _textMesh.color; }
+				else { return _textUI.color; }
+			}
+			set
+			{
+				if (_textUI == null) { _textMesh.color = value; }
+				else { _textUI.color = value; }
+			}
+		}
+	}
+
 	public static class Utilities
 	{
 		private static MonoBehaviour _monoBehavior;

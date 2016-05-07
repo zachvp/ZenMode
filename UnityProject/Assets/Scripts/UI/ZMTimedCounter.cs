@@ -7,8 +7,9 @@ public class ZMTimedCounter : MonoBehaviour
 	[SerializeField] private float startValue;
 	[SerializeField] private float timeIncrement;
 	[SerializeField] protected int min, max;
+	[SerializeField] private bool isClockFormat;
 
-	protected Text counterUIText;
+	protected DisplayText counterUIText;
 	protected float _value;
 	protected Coroutine _timerCoroutine;
 
@@ -16,18 +17,10 @@ public class ZMTimedCounter : MonoBehaviour
 	{
 		_value = startValue;
 
-		counterUIText = GetComponent<Text>();
+		counterUIText = new DisplayText(this);
 	}
 
-	protected virtual void UpdateText()
-	{
-		int minutes = Mathf.FloorToInt(_value / 60F);
-		int seconds = Mathf.FloorToInt(_value - minutes * 60);
-
-		counterUIText.text =  string.Format("{0:0}:{1:00}", minutes, seconds); _value.ToString();
-	}
-
-	protected void StartTimer()
+	public void StartTimer()
 	{
 		UpdateText();
 
@@ -36,10 +29,27 @@ public class ZMTimedCounter : MonoBehaviour
 		_timerCoroutine = Utilities.ExecuteAfterDelay(Count, Mathf.Abs(timeIncrement));
 	}
 
-	protected void PauseTimer()
+	public void PauseTimer()
 	{
-		StopCoroutine(_timerCoroutine);
+		if (_timerCoroutine != null) { StopCoroutine(_timerCoroutine); }
 		enabled = false;
+	}
+
+	public void Reset()
+	{
+		_value = startValue;
+		UpdateText();
+		PauseTimer();
+	}
+
+	protected virtual void UpdateText()
+	{
+		if (counterUIText == null) { return; }
+
+		int minutes = Mathf.FloorToInt(_value / 60F);
+		int seconds = Mathf.FloorToInt(_value - minutes * 60);
+
+		counterUIText.Text =  isClockFormat ? string.Format("{0:0}:{1:00}", minutes, seconds) : _value.ToString();
 	}
 
 	protected virtual void Count()
@@ -51,6 +61,6 @@ public class ZMTimedCounter : MonoBehaviour
 
 	private void ClearText()
 	{
-		counterUIText.text = "";
+		counterUIText.Text = "";
 	}
 }

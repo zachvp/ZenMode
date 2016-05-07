@@ -27,12 +27,12 @@ public class ZMTimedCounterStage : ZMTimedCounter
 
 		if (_value <= VALUE_WARNING)
 		{
-			counterUIText.color = new Color(0.905f, 0.698f, 0.635f, 0.75f);
+			counterUIText.DisplayColor = new Color(0.905f, 0.698f, 0.635f, 0.75f);
 			GetComponent<AudioSource>().PlayOneShot(audioTick, (_value <= 10 ? 1.5f : 0.66f));
 		}
 		else
 		{
-			counterUIText.color = new Color(1.000f, 1.000f, 1.000f, 0.75f);
+			counterUIText.DisplayColor = new Color(1.000f, 1.000f, 1.000f, 0.75f);
 		}
 	}
 

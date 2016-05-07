@@ -26,6 +26,7 @@ public class ZMPedestalController : ZMPlayerItem
 	private Light _light;
 	private ZMScalePulse _growShrink;
 	private Renderer _renderer;
+	private ZMTimedCounter _timedCounter;
 
 	private const string kPedestalWaypointTag = "PedestalWaypoint";
 	private const string kDisableMethodName   = "Disable";
@@ -45,6 +46,7 @@ public class ZMPedestalController : ZMPlayerItem
 		_scoringAgents = new HashSet<ZMPlayerInfo>();
 		_zenPopSystems = new List<ParticleSystem>();
 		_baseScale = transform.localScale;
+		_timedCounter = GetComponentInChildren<ZMTimedCounter>();
 
 		// event handler subscriptions
 		ZMStageScoreController.CanScoreEvent 	     += HandleCanScoreEvent;
@@ -94,7 +96,10 @@ public class ZMPedestalController : ZMPlayerItem
 	public void Enable()
 	{
 		_scoreState = ScoreState.SCORING_ENABLED;
+		_timedCounter.Reset();
+		_timedCounter.gameObject.SetActive(true);
 		_renderer.enabled = true;
+		_timedCounter.StartTimer();
 
 		zenAbsorbEffect.Play();
 
@@ -107,6 +112,7 @@ public class ZMPedestalController : ZMPlayerItem
 	{
 		_scoreState = ScoreState.SCORING_DISABLED;
 		_renderer.enabled = false;
+		_timedCounter.gameObject.SetActive(false);
 		zenAbsorbEffect.Stop();
 
 		_light.enabled = false;
