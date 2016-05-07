@@ -39,14 +39,14 @@ namespace Core
 		}
 
 		// Execute a given method after a delay.
-		public static void ExecuteAfterDelay(EventHandler method, float delay)
+		public static Coroutine ExecuteAfterDelay(EventHandler method, float delay)
 		{
-			_monoBehavior.StartCoroutine(ExecuteAfterDelayInternal(method, delay));
+			return _monoBehavior.StartCoroutine(ExecuteAfterDelayInternal(method, delay));
 		}
 
-		public static void ExecuteAfterDelay<T0>(EventHandler<T0> method, float delay, T0 param0)
+		public static Coroutine ExecuteAfterDelay<T0>(EventHandler<T0> method, float delay, T0 param0)
 		{
-			_monoBehavior.StartCoroutine(ExecuteAfterDelayInternal(method, delay, param0));
+			return _monoBehavior.StartCoroutine(ExecuteAfterDelayInternal(method, delay, param0));
 		}
 
 		private static IEnumerator ExecuteAfterDelayInternal(EventHandler method, float delay)

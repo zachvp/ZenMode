@@ -14,7 +14,6 @@ public class ZMPedestalController : ZMPlayerItem
 	private enum ScoreState { SCORING_ENABLED, SCORING_DISABLED };
 
 	private const int RESPAWN_TIME = 5;
-	private int _currentTimer;
 	private ScoreState _scoreState;
 
 	// scaling
@@ -46,7 +45,6 @@ public class ZMPedestalController : ZMPlayerItem
 		_scoringAgents = new HashSet<ZMPlayerInfo>();
 		_zenPopSystems = new List<ParticleSystem>();
 		_baseScale = transform.localScale;
-		_currentTimer = RESPAWN_TIME;
 
 		// event handler subscriptions
 		ZMStageScoreController.CanScoreEvent 	     += HandleCanScoreEvent;

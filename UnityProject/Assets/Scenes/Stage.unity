@@ -8226,18 +8226,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dccdcbe28df594cb9a1d72ed3178edf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayType: 1
   startValue: 180
+  timeIncrement: -1
   min: 0
   max: 180
-  valueIncrement: -1
-  timeIncrement: 1
-  shouldClearOnCompletion: 0
-  start: 0
-  juicy: 1
-  counterUIText: {fileID: 1227664147}
-  minMessage: 0
-  maxMessage: 3:00
   audioTick: {fileID: 0}
 --- !u!114 &1227664147
 MonoBehaviour:
