@@ -181,6 +181,11 @@ namespace Core
 			}
 		}
 
+		public static GameObject[] GetAllGameObjectsInScene()
+		{
+			return GameObject.FindObjectsOfType(typeof (GameObject)) as GameObject[];
+		}
+
 		// TODO: Fix =/
 //		public static UnityEngine.Object[] InstantiateObjects(UnityEngine.Object template, int count)
 //		{
@@ -193,5 +198,155 @@ namespace Core
 //
 //			return result;
 //		}
+	}
+
+	public class Layer
+	{
+		public int number { get; set; }
+		public string name { get; set; }
+		public bool isActive
+		{
+			get { return _isActive; }
+			set 
+			{
+				if (_isActive != value)
+				{
+					_isActive = value;
+					Notifier.SendEventNotification(OnActiveChanged, this);
+				}
+			}
+		}
+
+		// Passes the layer index in the array, NOT the layer number.
+		public EventHandler<Layer> OnActiveChanged;
+
+		private bool _isActive;
+
+		public Layer(int inNumber, bool inIsActive, string inName)
+		{
+			number = inNumber;
+			_isActive = inIsActive;
+			name = inName;
+		}
+	}
+
+	public static class LayerManager
+	{
+		public static EventHandler<Layer> OnLayerChangeActive;
+
+		public static Layer[] Layers { get { return _layers.ToArray(); } }
+		public static int LayerCount { get { return _layers != null ? _layers.Count : 0; } }
+
+		private const string UNASSIGNED = "";
+		private const uint MAX_LAYER_COUNT = 32;
+
+		private static List<Layer> _layers;
+		private static Dictionary<Layer, List<GameObject>> _objectLayerMappings;
+
+		// Necessary to keep state across disparate function calls.
+		private static Layer _currentGeneratedLayer;
+
+		public static void Init()
+		{
+			if (_layers ==  null) { InitSceneLayers(ref _layers); }
+			if (_objectLayerMappings == null) { InitLayerMappings(ref _objectLayerMappings, _layers.Count); }
+		}
+
+		public static void Clear()
+		{
+			_layers.Clear();
+			_layers = null;
+
+			_objectLayerMappings.Clear();
+			_objectLayerMappings = null;
+		}
+
+		public static void SetLayerObjectsActive(Layer layer, bool active)
+		{
+			List<GameObject> layerObjects;
+
+			if (_objectLayerMappings.TryGetValue(layer, out layerObjects))
+			{
+				foreach (GameObject layerObject in layerObjects)
+				{
+					layerObject.SetActive(active);
+				}
+			}
+		}
+
+
+		private static void InitSceneLayers(ref List<Layer> layers)
+		{
+			layers = new List<Layer>();
+
+			for (int i = 0; i < 32; ++i)
+			{
+				var layerName = LayerMask.LayerToName(i);
+
+				if (layerName != UNASSIGNED)
+				{
+					var layer = new Layer(i , true, layerName);
+
+					_currentGeneratedLayer = layer;
+
+					layer.OnActiveChanged += HandleOnLayerChangeActive;
+
+					layers.Add(layer);
+				}
+			}
+		}
+
+		private static void InitLayerMappings(ref Dictionary<Layer, List<GameObject>> mappings, int layerCount)
+		{
+			var sceneObjects = Utilities.GetAllGameObjectsInScene();
+			List<GameObject> currentObjectList;
+
+			mappings = new Dictionary<Layer, List<GameObject>>(layerCount);
+
+			for (int i = 0; i < sceneObjects.Length; ++i)
+			{
+				var sceneObject = sceneObjects[i];
+				var objectLayer = FindLayerForUnityLayer(sceneObject.layer);
+
+				Debug.AssertFormat(objectLayer != null, "Unrecognized layer {0} for scene object {1}",
+								   objectLayer, sceneObject.layer);
+
+				if (mappings.TryGetValue(objectLayer, out currentObjectList))
+				{
+					// If we already have a list for this layer going, add to it.
+					currentObjectList.Add(sceneObject);
+				}
+				else
+				{
+					// If we don't have an entry for this layer,
+					// create a new one and add the object.
+					currentObjectList = new List<GameObject>(1);
+					currentObjectList.Add(sceneObject);
+
+					mappings.Add(objectLayer, currentObjectList);
+				}
+			}
+		}
+
+		private static void HandleOnLayerChangeActive(Layer layer)
+		{
+			Notifier.SendEventNotification(OnLayerChangeActive, layer);
+		}
+
+		private static Layer FindLayerForUnityLayer(int layerNumUnity)
+		{
+			for (int i = 0; i < _layers.Count; ++i)
+			{
+				var layer = _layers[i];
+
+				if (layer.number == layerNumUnity)
+				{
+					return layer;
+				}
+			}
+
+			return null;
+		}
+
 	}
 }
