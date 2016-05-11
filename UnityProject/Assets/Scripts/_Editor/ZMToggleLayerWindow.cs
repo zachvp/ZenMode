@@ -9,7 +9,7 @@ public class ZMToggleLayerWindow : EditorWindow
 	[MenuItem ("Window/ToggleLayers")]
 	static void Init()
 	{
-		var window = EditorWindow.GetWindow(typeof(ZMToggleLayerWindow)) as ZMToggleLayerWindow;
+		var window = EditorWindow.GetWindow<ZMToggleLayerWindow>() as ZMToggleLayerWindow;
 
 		// TODO: Should happen on editor scene load...
 		LayerManager.Init();
@@ -41,5 +41,10 @@ public class ZMToggleLayerWindow : EditorWindow
 
 			layer.isActive = GUILayout.Toggle(layer.isActive, layer.name);
 		}
+	}
+
+	void OnSelectionChange()
+	{
+		LayerManager.Clear();
 	}
 }
