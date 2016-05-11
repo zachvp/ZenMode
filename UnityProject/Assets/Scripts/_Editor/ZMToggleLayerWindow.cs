@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using Core;
 
@@ -6,6 +7,8 @@ using System.Collections.Generic;
 
 public class ZMToggleLayerWindow : EditorWindow
 {
+	UnityEngine.SceneManagement.Scene _previousScene;
+
 	[MenuItem ("Window/ToggleLayers")]
 	static void Init()
 	{
@@ -45,6 +48,13 @@ public class ZMToggleLayerWindow : EditorWindow
 
 	void OnSelectionChange()
 	{
-		LayerManager.Clear();
+		var currentScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene();
+
+		if (_previousScene != currentScene)
+		{
+			LayerManager.Clear();
+		}
+
+		_previousScene = currentScene;
 	}
 }

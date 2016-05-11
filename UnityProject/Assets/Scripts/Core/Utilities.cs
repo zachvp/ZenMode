@@ -256,6 +256,8 @@ namespace Core
 
 			_objectLayerMappings.Clear();
 			_objectLayerMappings = null;
+
+			OnLayerChangeActive = null;
 		}
 
 		public static void SetLayerObjectsActive(Layer layer, bool active)

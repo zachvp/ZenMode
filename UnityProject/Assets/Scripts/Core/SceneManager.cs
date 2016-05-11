@@ -14,18 +14,20 @@ namespace Core
 
 		public static void LoadScene(string name)
 		{
-			Notifier.SendEventNotification(OnLoadScene);
-			MatchStateManager.Clear();
-
+			LoadSceneInternal();
 			UnityEngine.SceneManagement.SceneManager.LoadScene(name);
 		}
 
 		public static void LoadScene(int sceneIndex)
 		{
-			Notifier.SendEventNotification(OnLoadScene);
-			MatchStateManager.Clear();
-
+			LoadSceneInternal();
 			UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
+		}
+
+		private static void LoadSceneInternal()
+		{
+			Notifier.SendEventNotification(OnLoadScene);
+			MatchStateManager.Clear();	
 		}
 
 		public static void LoadNextScene()
