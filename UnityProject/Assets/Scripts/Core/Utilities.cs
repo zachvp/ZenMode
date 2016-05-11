@@ -243,9 +243,6 @@ namespace Core
 		private static List<Layer> _layers;
 		private static Dictionary<Layer, List<GameObject>> _objectLayerMappings;
 
-		// Necessary to keep state across disparate function calls.
-		private static Layer _currentGeneratedLayer;
-
 		public static void Init()
 		{
 			if (_layers ==  null) { InitSceneLayers(ref _layers); }
@@ -286,8 +283,6 @@ namespace Core
 				if (layerName != UNASSIGNED)
 				{
 					var layer = new Layer(i , true, layerName);
-
-					_currentGeneratedLayer = layer;
 
 					layer.OnActiveChanged += HandleOnLayerChangeActive;
 
