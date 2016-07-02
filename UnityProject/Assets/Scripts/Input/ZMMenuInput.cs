@@ -98,7 +98,7 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 	{
 		base.AcceptGamepadEvents();
 
-		var inputManager = ZMInputManager.Instance;
+		var inputManager = ZMInputNotifier.Instance;
 		
 		inputManager.OnAction1 	+= HandleOnSelect;
 	}
@@ -107,7 +107,7 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 	{
 		base.AcceptKeyboardEvents();
 
-		var inputManager = ZMInputManager.Instance;
+		var inputManager = ZMInputNotifier.Instance;
 
 		inputManager.OnEKey 	+= HandleOnSelect;
 		inputManager.OnSlashKey += HandleOnSelect;
@@ -117,7 +117,7 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 	{
 		base.ClearGamePadEvents();
 
-		var inputManager = ZMInputManager.Instance;
+		var inputManager = ZMInputNotifier.Instance;
 
 		inputManager.OnAction1 	-= HandleOnSelect;
 	}
@@ -126,7 +126,7 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 	{
 		base.ClearKeyboardEvents();
 
-		var inputManager = ZMInputManager.Instance;
+		var inputManager = ZMInputNotifier.Instance;
 		
 		inputManager.OnEKey 	-= HandleOnSelect;
 		inputManager.OnSlashKey -= HandleOnSelect;

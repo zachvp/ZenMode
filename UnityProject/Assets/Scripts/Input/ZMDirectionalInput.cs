@@ -23,14 +23,14 @@ public class ZMDirectionalInput : ZMPlayerItem
 	// Initialization.
 	protected virtual void AcceptGamepadEvents()
 	{
-		var inputManager = ZMInputManager.Instance;
+		var inputManager = ZMInputNotifier.Instance;
 		
 		inputManager.OnLeftAnalogStickMove += HandleOnMove;
 	}
 	
 	protected virtual void AcceptKeyboardEvents()
 	{
-		var inputManager = ZMInputManager.Instance;
+		var inputManager = ZMInputNotifier.Instance;
 		
 		inputManager.OnAKey += HandleOnMoveLeft;
 		inputManager.OnDKey += HandleOnMoveRight;
@@ -51,14 +51,14 @@ public class ZMDirectionalInput : ZMPlayerItem
 
 	protected virtual void ClearGamePadEvents()
 	{
-		var inputManager = ZMInputManager.Instance;
+		var inputManager = ZMInputNotifier.Instance;
 
 		inputManager.OnLeftAnalogStickMove -= HandleOnMove;
 	}
 
 	protected virtual void ClearKeyboardEvents()
 	{
-		var inputManager = ZMInputManager.Instance;
+		var inputManager = ZMInputNotifier.Instance;
 
 		inputManager.OnAKey -= HandleOnMoveLeft;
 		inputManager.OnDKey -= HandleOnMoveRight;

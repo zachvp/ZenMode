@@ -24,7 +24,7 @@ namespace ZMPlayer
 
 		public override int GetHashCode()
 		{
-			return id;
+			return id.GetHashCode();
 		}
 
 		public static bool operator ==(ZMPlayerInfo lhs, ZMPlayerInfo rhs)
@@ -46,12 +46,13 @@ namespace ZMPlayer
 		int IComparable.CompareTo(object other)
 		{
 			var otherInfo = (ZMPlayerInfo) other;
+			int result = 0;
 
-			if (otherInfo == null) { return 1; }
+			if (otherInfo == null) { result = 1; }
+			else if (id < otherInfo.id) { result = -1; }
+			else if (id > otherInfo.id) { result = 1; }
 
-			if (id < otherInfo.id) return -1;
-			if (id > otherInfo.id) return 1;
-			else { return 0; }
+			return result;
 		}
 	}
 }

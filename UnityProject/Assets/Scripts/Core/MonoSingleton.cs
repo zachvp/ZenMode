@@ -2,7 +2,9 @@
 
 public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
 {
-	public static T Instance { get
+	public static T Instance
+	{
+		get
 		{
 			Debug.AssertFormat(_instance != null, "{0}: No instance of MonoSingleton exists in the scene",
 												   typeof(MonoSingleton<T>).Name);

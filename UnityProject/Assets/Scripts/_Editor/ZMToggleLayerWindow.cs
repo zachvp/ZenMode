@@ -1,35 +1,52 @@
 ﻿using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using Core;
 
 using System.Collections.Generic;
 
+// Additional features:
+// 		Add object to layer when added to scene.
+//		Remove object from layer when removed from scene.
+
+// TODO: Move change scene logic to the SceneManagerEditor. Easiest way i can think of rn is extend the main unity
+// 		 editor window and listen to OnHierarchy change, checking for a scene difference.
 public class ZMToggleLayerWindow : EditorWindow
 {
-	UnityEngine.SceneManagement.Scene _previousScene;
+	private static SceneWrapper _previousScene;
 
-	[MenuItem ("Window/ToggleLayers")]
-	static void Init()
+	[MenuItem ("Window/Toggle Layers")]
+	static void InitWindow()
 	{
 		var window = EditorWindow.GetWindow<ZMToggleLayerWindow>() as ZMToggleLayerWindow;
-
-		// TODO: Should happen on editor scene load...
-		LayerManager.Init();
-		ListenToEvents();
 
 		window.Show();
 	}
 
-	private static void ListenToEvents()
+	private static void DiffInit()
 	{
-		LayerManager.OnLayerChangeActive += HandleLayerChangeActive;
+		// Only call Init() if the scene has changed.
+		if (_previousScene != SceneManagerEditor.CurrentScene)
+		{
+//			Init();
+			// Add the new scene.
+			LayerManager.AddActiveScene();
+
+			ZMToggleLayerWindow._previousScene = SceneManagerEditor.CurrentScene;
+			Debug.Log("update previous scene");
+		}
 	}
 
-	[ExecuteInEditMode]
-	private static void HandleLayerChangeActive(Layer layer)
+	private static void Init()
 	{
-		LayerManager.SetLayerObjectsActive(layer, layer.isActive);
+		Debug.Log("Init");
+
+		// TODO: Should happen on editor scene load...
+		LayerManager.Init();
+
+		ZMToggleLayerWindow.ListenToEvents();
+
+		// Init the previous scene to a nonexistent one.
+		ZMToggleLayerWindow._previousScene = null;
 	}
 
 	void OnGUI()
@@ -44,17 +61,33 @@ public class ZMToggleLayerWindow : EditorWindow
 
 			layer.isActive = GUILayout.Toggle(layer.isActive, layer.name);
 		}
+
+		if (GUILayout.Button("Force refresh"))
+		{
+			Init();
+		}
 	}
 
-	void OnSelectionChange()
+	void OnFocus()
 	{
-		var currentScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene();
+		Debug.LogFormat("OnFocus");
+		ZMToggleLayerWindow.DiffInit();
+	}
 
-		if (_previousScene != currentScene)
-		{
-			LayerManager.Clear();
-		}
+	static void OnHierarchyChange()
+	{
+		Debug.Log("OnHierarchyChange");
+		ZMToggleLayerWindow.DiffInit();
+	}
 
-		_previousScene = currentScene;
+	private static void ListenToEvents()
+	{
+		LayerManager.OnLayerChangeActive += HandleLayerChangeActive;
+	}
+
+	[ExecuteInEditMode]
+	private static void HandleLayerChangeActive(Layer layer)
+	{
+		LayerManager.SetLayerObjectsActive(layer, layer.isActive);
 	}
 }

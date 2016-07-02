@@ -42,7 +42,7 @@ namespace ZMPlayer
 		{
 			base.AcceptGamepadEvents();
 
-			var inputManager = ZMInputManager.Instance;
+			var inputManager = ZMInputNotifier.Instance;
 
 			inputManager.OnAction1 += HandleOnJump;
 			inputManager.OnAction3 += HandleOnJump;
@@ -59,7 +59,7 @@ namespace ZMPlayer
 		{
 			base.AcceptKeyboardEvents();
 
-			var inputManager = ZMInputManager.Instance;
+			var inputManager = ZMInputNotifier.Instance;
 
 			inputManager.OnSKey += HandleOnAttack;
 			inputManager.OnEKey += HandleOnAttack;

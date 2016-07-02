@@ -2,7 +2,7 @@
 using Core;
 using InControl;
 
-public class ZMInputManager : MonoSingleton<ZMInputManager>
+public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 {
 	// Gamepad digital events.
 	public EventHandler<ZMInput> OnAction1;
@@ -15,6 +15,11 @@ public class ZMInputManager : MonoSingleton<ZMInputManager>
 	public EventHandler<ZMInput> OnRightBumper;
 	public EventHandler<ZMInput> OnRightTrigger;
 
+	public EventHandler<ZMInput> OnLeftAnalogStickButton;
+	public EventHandler<ZMInput> OnRightAnalogStickButton;
+	public EventHandler<ZMInput> OnStartButton;
+	public EventHandler<ZMInput> OnAnyButton;
+
 	// Gamepad analog events.
 	public EventHandler<ZMInput, Vector2> OnLeftAnalogStickMove;
 	public EventHandler<ZMInput, Vector2> OnRightAnalogStickMove;
@@ -22,11 +27,6 @@ public class ZMInputManager : MonoSingleton<ZMInputManager>
 
 	public EventHandler<ZMInput, float> OnLeftTriggerAnalog;
 	public EventHandler<ZMInput, float> OnRightTriggerAnalog;
-
-	public EventHandler<ZMInput> OnLeftAnalogStickButton;
-	public EventHandler<ZMInput> OnRightAnalogStickButton;
-	public EventHandler<ZMInput> OnStartButton;
-	public EventHandler<ZMInput> OnAnyButton;
 
 	// Keyboard events.
 	public EventHandler<ZMInput> OnWKey;
@@ -70,7 +70,7 @@ public class ZMInputManager : MonoSingleton<ZMInputManager>
 			var device = InputManager.Devices[i];
 
 			BroadcastDigitalGamepadEvents(device, i);
-			BroadcastAnalogEvents(device, i);
+			BroadcastAnalogGamepadEvents(device, i);
 		}
 
 		// Broadcast keyboard events of all types.
@@ -106,7 +106,7 @@ public class ZMInputManager : MonoSingleton<ZMInputManager>
 		Notifier.SendEventNotification(OnStartButton, startInput);
 	}
 
-	private void BroadcastAnalogEvents(InputDevice device, int controlIndex)
+	private void BroadcastAnalogGamepadEvents(InputDevice device, int controlIndex)
 	{
 		var input = new ZMInput(ZMInput.State.HELD, controlIndex);
 
@@ -156,7 +156,10 @@ public class ZMInputManager : MonoSingleton<ZMInputManager>
 	{
 		for (int i = 0; i < ZMConfiguration.Configuration.KeyboardOwners.Length; ++i)
 		{
-			if (ZMConfiguration.Configuration.KeyboardOwners[i].Contains(code)) { return i; }
+			if (ZMConfiguration.Configuration.KeyboardOwners[i].Contains(code))
+			{
+				return i;
+			}
 		}
 
 		Debug.LogWarning("ZMInputManger: Unable to find owner of KeyCode " + code);
