@@ -166,21 +166,33 @@ public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 		return -1;
 	}
 
+	private ZMInput GetInputForControl(InputControl control, int controlIndex)
+	{
+		var state = GetStateForControl(control);
+
+		return new ZMInput(state, controlIndex);
+	}
+
 	private ZMInput.State GetStateForControl(InputControl control)
 	{
 		if (control.WasPressed) { return ZMInput.State.PRESSED; }
 		else if (control.WasReleased) { return ZMInput.State.RELEASED; }
 		else { return (ZMInput.State) (-1); }
 	}
-	
-	private ZMInput GetInputForControl(InputControl control, int controlIndex)
-	{
-		return new ZMInput(GetStateForControl(control), controlIndex);
-	}
 
 	private ZMInput GetInputForKeyCode(KeyCode code, ZMInput.State state)
 	{
 		return new ZMInput(state, GetIDForKeyCode(code));
+	}
+}
+
+public class ZMInputDevice
+{
+	InputDevice device;
+
+	public ZMInputDevice(InputDevice device)
+	{
+		
 	}
 }
 

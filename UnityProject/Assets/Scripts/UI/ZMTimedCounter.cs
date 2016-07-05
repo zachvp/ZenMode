@@ -31,7 +31,12 @@ public class ZMTimedCounter : MonoBehaviour
 
 	public void PauseTimer()
 	{
-		if (_timerCoroutine != null) { StopCoroutine(_timerCoroutine); }
+		if (_timerCoroutine != null)
+		{
+			Utilities.StopDelayRoutine(_timerCoroutine);
+//			StopCoroutine(_timerCoroutine);
+			_timerCoroutine = null;
+		}
 		enabled = false;
 	}
 

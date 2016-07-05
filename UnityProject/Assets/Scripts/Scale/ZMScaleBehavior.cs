@@ -8,7 +8,7 @@ public class ZMScaleBehavior : MonoBehaviour
 
 	protected virtual void Awake()
 	{
-		_scaleCoroutineCallback = new CoroutineCallback(StopScale);
+		_scaleCoroutineCallback = new CoroutineCallback();
 	}
 
 	public void Pause()
@@ -49,10 +49,6 @@ public class ZMScaleBehavior : MonoBehaviour
 		// Flag that the object is fully scaled.
 		transform.localScale = end;
 		Notifier.SendEventNotification(_scaleCoroutineCallback.OnFinished);
-	}
-
-	protected void StopScale()
-	{
-		StopCoroutine(_scaleCoroutineCallback.coroutine);
+		yield break;
 	}
 }

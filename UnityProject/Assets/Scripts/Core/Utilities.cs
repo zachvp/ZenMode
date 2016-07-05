@@ -82,6 +82,11 @@ namespace Core
 			return new Color(rhs.r, rhs.g, rhs.b, lhs.a);
 		}
 
+		public static void StopDelayRoutine(Coroutine coroutine)
+		{
+			_monoBehavior.StopCoroutine(coroutine);
+		}
+
 		// Execute a given method after a delay.
 		public static Coroutine ExecuteAfterDelay(EventHandler method, float delay)
 		{
