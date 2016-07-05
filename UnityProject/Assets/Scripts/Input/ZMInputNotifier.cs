@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using Core;
 using InControl;
+using Core;
 
 public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 {
@@ -58,19 +58,22 @@ public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 	protected override void Awake()
 	{
 		base.Awake();
-
-		Debug.LogFormat("devices: {0}", InputManager.Devices.Count);
 	}
 
 	void Update()
 	{
-		// Loop through input devices.
-		for (int i = 0; i < InputManager.Devices.Count; ++i)
-		{
-			var device = InputManager.Devices[i];
+		// Loop through users.
+		var users = ZMUserManager.Instance._users;
 
-			BroadcastDigitalGamepadEvents(device, i);
-			BroadcastAnalogGamepadEvents(device, i);
+		for (int i = 0; i < users.Count; ++i)
+		{
+			var device = users[i]._device._device;
+
+			if (device != null)
+			{
+				BroadcastDigitalGamepadEvents(device, i);
+				BroadcastAnalogGamepadEvents(device, i);
+			}
 		}
 
 		// Broadcast keyboard events of all types.
@@ -79,36 +82,36 @@ public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 		BroadcastKeyboardEvents(Input.GetKeyUp, ZMInput.State.RELEASED);
 	}
 
-	private void BroadcastDigitalGamepadEvents(InputDevice device, int controlIndex)
+	private void BroadcastDigitalGamepadEvents(InputDevice device, int userIndex)
 	{
-		var startInput = new ZMInput(device.MenuWasPressed, controlIndex);
+		var startInput = new ZMInput(device.MenuWasPressed, userIndex);
 
-		Notifier.SendEventNotification(OnAction1, GetInputForControl(device.Action1, controlIndex));
-		Notifier.SendEventNotification(OnAction2, GetInputForControl(device.Action2, controlIndex));
-		Notifier.SendEventNotification(OnAction3, GetInputForControl(device.Action3, controlIndex));
-		Notifier.SendEventNotification(OnAction4, GetInputForControl(device.Action4, controlIndex));
+		Notifier.SendEventNotification(OnAction1, GetInputForControl(device.Action1, userIndex));
+		Notifier.SendEventNotification(OnAction2, GetInputForControl(device.Action2, userIndex));
+		Notifier.SendEventNotification(OnAction3, GetInputForControl(device.Action3, userIndex));
+		Notifier.SendEventNotification(OnAction4, GetInputForControl(device.Action4, userIndex));
 
-		Notifier.SendEventNotification(OnLeftBumper, GetInputForControl(device.LeftBumper, controlIndex));
-		Notifier.SendEventNotification(OnLeftTrigger, GetInputForControl(device.LeftTrigger, controlIndex));
-		Notifier.SendEventNotification(OnRightBumper, GetInputForControl(device.RightBumper, controlIndex));
-		Notifier.SendEventNotification(OnRightTrigger, GetInputForControl(device.RightTrigger, controlIndex));
+		Notifier.SendEventNotification(OnLeftBumper, GetInputForControl(device.LeftBumper, userIndex));
+		Notifier.SendEventNotification(OnLeftTrigger, GetInputForControl(device.LeftTrigger, userIndex));
+		Notifier.SendEventNotification(OnRightBumper, GetInputForControl(device.RightBumper, userIndex));
+		Notifier.SendEventNotification(OnRightTrigger, GetInputForControl(device.RightTrigger, userIndex));
 
-		Notifier.SendEventNotification(OnLeftAnalogStickButton, GetInputForControl(device.LeftStickButton, controlIndex));
-		Notifier.SendEventNotification(OnRightAnalogStickButton, GetInputForControl(device.RightStickButton, controlIndex));
+		Notifier.SendEventNotification(OnLeftAnalogStickButton, GetInputForControl(device.LeftStickButton, userIndex));
+		Notifier.SendEventNotification(OnRightAnalogStickButton, GetInputForControl(device.RightStickButton, userIndex));
 
-		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.AnyButton, controlIndex));
-		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.LeftBumper, controlIndex));
-		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.LeftTrigger, controlIndex));
-		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.RightBumper, controlIndex));
-		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.RightTrigger, controlIndex));
+		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.AnyButton, userIndex));
+		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.LeftBumper, userIndex));
+		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.LeftTrigger, userIndex));
+		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.RightBumper, userIndex));
+		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.RightTrigger, userIndex));
 		Notifier.SendEventNotification(OnAnyButton, startInput);
 
 		Notifier.SendEventNotification(OnStartButton, startInput);
 	}
 
-	private void BroadcastAnalogGamepadEvents(InputDevice device, int controlIndex)
+	private void BroadcastAnalogGamepadEvents(InputDevice device, int userIndex)
 	{
-		var input = new ZMInput(ZMInput.State.HELD, controlIndex);
+		var input = new ZMInput(ZMInput.State.HELD, userIndex);
 
 		Notifier.SendEventNotification(OnLeftAnalogStickMove, input, device.LeftStick.Vector);
 		Notifier.SendEventNotification(OnRightAnalogStickMove, input, device.RightStick.Vector);
@@ -166,11 +169,11 @@ public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 		return -1;
 	}
 
-	private ZMInput GetInputForControl(InputControl control, int controlIndex)
+	private ZMInput GetInputForControl(InputControl control, int userIndex)
 	{
 		var state = GetStateForControl(control);
 
-		return new ZMInput(state, controlIndex);
+		return new ZMInput(state, userIndex);
 	}
 
 	private ZMInput.State GetStateForControl(InputControl control)
@@ -183,16 +186,6 @@ public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 	private ZMInput GetInputForKeyCode(KeyCode code, ZMInput.State state)
 	{
 		return new ZMInput(state, GetIDForKeyCode(code));
-	}
-}
-
-public class ZMInputDevice
-{
-	InputDevice device;
-
-	public ZMInputDevice(InputDevice device)
-	{
-		
 	}
 }
 
