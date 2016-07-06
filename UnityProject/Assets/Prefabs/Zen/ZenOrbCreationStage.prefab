@@ -201,10 +201,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startEnabled: 1
-  scaleTime: 2
+  scaleTime: 1
   minScale: 0
   maxScale: 0.99
-  shrinkRate: 0.04
+  shrinkRate: 0.25
 --- !u!114 &11421020
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1850,7 +1850,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: shrinkRate
-      value: 0.04
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_LocalScale.x

@@ -21,6 +21,14 @@ public class ZMScaleBehavior : MonoBehaviour
 		enabled = true;
 	}
 
+	public void StopScale()
+	{
+		if (_scaleCoroutineCallback != null)
+		{
+			StopCoroutine(_scaleCoroutineCallback.coroutine);
+		}
+	}
+
 	public virtual CoroutineCallback ScaleToTargetOverTime(Vector3 start, Vector3 end, float growTime)
 	{
 		_scaleCoroutineCallback.coroutine = StartCoroutine(ScaleToTargetOverTimeInternal(start, end, growTime));

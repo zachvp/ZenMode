@@ -58,7 +58,7 @@ public class ZMPlayerController : ZMPlayerItem
 	private Vector2 _collisionVelocities;
 
 	// Player states.
-	private enum MovementDirectionState { FACING_LEFT, FACING_RIGHT };
+	private enum MovementDirectionState { FACING_LEFT = -1, FACING_RIGHT = 1 };
 	private enum ControlMoveState 		{ NEUTRAL, MOVING };
 	private enum ControlModState	    { NEUTRAL, JUMPING, ATTACK, AIR_ATTACK, ATTACKING, WALL_JUMPING, PLUNGE, PLUNGING, PARRY, PARRYING };
 	private enum MoveModState 		    { NEUTRAL, PLUNGE, PLUNGING, LUNGE, LUNGING_AIR, LUNGING_GROUND, WALL_SLIDE, RECOIL, RECOILING, STUN, STUNNED, DISABLE, DISABLED, PARRY_FACING, PARRY_AOE, RESPAWN, ELIMINATED };
@@ -110,7 +110,7 @@ public class ZMPlayerController : ZMPlayerItem
 	private GameObject _lowerBodyTemplate, _upperBodyTemplate;
 
 	// Materials
-	private Material _materialDefault;
+	private Material _material;
 	public Material _materialFlash;
 
 	// Delegates
@@ -180,8 +180,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_goreEmitter.GetComponent<Renderer>().material.color = _baseColor;
 		_goreEmitter.startColor = _baseColor;
 
-		_materialDefault = GetComponent<Renderer>().material;
-		_materialDefault.color = Color.black;
+		_material.color = Color.black;
 
 		Notifier.SendEventNotification(OnPlayerCreate, _playerInfo);
 	}
@@ -312,7 +311,7 @@ public class ZMPlayerController : ZMPlayerItem
 			effect.transform.parent = transform;
 			effect.transform.localScale = new Vector3(0.66f, 0.66f, 1.0f);
 
-			GetComponent<Renderer>().material = _materialFlash;
+			_material = _materialFlash;
 			_audio.PlayOneShot(_audioParry);
 
 			if (_controller.isGrounded)
@@ -558,13 +557,13 @@ public class ZMPlayerController : ZMPlayerItem
 
 		// Update visuals.
 		if (!_controller.isGrounded && !_canAirLunge) {
-			Color color = GetComponent<Renderer>().material.color;
+			Color color = _material.color;
 			color.a = 0.5f;
-			GetComponent<Renderer>().material.color = color;
+			_material.color = color;
 		} else {
-			Color color = GetComponent<Renderer>().material.color;
+			Color color = _material.color;
 			color.a = 1.0f;
-			GetComponent<Renderer>().material.color = color;
+			_material.color = color;
 		}
 
 		// Update and apply velocity.
@@ -624,6 +623,7 @@ public class ZMPlayerController : ZMPlayerItem
 	private void GetComponentReferences()
 	{
 		_animator = GetComponent<Animator>();
+		_material = GetComponent<Renderer>().material;
 		_controller = GetComponent<CharacterController2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _inputController = GetComponent<ZMPlayerInputController>();
@@ -1037,7 +1037,7 @@ public class ZMPlayerController : ZMPlayerItem
 		Utilities.StopDelayRoutine(_enablePlayerCoroutine);
 
 		// Handle death visuals here
-		GetComponent<Renderer>().material.color = Color.red;
+		_material.color = Color.red;
 		_light.enabled = false;
 		_spriteRenderer.enabled = false;
 
@@ -1107,9 +1107,12 @@ public class ZMPlayerController : ZMPlayerItem
 		float recoilSpeed = 700f;
 		_velocity.y = JUMP_HEIGHT / 2.0f;
 
-		if (_movementDirection == MovementDirectionState.FACING_LEFT) {
+		if (_movementDirection == MovementDirectionState.FACING_LEFT)
+		{
 			runSpeed = recoilSpeed;
-		} else if (_movementDirection == MovementDirectionState.FACING_RIGHT) {
+		}
+		else if (_movementDirection == MovementDirectionState.FACING_RIGHT)
+		{
 			runSpeed = -recoilSpeed;
 		}
 	}
@@ -1159,14 +1162,12 @@ public class ZMPlayerController : ZMPlayerItem
 	private void EndStunBeginParry()
 	{
 		_canStun = false;
-		GetComponent<Renderer>().material = _materialDefault;
 		Utilities.ExecuteAfterDelay(EndParry, PARRY_TIME);
 	}
 
 	private void EndStun()
 	{
 		_canStun = false;
-		GetComponent<Renderer>().material = _materialDefault;
 		EndParry();
 	}
 

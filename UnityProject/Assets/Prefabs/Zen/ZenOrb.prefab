@@ -388,7 +388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startEnabled: 1
-  scaleTime: 1
+  scaleTime: 0.8
   minScale: 0.5
   maxScale: 0.99
 --- !u!114 &11464640
@@ -406,6 +406,7 @@ MonoBehaviour:
   timeIncrement: -1
   min: 0
   max: 5
+  isClockFormat: 0
 --- !u!114 &11466392
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2089,7 +2090,7 @@ Prefab:
       objectReference: {fileID: 2100000, guid: 72720ce097d0840c19113c1705a32104, type: 2}
     - target: {fileID: 0}
       propertyPath: scaleTime
-      value: 1
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: startEnabled

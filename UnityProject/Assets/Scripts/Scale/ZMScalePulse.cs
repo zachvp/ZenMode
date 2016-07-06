@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using Core;
 
 public class ZMScalePulse : ZMScaleBehavior
 {
@@ -35,8 +35,8 @@ public class ZMScalePulse : ZMScaleBehavior
 
 	protected void StopPulsing()
 	{
+		StopScale();
 		_scaleCoroutineCallback.OnFinished -= Pulse;
-		ScaleToTargetOverTime(transform.localScale, 0.0f);
 	}
 
 	private void Pulse()
