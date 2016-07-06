@@ -11,60 +11,22 @@ public class ZMTauntText : MonoBehaviour
 	private ZMScaleBehavior _scaleBehavior;
 	private string[] kDeathStrings;
 
+	private const string FILEPATH_TAUNTS = "Taunts/taunts";
+
 	void Awake()
 	{
 		_tauntText = GetComponent<Text>();
 		_scaleBehavior = GetComponent<ZMScaleBehavior>();
 
-		InitDeathStrings();
+		Init();
 		HideTauntText();
 
 		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
 	}
 
-	private void InitDeathStrings()
+	private void Init()
 	{
-		kDeathStrings = new string[39];
-
-		kDeathStrings[0] = "OOOAHH";
-		kDeathStrings[1] = "WHOOOP";
-		kDeathStrings[2] = "AYYYEEH";
-		kDeathStrings[3] = "HADOOOP";
-		kDeathStrings[4] = "WHUAAAH";
-		kDeathStrings[5] = "BLARHGH";
-		kDeathStrings[6] = "OUCH";
-		kDeathStrings[7] = "DUN GOOFD";
-		kDeathStrings[8] = "REKT";
-		kDeathStrings[9] = "PWNED";
-		kDeathStrings[10] = "SPLAT";
-		kDeathStrings[11] = "SPLUUSH";
-		kDeathStrings[12] = "ASDF";
-		kDeathStrings[13] = "WHAAUH";
-		kDeathStrings[14] = "AUUGH";
-		kDeathStrings[15] = "WAOOOH";
-		kDeathStrings[16] = "DERP";
-		kDeathStrings[17] = "DISGRACE";
-		kDeathStrings[18] = "DISHONOR";
-		kDeathStrings[19] = "HUUUAP";
-		kDeathStrings[20] = "PUUUAH";
-		kDeathStrings[21] = "AYUUSH";
-		kDeathStrings[22] = "WYAAAH";
-		kDeathStrings[23] = "KWAAAH";
-		kDeathStrings[24] = "HUZZAH";
-		kDeathStrings[25] = "#WINNING";
-		kDeathStrings[26] = "NOOB";
-		kDeathStrings[27] = "ELEGANT";
-		kDeathStrings[28] = "SWIFT";
-		kDeathStrings[29] = "WAHH";
-		kDeathStrings[30] = "OOOOOOHH";
-		kDeathStrings[31] = "POOOOW";
-		kDeathStrings[32] = "YAAAAS";
-		kDeathStrings[33] = "SWOOOP";
-		kDeathStrings[34] = "LOLWUT";
-		kDeathStrings[35] = "SMOOTH";
-		kDeathStrings[36] = "YUUUUS";
-		kDeathStrings[37] = "YEESSS";
-		kDeathStrings[38] = "NOICE";
+		kDeathStrings = Utilities.FileIO.ReadAllLinesFromFile(FILEPATH_TAUNTS);
 	}
 
 	private void HandlePlayerDeathEvent(ZMPlayer.ZMPlayerInfo info)
