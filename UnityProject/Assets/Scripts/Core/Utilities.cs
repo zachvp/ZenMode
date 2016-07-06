@@ -211,6 +211,40 @@ namespace Core
 //		}
 	}
 
+	public static class Environment
+	{
+		public static RaycastHit2D CheckLeft(Vector3 position, Vector2 offset, float distance, LayerMask mask)
+		{
+			Vector2 rayOrigin = new Vector2(position.x, position.y);
+			Vector2 rayDirection = new Vector2(-1.0f, 0.0f);
+
+			rayOrigin += offset;
+
+			return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
+		}
+
+		public static RaycastHit2D CheckRight(Vector3 position, Vector2 offset, float distance, LayerMask mask)
+		{
+			Vector2 rayOrigin = new Vector2(position.x, position.y);
+			Vector2 rayDirection = new Vector2(1.0f, 0.0f);
+
+			rayOrigin += offset;
+
+			return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
+		}
+
+		public static RaycastHit2D CheckBelow(Vector3 position, Vector2 offset, float distance, LayerMask mask)
+		{
+			Vector2 rayOrigin = new Vector2(position.x, position.y);
+			Vector2 rayDirection = new Vector2(0.0f, -1.0f);
+
+			rayOrigin += offset;
+			Debug.DrawRay(rayOrigin, rayDirection, Color.yellow);
+
+			return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
+		}
+	}
+
 	public class Layer
 	{
 		public int number { get; set; }

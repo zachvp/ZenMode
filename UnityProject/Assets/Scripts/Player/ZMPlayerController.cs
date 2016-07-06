@@ -21,7 +21,6 @@ public class ZMPlayerController : ZMPlayerItem
 	private float LUNGE_TIME = 0.12f;
 	private float WALL_SLIDE_SPEED = 80.0f;
 	private float WALL_JUMP_KICK_SPEED = 500.0f;
-	private float EDGE_OFFSET = 16.0f;
 	private float AOE_RANGE = 32.0f;
 	private float RECOIL_STUN_TIME = 0.001f;
 	private float PARRY_TIME_LUNGE = 0.30f;
@@ -69,6 +68,8 @@ public class ZMPlayerController : ZMPlayerItem
 	private ControlModState _controlModState;
 	private MovementDirectionState _movementDirection;
 	private MoveModState _moveModState;
+
+	// Flags.
 	private bool _playerInPath;
 	private bool _canStun;
 
@@ -124,6 +125,12 @@ public class ZMPlayerController : ZMPlayerItem
 	public static EventHandler<ZMPlayerController, float> PlayerStunEvent;
 	public static EventHandler<ZMPlayerController, float> PlayerParryEvent;
 	public static EventHandler PlayerLandPlungeEvent;
+
+	// Constants
+	private const float EDGE_OFFSET = 16.0f;
+
+	private readonly Vector2 LEFT_EDGE_OFFSET = new Vector2(-EDGE_OFFSET - 1, 0.0f);
+	private readonly Vector2 RIGHT_EDGE_OFFSET = new Vector2(EDGE_OFFSET + 1, 0.0f);
 
 	// Debug
 	private SpriteRenderer _spriteRenderer;
@@ -182,8 +189,8 @@ public class ZMPlayerController : ZMPlayerItem
 	void Update()
 	{
 		// Set raycasts. These will check one tile unit to the left and right to help with things like wall jump.
-		_checkTouchingLeft  = CheckLeft(TILE_SIZE, _controller.platformMask);
-		_checkTouchingRight = CheckRight(TILE_SIZE, _controller.platformMask);
+		_checkTouchingLeft  = Environment.CheckLeft(transform.position, LEFT_EDGE_OFFSET, TILE_SIZE, _controller.platformMask);
+		_checkTouchingRight = Environment.CheckRight(transform.position, RIGHT_EDGE_OFFSET, TILE_SIZE, _controller.platformMask);
 
 		// Update the velocity calculated from the controller.
 		_velocity = _controller.velocity;
@@ -199,7 +206,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			_velocity.y = 0;
 
-			if (IsPerformingPlunge()) {
+			if (IsPlunging()) {
 				_audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 
 				Notifier.SendEventNotification(PlayerLandPlungeEvent);
@@ -207,7 +214,7 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 
 		// Horizontal movement.
-		if (_controlMoveState == ControlMoveState.MOVING && !IsPerformingPlunge() && !IsRecoiling())
+		if (_controlMoveState == ControlMoveState.MOVING && !IsPlunging() && !IsRecoiling())
 		{
 
 			if (_movementDirection == MovementDirectionState.FACING_RIGHT)
@@ -256,7 +263,7 @@ public class ZMPlayerController : ZMPlayerItem
 		// Update movement and ability state.
 		if (_controlModState == ControlModState.ATTACK)
 		{
-			if (!IsPerformingLunge() && _canLunge)
+			if (!IsLunging() && _canLunge)
 			{
 				HorizontalAttack();
 			}
@@ -267,7 +274,7 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 		else if (_controlModState == ControlModState.AIR_ATTACK)
 		{
-			if (!IsPerformingLunge() && _canLunge && _canAirLunge)
+			if (!IsLunging() && _canLunge && _canAirLunge)
 			{
 				_canAirLunge = false;
 				HorizontalAttack();
@@ -281,7 +288,7 @@ public class ZMPlayerController : ZMPlayerItem
 		{
 			_controlModState = ControlModState.PLUNGING;
 
-			if (!IsPerformingPlunge())
+			if (!IsPlunging())
 			{
 				_audio.PlayOneShot(_audioPlunge[Random.Range (0, _audioPlunge.Length)]);
 				_moveModState = MoveModState.PLUNGE;
@@ -330,13 +337,14 @@ public class ZMPlayerController : ZMPlayerItem
 		{
 			if (_controller.isGrounded)
 			{
-				Instantiate(_effectPlungeObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
-
-				// AOE Check:
+				var recoilOffsetRight = new Vector2(EDGE_OFFSET, -16.0f);
+				var recoilOffsetLeft = new Vector2(-EDGE_OFFSET, -16.0f);
+				var recoilAOE = Environment.CheckRight(transform.position, recoilOffsetRight, AOE_RANGE, _controller.specialInteractibleMask);
 				ZMPlayerController playerController;
 
-				// Check right:
-				RaycastHit2D recoilAOE = CheckRight(new Vector2(EDGE_OFFSET, -16.0f), AOE_RANGE, _controller.specialInteractibleMask);
+				Instantiate(_effectPlungeObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
+
+				// Check right.
 				if (recoilAOE)
 				{
 					playerController = recoilAOE.collider.GetComponent<ZMPlayerController>();
@@ -347,8 +355,9 @@ public class ZMPlayerController : ZMPlayerItem
 						playerController._moveModState = MoveModState.RECOIL;
 					}
 				}
+
 				// Check left:
-				recoilAOE = CheckLeft(new Vector2(-EDGE_OFFSET, -16.0f), AOE_RANGE, _controller.specialInteractibleMask);
+				recoilAOE = Environment.CheckLeft(transform.position, recoilOffsetLeft, AOE_RANGE, _controller.specialInteractibleMask);
 
 				if (recoilAOE)
 				{
@@ -376,7 +385,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			if (_movementDirection == MovementDirectionState.FACING_RIGHT)
 			{
-				if (checkPlayer = CheckRight(145f, _controller.specialInteractibleMask))
+				if (checkPlayer = Environment.CheckRight(transform.position, RIGHT_EDGE_OFFSET, 145f, _controller.specialInteractibleMask))
 				{
 					if (checkPlayer.collider.CompareTag(Tags.kPlayerTag) && !_playerInPath)
 					{
@@ -388,7 +397,7 @@ public class ZMPlayerController : ZMPlayerItem
 			}
 			else if (_movementDirection == MovementDirectionState.FACING_LEFT)
 			{
-				if (checkPlayer = CheckLeft(145f, _controller.specialInteractibleMask))
+				if (checkPlayer = Environment.CheckLeft(transform.position, LEFT_EDGE_OFFSET, 145f, _controller.specialInteractibleMask))
 				{
 					if (checkPlayer.collider.CompareTag(Tags.kPlayerTag) && !_playerInPath)
 					{
@@ -405,17 +414,23 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 
 		if (_movementDirection == MovementDirectionState.FACING_RIGHT && (_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND)) {
-			RaycastHit2D hit = CheckRight (4, _controller.platformMask);
-			if (hit && !hit.collider.CompareTag("Breakable")) {
+			var hit = Environment.CheckRight(transform.position, RIGHT_EDGE_OFFSET, 4, _controller.platformMask);
+
+			if (hit && !hit.collider.CompareTag("Breakable"))
+			{
 				_audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 				Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, 90.0f));
 				Instantiate(_effectPlungeObject, new Vector2(transform.position.x - 18, transform.position.y), rotation);
 				EndLunge ();
 			}
 		}
-		if (_movementDirection == MovementDirectionState.FACING_LEFT && (_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND)) {
-			RaycastHit2D hit = CheckLeft (4, _controller.platformMask);
-			if (hit && !hit.collider.CompareTag("Breakable")) {
+		if (_movementDirection == MovementDirectionState.FACING_LEFT &&
+			(_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND))
+		{
+			var hit = Environment.CheckLeft(transform.position, LEFT_EDGE_OFFSET, 4, _controller.platformMask);
+
+			if (hit && !hit.collider.CompareTag("Breakable"))
+			{
 				_audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 				Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, 270.0f));
 				Instantiate(_effectPlungeObject, new Vector2(transform.position.x + 14, transform.position.y), rotation);
@@ -423,7 +438,8 @@ public class ZMPlayerController : ZMPlayerItem
 			}
 		}
 
-		if (_moveModState == MoveModState.RECOIL) {
+		if (_moveModState == MoveModState.RECOIL)
+		{
 			_audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 			Instantiate(_effectClashObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 			_moveModState = MoveModState.RECOILING;
@@ -435,13 +451,17 @@ public class ZMPlayerController : ZMPlayerItem
 			DisableInputWithCallbackDelay(RECOIL_STUN_TIME);
 
 			Notifier.SendEventNotification(PlayerRecoilEvent, this, RECOIL_STUN_TIME);
-		} else if (_moveModState == MoveModState.RECOILING) {
+		}
+		else if (_moveModState == MoveModState.RECOILING)
+		{
 			_moveModState = MoveModState.NEUTRAL;
 			_controlModState = ControlModState.NEUTRAL;
 			_controlMoveState = ControlMoveState.NEUTRAL;
 
 			_playerInPath = false;
-		} else if (_moveModState == MoveModState.STUN) {
+		}
+		else if (_moveModState == MoveModState.STUN)
+		{
 			_moveModState = MoveModState.STUNNED;
 			_controlModState = ControlModState.NEUTRAL;
 			_controlMoveState = ControlMoveState.NEUTRAL;
@@ -455,43 +475,57 @@ public class ZMPlayerController : ZMPlayerItem
 
 
 			Notifier.SendEventNotification(PlayerStunEvent, this, STUN_TIME);
-		} else if (_moveModState == MoveModState.WALL_SLIDE) {
+		}
+		else if (_moveModState == MoveModState.WALL_SLIDE)
+		{
 			// Wall slide.
-			if (_velocity.y < 1.0f &&  _controlMoveState == ControlMoveState.MOVING) {
+			if (_velocity.y < 1.0f &&  _controlMoveState == ControlMoveState.MOVING)
+			{
 				_velocity.y = -WALL_SLIDE_SPEED;
-				if (IsTouchingRightAndMovingRight() || IsTouchingLeftAndMovingLeft()) {
+				if (IsTouchingRightAndMovingRight() || IsTouchingLeftAndMovingLeft())
+				{
 					runSpeed = 0;
 				}
 			}
-			if (_controller.isGrounded || !IsTouchingEitherSide()) {
+			if (_controller.isGrounded || !IsTouchingEitherSide())
+			{
 				_moveModState = MoveModState.NEUTRAL;
 			}
 			// Wall jump.
-			if (_controlModState == ControlModState.WALL_JUMPING) {
+			if (_controlModState == ControlModState.WALL_JUMPING)
+			{
 				_controlModState = ControlModState.NEUTRAL;
 
-				if (IsMovingLeft () || IsMovingRight()) {
-					if (!_controller.isGrounded) {
+				if (IsMovingLeft () || IsMovingRight())
+				{
+					if (!_controller.isGrounded)
+					{
+						var rotation = Quaternion.Euler(new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
+						var skidOffset = _movementDirection == MovementDirectionState.FACING_RIGHT ? 12.0f : -12.0f;
+
 						_velocity.y = JUMP_HEIGHT;
 						_audio.PlayOneShot(_audioJump[Random.Range (0, _audioJump.Length)]);
-						Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 180.0f : 0.0f), 0.0f));
-						float offset = (_movementDirection == MovementDirectionState.FACING_RIGHT ? 12.0f : -12.0f);
-						Instantiate (_effectSkidObject, new Vector2 (transform.position.x + offset, transform.position.y - 20), rotation);
+
+						Instantiate (_effectSkidObject, new Vector2 (transform.position.x + skidOffset, transform.position.y - 20), rotation);
 						_moveModState = MoveModState.NEUTRAL;
 						_canWallJump = false;
 						_canAirLunge = true;
 						Utilities.ExecuteAfterDelay(WallJumpCooldown, 0.05f);
 
-						if (IsMovingLeft()) {
+						if (IsMovingLeft())
+						{
 							runSpeed = WALL_JUMP_KICK_SPEED * 0.6f;
 						}
-						else if (IsMovingRight()) {
+						else if (IsMovingRight())
+						{
 							runSpeed = -WALL_JUMP_KICK_SPEED * 0.6f;
 						}
 					}
 				}
 			}
-		} else if (IsAttacking() || IsPerformingPlunge()) {
+		}
+		else if (IsAttacking() || IsPlunging())
+		{
 			var dist = 0.0f;
 			var lerpPos = _posPrevious;
 			var mult = 0.5f;
@@ -528,7 +562,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_velocity.y -= GRAVITY * Time.deltaTime;
 
 		// Don't want gravity to affect the player if lunging.
-		if (IsPerformingLunge())
+		if (IsLunging())
 		{
 			_velocity.y = 0.0f;
 		}
@@ -541,26 +575,31 @@ public class ZMPlayerController : ZMPlayerItem
 
 	private void UpdateAnimator()
 	{
+		var leftOffset = new Vector2(-17f, 0.0f);
+		var rightOffset = new Vector2(17f, 0.0f);
+
 		bool isChangingDirectionToRight = _movementDirection == MovementDirectionState.FACING_LEFT && _velocity.x > 0;
 		bool isChangingDirectionToLeft = _movementDirection == MovementDirectionState.FACING_RIGHT && _velocity.x < 0;
 
 		bool isSkidding = isChangingDirectionToRight || isChangingDirectionToLeft;
 		bool isSliding = _velocity.x != 0 && _controlMoveState == ControlMoveState.NEUTRAL;
+		bool isTouchingLeft = Environment.CheckLeft(transform.position, leftOffset, 2.0f, _controller.platformMask);
+		bool isTouchingRight = Environment.CheckRight(transform.position, rightOffset, 2.0f, _controller.platformMask);
 
 		// Update animation states.
 		if (_movementDirection == MovementDirectionState.FACING_LEFT)
 		{
-			_animator.SetBool ("isRunning", _controlMoveState == ControlMoveState.MOVING && !CheckLeft(2.0f, _controller.platformMask));
+			_animator.SetBool ("isRunning", _controlMoveState == ControlMoveState.MOVING && !isTouchingLeft);
 		}
 		else
 		{
-			_animator.SetBool ("isRunning", _controlMoveState == ControlMoveState.MOVING && !CheckRight(2.0f, _controller.platformMask));
+			_animator.SetBool ("isRunning", _controlMoveState == ControlMoveState.MOVING && !isTouchingRight);
 		}
 
 		_animator.SetBool ("isSkidding", isSkidding || isSliding);
 		_animator.SetBool ("isGrounded", _controller.isGrounded);
-		_animator.SetBool ("isPlunging", IsPerformingPlunge());
-		_animator.SetBool ("isLunging", IsPerformingLunge());
+		_animator.SetBool ("isPlunging", IsPlunging());
+		_animator.SetBool ("isLunging", IsLunging());
 		_animator.SetBool ("isParrying", _moveModState == MoveModState.PARRY_AOE);
 		_animator.SetBool ("isNeutral", _moveModState == MoveModState.NEUTRAL);
 		_animator.SetFloat ("velocityY", _velocity.y);
@@ -656,7 +695,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			if (_movementDirection == MovementDirectionState.FACING_LEFT) { CheckSkidding (); }
 
-			if (!IsPerformingLunge()) { SetMovementDirection(MovementDirectionState.FACING_RIGHT); }
+			if (!IsLunging()) { SetMovementDirection(MovementDirectionState.FACING_RIGHT); }
 		}
 	}
 
@@ -668,7 +707,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			if (_movementDirection == MovementDirectionState.FACING_RIGHT) { CheckSkidding (); }
 
-			if (!IsPerformingLunge()) { SetMovementDirection(MovementDirectionState.FACING_LEFT); }
+			if (!IsLunging()) { SetMovementDirection(MovementDirectionState.FACING_LEFT); }
 		}
 	}
 
@@ -702,8 +741,14 @@ public class ZMPlayerController : ZMPlayerItem
 			}
 
 			// hack for destroying a breakable when pressed up against it
-			if (_movementDirection == MovementDirectionState.FACING_LEFT) { hit = CheckLeft(10.0f, _controller.specialInteractibleMask); }
-			else { hit = CheckRight(10.0f, _controller.specialInteractibleMask); }
+			if (_movementDirection == MovementDirectionState.FACING_LEFT)
+			{
+				hit = Environment.CheckLeft(transform.position, LEFT_EDGE_OFFSET, 10.0f, _controller.specialInteractibleMask);
+			}
+			else
+			{
+				hit = Environment.CheckRight(transform.position, RIGHT_EDGE_OFFSET, 10.0f, _controller.specialInteractibleMask);
+			}
 
 			if (hit && Mathf.Round(Vector3.Dot(hit.normal, forward)) != 0 && hit.collider != null)
 			{
@@ -725,7 +770,8 @@ public class ZMPlayerController : ZMPlayerItem
 			}
 			else
 			{
-				var hit = CheckBelow(2, _controller.specialInteractibleMask);
+				var offset = new Vector2(0, -32.1f);
+				var hit = Environment.CheckBelow(transform.position, offset, 2, _controller.specialInteractibleMask);
 
 				if (hit && hit.collider != null)
 				{
@@ -782,11 +828,11 @@ public class ZMPlayerController : ZMPlayerItem
 				if (hit.collider.CompareTag(Tags.kPlayerTag)) {
 					ZMPlayerController otherPlayer = hit.collider.GetComponent<ZMPlayerController>();
 
-					if (IsPerformingPlunge()) {
+					if (IsPlunging()) {
 						KillOpponent (otherPlayer);
 					}
 				} else if (hit.collider.CompareTag("Breakable")) {
-					if (IsPerformingPlunge()) {
+					if (IsPlunging()) {
 						hit.collider.GetComponent<ZMBreakable>().HandleCollision(_playerInfo);
 					}
 				}
@@ -794,7 +840,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			if (hit.normal.x == -1.0f || hit.normal.x == 1.0f) {
 				// See if we hit a player.
-				if (IsPerformingLunge()) {
+				if (IsLunging()) {
 					if (hit.collider.CompareTag(Tags.kPlayerTag)) {
 						ZMPlayerController otherPlayer = hit.collider.GetComponent<ZMPlayerController>();
 
@@ -833,7 +879,7 @@ public class ZMPlayerController : ZMPlayerItem
 	void onTriggerEnterEvent( Collider2D collider ) {
 		if (collider.CompareTag ("Grass")) {
 			collider.GetComponent<ZMGrassController>().GrassEnter();
-			if (IsPerformingLunge() || IsPerformingPlunge()) {
+			if (IsLunging() || IsPlunging()) {
 				collider.GetComponent<ZMGrassController>().CutGrass(_playerInfo);
 			}
 		}
@@ -899,9 +945,12 @@ public class ZMPlayerController : ZMPlayerItem
 		if (!previousDirection.Equals(_movementDirection)) {
 			Vector3 shiftedPos = transform.position;
 
-			if (CheckRight(2.0f, _controller.platformMask)) {
+			if (Environment.CheckRight(transform.position, RIGHT_EDGE_OFFSET, 2.0f, _controller.platformMask))
+			{
 				shiftedPos.x -= 4.0f;
-			} else if (CheckLeft(2.0f, _controller.platformMask)) {
+			}
+			else if (Environment.CheckLeft(transform.position, LEFT_EDGE_OFFSET, 2.0f, _controller.platformMask))
+			{
 				shiftedPos.x += 4.0f;
 			}
 
@@ -1065,108 +1114,68 @@ public class ZMPlayerController : ZMPlayerItem
 		EndParry();
 	}
 
-	private RaycastHit2D CheckLeft(float distance, LayerMask mask) {
-		return CheckLeft(Vector2.zero, distance, mask);
-	}
-
-	private RaycastHit2D CheckLeft(Vector2 offset, float distance, LayerMask mask) {
-		Vector2 rayOrigin = new Vector2(transform.position.x - 17f, transform.position.y);
-		Vector2 rayDirection = new Vector2(-1.0f, 0.0f);
-
-		rayOrigin += offset;
-		
-		return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
-	}
-
-	private RaycastHit2D CheckRight(float distance, LayerMask mask) {
-		return CheckRight (Vector2.zero, distance, mask);
-	}
-
-	private RaycastHit2D CheckRight(Vector2 offset, float distance, LayerMask mask) {
-		Vector2 rayOrigin = new Vector2(transform.position.x + 17f, transform.position.y);
-		Vector2 rayDirection = new Vector2(1.0f, 0.0f);
-
-		rayOrigin += offset;
-		
-		return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
-	}
-
-	private RaycastHit2D CheckBelow(float distance, LayerMask mask) {
-		return CheckBelow(Vector2.zero, distance, mask);
-	}
-
-	private RaycastHit2D CheckBelow(Vector2 offset, float distance, LayerMask mask) {
-		Vector2 rayOrigin = new Vector2(transform.position.x, transform.position.y - 32.1f);
-		Vector2 rayDirection = new Vector2(1.0f, 0.0f);
-		
-		rayOrigin += offset;
-		Debug.DrawRay(rayOrigin, rayDirection, Color.yellow);
-		
-		return Physics2D.Raycast(rayOrigin, rayDirection, distance, mask);
-	}
-
-	private bool IsTouchingEitherSide() {
-		return _checkTouchingLeft || _checkTouchingRight;
-	}
-
-	private bool IsMovingLeft() {
-		return _controlMoveState == ControlMoveState.MOVING && _movementDirection == MovementDirectionState.FACING_LEFT;
-	}
-
-	private bool IsMovingRight() {
-		return _controlMoveState == ControlMoveState.MOVING && _movementDirection == MovementDirectionState.FACING_RIGHT;
-	}
-
-	private bool IsTouchingLeftAndMovingLeft() {
-		return _checkTouchingLeft &&  runSpeed < 0;
-	}
-
-	private bool IsTouchingRightAndMovingRight() {
-		return _checkTouchingRight && runSpeed > 0;
-	}
-
-	private bool IsPerformingPlunge() {
+	private bool IsPlunging()
+	{
 		return _moveModState == MoveModState.PLUNGE || _moveModState == MoveModState.PLUNGING;
 	}
 
-	private bool IsPerformingLunge() {
+	private bool IsLunging()
+	{
 		return _moveModState == MoveModState.LUNGE || _moveModState == MoveModState.LUNGING_GROUND || _moveModState == MoveModState.LUNGING_AIR;
 	}
 
-	private bool IsRecoiling() {
+	private bool IsRecoiling()
+	{
 		return _moveModState == MoveModState.RECOIL || _moveModState == MoveModState.RECOILING;
 	}
 
-	private bool IsParrying() { 
-		return _moveModState == MoveModState.PARRY_FACING || _moveModState == MoveModState.PARRY_AOE; 
+	private bool IsParrying()
+	{
+		return _moveModState == MoveModState.PARRY_FACING || _moveModState == MoveModState.PARRY_AOE;
 	}
 
-	private bool IsAbleToKill() {
-		return IsPerformingLunge() || IsPerformingPlunge();
-	}
-
-	private bool IsAbleToDie() {
-		return _moveModState != MoveModState.RESPAWN && !IsRecoiling();
-	}
-
-	public bool IsDead() {
+	public bool IsDead()
+	{
 		return _moveModState == MoveModState.RESPAWN;
 	}
 
-	private bool IsOpposingDirection(ZMPlayerController otherPlayer) {
-		return _movementDirection != otherPlayer._movementDirection;
-	}
-
-	private bool ShouldEnable() {
-		return (!_controller.isGrounded && !IsPerformingPlunge () && !IsRecoiling () 
-			&& !IsPerformingLunge () && _moveModState != MoveModState.PARRY_AOE && _moveModState != MoveModState.STUNNED);
-	}
-
-	private bool ShouldRecoilWithPlayer(ZMPlayerController other) {
-		return IsPerformingLunge() && other.IsPerformingLunge();
-	}
-
-	private bool IsAttacking() {
+	private bool IsAttacking()
+	{
 		return  _controlModState == ControlModState.ATTACKING || _controlModState == ControlModState.ATTACK;
+	}
+
+	private bool IsTouchingEitherSide()
+	{
+		return _checkTouchingLeft || _checkTouchingRight;
+	}
+
+	private bool IsMovingLeft()
+	{
+		return _controlMoveState == ControlMoveState.MOVING && _movementDirection == MovementDirectionState.FACING_LEFT;
+	}
+
+	private bool IsMovingRight()
+	{
+		return _controlMoveState == ControlMoveState.MOVING && _movementDirection == MovementDirectionState.FACING_RIGHT;
+	}
+
+	private bool IsTouchingLeftAndMovingLeft()
+	{
+		return _checkTouchingLeft &&  runSpeed < 0;
+	}
+
+	private bool IsTouchingRightAndMovingRight()
+	{
+		return _checkTouchingRight && runSpeed > 0;
+	}
+
+	private bool IsAbleToDie()
+	{
+		return _moveModState != MoveModState.RESPAWN && !IsRecoiling();
+	}
+
+	private bool IsOpposingDirection(ZMPlayerController otherPlayer)
+	{
+		return _movementDirection != otherPlayer._movementDirection;
 	}
 }
