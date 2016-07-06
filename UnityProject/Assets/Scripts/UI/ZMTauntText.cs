@@ -21,7 +21,7 @@ public class ZMTauntText : MonoBehaviour
 		Init();
 		HideTauntText();
 
-		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
+		ZMPlayerController.OnPlayerDeath += HandlePlayerDeathEvent;
 	}
 
 	private void Init()

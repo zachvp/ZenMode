@@ -18,7 +18,7 @@ public class ZMSpawnManager : MonoSingleton<ZMSpawnManager>
 
 		_respawnDelay = Constants.STAGE_RESPAWN_TIME;
 
-		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
+		ZMPlayerController.OnPlayerDeath += HandlePlayerDeathEvent;
 	}
 
 	void Start()

@@ -37,8 +37,8 @@ public class ZMPlayerLabelController : ZMFudgeParentToObject
 		ZMLobbyScoreController.OnReachMaxScore += Deactivate;
 		ZMLobbyController.OnPlayerDropOut += Deactivate;
 
-		ZMPlayerController.PlayerDeathEvent += Deactivate;
-		ZMPlayerController.PlayerRespawnEvent += HandleOnPlayerRespawn;
+		ZMPlayerController.OnPlayerDeath += Deactivate;
+		ZMPlayerController.OnPlayerRespawn += HandleOnPlayerRespawn;
 	}
 
 	private void ClearEvents()
@@ -46,8 +46,8 @@ public class ZMPlayerLabelController : ZMFudgeParentToObject
 		ZMLobbyScoreController.OnReachMaxScore -= Deactivate;
 		ZMLobbyController.OnPlayerDropOut -= Deactivate;
 
-		ZMPlayerController.PlayerDeathEvent -= Deactivate;
-		ZMPlayerController.PlayerRespawnEvent -= HandleOnPlayerRespawn;
+		ZMPlayerController.OnPlayerDeath -= Deactivate;
+		ZMPlayerController.OnPlayerRespawn -= HandleOnPlayerRespawn;
 	}
 
 	private void HandleOnPlayerRespawn(ZMPlayerController controller)

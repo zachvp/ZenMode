@@ -107,7 +107,8 @@ public class ZMPlayerController : ZMPlayerItem
 	public AudioClip _audioLungeFail;
 
 	// DISMEMBERMENT!
-	private GameObject _lowerBodyTemplate, _upperBodyTemplate;
+	private GameObject _lowerBodyTemplate;
+	private GameObject _upperBodyTemplate;
 
 	// Materials
 	private Material _material;
@@ -115,14 +116,14 @@ public class ZMPlayerController : ZMPlayerItem
 
 	// Delegates
 	public static EventHandler<ZMPlayerInfo> OnPlayerCreate;
-	public static EventHandler<ZMPlayerController> PlayerKillEvent;
-	public static EventHandler<ZMPlayerInfo> PlayerDeathEvent;
-	public static EventHandler<ZMPlayerController> PlayerRespawnEvent;
-	public static EventHandler<ZMPlayerController> PlayerEliminatedEvent;
-	public static EventHandler<ZMPlayerController, float> PlayerRecoilEvent;
-	public static EventHandler<ZMPlayerController, float> PlayerStunEvent;
-	public static EventHandler<ZMPlayerController, float> PlayerParryEvent;
-	public static EventHandler PlayerLandPlungeEvent;
+	public static EventHandler<ZMPlayerController> OnPlayerKill;
+	public static EventHandler<ZMPlayerInfo> OnPlayerDeath;
+	public static EventHandler<ZMPlayerController> OnPlayerRespawn;
+	public static EventHandler<ZMPlayerController> OnPlayerEliminated;
+	public static EventHandler<ZMPlayerController, float> OnPlayerRecoil;
+	public static EventHandler<ZMPlayerController, float> OnPlayerStun;
+	public static EventHandler<ZMPlayerController, float> OnPlayerParry;
+	public static EventHandler OnPlayerLandPlunge;
 
 	// Constants
 	private const float EDGE_OFFSET = 16.0f;
@@ -208,14 +209,14 @@ public class ZMPlayerController : ZMPlayerItem
 			if (IsPlunging()) {
 				_audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 
-				Notifier.SendEventNotification(PlayerLandPlungeEvent);
+				Notifier.SendEventNotification(OnPlayerLandPlunge);
 			}
 		}
 
-		// Horizontal movement.
+		// Horizontal movement. Only want to move if we aren't doing some kind of attack
+		// or getting knocked back (recoiling).
 		if (_controlMoveState == ControlMoveState.MOVING && !IsPlunging() && !IsRecoiling())
 		{
-
 			if (_movementDirection == MovementDirectionState.FACING_RIGHT)
 			{
 				if (runSpeed < RUN_SPEED_MAX)
@@ -319,7 +320,7 @@ public class ZMPlayerController : ZMPlayerItem
 				Utilities.ExecuteAfterDelay(EndStunBeginParry, PARRY_STUN_WINDOW);
 				DisableInputWithCallbackDelay(PARRY_STUN_WINDOW + PARRY_TIME);
 
-				Notifier.SendEventNotification(PlayerParryEvent, this, PARRY_STUN_WINDOW + PARRY_TIME);
+				Notifier.SendEventNotification(OnPlayerParry, this, PARRY_STUN_WINDOW + PARRY_TIME);
 			}
 		}
 		else if (_controlModState == ControlModState.NEUTRAL)
@@ -347,10 +348,10 @@ public class ZMPlayerController : ZMPlayerItem
 		{
 			if (_controller.isGrounded)
 			{
+				ZMPlayerController playerController;
 				var recoilOffsetRight = new Vector2(EDGE_OFFSET, -16.0f);
 				var recoilOffsetLeft = new Vector2(-EDGE_OFFSET, -16.0f);
 				var recoilAOE = Environment.CheckRight(transform.position, recoilOffsetRight, AOE_RANGE, _controller.specialInteractibleMask);
-				ZMPlayerController playerController;
 
 				Instantiate(_effectPlungeObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 
@@ -418,12 +419,14 @@ public class ZMPlayerController : ZMPlayerItem
 				LungeLeft();
 			}
 
-			// End the lunge after a delay
+			// End the lunge after a delay so we don't zoom across the map forever.
 			Utilities.StopDelayRoutine(_endLungeCoroutine);
 			_endLungeCoroutine = Utilities.ExecuteAfterDelay(EndLunge, LUNGE_TIME);
 		}
 
-		if (_movementDirection == MovementDirectionState.FACING_RIGHT && (_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND)) {
+		if (_movementDirection == MovementDirectionState.FACING_RIGHT &&
+			(_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND))
+		{
 			var hit = Environment.CheckRight(transform.position, RIGHT_EDGE_OFFSET, 4, _controller.platformMask);
 
 			if (hit && !hit.collider.CompareTag("Breakable"))
@@ -434,7 +437,7 @@ public class ZMPlayerController : ZMPlayerItem
 				EndLunge ();
 			}
 		}
-		if (_movementDirection == MovementDirectionState.FACING_LEFT &&
+		else if (_movementDirection == MovementDirectionState.FACING_LEFT &&
 			(_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND))
 		{
 			var hit = Environment.CheckLeft(transform.position, LEFT_EDGE_OFFSET, 4, _controller.platformMask);
@@ -460,7 +463,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			DisableInputWithCallbackDelay(RECOIL_STUN_TIME);
 
-			Notifier.SendEventNotification(PlayerRecoilEvent, this, RECOIL_STUN_TIME);
+			Notifier.SendEventNotification(OnPlayerRecoil, this, RECOIL_STUN_TIME);
 		}
 		else if (_moveModState == MoveModState.RECOILING)
 		{
@@ -483,7 +486,7 @@ public class ZMPlayerController : ZMPlayerItem
 			Utilities.ExecuteAfterDelay(ResetMoveModState, STUN_TIME);
 			DisableInputWithCallbackDelay(STUN_TIME);
 
-			Notifier.SendEventNotification(PlayerStunEvent, this, STUN_TIME);
+			Notifier.SendEventNotification(OnPlayerStun, this, STUN_TIME);
 		}
 		else if (_moveModState == MoveModState.WALL_SLIDE)
 		{
@@ -585,14 +588,14 @@ public class ZMPlayerController : ZMPlayerItem
 	private void OnDestroy()
 	{
 		OnPlayerCreate = null;
-		PlayerKillEvent = null;
-		PlayerDeathEvent = null;
-		PlayerRespawnEvent = null;
-		PlayerEliminatedEvent = null;
-		PlayerRecoilEvent = null;
-		PlayerStunEvent = null;
-		PlayerParryEvent = null;
-		PlayerLandPlungeEvent = null;
+		OnPlayerKill = null;
+		OnPlayerDeath = null;
+		OnPlayerRespawn = null;
+		OnPlayerEliminated = null;
+		OnPlayerRecoil = null;
+		OnPlayerStun = null;
+		OnPlayerParry = null;
+		OnPlayerLandPlunge = null;
 
 		Resources.UnloadUnusedAssets();
 	}
@@ -951,7 +954,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			_moveModState = MoveModState.ELIMINATED;
 
-			Notifier.SendEventNotification(PlayerEliminatedEvent, this);
+			Notifier.SendEventNotification(OnPlayerEliminated, this);
 		}
 	}
 
@@ -961,7 +964,7 @@ public class ZMPlayerController : ZMPlayerItem
 		
 		transform.position = position;
 		
-		Notifier.SendEventNotification(PlayerRespawnEvent, this);
+		Notifier.SendEventNotification(OnPlayerRespawn, this);
 	}
 
 	// Player state utility methods
@@ -1030,7 +1033,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_controlModState = ControlModState.NEUTRAL;
 		_controlMoveState = ControlMoveState.NEUTRAL;
 
-		Notifier.SendEventNotification(PlayerDeathEvent, _playerInfo);
+		Notifier.SendEventNotification(OnPlayerDeath, _playerInfo);
 
 		Utilities.StopDelayRoutine(_endLungeCoroutine);
 		Utilities.StopDelayRoutine(_resetControlModCoroutine);
@@ -1074,7 +1077,7 @@ public class ZMPlayerController : ZMPlayerItem
 		{
 			playerController.KillSelf(this);
 
-			Notifier.SendEventNotification(PlayerKillEvent, this);
+			Notifier.SendEventNotification(OnPlayerKill, this);
 
 			// add the stat
 			ZMStatTracker.Kills.Add(_playerInfo);

@@ -148,8 +148,8 @@ public class ZMStageScoreController : ZMScoreController
 
 	protected override void AcceptPlayerEvents()
 	{
-		ZMPlayerController.PlayerDeathEvent   += HandlePlayerDeathEvent;
-		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
+		ZMPlayerController.OnPlayerDeath   += HandlePlayerDeathEvent;
+		ZMPlayerController.OnPlayerRespawn += HandlePlayerRespawnEvent;
 	}
 
 	public override void ConfigureItemWithID(int id)

@@ -88,8 +88,8 @@ public class ZMPedestalController : ZMPlayerItem
 
 	protected override void AcceptPlayerEvents()
 	{
-		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
-		ZMPlayerController.PlayerRespawnEvent += HandleSpawnObjectEvent;
+		ZMPlayerController.OnPlayerDeath += HandlePlayerDeathEvent;
+		ZMPlayerController.OnPlayerRespawn += HandleSpawnObjectEvent;
 	}
 
 	// public methods

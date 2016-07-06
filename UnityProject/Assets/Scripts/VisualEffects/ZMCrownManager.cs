@@ -102,8 +102,8 @@ public class ZMCrownManager : MonoBehaviour
 
 	private void AcceptPlayerEvents()
 	{
-		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
-		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
+		ZMPlayerController.OnPlayerDeath += HandlePlayerDeathEvent;
+		ZMPlayerController.OnPlayerRespawn += HandlePlayerRespawnEvent;
 
 		enabled = true;
 	}

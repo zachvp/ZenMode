@@ -60,8 +60,8 @@ public class ZMLobbyScoreController : ZMScoreController
 
 	protected override void AcceptPlayerEvents()
 	{
-		ZMPlayerController.PlayerDeathEvent += HandlePlayerDeathEvent;
-		ZMPlayerController.PlayerRespawnEvent += HandlePlayerRespawnEvent;
+		ZMPlayerController.OnPlayerDeath += HandlePlayerDeathEvent;
+		ZMPlayerController.OnPlayerRespawn += HandlePlayerRespawnEvent;
 	}
 	
 	private void HandlePlayerRespawnEvent(ZMPlayerController playerController)

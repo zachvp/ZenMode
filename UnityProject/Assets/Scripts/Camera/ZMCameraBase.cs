@@ -57,9 +57,9 @@ public class ZMCameraBase : MonoBehaviour
 
 	protected void AcceptPlayerEvents()
 	{
-		ZMPlayerController.PlayerDeathEvent 	 += HandlePlayerDeathEvent;
-		ZMPlayerController.PlayerRecoilEvent 	 += HandlePlayerRecoilEvent;
-		ZMPlayerController.PlayerLandPlungeEvent += HandlePlayerLandPlungeEvent;
+		ZMPlayerController.OnPlayerDeath 	 += HandlePlayerDeathEvent;
+		ZMPlayerController.OnPlayerRecoil 	 += HandlePlayerRecoilEvent;
+		ZMPlayerController.OnPlayerLandPlunge += HandlePlayerLandPlungeEvent;
 	}
 
 	protected void Shake(int frames)

@@ -16,7 +16,7 @@ public class ZMKillCounter : ZMPlayerItem
 		_text = GetComponent<Text>();
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 
-		ZMPlayerController.PlayerKillEvent += HandlePlayerKillEvent;
+		ZMPlayerController.OnPlayerKill += HandlePlayerKillEvent;
 		ZMLobbyController.OnPlayerDropOut += HandleDropOutEvent;
 
 		UpdateUI(0);
