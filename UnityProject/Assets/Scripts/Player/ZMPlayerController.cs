@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ZMPlayer;
 using Core;
+using ZMConfiguration;
 
 [RequireComponent(typeof(ZMPlayerInputController))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -71,17 +72,10 @@ public class ZMPlayerController : ZMPlayerItem
 	private bool _playerInPath;
 	private bool _canStun;
 
-	// Tags and layers.
-	private const string kPlayerTag						    = "Player";
-	private const string kWarpVolumeTag						= "WarpVolume";
-	private const string kGroundLayerMaskName 			    = "Ground";
-	private const string kSpecialInteractiblesLayerMaskName = "SpecialInteractibles";
-	
-	// Methods.
-	private const string kMethodNameEnablePlayer  			= "EnablePlayer";
-	private const string kMethodNameEndLunge 	  			= "EndLunge";
-	private const string kEndParryMethodName				= "EndParry";
-	private const string kGameStateControllerName 			= "GameController";
+	// Coroutines.
+	private Coroutine _enablePlayerCoroutine;
+	private Coroutine _resetControlModCoroutine;
+	private Coroutine _endLungeCoroutine;
 
 	// Protected references.
 	protected Animator _animator;
@@ -311,7 +305,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			if (_controller.isGrounded)
 			{
-				Invoke("EndStunBeginParry", PARRY_STUN_WINDOW);
+				Utilities.ExecuteAfterDelay(EndStunBeginParry, PARRY_STUN_WINDOW);
 				DisableInputWithCallbackDelay(PARRY_STUN_WINDOW + PARRY_TIME);
 
 				Notifier.SendEventNotification(PlayerParryEvent, this, PARRY_STUN_WINDOW + PARRY_TIME);
@@ -370,8 +364,8 @@ public class ZMPlayerController : ZMPlayerItem
 				_moveModState = MoveModState.PARRY_AOE;
 				DisablePlayer();
 
-				Invoke(kMethodNameEnablePlayer, PARRY_TIME_LUNGE);
-				Invoke("ResetControlModState", PARRY_TIME_LUNGE + 0.02f);
+				_enablePlayerCoroutine = Utilities.ExecuteAfterDelay(EnablePlayer, PARRY_TIME_LUNGE);
+				_resetControlModCoroutine = Utilities.ExecuteAfterDelay(ResetControlModState, PARRY_TIME_LUNGE + 0.02f);
 			}
 		}
 		else if (_moveModState == MoveModState.LUNGE)
@@ -384,7 +378,7 @@ public class ZMPlayerController : ZMPlayerItem
 			{
 				if (checkPlayer = CheckRight(145f, _controller.specialInteractibleMask))
 				{
-					if (checkPlayer.collider.CompareTag(kPlayerTag) && !_playerInPath)
+					if (checkPlayer.collider.CompareTag(Tags.kPlayerTag) && !_playerInPath)
 					{
 						_playerInPath = true;
 					}
@@ -396,7 +390,7 @@ public class ZMPlayerController : ZMPlayerItem
 			{
 				if (checkPlayer = CheckLeft(145f, _controller.specialInteractibleMask))
 				{
-					if (checkPlayer.collider.CompareTag(kPlayerTag) && !_playerInPath)
+					if (checkPlayer.collider.CompareTag(Tags.kPlayerTag) && !_playerInPath)
 					{
 						_playerInPath = true;
 					}
@@ -406,8 +400,8 @@ public class ZMPlayerController : ZMPlayerItem
 			}
 
 			// End the lunge after a delay
-			if (IsInvoking(kMethodNameEndLunge)) { CancelInvoke(kMethodNameEndLunge); }
-			Invoke (kMethodNameEndLunge, LUNGE_TIME);
+			Utilities.StopDelayRoutine(_endLungeCoroutine);
+			_endLungeCoroutine = Utilities.ExecuteAfterDelay(EndLunge, LUNGE_TIME);
 		}
 
 		if (_movementDirection == MovementDirectionState.FACING_RIGHT && (_moveModState == MoveModState.LUNGING_AIR || _moveModState == MoveModState.LUNGING_GROUND)) {
@@ -434,7 +428,7 @@ public class ZMPlayerController : ZMPlayerItem
 			Instantiate(_effectClashObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 			_moveModState = MoveModState.RECOILING;
 
-			if (IsInvoking(kMethodNameEndLunge)) CancelInvoke(kMethodNameEndLunge);
+			Utilities.StopDelayRoutine(_endLungeCoroutine);
 
 			Recoil();
 
@@ -453,10 +447,10 @@ public class ZMPlayerController : ZMPlayerItem
 			_controlMoveState = ControlMoveState.NEUTRAL;
 			_audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 
-			if (IsInvoking(kMethodNameEndLunge)) CancelInvoke(kMethodNameEndLunge);
+			Utilities.StopDelayRoutine(_endLungeCoroutine);
 
 			Recoil();
-			Invoke("ResetMoveModState", STUN_TIME);
+			Utilities.ExecuteAfterDelay(ResetMoveModState, STUN_TIME);
 			DisableInputWithCallbackDelay(STUN_TIME);
 
 
@@ -486,7 +480,7 @@ public class ZMPlayerController : ZMPlayerItem
 						_moveModState = MoveModState.NEUTRAL;
 						_canWallJump = false;
 						_canAirLunge = true;
-						Invoke("WallJumpCooldown", 0.05f);
+						Utilities.ExecuteAfterDelay(WallJumpCooldown, 0.05f);
 
 						if (IsMovingLeft()) {
 							runSpeed = WALL_JUMP_KICK_SPEED * 0.6f;
@@ -783,9 +777,9 @@ public class ZMPlayerController : ZMPlayerItem
 			}
 		}
 
-		if (hit.collider.gameObject.layer == LayerMask.NameToLayer(kSpecialInteractiblesLayerMaskName)) {
+		if (hit.collider.gameObject.layer == LayerMask.NameToLayer(LayerMaskNames.kSpecialInteractiblesLayerMaskName)) {
 			if (hit.normal.y == 1.0f) {
-				if (hit.collider.CompareTag(kPlayerTag)) {
+				if (hit.collider.CompareTag(Tags.kPlayerTag)) {
 					ZMPlayerController otherPlayer = hit.collider.GetComponent<ZMPlayerController>();
 
 					if (IsPerformingPlunge()) {
@@ -801,12 +795,12 @@ public class ZMPlayerController : ZMPlayerItem
 			if (hit.normal.x == -1.0f || hit.normal.x == 1.0f) {
 				// See if we hit a player.
 				if (IsPerformingLunge()) {
-					if (hit.collider.CompareTag(kPlayerTag)) {
+					if (hit.collider.CompareTag(Tags.kPlayerTag)) {
 						ZMPlayerController otherPlayer = hit.collider.GetComponent<ZMPlayerController>();
 
 						if (_playerInPath && otherPlayer._playerInPath) {
 							if (_movementDirection != otherPlayer._movementDirection) {
-								CancelInvoke(kMethodNameEndLunge);
+								Utilities.StopDelayRoutine(_endLungeCoroutine);
 								_moveModState = MoveModState.RECOIL;
 							}
 						} else if (otherPlayer._moveModState == MoveModState.PARRY_FACING && IsOpposingDirection(otherPlayer)) {
@@ -830,7 +824,7 @@ public class ZMPlayerController : ZMPlayerItem
 			}
 
 			// Check for collision with volume.
-			if (hit.collider.CompareTag(kWarpVolumeTag)) {
+			if (hit.collider.CompareTag(Tags.kWarpVolume)) {
 				GetComponent<ZMWarpController>().OnTriggerEnterCC2D(hit.collider);
 			}
 		}
@@ -938,9 +932,9 @@ public class ZMPlayerController : ZMPlayerItem
 
 		Notifier.SendEventNotification(PlayerDeathEvent, _playerInfo);
 
-		CancelInvoke(kMethodNameEndLunge);
-		CancelInvoke("ResetControlModState");
-		CancelInvoke(kMethodNameEnablePlayer);
+		Utilities.StopDelayRoutine(_endLungeCoroutine);
+		Utilities.StopDelayRoutine(_resetControlModCoroutine);
+		Utilities.StopDelayRoutine(_enablePlayerCoroutine);
 
 		// Handle death visuals here
 		GetComponent<Renderer>().material.color = Color.red;
@@ -990,7 +984,7 @@ public class ZMPlayerController : ZMPlayerItem
 	private void DisableInputWithCallbackDelay(float delay)
 	{
 		ClearInputEvents();
-        Invoke ("AcceptInputEvents", delay);
+		Utilities.ExecuteAfterDelay(AcceptInputEvents, delay);
 	}
 
 	private void Reset()
@@ -1034,19 +1028,21 @@ public class ZMPlayerController : ZMPlayerItem
 		runSpeed = -LUNGE_SPEED;
 	}
 
-	private void EndLunge() {
+	private void EndLunge()
+	{
+		float lagTime = (_moveModState == MoveModState.LUNGING_AIR ? PARRY_TIME_AIR : PARRY_TIME_LUNGE);
+
 		runSpeed = 0;
 		_playerInPath = false;
 
-		float lagTime = (_moveModState == MoveModState.LUNGING_AIR ? PARRY_TIME_AIR : PARRY_TIME_LUNGE);
 		_moveModState = MoveModState.PARRY_FACING;
 		_controlModState = ControlModState.NEUTRAL;
-		Invoke(kMethodNameEnablePlayer, lagTime);
+		_enablePlayerCoroutine = Utilities.ExecuteAfterDelay(EnablePlayer, lagTime);
 
 		// Set a cooldown before we can lunge again.
-		Invoke ("LungeCooldown", lagTime);
 		_canLunge = false;
 		DisablePlayer();
+		Utilities.ExecuteAfterDelay(LungeCooldown, lagTime);
 	}
 
 	private void EndParry() {
@@ -1056,10 +1052,11 @@ public class ZMPlayerController : ZMPlayerItem
 		_light.color = _baseColor;
 	}
 
-	private void EndStunBeginParry() {
+	private void EndStunBeginParry()
+	{
 		_canStun = false;
 		GetComponent<Renderer>().material = _materialDefault;
-		Invoke(kEndParryMethodName, PARRY_TIME);
+		Utilities.ExecuteAfterDelay(EndParry, PARRY_TIME);
 	}
 
 	private void EndStun() {
@@ -1158,10 +1155,6 @@ public class ZMPlayerController : ZMPlayerItem
 
 	private bool IsOpposingDirection(ZMPlayerController otherPlayer) {
 		return _movementDirection != otherPlayer._movementDirection;
-	}
-
-	private bool ShouldDisableWhenGrounded() {
-		return _moveModState == MoveModState.DISABLE && _controller.isGrounded;
 	}
 
 	private bool ShouldEnable() {

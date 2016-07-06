@@ -84,7 +84,10 @@ namespace Core
 
 		public static void StopDelayRoutine(Coroutine coroutine)
 		{
-			_monoBehavior.StopCoroutine(coroutine);
+			if (coroutine != null)
+			{
+				_monoBehavior.StopCoroutine(coroutine);
+			}
 		}
 
 		// Execute a given method after a delay.

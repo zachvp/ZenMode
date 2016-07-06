@@ -202,9 +202,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startEnabled: 1
   scaleTime: 2
-  minScale: 0.5
+  minScale: 0
   maxScale: 0.99
-  shrinkRate: 0.4
+  shrinkRate: 0.04
 --- !u!114 &11421020
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1850,7 +1850,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: shrinkRate
-      value: 0.4
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_LocalScale.x
@@ -1871,6 +1871,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Color.b
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: minScale
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

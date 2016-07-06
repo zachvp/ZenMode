@@ -32,6 +32,12 @@ namespace ZMConfiguration
 		public const string kPedestal				= "Pedestal";				// TODO: Change legacy name.
 	}
 
+	public static class LayerMaskNames
+	{
+		public const string kSpecialInteractiblesLayerMaskName = "SpecialInteractibles";
+		public const string kGroundLayerMaskName 			   = "Ground";
+	}
+
 	public static class Settings
 	{
 		public static Setting<int> MatchPlayerCount = new Setting<int>("kMatchPlayerCount");
