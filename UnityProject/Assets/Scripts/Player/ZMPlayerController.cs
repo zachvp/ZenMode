@@ -50,7 +50,6 @@ public class ZMPlayerController : ZMPlayerItem
 	private Vector3 _storedVelocity;
 
 	private int _framesUntilStep = 0;
-	private string[] kDeathStrings;
 	private bool _canLunge;
 	private bool _canWallJump;
 	private bool _canAirLunge;
@@ -95,7 +94,6 @@ public class ZMPlayerController : ZMPlayerItem
 	public GameObject _effectClashObject;
 	public GameObject _effectPlungeObject;
 	public ParticleSystem _goreEmitter;
-	public Text _tauntText;
 	public SpriteRenderer _fadeEffect;
 
 	// Sound resources.
@@ -148,7 +146,6 @@ public class ZMPlayerController : ZMPlayerItem
 		_moveModState = MoveModState.NEUTRAL;
 		_fadeSpawnCycleLen = 2;
 
-		InitDeathStrings();
 		GetComponentReferences();
 
 		_canLunge = true;
@@ -590,52 +587,6 @@ public class ZMPlayerController : ZMPlayerItem
 		Resources.UnloadUnusedAssets();
 	}
 
-	// Initialization.
-	private void InitDeathStrings()
-	{
-		kDeathStrings = new string[39];
-
-		kDeathStrings[0] = "OOOAHH";
-		kDeathStrings[1] = "WHOOOP";
-		kDeathStrings[2] = "AYYYEEH";
-		kDeathStrings[3] = "HADOOOP";
-		kDeathStrings[4] = "WHUAAAH";
-		kDeathStrings[5] = "BLARHGH";
-		kDeathStrings[6] = "OUCH";
-		kDeathStrings[7] = "DUN GOOFD";
-		kDeathStrings[8] = "REKT";
-		kDeathStrings[9] = "PWNED";
-		kDeathStrings[10] = "SPLAT";
-		kDeathStrings[11] = "SPLUUSH";
-		kDeathStrings[12] = "ASDF";
-		kDeathStrings[13] = "WHAAUH";
-		kDeathStrings[14] = "AUUGH";
-		kDeathStrings[15] = "WAOOOH";
-		kDeathStrings[16] = "DERP";
-		kDeathStrings[17] = "DISGRACE";
-		kDeathStrings[18] = "DISHONOR";
-		kDeathStrings[19] = "HUUUAP";
-		kDeathStrings[20] = "PUUUAH";
-		kDeathStrings[21] = "AYUUSH";
-		kDeathStrings[22] = "WYAAAH";
-		kDeathStrings[23] = "KWAAAH";
-		kDeathStrings[24] = "HUZZAH";
-		kDeathStrings[25] = "#WINNING";
-		kDeathStrings[26] = "NOOB";
-		kDeathStrings[27] = "ELEGANT";
-		kDeathStrings[28] = "SWIFT";
-		kDeathStrings[29] = "WAHH";
-		kDeathStrings[30] = "OOOOOOHH";
-		kDeathStrings[31] = "POOOOW";
-		kDeathStrings[32] = "YAAAAS";
-		kDeathStrings[33] = "SWOOOP";
-		kDeathStrings[34] = "LOLWUT";
-		kDeathStrings[35] = "SMOOTH";
-		kDeathStrings[36] = "YUUUUS";
-		kDeathStrings[37] = "YEESSS";
-		kDeathStrings[38] = "NOICE";
-	}
-	
 	// Setup.
 	protected void AcceptInputEvents()
 	{
@@ -1021,18 +972,6 @@ public class ZMPlayerController : ZMPlayerItem
 		_audio.PlayOneShot(_audioHurt[Random.Range (0, _audioHurt.Length)]);
 		_audio.PlayOneShot(_audioKill[Random.Range (0, _audioKill.Length)]);
 		_goreEmitter.Play();
-
-		// Handle taunt text.
-		if (_tauntText)
-		{
-			_tauntText.gameObject.SetActive (true);
-			_tauntText.text = kDeathStrings [Random.Range (0, kDeathStrings.Length)];
-			_tauntText.transform.rotation = Quaternion.Euler (new Vector3 (0.0f, 0.0f, Random.Range (-20, 20)));
-			_tauntText.transform.position = new Vector3 (Random.Range (-100, 100), Random.Range (-100, 100), 0.0f);
-
-			StartCoroutine (ScaleTauntText (new Vector3 (1.5f, 1.5f, 1.5f), Vector3.one, 0.05f));
-			Invoke ("HideTauntText", 0.5f);
-		}
 	}
 
 	private void KillOpponent(ZMPlayerController playerController) 
@@ -1052,21 +991,6 @@ public class ZMPlayerController : ZMPlayerItem
 	{
 		ClearInputEvents();
         Invoke ("AcceptInputEvents", delay);
-	}
-
-	private IEnumerator ScaleTauntText(Vector3 start, Vector3 end, float totalTime) {
-		float t = 0;
-		while (t < totalTime) {
-			_tauntText.transform.localScale = Vector3.Lerp(start, end, t / totalTime);
-			yield return null;
-			t += Time.deltaTime;
-		} 
-		_tauntText.transform.localScale = end;
-		yield break;
-	}
-
-	private void HideTauntText() {
-		_tauntText.gameObject.SetActive (false);
 	}
 
 	private void Reset()

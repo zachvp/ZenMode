@@ -21,12 +21,16 @@ public class ZMScaleBehavior : MonoBehaviour
 		enabled = true;
 	}
 
-	protected virtual CoroutineCallback ScaleToTargetOverTime(Vector3 target, float growTime)
+	public virtual CoroutineCallback ScaleToTargetOverTime(Vector3 start, Vector3 end, float growTime)
 	{
-		_scaleCoroutineCallback.coroutine = StartCoroutine(ScaleToTargetOverTimeInternal(transform.localScale,
-												 		   target, growTime));
+		_scaleCoroutineCallback.coroutine = StartCoroutine(ScaleToTargetOverTimeInternal(start, end, growTime));
 
 		return _scaleCoroutineCallback;
+	}
+
+	public virtual CoroutineCallback ScaleToTargetOverTime(Vector3 target, float growTime)
+	{
+		return ScaleToTargetOverTime(transform.localScale, target, growTime);
 	}
 
 	// Scales this object's transform from the start scale to the end scale.
@@ -39,10 +43,11 @@ public class ZMScaleBehavior : MonoBehaviour
 		{
 			// Each frame, this while loop will go through one iteration (note the yield return null).
 			// Each loop iteration interpolates the attached object's scale.
-			t += Time.deltaTime;
 			transform.localScale = Vector3.Lerp(start, end, t / totalTime);
 
 			yield return null;
+
+			t += Time.deltaTime;
 		} 
 
 		// Snap our scale to the desired scale.
