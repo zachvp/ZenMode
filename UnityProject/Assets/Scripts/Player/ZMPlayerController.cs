@@ -697,7 +697,7 @@ public class ZMPlayerController : ZMPlayerItem
 	// Event handling - CCONTROL
 	private void MoveRightEvent()
 	{
-		if (enabled)
+		if (IsAbleToReceiveInput())
 		{
 			_controlMoveState = ControlMoveState.MOVING;
 
@@ -715,7 +715,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 	private void MoveLeftEvent()
 	{
-		if (enabled)
+		if (IsAbleToReceiveInput())
 		{
 			_controlMoveState = ControlMoveState.MOVING;
 
@@ -732,22 +732,25 @@ public class ZMPlayerController : ZMPlayerItem
 
 	private void JumpEvent()
 	{
-		if (_controller.isGrounded) 
+		if (IsAbleToReceiveInput())
 		{
-			if (_controlModState != ControlModState.JUMPING)
+			if (_controller.isGrounded) 
 			{
-				_controlModState = ControlModState.JUMPING;
+				if (_controlModState != ControlModState.JUMPING)
+				{
+					_controlModState = ControlModState.JUMPING;
+				}
 			}
-		}
-		else if (IsTouchingEitherSide() && _canWallJump)
-		{
-			_controlModState = ControlModState.WALL_JUMPING;
+			else if (IsTouchingEitherSide() && _canWallJump)
+			{
+				_controlModState = ControlModState.WALL_JUMPING;
+			}
 		}
 	}
 
 	private void AttackEvent(int direction)
 	{
-		if (!IsAttacking() && _moveModState != MoveModState.RESPAWN)
+		if (!IsAttacking() && IsAbleToReceiveInput())
 		{
 			var forward = new Vector2(direction, 0);
 			RaycastHit2D hit;
@@ -788,7 +791,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 	private void PlungeEvent()
 	{
-		if (!IsAttacking() && _moveModState != MoveModState.RESPAWN)
+		if (!IsAttacking() && IsAbleToReceiveInput())
 		{
 			if (!_controller.isGrounded)
 			{
@@ -813,7 +816,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 	private void ParryEvent()
 	{
-		if (!IsParrying () && _moveModState != MoveModState.RESPAWN)
+		if (!IsParrying () && IsAbleToReceiveInput())
 		{
 			_controlModState = ControlModState.PARRY;
 		}
@@ -1138,13 +1141,15 @@ public class ZMPlayerController : ZMPlayerItem
 		EnablePlayer();
 		SetMovementDirection(transform.position.x < 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
 
-		if (!MatchStateManager.IsPause() && !MatchStateManager.IsEnd()) { AcceptInputEvents(); }
+		if (!MatchStateManager.IsPause() && !MatchStateManager.IsEnd())
+		{
+			AcceptInputEvents();
+		}
 	}
 
 	private void Recoil()
 	{
 		float recoilSpeed = 700f;
-		_velocity.y = JUMP_HEIGHT / 2.0f;
 
 		if (_movementDirection == MovementDirectionState.FACING_LEFT)
 		{
@@ -1154,8 +1159,9 @@ public class ZMPlayerController : ZMPlayerItem
 		{
 			runSpeed = -recoilSpeed;
 		}
-	}
 
+		_velocity.y = JUMP_HEIGHT / 2.0f;
+	}
 
 	private void Plunge()
 	{
