@@ -22,6 +22,7 @@ GameObject:
   - 114: {fileID: 11493886}
   - 122: {fileID: 12251136}
   - 114: {fileID: 11451136}
+  - 114: {fileID: 11452436}
   m_Layer: 10
   m_Name: StagePlayer
   m_TagString: Player
@@ -241,6 +242,17 @@ MonoBehaviour:
     type: 2}
   emitInterval: 6
   emitAtStart: 0
+--- !u!114 &11452436
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 111554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 785c916f68f3b4acfb0eac5a47607b2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11480978
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -311,7 +323,6 @@ MonoBehaviour:
   _effectClashObject: {fileID: 168640, guid: df83d9dbd5bd7473a8f78bd8170e1daa, type: 2}
   _effectPlungeObject: {fileID: 186170, guid: 915da6d3d9b4542f9b1853b021021d77, type: 2}
   _goreEmitter: {fileID: 19851136}
-  _tauntText: {fileID: 0}
   _fadeEffect: {fileID: 21222662, guid: a25f0d9847d3e4802b9ccd591ccc2f45, type: 2}
   _audioJump:
   - {fileID: 8300000, guid: 05fc314cbf0524b2996a454678982d2d, type: 3}

@@ -14,7 +14,7 @@ GameObject:
   m_TagString: PlayerManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &498146
 Transform:
@@ -23,7 +23,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 198146}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -45.2187767, y: 24.2435074, z: .375}
+  m_LocalPosition: {x: -45.218777, y: 24.243507, z: 0.375}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -39,6 +39,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 937ffe7b9f80d8649a78a3ea6c145109, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerTemplate: {fileID: 11480980, guid: a49dbdec2cc6f48f99671821bf4c7d41, type: 2}
   debug: 1
   debugPlayerCount: 2
 --- !u!1001 &100100000
@@ -52,4 +53,3 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 198146}
   m_IsPrefabParent: 1
-  m_IsExploded: 1
