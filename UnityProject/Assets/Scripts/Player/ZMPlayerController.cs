@@ -701,9 +701,15 @@ public class ZMPlayerController : ZMPlayerItem
 		{
 			_controlMoveState = ControlMoveState.MOVING;
 
-			if (_movementDirection == MovementDirectionState.FACING_LEFT) { CheckSkidding (); }
+			if (_movementDirection == MovementDirectionState.FACING_LEFT)
+			{
+				CheckSkidding();
+			}
 
-			if (!IsLunging()) { SetMovementDirection(MovementDirectionState.FACING_RIGHT); }
+			if (!IsLunging())
+			{
+				SetMovementDirection(MovementDirectionState.FACING_RIGHT);
+			}
 		}
 	}
 
@@ -930,18 +936,27 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 	}
 	
-	void onTriggerEnterEvent( Collider2D collider ) {
-		if (collider.CompareTag ("Grass")) {
-			collider.GetComponent<ZMGrassController>().GrassEnter();
-			if (IsLunging() || IsPlunging()) {
-				collider.GetComponent<ZMGrassController>().CutGrass(_playerInfo);
+	void onTriggerEnterEvent(Collider2D collider)
+	{
+		if (collider.CompareTag(Tags.kGrass))
+		{
+			var grassController = collider.GetComponent<ZMGrassController>();
+
+			// Signal that the player has entered the grass.
+			grassController.GrassEnter();
+
+			if (IsLunging() || IsPlunging())
+			{
+				// Cut the grass if the player is attacking.
+				grassController.CutGrass(_playerInfo);
 			}
 		}
 	}
 	
-	void onTriggerExitEvent( Collider2D collider )
+	void onTriggerExitEvent(Collider2D collider)
 	{
-		if (collider.CompareTag ("Grass")) {
+		if (collider.CompareTag(Tags.kGrass))
+		{
 			collider.GetComponent<ZMGrassController>().GrassExit();
 		}
 	}
@@ -1012,15 +1027,36 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 	}
 
-	private void CheckSkidding() {
-		if (_controller.isGrounded) {
-			int direction = (_movementDirection == MovementDirectionState.FACING_RIGHT ? 1 : -1);
-			Quaternion rotation = Quaternion.Euler (new Vector3 (0.0f, (_movementDirection == MovementDirectionState.FACING_RIGHT ? 0.0f : 180.0f), 0.0f));
-			Instantiate (_effectSkidObject, new Vector2 (transform.position.x + 30 * direction, transform.position.y - 20), rotation);
+	private void CheckSkidding()
+	{
+		if (_controller.isGrounded)
+		{
+			var isFacingRight = _movementDirection == MovementDirectionState.FACING_RIGHT;
+			int direction;
+			Quaternion rotation;
+			Vector2 skidEffectPosition;
+			float yRotation;
+
+			if (isFacingRight)
+			{
+				direction = 1;
+				yRotation = 0.0f;
+			}
+			else
+			{
+				direction = -1;
+				yRotation = 180.0f;
+			}
+
+			rotation = Quaternion.Euler (new Vector3 (0.0f, yRotation, 0.0f));
+			skidEffectPosition = new Vector2(transform.position.x + 30 * direction, transform.position.y - 20);
+
+			Instantiate(_effectSkidObject, skidEffectPosition, rotation);
 		}
 	}
 
-	private void AddVelocity(Vector2 velocity) {
+	private void SetVelocity(Vector2 velocity)
+	{
 		runSpeed = velocity.x;
 		_velocity.y = velocity.y;
 	}
