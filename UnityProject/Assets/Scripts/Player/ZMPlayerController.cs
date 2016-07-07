@@ -1210,6 +1210,11 @@ public class ZMPlayerController : ZMPlayerItem
 		EndParry();
 	}
 
+	private bool IsAbleToReceiveInput()
+	{
+		return enabled && _moveModState != MoveModState.RESPAWN && gameObject.activeInHierarchy;
+	}
+
 	private bool IsPlunging()
 	{
 		return _moveModState == MoveModState.PLUNGE || _moveModState == MoveModState.PLUNGING;
