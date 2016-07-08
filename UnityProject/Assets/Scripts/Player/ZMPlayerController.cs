@@ -36,7 +36,7 @@ public class ZMPlayerController : ZMPlayerItem
 	private int FRAMES_PER_STEP = 30;
 
 	private CharacterController2D _controller;
-	private ZMPlayerInputController _inputController;
+	private ZMPlayerInputEventNotifier _inputEventNotifier;
 
 	// Unity component references.
 	private Light _light;
@@ -166,6 +166,8 @@ public class ZMPlayerController : ZMPlayerItem
 		MatchStateManager.OnMatchResume += HandleOnMatchResume;
 		MatchStateManager.OnMatchStart += HandleOnMatchStart;
 		MatchStateManager.OnMatchEnd += HandleOnMatchPause;
+
+		ZMPlayerInputRecorder.OnPlaybackBegin += HandlePlaybackBegin;
 
 		// load resources
 		_upperBodyTemplate = Resources.Load(kBodyUpperHalfPath, typeof(GameObject)) as GameObject;
@@ -603,36 +605,44 @@ public class ZMPlayerController : ZMPlayerItem
 	// Setup.
 	protected void AcceptInputEvents()
 	{
-		_inputController.OnMoveRightEvent += MoveRightEvent;
-		_inputController.OnMoveLeftEvent  += MoveLeftEvent;
-		_inputController.OnNoMoveEvent	  += NoMoveEvent;
-		_inputController.OnJumpEvent	  += JumpEvent;
-		_inputController.OnAttackEvent    += AttackEvent;
-		_inputController.OnPlungeEvent    += PlungeEvent;
-		_inputController.OnParryEvent     += ParryEvent;
+		_inputEventNotifier.OnMoveRightEvent += MoveRightEvent;
+		_inputEventNotifier.OnMoveLeftEvent  += MoveLeftEvent;
+		_inputEventNotifier.OnNoMoveEvent	 += NoMoveEvent;
+		_inputEventNotifier.OnJumpEvent	  	 += JumpEvent;
+		_inputEventNotifier.OnAttackEvent    += AttackEvent;
+		_inputEventNotifier.OnPlungeEvent    += PlungeEvent;
+		_inputEventNotifier.OnParryEvent     += ParryEvent;
 	}
 	
 	protected void ClearInputEvents()
 	{
-		_inputController.OnMoveRightEvent -= MoveRightEvent;
-		_inputController.OnMoveLeftEvent  -= MoveLeftEvent;
-		_inputController.OnNoMoveEvent	  -= NoMoveEvent;
-		_inputController.OnJumpEvent	  -= JumpEvent;
-		_inputController.OnAttackEvent    -= AttackEvent;
-		_inputController.OnPlungeEvent    -= PlungeEvent;
-		_inputController.OnParryEvent     -= ParryEvent;
+		_inputEventNotifier.OnMoveRightEvent -= MoveRightEvent;
+		_inputEventNotifier.OnMoveLeftEvent  -= MoveLeftEvent;
+		_inputEventNotifier.OnNoMoveEvent	 -= NoMoveEvent;
+		_inputEventNotifier.OnJumpEvent	  	 -= JumpEvent;
+		_inputEventNotifier.OnAttackEvent    -= AttackEvent;
+		_inputEventNotifier.OnPlungeEvent    -= PlungeEvent;
+		_inputEventNotifier.OnParryEvent     -= ParryEvent;
 	}
 	
 	private void GetComponentReferences()
-	{
+	{		
 		_animator = GetComponent<Animator>();
 		_material = GetComponent<Renderer>().material;
 		_controller = GetComponent<CharacterController2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _inputController = GetComponent<ZMPlayerInputController>();
 		_light = GetComponent<Light>();
 		_audio = GetComponent<AudioSource>();
+
+		SetInputNotifierToController();
     }
+
+	private void SetInputNotifierToController()
+	{
+		var inputController = GetComponent<ZMPlayerInputController>();
+
+		_inputEventNotifier = inputController._inputEventNotifier;
+	}
 
 	private void UpdateAnimator()
 	{
@@ -681,6 +691,23 @@ public class ZMPlayerController : ZMPlayerItem
 	{
 		EnablePlayer();
 		AcceptInputEvents();
+	}
+
+	private void HandlePlaybackBegin(ZMPlayerInfo info, ZMPlayerInputRecorder recorder)
+	{
+		if (_playerInfo == info)
+		{
+			_inputEventNotifier = recorder._inputEventNotifier;
+			AcceptInputEvents();
+		}
+	}
+
+	private void HandlePlaybackEnd(ZMPlayerInfo info, ZMPlayerInputRecorder recorder)
+	{
+		if (_playerInfo == info)
+		{
+			SetInputNotifierToController();
+		}
 	}
 	
 	private void WallJumpCooldown()

@@ -17,7 +17,7 @@ public class ZMGrassController : MonoBehaviour {
 		StartCoroutine (TranslateGrass (new Vector3(0.0f, -10.0f, 0.0f), Vector3.zero, 0.1f));
 	}
 
-	public void CutGrass (ZMPlayer.ZMPlayerInfo playerInfo) {
+	public void CutGrass (ZMPlayerInfo playerInfo) {
 		_cutEmitter.Play ();
 		GetComponent<SpriteRenderer> ().enabled = false;
 		Destroy (gameObject, 1.0f);

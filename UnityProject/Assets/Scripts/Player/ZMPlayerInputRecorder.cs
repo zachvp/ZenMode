@@ -6,13 +6,12 @@ using System.Collections.Generic;
 [RequireComponent(typeof(ZMPlayerInputController))]
 public class ZMPlayerInputRecorder : MonoBehaviour
 {
-	// Overview
-	//	Record input from InputController every frame
-	//	Stored in class containing EventHandler
-	//	In HandleInputEvent() functions, instances of class get stored in queue
-	//  In update loop, pop items from queue and add to canonical list
-	//  This list stores the action (or lack thereof) every frame
-	//  Possible optimization: store number of times no-op happened.
+	public static EventHandler<ZMPlayerInfo, ZMPlayerInputRecorder> OnPlaybackBegin;
+	public static EventHandler<ZMPlayerInfo, ZMPlayerInputRecorder> OnPlaybackEnd;
+
+	public ZMPlayerInputEventNotifier _inputEventNotifier { get; private set; }
+
+	private ZMPlayerInfo _playerInfo;
 	private ZMPlayerInputController _inputController;
 
 	// Enqueue whenever actual input is received.
@@ -23,11 +22,32 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 
 	void Awake()
 	{
+		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_inputController = GetComponent<ZMPlayerInputController>();
+
+		_inputEventNotifier = new ZMPlayerInputEventNotifier();
 		_inputRecordQueue = new Queue<InputRecord>();
 		_canonicalRecordList = new List<EventRecord>();
 
-		_inputController.OnJumpEvent += HandleJumpEvent;
+		_inputController._inputEventNotifier.OnMoveRightEvent += HandleOnMoveRightEvent;
+		_inputController._inputEventNotifier.OnJumpEvent += HandleJumpEvent;
+	}
+
+	/*
+	OnMoveRightEvent;
+	public EventHandler OnMoveLeftEvent;
+	public EventHandler OnNoMoveEvent;
+	public EventHandler OnJumpEvent;
+	public EventHandler OnPlungeEvent;
+	public EventHandler OnParryEvent;
+
+	public EventHandler<int> OnAttackEvent;
+	*/
+
+	void OnDestroy()
+	{
+		OnPlaybackBegin = null;
+		OnPlaybackEnd = null;
 	}
 
 	void Update()
@@ -76,6 +96,7 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 
 	public void PlaybackInputEvents()
 	{
+		Notifier.SendEventNotification(OnPlaybackBegin, _playerInfo, this);
 		StartCoroutine(PlaybackInputEventsInternal());
 	}
 
@@ -90,28 +111,32 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 			{
 				if (record.inputRecord != null)
 				{
-					_inputController.SendJumpInput();
+					_inputEventNotifier.TriggerEvent(record.inputRecord.entry);
 				}
 
 				yield return null;
 			}
 		}
 
+		Notifier.SendEventNotification(OnPlaybackEnd, _playerInfo, this);
 		yield break;
 	}
 
-	void HandleJumpEvent()
+	private void HandleJumpEvent()
 	{
-		var record = new InputRecord(_inputController.OnJumpEvent);
+		var record = new InputRecord(_inputEventNotifier.OnJumpEvent);
 
+		_inputEventNotifier.OnJumpEvent = _inputController._inputEventNotifier.OnJumpEvent;
 		_inputRecordQueue.Enqueue(record);
 	}
 
-//	_inputController.OnMoveRightEvent;
-//	_inputController.OnMoveLeftEvent;
-//	_inputController.OnNoMoveEvent;
-//	_inputController.OnPlungeEvent;
-//	_inputController.OnParryEvent;
+	private void HandleOnMoveRightEvent()
+	{
+		var record = new InputRecord(_inputEventNotifier.OnMoveRightEvent);
+
+		_inputEventNotifier.OnMoveRightEvent = _inputController._inputEventNotifier.OnMoveRightEvent;
+		_inputRecordQueue.Enqueue(record);
+	}
 }
 
 public class EventRecord

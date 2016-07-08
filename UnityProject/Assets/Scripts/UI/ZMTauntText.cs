@@ -29,7 +29,7 @@ public class ZMTauntText : MonoBehaviour
 		kDeathStrings = Utilities.FileIO.ReadAllLinesFromFile(FILEPATH_TAUNTS);
 	}
 
-	private void HandlePlayerDeathEvent(ZMPlayer.ZMPlayerInfo info)
+	private void HandlePlayerDeathEvent(ZMPlayerInfo info)
 	{
 		var startScale = new Vector3 (1.5f, 1.5f, 1.5f);
 		var endScale = Vector3.one;

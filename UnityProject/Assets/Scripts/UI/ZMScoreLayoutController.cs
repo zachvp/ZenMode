@@ -30,7 +30,7 @@ public class ZMScoreLayoutController : MonoBehaviour
 	{
 		foreach (GameObject item in GameObject.FindGameObjectsWithTag(Tags.kScoreGui))
 		{
-			int index = item.GetComponent<ZMPlayer.ZMPlayerInfo>().ID;
+			int index = item.GetComponent<ZMPlayerInfo>().ID;
 
 			item.gameObject.SetActive(false);
 

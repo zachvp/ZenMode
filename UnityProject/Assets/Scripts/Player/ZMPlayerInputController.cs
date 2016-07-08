@@ -2,9 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using Core;
 
-public class ZMPlayerInputController : ZMDirectionalInput
+public class ZMPlayerInputEventNotifier
 {
-	// Delegates.
 	public EventHandler OnMoveRightEvent;
 	public EventHandler OnMoveLeftEvent;
 	public EventHandler OnNoMoveEvent;
@@ -14,7 +13,34 @@ public class ZMPlayerInputController : ZMDirectionalInput
 
 	public EventHandler<int> OnAttackEvent;
 
+	public ZMPlayerInputEventNotifier()
+	{
+		// Empty
+	}
+
+	public void TriggerEvent(EventHandler handler)
+	{
+		Notifier.SendEventNotification(handler);
+	}
+
+	public void TriggerEvent<T>(EventHandler<T> handler, T param0)
+	{
+		Notifier.SendEventNotification(handler, param0);
+	}
+}
+
+public class ZMPlayerInputController : ZMDirectionalInput
+{
+	public ZMPlayerInputEventNotifier _inputEventNotifier { get; private set; }
+
 	private const float DOT_THRESHOLD = 0.75f;
+
+	protected override void Awake()
+	{
+		base.Awake();
+
+		_inputEventNotifier = new ZMPlayerInputEventNotifier();
+	}
 
 	void Update()
 	{
@@ -23,15 +49,15 @@ public class ZMPlayerInputController : ZMDirectionalInput
 		// Handle horizontal movement.
 		if (dotX > DOT_THRESHOLD)
 		{
-			Notifier.SendEventNotification(OnMoveRightEvent);
+			_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnMoveRightEvent);
 		}
 		else if (dotX < -DOT_THRESHOLD)
 		{
-			Notifier.SendEventNotification(OnMoveLeftEvent);
+			_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnMoveLeftEvent);
 		}
 		else
 		{
-			Notifier.SendEventNotification(OnNoMoveEvent);
+			_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnNoMoveEvent);
 		}
 	}
 
@@ -87,7 +113,7 @@ public class ZMPlayerInputController : ZMDirectionalInput
 		{
 			if (input.Pressed)
 			{
-				Notifier.SendEventNotification(OnJumpEvent);
+				_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnJumpEvent);
 			}
 		}
 	}
@@ -103,19 +129,19 @@ public class ZMPlayerInputController : ZMDirectionalInput
 
 				if (dotY < -DOT_THRESHOLD)
 				{
-					Notifier.SendEventNotification(OnPlungeEvent);
+					_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnPlungeEvent);
 				}
 				else if (dotX > DOT_THRESHOLD)
 				{
-					Notifier.SendEventNotification(OnAttackEvent, 1);
+					_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnAttackEvent, 1);
 				}
 				else if (dotX < -DOT_THRESHOLD)
 				{
-					Notifier.SendEventNotification(OnAttackEvent, -1);
+					_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnAttackEvent, -1);
 				}
 				else
 				{
-					Notifier.SendEventNotification(OnAttackEvent, 0);
+					_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnAttackEvent, 0);
 				}
 			}
 		}
@@ -124,11 +150,5 @@ public class ZMPlayerInputController : ZMDirectionalInput
 	protected override bool IsValidInputControl(ZMInput input)
 	{
 		return input.ID == -1 || input.ID == _playerInfo.ID;
-	}
-
-	// DEBUG HACK
-	public void SendJumpInput()
-	{
-		Notifier.SendEventNotification(OnJumpEvent);
 	}
 }

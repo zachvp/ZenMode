@@ -2,13 +2,13 @@
 using System.Collections;
 
 public class ZMZenStream : MonoBehaviour {
-	private ZMPlayer.ZMPlayerInfo _playerInfo;
+	private ZMPlayerInfo _playerInfo;
 	private ParticleSystem _particleSystem;
 
 	// Use this for initialization
 	void Awake () {
 		_particleSystem = GetComponent<ParticleSystem>();
-		_playerInfo = GetComponent<ZMPlayer.ZMPlayerInfo>();
+		_playerInfo = GetComponent<ZMPlayerInfo>();
 
 		ZMPedestalController.OnActivateEvent += HandleActivateEvent;
 		ZMPedestalController.OnDeactivateEvent += HandleDeactivateEvent;
@@ -38,7 +38,7 @@ public class ZMZenStream : MonoBehaviour {
 
 	private void HandleMaxScoreReachedEvent(ZMLobbyScoreController lobbyScoreController)
 	{
-		if (_playerInfo == lobbyScoreController.GetComponent<ZMPlayer.ZMPlayerInfo>())
+		if (_playerInfo == lobbyScoreController.GetComponent<ZMPlayerInfo>())
 		{
 			if (gameObject != null) {
 				Destroy(gameObject);
