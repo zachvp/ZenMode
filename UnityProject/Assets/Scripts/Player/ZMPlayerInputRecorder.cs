@@ -14,11 +14,11 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 	private ZMPlayerInfo _playerInfo;
 	private ZMPlayerInputController _inputController;
 
-	// Enqueue whenever actual input is received.
-	private Queue<InputRecord> _inputRecordQueue;
+	// Stores all inputs for a frame.
+	private Queue<InputRecord> _frameInputs;
 
-	// Enqueue every frame.
-	private List<EventRecord> _canonicalRecordList;
+	// Archives all frame inputs.
+	private Queue<FrameInputRecord> _canonicalRecord;
 
 	void Awake()
 	{
@@ -26,8 +26,8 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 		_inputController = GetComponent<ZMPlayerInputController>();
 
 		_inputEventNotifier = new ZMPlayerInputEventNotifier();
-		_inputRecordQueue = new Queue<InputRecord>();
-		_canonicalRecordList = new List<EventRecord>();
+		_frameInputs = new Queue<InputRecord>();
+		_canonicalRecord = new Queue<FrameInputRecord>();
 
 		_inputController._inputEventNotifier.OnMoveRightEvent += HandleOnMoveRightEvent;
 		_inputController._inputEventNotifier.OnMoveLeftEvent += HandleOnMoveLeftEvent;
@@ -47,50 +47,21 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 		OnPlaybackEnd = null;
 	}
 
-	void Update()
+	void LateUpdate()
 	{
-		var canonicalRecordCount = _canonicalRecordList.Count;
-		InputRecord inputRecord = null;
-		EventRecord eventRecord = new EventRecord(null);
+		// All the input events for the frame have been captured. Time to log them.
+		FrameInputRecord frameRecord;
+		Queue<InputRecord> frameInputs = new Queue<InputRecord>(_frameInputs);
 
-		if (_inputRecordQueue.Count > 0)
-		{
-			inputRecord = _inputRecordQueue.Dequeue();
-			eventRecord.inputRecord = inputRecord;
+		frameRecord = new FrameInputRecord(frameInputs);
 
-			Debug.LogFormat("input count: {0}", _inputRecordQueue.Count);
-		}
-			
-		if (canonicalRecordCount > 0)
-		{
-			var previousRecord = _canonicalRecordList[canonicalRecordCount - 1];
-
-			if (inputRecord == previousRecord.inputRecord)
-			{
-				// Duplicate records, so increment the count.
-				previousRecord.repetitionCount += 1;
-			}
-			else
-			{
-				// We have a new entry because our current record does not match our previous.
-				_canonicalRecordList.Add(eventRecord);
-			}
-		}
-		else
-		{
-			// We can't possibly have a repetition since this is the first entry.
-			_canonicalRecordList.Add(eventRecord);
-		}
+		_canonicalRecord.Enqueue(frameRecord);
+		_frameInputs.Clear();
 
 		if (Input.GetKeyDown(KeyCode.P))
 		{
 			PlaybackInputEvents();
 		}
-	}
-
-	private void ProcessInputRecord()
-	{
-		
 	}
 
 	public void PlaybackInputEvents()
@@ -101,19 +72,22 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 
 	private IEnumerator PlaybackInputEventsInternal()
 	{
-		var canonicalRecordCopy = new List<EventRecord>(_canonicalRecordList);
+		var canonicalRecord = new Queue<FrameInputRecord>(_canonicalRecord);
 
-		foreach (EventRecord record in canonicalRecordCopy)
+		while (canonicalRecord.Count > 0)
 		{
-			for (int i = 0; i < record.repetitionCount; ++i)
-			{
-				if (record.inputRecord != null)
-				{
-					_inputEventNotifier.TriggerEvent(record.inputRecord.entry);
-				}
+			// Get the record for a frame.
+			var frameRecord = canonicalRecord.Dequeue();
 
-				yield return null;
+			// Playback all inputs from that frame.
+			while (frameRecord.record.Count > 0)
+			{
+				var inputRecord = frameRecord.record.Dequeue();
+
+				_inputEventNotifier.TriggerEvent(inputRecord.entry);
 			}
+
+			yield return null;
 		}
 
 		Notifier.SendEventNotification(OnPlaybackEnd, _playerInfo, this);
@@ -122,42 +96,37 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 
 	private void HandleOnMoveRightEvent()
 	{
-		var record = new InputRecord(_inputEventNotifier.OnMoveRightEvent);
+		var record = new InputRecord(_inputController._inputEventNotifier.OnMoveRightEvent);
 
-		_inputEventNotifier.OnMoveRightEvent = _inputController._inputEventNotifier.OnMoveRightEvent;
-		_inputRecordQueue.Enqueue(record);
+		_frameInputs.Enqueue(record);
 	}
 
 	private void HandleOnMoveLeftEvent()
 	{
-		var record = new InputRecord(_inputEventNotifier.OnMoveLeftEvent);
+		var record = new InputRecord(_inputController._inputEventNotifier.OnMoveLeftEvent);
 
-		_inputEventNotifier.OnMoveLeftEvent = _inputController._inputEventNotifier.OnMoveLeftEvent;
-		_inputRecordQueue.Enqueue(record);
+		_frameInputs.Enqueue(record);
 	}
 
 	private void HandleNoMoveEvent()
 	{
-		var record = new InputRecord(_inputEventNotifier.OnNoMoveEvent);
+		var record = new InputRecord(_inputController._inputEventNotifier.OnNoMoveEvent);
 
-		_inputEventNotifier.OnNoMoveEvent = _inputController._inputEventNotifier.OnNoMoveEvent;
-		_inputRecordQueue.Enqueue(record);
+		_frameInputs.Enqueue(record);
 	}
 
 	private void HandleJumpEvent()
 	{
-		var record = new InputRecord(_inputEventNotifier.OnJumpEvent);
+		var record = new InputRecord(_inputController._inputEventNotifier.OnJumpEvent);
 
-		_inputEventNotifier.OnJumpEvent = _inputController._inputEventNotifier.OnJumpEvent;
-		_inputRecordQueue.Enqueue(record);
+		_frameInputs.Enqueue(record);
 	}
 
 	private void HandlePlungeEvent()
 	{
-		var record = new InputRecord(_inputEventNotifier.OnPlungeEvent);
+		var record = new InputRecord(_inputController._inputEventNotifier.OnPlungeEvent);
 
-		_inputEventNotifier.OnPlungeEvent = _inputController._inputEventNotifier.OnPlungeEvent;
-		_inputRecordQueue.Enqueue(record);
+		_frameInputs.Enqueue(record);
 	}
 
 	private void HandleAttackEvent(int direction)
@@ -166,18 +135,13 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 	}
 }
 
-public class EventRecord
+public class FrameInputRecord
 {
-	// The (possibly null) event record.
-	public InputRecord inputRecord;
+	public Queue<InputRecord> record;
 
-	// How many successive frames this event was recorded.
-	public uint repetitionCount;
-
-	public EventRecord(InputRecord record)
+	public FrameInputRecord(Queue<InputRecord> inputRecord)
 	{
-		inputRecord = record;
-		repetitionCount = 1;
+		record = inputRecord;
 	}
 }
 

@@ -715,6 +715,7 @@ public class ZMPlayerController : ZMPlayerItem
 	{
 		if (_playerInfo == info)
 		{
+//			ClearInputEvents();
 			SetInputNotifierToController();
 			AcceptInputEvents();
 		}
