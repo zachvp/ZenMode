@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace Core
 {
@@ -61,6 +62,20 @@ namespace Core
 				if (_textUI == null) { _textMesh.color = value; }
 				else { _textUI.color = value; }
 			}
+		}
+	}
+
+	public class StoreTransform
+	{
+		public Vector3 position;
+		public Quaternion rotation;
+		public Vector3 localScale;
+
+		public StoreTransform(Transform transform)
+		{
+			position = transform.position;
+			rotation = transform.rotation;
+			localScale = transform.localScale;
 		}
 	}
 
@@ -196,6 +211,12 @@ namespace Core
 		public static GameObject[] GetAllGameObjectsInScene()
 		{
 			return GameObject.FindObjectsOfType(typeof (GameObject)) as GameObject[];
+		}
+
+		public static string GetVariableName<T>(Expression<Func<T>> variableExpression)
+		{
+			var expressionBody = (MemberExpression) variableExpression.Body;
+			return expressionBody.Member.Name;
 		}
 
 		// All filepaths here are relative to Unity's "Assets/Resources" folder.

@@ -137,6 +137,7 @@ public class ZMPlayerController : ZMPlayerItem
 	private SpriteRenderer _spriteRenderer;
 	private Color _baseColor;
 
+	private StoreTransform _initialTransform;
 	private Vector3 _posPrevious;
 	private int _fadeSpawnCycleLen;
 	private int _fadeSpawnIndex;
@@ -168,6 +169,7 @@ public class ZMPlayerController : ZMPlayerItem
 		MatchStateManager.OnMatchEnd += HandleOnMatchPause;
 
 		ZMPlayerInputRecorder.OnPlaybackBegin += HandlePlaybackBegin;
+		ZMPlayerInputRecorder.OnPlaybackEnd += HandlePlaybackEnd;
 
 		// load resources
 		_upperBodyTemplate = Resources.Load(kBodyUpperHalfPath, typeof(GameObject)) as GameObject;
@@ -185,6 +187,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 		_material.color = Color.black;
 
+		_initialTransform = new StoreTransform(transform);
 		Notifier.SendEventNotification(OnPlayerCreate, _playerInfo);
 	}
 
@@ -697,6 +700,12 @@ public class ZMPlayerController : ZMPlayerItem
 	{
 		if (_playerInfo == info)
 		{
+			transform.position = _initialTransform.position;
+			transform.rotation = _initialTransform.rotation;
+			transform.localScale = _initialTransform.localScale;
+
+			// Configure the input notifier to be set to the recorder.
+			ClearInputEvents();
 			_inputEventNotifier = recorder._inputEventNotifier;
 			AcceptInputEvents();
 		}
@@ -707,6 +716,7 @@ public class ZMPlayerController : ZMPlayerItem
 		if (_playerInfo == info)
 		{
 			SetInputNotifierToController();
+			AcceptInputEvents();
 		}
 	}
 	

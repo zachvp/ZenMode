@@ -13,9 +13,17 @@ public class ZMPlayerInputEventNotifier
 
 	public EventHandler<int> OnAttackEvent;
 
+	private Dictionary<string, EventHandler> _inputEvents;
+
 	public ZMPlayerInputEventNotifier()
 	{
-		// Empty
+		_inputEvents = new Dictionary<string, EventHandler>();
+		_inputEvents.Add(Utilities.GetVariableName(() => OnMoveRightEvent), OnMoveRightEvent);
+		_inputEvents.Add(Utilities.GetVariableName(() => OnMoveLeftEvent), OnMoveLeftEvent);
+		_inputEvents.Add(Utilities.GetVariableName(() => OnNoMoveEvent), OnNoMoveEvent);
+		_inputEvents.Add(Utilities.GetVariableName(() => OnJumpEvent), OnJumpEvent);
+		_inputEvents.Add(Utilities.GetVariableName(() => OnPlungeEvent), OnPlungeEvent);
+		_inputEvents.Add(Utilities.GetVariableName(() => OnParryEvent), OnParryEvent);
 	}
 
 	public void TriggerEvent(EventHandler handler)
@@ -26,6 +34,18 @@ public class ZMPlayerInputEventNotifier
 	public void TriggerEvent<T>(EventHandler<T> handler, T param0)
 	{
 		Notifier.SendEventNotification(handler, param0);
+	}
+
+	public EventHandler GetInputEventForKey(string key)
+	{
+		EventHandler result = null;
+
+		if (!_inputEvents.TryGetValue(key, out result))
+		{
+			Debug.LogErrorFormat("ZMPlayerInputEventNotifier: Unable to find input event for key {0}", key);
+		}
+
+		return result;
 	}
 }
 

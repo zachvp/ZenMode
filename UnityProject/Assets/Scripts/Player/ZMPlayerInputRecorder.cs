@@ -30,17 +30,14 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 		_canonicalRecordList = new List<EventRecord>();
 
 		_inputController._inputEventNotifier.OnMoveRightEvent += HandleOnMoveRightEvent;
+		_inputController._inputEventNotifier.OnMoveLeftEvent += HandleOnMoveLeftEvent;
+		_inputController._inputEventNotifier.OnNoMoveEvent += HandleNoMoveEvent;
 		_inputController._inputEventNotifier.OnJumpEvent += HandleJumpEvent;
+		_inputController._inputEventNotifier.OnPlungeEvent += HandlePlungeEvent;
+		_inputController._inputEventNotifier.OnAttackEvent += HandleAttackEvent;
 	}
 
 	/*
-	OnMoveRightEvent;
-	public EventHandler OnMoveLeftEvent;
-	public EventHandler OnNoMoveEvent;
-	public EventHandler OnJumpEvent;
-	public EventHandler OnPlungeEvent;
-	public EventHandler OnParryEvent;
-
 	public EventHandler<int> OnAttackEvent;
 	*/
 
@@ -52,40 +49,35 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 
 	void Update()
 	{
+		var canonicalRecordCount = _canonicalRecordList.Count;
+		InputRecord inputRecord = null;
+		EventRecord eventRecord = new EventRecord(null);
+
 		if (_inputRecordQueue.Count > 0)
 		{
-			// We got input last frame, so add it to the canonical record.
-			var inputRecord = _inputRecordQueue.Dequeue();
-			var eventRecord = new EventRecord(inputRecord);
-
-			_canonicalRecordList.Add(eventRecord);
+			inputRecord = _inputRecordQueue.Dequeue();
+			eventRecord.inputRecord = inputRecord;
 		}
-		else
+
+		if (canonicalRecordCount > 0)
 		{
-			var canonicalRecordCount = _canonicalRecordList.Count;
+			var previousRecord = _canonicalRecordList[canonicalRecordCount - 1];
 
-			// We didn't get any input last frame, let's see if we didn't get input two frames ago.
-			if (canonicalRecordCount > 1)
+			if (inputRecord == previousRecord.inputRecord)
 			{
-				var checkRecord = _canonicalRecordList[canonicalRecordCount - 2];
-
-				if (checkRecord.inputRecord == null)
-				{
-					// We didn't get any input two frames ago either, so let's increment that count.
-					checkRecord.repetitionCount += 1;
-				}
-				else
-				{
-					// We did get input two frames ago, but not this time, so let's add a new null record.
-					var nullRecord = new EventRecord(null);
-					_canonicalRecordList.Add(nullRecord);
-				}
+				// Duplicate records, so increment the count.
+				previousRecord.repetitionCount += 1;
 			}
 			else
 			{
-				var nullRecord = new EventRecord(null);
-				_canonicalRecordList.Add(nullRecord);
+				// We have a new entry because our current record does not match our previous.
+				_canonicalRecordList.Add(eventRecord);
 			}
+		}
+		else
+		{
+			// We can't possibly have a repetition since this is the first entry.
+			_canonicalRecordList.Add(eventRecord);
 		}
 
 		if (Input.GetKeyDown(KeyCode.P))
@@ -102,11 +94,10 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 
 	private IEnumerator PlaybackInputEventsInternal()
 	{
-		List<EventRecord> canonicalRecordCopy = new List<EventRecord>(_canonicalRecordList);
+		var canonicalRecordCopy = new List<EventRecord>(_canonicalRecordList);
 
 		foreach (EventRecord record in canonicalRecordCopy)
 		{
-			// TODO: Account for more than one repetition count.
 			for (int i = 0; i < record.repetitionCount; ++i)
 			{
 				if (record.inputRecord != null)
@@ -122,6 +113,30 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 		yield break;
 	}
 
+	private void HandleOnMoveRightEvent()
+	{
+		var record = new InputRecord(_inputEventNotifier.OnMoveRightEvent);
+
+		_inputEventNotifier.OnMoveRightEvent = _inputController._inputEventNotifier.OnMoveRightEvent;
+		_inputRecordQueue.Enqueue(record);
+	}
+
+	private void HandleOnMoveLeftEvent()
+	{
+		var record = new InputRecord(_inputEventNotifier.OnMoveLeftEvent);
+
+		_inputEventNotifier.OnMoveLeftEvent = _inputController._inputEventNotifier.OnMoveLeftEvent;
+		_inputRecordQueue.Enqueue(record);
+	}
+
+	private void HandleNoMoveEvent()
+	{
+		var record = new InputRecord(_inputEventNotifier.OnNoMoveEvent);
+
+		_inputEventNotifier.OnNoMoveEvent = _inputController._inputEventNotifier.OnNoMoveEvent;
+		_inputRecordQueue.Enqueue(record);
+	}
+
 	private void HandleJumpEvent()
 	{
 		var record = new InputRecord(_inputEventNotifier.OnJumpEvent);
@@ -130,12 +145,17 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 		_inputRecordQueue.Enqueue(record);
 	}
 
-	private void HandleOnMoveRightEvent()
+	private void HandlePlungeEvent()
 	{
-		var record = new InputRecord(_inputEventNotifier.OnMoveRightEvent);
+		var record = new InputRecord(_inputEventNotifier.OnPlungeEvent);
 
-		_inputEventNotifier.OnMoveRightEvent = _inputController._inputEventNotifier.OnMoveRightEvent;
+		_inputEventNotifier.OnPlungeEvent = _inputController._inputEventNotifier.OnPlungeEvent;
 		_inputRecordQueue.Enqueue(record);
+	}
+
+	private void HandleAttackEvent(int direction)
+	{
+		// TODO: Maybe just separate attack into separate calls.
 	}
 }
 
@@ -154,12 +174,53 @@ public class EventRecord
 	}
 }
 
-public class InputRecord
+public class InputRecord : System.IComparable
 {
 	public EventHandler entry;
 
 	public InputRecord(EventHandler recordedEvent)
 	{
 		entry = recordedEvent;
+	}
+
+	public override bool Equals(System.Object other)
+	{
+		var otherRecord = other as InputRecord;
+
+		if (otherRecord == null) { return false; }
+
+		return entry == otherRecord.entry;
+	}
+
+	public override int GetHashCode()
+	{
+		return entry.GetHashCode();
+	}
+
+	public static bool operator ==(InputRecord lhs, InputRecord rhs)
+	{
+		// Automatically equal if same reference (or both null).
+		if (System.Object.ReferenceEquals(lhs, rhs)) { return true; }
+
+		// If one is null, but not both, return false.
+		if ((object) lhs == null || (object) rhs == null) { return false; }
+
+		return lhs.entry == rhs.entry;
+	}
+
+	public static bool operator !=(InputRecord lhs, InputRecord rhs)
+	{
+		return !(lhs == rhs);
+	}
+
+	int System.IComparable.CompareTo(object other)
+	{
+		var otherRecord = (InputRecord) other;
+		int result = 0;
+
+		if (otherRecord == null && this != null) { result = 1; }
+		else if (otherRecord != null && this == null) { result = -1; }
+
+		return result;
 	}
 }
