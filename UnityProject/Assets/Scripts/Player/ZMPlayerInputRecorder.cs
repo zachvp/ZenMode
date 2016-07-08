@@ -50,10 +50,8 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 	void LateUpdate()
 	{
 		// All the input events for the frame have been captured. Time to log them.
-		FrameInputRecord frameRecord;
-		Queue<InputRecord> frameInputs = new Queue<InputRecord>(_frameInputs);
-
-		frameRecord = new FrameInputRecord(frameInputs);
+		var frameInputs = new Queue<InputRecord>(_frameInputs);
+		var frameRecord = new FrameInputRecord(frameInputs);
 
 		_canonicalRecord.Enqueue(frameRecord);
 		_frameInputs.Clear();
