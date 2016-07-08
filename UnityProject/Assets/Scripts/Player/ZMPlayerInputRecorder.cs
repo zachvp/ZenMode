@@ -57,8 +57,10 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 		{
 			inputRecord = _inputRecordQueue.Dequeue();
 			eventRecord.inputRecord = inputRecord;
-		}
 
+			Debug.LogFormat("input count: {0}", _inputRecordQueue.Count);
+		}
+			
 		if (canonicalRecordCount > 0)
 		{
 			var previousRecord = _canonicalRecordList[canonicalRecordCount - 1];
@@ -84,6 +86,11 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 		{
 			PlaybackInputEvents();
 		}
+	}
+
+	private void ProcessInputRecord()
+	{
+		
 	}
 
 	public void PlaybackInputEvents()
@@ -176,6 +183,7 @@ public class EventRecord
 
 public class InputRecord : System.IComparable
 {
+	// Make this a list/array of objects? Index 0 = no args, index 1 = 1 arg...
 	public EventHandler entry;
 
 	public InputRecord(EventHandler recordedEvent)

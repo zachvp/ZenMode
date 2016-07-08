@@ -20,9 +20,11 @@ public class ZMStatDisplay : MonoBehaviour {
 
 	void Start()
 	{
-		for (int i = 0; i < Constants.MAX_PLAYERS; ++i)
+		for (int i = 0; i < _allPlayerInfo.Length && i < ZMPlayerManager.Instance.Players.Length; ++i)
 		{
-			_allPlayerInfo[i] = ZMPlayerManager.Instance.Players[i].GetComponent<ZMPlayerInfo>();
+			var player = ZMPlayerManager.Instance.Players[i];
+
+			_allPlayerInfo[i] = player.GetComponent<ZMPlayerInfo>();
 		}
 	}
 
