@@ -6,8 +6,8 @@ using ZMPlayer;
 
 public class ZMStageScoreController : ZMScoreController
 {
-	public static EventHandler<ZMPlayerInfo> CanScoreEvent;
-	public static EventHandler<ZMPlayerInfo> CanDrainEvent;
+	public static EventHandler<ZMPlayerInfoEventArgs> CanScoreEvent;
+	public static EventHandler<ZMPlayerInfoEventArgs> CanDrainEvent;
 
 	// States
 	private enum ZoneState   { INACTIVE, ACTIVE };
@@ -40,6 +40,8 @@ public class ZMStageScoreController : ZMScoreController
 
 	void FixedUpdate()
 	{
+		var infoArgs = new ZMPlayerInfoEventArgs(_playerInfo);
+
 		// Score checks.
 		if (IsAbleToScore())
 		{
@@ -47,14 +49,14 @@ public class ZMStageScoreController : ZMScoreController
 			{
 				_pointState = PointState.GAINING;
 				
-				Notifier.SendEventNotification(CanScoreEvent, _playerInfo);
+				Notifier.SendEventNotification(CanScoreEvent, infoArgs);
 			}
 		}
 		else if (_pointState != PointState.NEUTRAL)
 		{
 			_pointState = PointState.NEUTRAL;
 			
-			Notifier.SendEventNotification(OnStopScore, _playerInfo);
+			Notifier.SendEventNotification(OnStopScore, infoArgs);
 		}
 		
 		// state handling
@@ -80,7 +82,7 @@ public class ZMStageScoreController : ZMScoreController
 		}
 		else if (_pointState == PointState.LOSING)
 		{
-			Notifier.SendEventNotification(CanDrainEvent, _playerInfo);
+			Notifier.SendEventNotification(CanDrainEvent, infoArgs);
 		}
 		
 		// player score checks
@@ -88,7 +90,7 @@ public class ZMStageScoreController : ZMScoreController
 		{
 			_goalState = GoalState.MIN;
 
-			Notifier.SendEventNotification(OnReachMinScore, _playerInfo);
+			Notifier.SendEventNotification(OnReachMinScore, infoArgs);
 		}
 		
 		if (_totalScore >= MAX_SCORE && !IsMaxed())
@@ -104,7 +106,7 @@ public class ZMStageScoreController : ZMScoreController
 			// Assumes total score clamped to max score.
 			if (_totalScore == MAX_SCORE) { MatchStateManager.EndMatch(); }
 
-			Notifier.SendEventNotification(OnReachMaxScore, _playerInfo);
+			Notifier.SendEventNotification(OnReachMaxScore, infoArgs);
 		}
 	}
 
@@ -165,17 +167,17 @@ public class ZMStageScoreController : ZMScoreController
 	private bool IsMaxed() { return _goalState == GoalState.MAX || _goalState == GoalState.MAXED; }
 	
 	// event handlers
-	private void HandlePlayerDeathEvent(ZMPlayerInfo info)
+	private void HandlePlayerDeathEvent(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			_targetState = TargetState.DEAD;
 		}
 	}
 	
-	private void HandlePlayerRespawnEvent(ZMPlayerController playerController)
+	private void HandlePlayerRespawnEvent(ZMPlayerControllerEventArgs args)
 	{
-		if (playerController.gameObject.Equals(gameObject))
+		if (args.controller.gameObject.Equals(gameObject))
 		{
 			_targetState = TargetState.ALIVE;
 			_pointState = PointState.NEUTRAL;
@@ -187,16 +189,20 @@ public class ZMStageScoreController : ZMScoreController
 		enabled = false;
 	}
 	
-	private void HandlePedestalDeactivation(ZMPedestalController pedestalController)
+	private void HandlePedestalDeactivation(MonoBehaviourEventArgs args)
 	{
+		var pedestalController = args.behavior as ZMPedestalController;
+
 		if (_playerInfo == pedestalController.PlayerInfo)
 		{
 			RemoveSoul(pedestalController);
 		}
 	}
 	
-	private void HandleSoulDestroyedEvent(ZMSoul soul)
+	private void HandleSoulDestroyedEvent(MonoBehaviourEventArgs args)
 	{
+		var soul = args.behavior as ZMSoul;
+
 		RemoveSoul(soul);
 	}
 	

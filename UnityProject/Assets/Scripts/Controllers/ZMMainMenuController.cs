@@ -58,7 +58,7 @@ public class ZMMainMenuController : ZMTextMenu
 		}
 	}
 
-	private void HandleStartInputEvent(int controlIndex)
+	private void HandleStartInputEvent(IntEventArgs args)
 	{
 		BeginGame();
 	}

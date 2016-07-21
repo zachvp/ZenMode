@@ -22,17 +22,17 @@ public class ZMKillCounter : ZMPlayerItem
 		UpdateUI(0);
 	}
 
-	private void HandleDropOutEvent(ZMPlayerInfo info)
+	private void HandleDropOutEvent(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			UpdateUI(0);
 		}
 	}
 
-	private void HandlePlayerKillEvent(ZMPlayerController killer)
+	private void HandlePlayerKillEvent(ZMPlayerControllerEventArgs args)
 	{
-		if (_playerInfo == killer.PlayerInfo)
+		if (_playerInfo == args.controller.PlayerInfo)
 		{
 			UpdateUI(_kills + 1);
 		}

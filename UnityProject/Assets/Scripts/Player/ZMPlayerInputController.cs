@@ -11,11 +11,23 @@ public class ZMPlayerInputEventNotifier
 	public EventHandler OnPlungeEvent;
 	public EventHandler OnParryEvent;
 
-	public EventHandler<int> OnAttackEvent;
+	public EventHandler<IntEventArgs> OnAttackEvent;
+
+	public string OnMoveRightString
+	{
+		get { return Utilities.GetVariableName(() => OnMoveRightEvent); }
+	}
+
+	private Dictionary<string, EventHandler> _noArgMapping;
+	private Dictionary<string, EventHandler<EventArgs>> _argMapping;
 
 	public ZMPlayerInputEventNotifier()
 	{
 		// Empty
+		_noArgMapping = new Dictionary<string, EventHandler>();
+		_argMapping = new Dictionary<string, EventHandler<EventArgs>>();
+
+		_noArgMapping.Add(OnMoveRightString, OnMoveRightEvent);
 	}
 
 	public void TriggerEvent(EventHandler handler)
@@ -23,9 +35,24 @@ public class ZMPlayerInputEventNotifier
 		Notifier.SendEventNotification(handler);
 	}
 
-	public void TriggerEvent<T>(EventHandler<T> handler, T param0)
+	public void TriggerEvent<T>(EventHandler<T> handler, T args)
 	{
-		Notifier.SendEventNotification(handler, param0);
+		Notifier.SendEventNotification(handler, args);
+	}
+
+	public void TriggerEventWithString(string eventString)
+	{
+		EventHandler eventHandler;
+		EventHandler<EventArgs> eventHandlerOneArg;
+
+		if (_noArgMapping.TryGetValue(eventString, out eventHandler))
+		{
+			TriggerEvent(eventHandler);
+		}
+		else if (_argMapping.TryGetValue(eventString, out eventHandlerOneArg))
+		{
+//			TriggerEvent(eventHandlerOneArg, );
+		}
 	}
 }
 
@@ -93,55 +120,60 @@ public class ZMPlayerInputController : ZMDirectionalInput
 	}
 
 	// Handlers.
-	protected override void HandleOnMoveUp(ZMInput input)
+	protected override void HandleOnMoveUp(ZMInputEventArgs args)
 	{
-		base.HandleOnMoveUp(input);
+		base.HandleOnMoveUp(args);
 
-		HandleOnJump(input);
+		HandleOnJump(args);
 	}
 
-	protected override void HandleOnMoveDown(ZMInput input)
+	protected override void HandleOnMoveDown(ZMInputEventArgs args)
 	{
-		base.HandleOnMoveDown(input);
+		base.HandleOnMoveDown(args);
 
-		HandleOnAttack(input);
+		HandleOnAttack(args);
 	}
 
-	private void HandleOnJump(ZMInput input)
+	private void HandleOnJump(ZMInputEventArgs args)
 	{
-		if (IsValidInputControl(input))
+		if (IsValidInputControl(args.input))
 		{
-			if (input.Pressed)
+			if (args.input.Pressed)
 			{
 				_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnJumpEvent);
 			}
 		}
 	}
 
-	private void HandleOnAttack(ZMInput input)
+	private void HandleOnAttack(ZMInputEventArgs args)
 	{
-		if (IsValidInputControl(input))
+		if (IsValidInputControl(args.input))
 		{
-			if (input.Pressed)
+			if (args.input.Pressed)
 			{
 				var dotX = Vector2.Dot(_movement, Vector2.right);
 				var dotY = Vector2.Dot(_movement, Vector2.up);
+				var notifyArgs = new IntEventArgs(0);
 
 				if (dotY < -DOT_THRESHOLD)
 				{
+					// Excepting plunge case.
 					_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnPlungeEvent);
 				}
 				else if (dotX > DOT_THRESHOLD)
 				{
-					_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnAttackEvent, 1);
+					notifyArgs.value = 1;
+					_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnAttackEvent, notifyArgs);
 				}
 				else if (dotX < -DOT_THRESHOLD)
 				{
-					_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnAttackEvent, -1);
+					notifyArgs.value = -1;
+					_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnAttackEvent, notifyArgs);
 				}
 				else
 				{
-					_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnAttackEvent, 0);
+					// Default lunge case.
+					_inputEventNotifier.TriggerEvent(_inputEventNotifier.OnAttackEvent, notifyArgs);
 				}
 			}
 		}

@@ -27,17 +27,17 @@ public class ZMColorFade : MonoBehaviour
 		ZMStageScoreController.OnReachMinScore += HandleMinScoreReached;
 	}
 
-	void HandleStopScoreEvent(ZMPlayerInfo info)
+	void HandleStopScoreEvent(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			_fadingIn = false;
 		}
 	}
 
-	void HandleCanScoreEvent(ZMPlayerInfo info)
+	void HandleCanScoreEvent(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			_fadingIn = true;
 
@@ -45,9 +45,9 @@ public class ZMColorFade : MonoBehaviour
 		}
 	}
 
-	void HandleMinScoreReached(ZMPlayerInfo info)
+	void HandleMinScoreReached(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			_image.enabled = false;
 		}

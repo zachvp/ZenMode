@@ -15,16 +15,16 @@ public class ZMMenuInputResponder : ZMResponder
 		ZMMainMenuController.OnSelectOption += HandleSelectOption;
 	}
 
-	private void HandleSelectOption(ZMMenuOption option)
+	private void HandleSelectOption(ZMMenuOptionEventArgs args)
 	{
-		if (!_isActive && _option == option)
+		if (!_isActive && _option == args.option)
 		{
 			Activate();
 			Utilities.ExecuteAfterDelay(Toggle, 0.2f);
 		}
 	}
 
-	private void HandleAnyInput(int id)
+	private void HandleAnyInput(IntEventArgs args)
 	{
 		if (_isActive && _canToggleOff)
 		{

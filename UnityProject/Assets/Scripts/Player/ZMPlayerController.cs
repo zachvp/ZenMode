@@ -115,14 +115,14 @@ public class ZMPlayerController : ZMPlayerItem
 	public Material _materialFlash;
 
 	// Delegates
-	public static EventHandler<ZMPlayerInfo> OnPlayerCreate;
-	public static EventHandler<ZMPlayerController> OnPlayerKill;
-	public static EventHandler<ZMPlayerInfo> OnPlayerDeath;
-	public static EventHandler<ZMPlayerController> OnPlayerRespawn;
-	public static EventHandler<ZMPlayerController> OnPlayerEliminated;
-	public static EventHandler<ZMPlayerController, float> OnPlayerRecoil;
-	public static EventHandler<ZMPlayerController, float> OnPlayerStun;
-	public static EventHandler<ZMPlayerController, float> OnPlayerParry;
+	public static EventHandler<ZMPlayerInfoEventArgs> OnPlayerCreate;
+	public static EventHandler<ZMPlayerControllerEventArgs> OnPlayerKill;
+	public static EventHandler<ZMPlayerInfoEventArgs> OnPlayerDeath;
+	public static EventHandler<ZMPlayerControllerEventArgs> OnPlayerRespawn;
+	public static EventHandler<ZMPlayerControllerEventArgs> OnPlayerEliminated;
+	public static EventHandler<ZMPlayerControllerFloatEventArgs> OnPlayerRecoil;
+	public static EventHandler<ZMPlayerControllerFloatEventArgs> OnPlayerStun;
+	public static EventHandler<ZMPlayerControllerFloatEventArgs> OnPlayerParry;
 	public static EventHandler OnPlayerLandPlunge;
 
 	// Constants
@@ -178,6 +178,8 @@ public class ZMPlayerController : ZMPlayerItem
 
 	protected virtual void Start()
 	{
+		var infoArgs = new ZMPlayerInfoEventArgs(_playerInfo);
+
 		// Set original facing direction so the player faces the center of the stage.
 		SetMovementDirection(transform.position.x > 0 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
 
@@ -188,7 +190,7 @@ public class ZMPlayerController : ZMPlayerItem
 		_material.color = Color.black;
 
 		_initialTransform = new StoreTransform(transform);
-		Notifier.SendEventNotification(OnPlayerCreate, _playerInfo);
+		Notifier.SendEventNotification(OnPlayerCreate, infoArgs);
 	}
 
 	void Update()
@@ -306,6 +308,8 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 		else if (_controlModState == ControlModState.PARRY)
 		{
+			var playerArgs = new ZMPlayerControllerFloatEventArgs(this, PARRY_STUN_WINDOW + PARRY_TIME);
+
 			_controlModState = ControlModState.PARRYING;
 			_moveModState = MoveModState.PARRY_FACING;
 			_canStun = true;
@@ -325,7 +329,7 @@ public class ZMPlayerController : ZMPlayerItem
 				Utilities.ExecuteAfterDelay(EndStunBeginParry, PARRY_STUN_WINDOW);
 				DisableInputWithCallbackDelay(PARRY_STUN_WINDOW + PARRY_TIME);
 
-				Notifier.SendEventNotification(OnPlayerParry, this, PARRY_STUN_WINDOW + PARRY_TIME);
+				Notifier.SendEventNotification(OnPlayerParry, playerArgs);
 			}
 		}
 		else if (_controlModState == ControlModState.NEUTRAL)
@@ -458,6 +462,8 @@ public class ZMPlayerController : ZMPlayerItem
 
 		if (_moveModState == MoveModState.RECOIL)
 		{
+			var playerArgs = new ZMPlayerControllerFloatEventArgs(this, RECOIL_STUN_TIME);
+
 			_audio.PlayOneShot(_audioSword[Random.Range (0, _audioSword.Length)], 1.0f);
 			Instantiate(_effectClashObject, new Vector2(transform.position.x, transform.position.y), transform.rotation);
 			_moveModState = MoveModState.RECOILING;
@@ -468,7 +474,7 @@ public class ZMPlayerController : ZMPlayerItem
 
 			DisableInputWithCallbackDelay(RECOIL_STUN_TIME);
 
-			Notifier.SendEventNotification(OnPlayerRecoil, this, RECOIL_STUN_TIME);
+			Notifier.SendEventNotification(OnPlayerRecoil, playerArgs);
 		}
 		else if (_moveModState == MoveModState.RECOILING)
 		{
@@ -480,6 +486,8 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 		else if (_moveModState == MoveModState.STUN)
 		{
+			var playerArgs = new ZMPlayerControllerFloatEventArgs(this, STUN_TIME);
+
 			_moveModState = MoveModState.STUNNED;
 			_controlModState = ControlModState.NEUTRAL;
 			_controlMoveState = ControlMoveState.NEUTRAL;
@@ -491,7 +499,7 @@ public class ZMPlayerController : ZMPlayerItem
 			Utilities.ExecuteAfterDelay(ResetMoveModState, STUN_TIME);
 			DisableInputWithCallbackDelay(STUN_TIME);
 
-			Notifier.SendEventNotification(OnPlayerStun, this, STUN_TIME);
+			Notifier.SendEventNotification(OnPlayerStun, playerArgs);
 		}
 		else if (_moveModState == MoveModState.WALL_SLIDE)
 		{
@@ -696,9 +704,9 @@ public class ZMPlayerController : ZMPlayerItem
 		AcceptInputEvents();
 	}
 
-	private void HandlePlaybackBegin(ZMPlayerInfo info, ZMPlayerInputRecorder recorder)
+	private void HandlePlaybackBegin(ZMPlayerInfoPlayerInputRecorderEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			transform.position = _initialTransform.position;
 			transform.rotation = _initialTransform.rotation;
@@ -706,16 +714,16 @@ public class ZMPlayerController : ZMPlayerItem
 
 			// Configure the input notifier to be set to the recorder.
 			ClearInputEvents();
-			_inputEventNotifier = recorder._inputEventNotifier;
+			_inputEventNotifier = args.recorder._inputEventNotifier;
 			AcceptInputEvents();
 		}
 	}
 
-	private void HandlePlaybackEnd(ZMPlayerInfo info, ZMPlayerInputRecorder recorder)
+	private void HandlePlaybackEnd(ZMPlayerInfoPlayerInputRecorderEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
-//			ClearInputEvents();
+			ClearInputEvents();
 			SetInputNotifierToController();
 			AcceptInputEvents();
 		}
@@ -786,11 +794,11 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 	}
 
-	private void AttackEvent(int direction)
+	private void AttackEvent(IntEventArgs args)
 	{
 		if (!IsAttacking() && IsAbleToReceiveInput())
 		{
-			var forward = new Vector2(direction, 0);
+			var forward = new Vector2(args.value, 0);
 			RaycastHit2D hit;
 
 			if (_controller.isGrounded)
@@ -802,9 +810,9 @@ public class ZMPlayerController : ZMPlayerItem
 				_controlModState = ControlModState.AIR_ATTACK;
 			}
 
-			if (direction != 0)
+			if (args.value != 0)
 			{
-				SetMovementDirection(direction == -1 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
+				SetMovementDirection(args.value == -1 ? MovementDirectionState.FACING_LEFT : MovementDirectionState.FACING_RIGHT);
 			}
 
 			// hack for destroying a breakable when pressed up against it
@@ -1002,25 +1010,29 @@ public class ZMPlayerController : ZMPlayerItem
 		}
 	}
 
-	void HandleMinScoreReached(ZMPlayerInfo info)
+	void HandleMinScoreReached(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
+			var playerArgs = new ZMPlayerControllerEventArgs(this);
+
 			gameObject.SetActive(false);
 
 			_moveModState = MoveModState.ELIMINATED;
 
-			Notifier.SendEventNotification(OnPlayerEliminated, this);
+			Notifier.SendEventNotification(OnPlayerEliminated, playerArgs);
 		}
 	}
 
 	public void Respawn(Vector3 position)
 	{
+		var playerArgs = new ZMPlayerControllerEventArgs(this);
+
 		Reset();
 		
 		transform.position = position;
 		
-		Notifier.SendEventNotification(OnPlayerRespawn, this);
+		Notifier.SendEventNotification(OnPlayerRespawn, playerArgs);
 	}
 
 	// Player state utility methods
@@ -1105,12 +1117,13 @@ public class ZMPlayerController : ZMPlayerItem
 	private void KillSelf(ZMPlayerController killer)
 	{
 		GameObject body;
+		var infoArgs = new ZMPlayerInfoEventArgs(_playerInfo);
 
 		_moveModState = MoveModState.RESPAWN;
 		_controlModState = ControlModState.NEUTRAL;
 		_controlMoveState = ControlMoveState.NEUTRAL;
 
-		Notifier.SendEventNotification(OnPlayerDeath, _playerInfo);
+		Notifier.SendEventNotification(OnPlayerDeath, infoArgs);
 
 		Utilities.StopDelayRoutine(_endLungeCoroutine);
 		Utilities.StopDelayRoutine(_resetControlModCoroutine);
@@ -1152,9 +1165,11 @@ public class ZMPlayerController : ZMPlayerItem
 	{
 		if (playerController.IsAbleToDie())
 		{
+			var playerArgs = new ZMPlayerControllerEventArgs(this);
+
 			playerController.KillSelf(this);
 
-			Notifier.SendEventNotification(OnPlayerKill, this);
+			Notifier.SendEventNotification(OnPlayerKill, playerArgs);
 
 			// add the stat
 			ZMStatTracker.Kills.Add(_playerInfo);

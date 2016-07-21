@@ -16,7 +16,7 @@ public abstract class ZMScoreDisplay : MonoBehaviour
 		GetDisplayElements();
 		ConfigureScoreSlider();
 
-		ZMScoreController.OnUpdateScore += UpdateScore;
+		ZMScoreController.OnUpdateScore += HandleUpdateScore;
 	}
 
 	protected virtual void GetDisplayElements()
@@ -26,17 +26,36 @@ public abstract class ZMScoreDisplay : MonoBehaviour
 
 	protected void ActivateScoreBar(ZMPlayerInfo info)
 	{
-		if (_playerInfo == info) { gameObject.SetActive(true); }
+		if (_playerInfo == info)
+		{
+			gameObject.SetActive(true);
+		}
+	}
+
+	protected void HandleDeactivateScoreBar(ZMPlayerInfoEventArgs args)
+	{
+		DeactivateScoreBar(args.info);
 	}
 
 	protected void DeactivateScoreBar(ZMPlayerInfo info)
 	{
-		if (_playerInfo == info) { gameObject.SetActive(false); }
+		if (_playerInfo == info)
+		{
+			gameObject.SetActive(false);
+		}
 	}
 	
-	protected void UpdateScore(ZMPlayerInfo info, float amount)
+	protected void HandleUpdateScore(ZMPlayerInfoFloatEventArgs args)
 	{		
-		if (_playerInfo == info && _scoreSlider) { _scoreSlider.value = amount; }
+		UpdateScore(args.info, args.value);
+	}
+
+	protected void UpdateScore(ZMPlayerInfo info, float amount)
+	{
+		if (_playerInfo == info && _scoreSlider)
+		{
+			_scoreSlider.value = amount;
+		}
 	}
 
 	protected abstract void ConfigureScoreSlider();

@@ -8,10 +8,10 @@ using Core;
 public class ZMScoreController : ZMPlayerItem
 {
 	// Events
-	public static EventHandler<ZMPlayerInfo> OnReachMaxScore;
-	public static EventHandler<ZMPlayerInfo> OnReachMinScore;
-	public static EventHandler<ZMPlayerInfo> OnStopScore;
-	public static EventHandler<ZMPlayerInfo, float> OnUpdateScore;
+	public static EventHandler<ZMPlayerInfoEventArgs> OnReachMaxScore;
+	public static EventHandler<ZMPlayerInfoEventArgs> OnReachMinScore;
+	public static EventHandler<ZMPlayerInfoEventArgs> OnStopScore;
+	public static EventHandler<ZMPlayerInfoFloatEventArgs> OnUpdateScore;
 
 	public const float MAX_SCORE = 1000.0f;	// TODO: Move to constants class and refactor.
 
@@ -69,10 +69,12 @@ public class ZMScoreController : ZMPlayerItem
 	
 	public void SetScore(float newScore)
 	{
+		var infoArgs = new ZMPlayerInfoFloatEventArgs(_playerInfo, _totalScore);
+
 		_totalScore = Mathf.Max(newScore, 0);
 		_totalScore = Mathf.Min(newScore, MAX_SCORE);
 		
-		Notifier.SendEventNotification(OnUpdateScore, _playerInfo, _totalScore);
+		Notifier.SendEventNotification(OnUpdateScore, infoArgs);
 	}
 
 	// utility methods

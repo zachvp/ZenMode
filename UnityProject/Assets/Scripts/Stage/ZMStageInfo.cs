@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using ZMConfiguration;
+using Core;
 
 public class ZMStageInfo : MonoSingleton<ZMStageInfo>
 {
@@ -33,8 +34,10 @@ public class ZMStageInfo : MonoSingleton<ZMStageInfo>
 //		}
 //	}
 
-	private void HandleCameraStart(Camera camera)
+	private void HandleCameraStart(UnityObjectEventArgs args)
 	{
+		var camera = args.arg as Camera;
+
 		_stageRect = GetStageRect(camera, _origin);
 	}
 

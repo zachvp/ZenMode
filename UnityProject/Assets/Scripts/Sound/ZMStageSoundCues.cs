@@ -12,8 +12,12 @@ public class ZMStageSoundCues : MonoBehaviour {
 	private const string kSwitchFocusMethodName		    = "SwitchFocus";
 	private const string kPlayMainBattleTrackMethodName = "PlayMainBattleTrack";
 
-	void Awake ()
+	private AudioSource _audio;
+
+	void Awake()
 	{
+		_audio = GetComponent<AudioSource>();
+
 		ZMWaypointMovement.AtPathNodeEvent += HandleAtPathNodeEvent;
 		ZMWaypointMovement.AtPathEndEvent += HandleAtPathEndEvent;
 
@@ -22,43 +26,47 @@ public class ZMStageSoundCues : MonoBehaviour {
 		ZMPedestalController.OnDeactivateEvent += HandleDeactivateEvent;
 	}
 
-	void HandleDeactivateEvent (ZMPedestalController pedestalController)
+	private void HandleDeactivateEvent(MonoBehaviourEventArgs args)
 	{
 		if (MatchStateManager.IsMain())
 		{ 
 			int index = Random.Range(0, zenPop.Length - 1);
 
-			GetComponent<AudioSource>().PlayOneShot(zenPop[index]);
+			_audio.PlayOneShot(zenPop[index]);
 		}
 	}
 
-	void HandleAtPathEndEvent (ZMWaypointMovement waypointMovement)
+	private void HandleAtPathEndEvent(ZMWaypointMovementEventArgs args)
 	{
-		if (waypointMovement.CompareTag("MainCamera")) {
+		if (args.movement.CompareTag("MainCamera"))
+		{
 			// start the intro
-			GetComponent<AudioSource>().PlayOneShot(battleIntro);
+			_audio.PlayOneShot(battleIntro);
 			Invoke(kPlayMainBattleTrackMethodName, battleIntro.length);
 		}
-
 	}
 
-	void HandleStartGameEvent ()
+	private void HandleStartGameEvent()
 	{
-		GetComponent<AudioSource>().PlayOneShot(matchStart, 0.5f);
+		_audio.PlayOneShot(matchStart, 0.5f);
 	}
 
-	void HandleAtPathNodeEvent (ZMWaypointMovement waypointMovement, int index) {
-		//audio.PlayOneShot (switchFocus);
-		if (waypointMovement.CompareTag("MainCamera"))
-			Invoke (kSwitchFocusMethodName, 0.1f);
+	private void HandleAtPathNodeEvent(ZMWaypointMovementIntEventArgs args)
+	{
+		if (args.movement.CompareTag("MainCamera"))
+		{
+			Invoke(kSwitchFocusMethodName, 0.1f);
+		}
 	}
 
-	void SwitchFocus() {
-		GetComponent<AudioSource>().PlayOneShot (focusOnPlayer);
+	private void SwitchFocus()
+	{
+		_audio.PlayOneShot(focusOnPlayer);
 	}
 
-	private void PlayMainBattleTrack() {
-		GetComponent<AudioSource>().Play();
-		GetComponent<AudioSource>().loop = true;
+	private void PlayMainBattleTrack()
+	{
+		_audio.Play();
+		_audio.loop = true;
 	}
 }

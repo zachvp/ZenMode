@@ -13,14 +13,16 @@ public class Layer
 		{
 			if (_isActive != value)
 			{
+				var args = new LayerEventArgs(this);
+
 				_isActive = value;
-				Notifier.SendEventNotification(OnActiveChanged, this);
+				Notifier.SendEventNotification(OnActiveChanged, args);
 			}
 		}
 	}
 
 	// Passes the layer index in the array, NOT the layer number.
-	public EventHandler<Layer> OnActiveChanged;
+	public EventHandler<LayerEventArgs> OnActiveChanged;
 
 	private bool _isActive;
 
@@ -36,7 +38,7 @@ public static class LayerManager
 {
 	// TODO: Use map to add new scene configurations
 
-	public static EventHandler<Layer> OnLayerChangeActive;
+	public static EventHandler<LayerEventArgs> OnLayerChangeActive;
 
 	public static Layer[] Layers { get { return _currentConfiguration._layers.ToArray(); } }
 	public static int LayerCount { get { return _currentConfiguration != null ? _currentConfiguration._layers.Count : 0; } }
@@ -131,9 +133,9 @@ public static class LayerManager
 		}
 	}
 
-	private static void HandleOnLayerChangeActive(Layer layer)
+	private static void HandleOnLayerChangeActive(LayerEventArgs args)
 	{
-		Notifier.SendEventNotification(OnLayerChangeActive, layer);
+		Notifier.SendEventNotification(OnLayerChangeActive, args);
 	}
 
 	private static Layer FindLayerForUnityLayer(int layerNumUnity)

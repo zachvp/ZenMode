@@ -6,8 +6,8 @@ using System.Collections.Generic;
 [RequireComponent(typeof(ZMPlayerInputController))]
 public class ZMPlayerInputRecorder : MonoBehaviour
 {
-	public static EventHandler<ZMPlayerInfo, ZMPlayerInputRecorder> OnPlaybackBegin;
-	public static EventHandler<ZMPlayerInfo, ZMPlayerInputRecorder> OnPlaybackEnd;
+	public static EventHandler<ZMPlayerInfoPlayerInputRecorderEventArgs> OnPlaybackBegin;
+	public static EventHandler<ZMPlayerInfoPlayerInputRecorderEventArgs> OnPlaybackEnd;
 
 	public ZMPlayerInputEventNotifier _inputEventNotifier { get; private set; }
 
@@ -37,10 +37,6 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 		_inputController._inputEventNotifier.OnAttackEvent += HandleAttackEvent;
 	}
 
-	/*
-	public EventHandler<int> OnAttackEvent;
-	*/
-
 	void OnDestroy()
 	{
 		OnPlaybackBegin = null;
@@ -64,13 +60,16 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 
 	public void PlaybackInputEvents()
 	{
-		Notifier.SendEventNotification(OnPlaybackBegin, _playerInfo, this);
+		var playbackArgs = new ZMPlayerInfoPlayerInputRecorderEventArgs(_playerInfo, this);
+
+		Notifier.SendEventNotification(OnPlaybackBegin, playbackArgs);
 		StartCoroutine(PlaybackInputEventsInternal());
 	}
 
 	private IEnumerator PlaybackInputEventsInternal()
 	{
 		var canonicalRecord = new Queue<FrameInputRecord>(_canonicalRecord);
+		var playbackArgs = new ZMPlayerInfoPlayerInputRecorderEventArgs(_playerInfo, this);
 
 		while (canonicalRecord.Count > 0)
 		{
@@ -82,13 +81,14 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 			{
 				var inputRecord = frameRecord.record.Dequeue();
 
-				_inputEventNotifier.TriggerEvent(inputRecord.entry);
+				_inputEventNotifier.TriggerEvent(inputRecord.handler);
+				_inputEventNotifier.TriggerEvent(inputRecord.handlerInt, inputRecord.args as IntEventArgs);
 			}
 
 			yield return null;
 		}
 
-		Notifier.SendEventNotification(OnPlaybackEnd, _playerInfo, this);
+		Notifier.SendEventNotification(OnPlaybackEnd, playbackArgs);
 		yield break;
 	}
 
@@ -127,9 +127,11 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 		_frameInputs.Enqueue(record);
 	}
 
-	private void HandleAttackEvent(int direction)
+	private void HandleAttackEvent(IntEventArgs args)
 	{
-		// TODO: Maybe just separate attack into separate calls.
+		var record = new InputRecord(_inputController._inputEventNotifier.OnAttackEvent, args);
+
+		_frameInputs.Enqueue(record);
 	}
 }
 
@@ -143,28 +145,47 @@ public class FrameInputRecord
 	}
 }
 
-public class InputRecord : System.IComparable
+public class InputRecord
 {
 	// Make this a list/array of objects? Index 0 = no args, index 1 = 1 arg...
-	public EventHandler entry;
+	public EventHandler handler { get { return _recordedEvent as EventHandler; } }
+	public EventHandler<IntEventArgs> handlerInt { get { return _recordedEvent as EventHandler<IntEventArgs>; } }
 
-	public InputRecord(EventHandler recordedEvent)
+	public EventArgs args { get; private set; }
+
+	private object _recordedEvent;
+
+	public InputRecord(object eventHandler)
 	{
-		entry = recordedEvent;
+		Debug.AssertFormat(eventHandler is EventHandler,
+						   "Improper constructor. Attempting to create InputRecord containing arguments." +
+						   "Use this class for no arguments");
+		_recordedEvent = eventHandler;
 	}
 
-	public override bool Equals(System.Object other)
+	public InputRecord(object eventHandler, EventArgs eventArgs)
+	{
+		Debug.AssertFormat(!(eventHandler is EventHandler),
+						   "Improper constructor. Attempting to create InputRecord without arguments." +
+						   "Use this class for EventHandlers with arguments (templated).");
+
+		_recordedEvent = eventHandler;
+		args = eventArgs;
+		// TODO: Enforce supported types with checks.
+	}
+
+	/*public override bool Equals(System.Object other)
 	{
 		var otherRecord = other as InputRecord;
 
 		if (otherRecord == null) { return false; }
 
-		return entry == otherRecord.entry;
+		return command == otherRecord.command;
 	}
 
 	public override int GetHashCode()
 	{
-		return entry.GetHashCode();
+		return command.GetHashCode();
 	}
 
 	public static bool operator ==(InputRecord lhs, InputRecord rhs)
@@ -175,7 +196,7 @@ public class InputRecord : System.IComparable
 		// If one is null, but not both, return false.
 		if ((object) lhs == null || (object) rhs == null) { return false; }
 
-		return lhs.entry == rhs.entry;
+		return lhs.command == rhs.command;
 	}
 
 	public static bool operator !=(InputRecord lhs, InputRecord rhs)
@@ -192,5 +213,5 @@ public class InputRecord : System.IComparable
 		else if (otherRecord != null && this == null) { result = -1; }
 
 		return result;
-	}
+	}*/
 }

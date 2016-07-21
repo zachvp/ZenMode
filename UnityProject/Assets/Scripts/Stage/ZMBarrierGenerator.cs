@@ -11,7 +11,7 @@ public class ZMBarrierGenerator : MonoBehaviour
 		ZMCameraController.OnCameraStart += HandleCameraStart;
 	}
 
-	private void HandleCameraStart(Camera camera)
+	private void HandleCameraStart(UnityObjectEventArgs args)
 	{
 		CreateBarriers(ZMStageInfo.Instance.StageRect);
 	}

@@ -1,35 +1,64 @@
-﻿using System;
+﻿using UnityEngine;
+using System.Runtime.Serialization;
 
 // Responsible for defining delegates and events.
 namespace Core
 {
-	// Defines common delegates.
 	public delegate void EventHandler();
-    public delegate void EventHandler<T>(T item);
-	public delegate void EventHandler<T, U>(T item1, U item2);
-	public delegate void EventHandler<T, U, V>(T item1, U item2, V item3);
+	public delegate void EventHandler<EventArgs>(EventArgs args);
 
+	public struct EventArgWrapper
+	{
+		
+	}
+
+	public struct EventHandlerWrapper
+	{
+		public EventHandler handler;
+	}
 
 	public class Notifier
 	{
 		public static void SendEventNotification(EventHandler eventHandler)
 		{
-			if (eventHandler != null) { eventHandler(); }
+			// Temp variable for thread safety.
+			var threadsafeHandler = eventHandler;
+			if (threadsafeHandler != null) { threadsafeHandler(); }
 		}
 
-		public static void SendEventNotification<T>(EventHandler<T> eventHandler, T item)
+		public static void SendEventNotification<T>(EventHandler<T> eventHandler, T args)
 		{
-			if (eventHandler != null) { eventHandler(item); }
+			// Temp variable for thread safety.
+			var threadsafeHandler = eventHandler;
+			if (threadsafeHandler != null) { threadsafeHandler(args); }
+		}
+	}
+
+	// This class serializes the given EventHandlers of any type to a string format that can be read at the other end.
+	public static class NotificationsSerializer
+	{
+		public static string CreateSerializedEventHandler(EventHandler eventHandler)
+		{
+			string result = null;
+
+			if (eventHandler != null)
+			{
+				result = JsonUtility.ToJson(eventHandler);
+			}
+
+			return result;
 		}
 
-		public static void SendEventNotification<T, U>(EventHandler<T, U> eventHandler, T item1, U item2)
+		/*public static string CreateSerializedEventHandler<T>(EventHandler<T> eventHandler, T args)
 		{
-			if (eventHandler != null) { eventHandler(item1, item2); }
-		}
+			string result = null;
 
-		public static void SendEventNotification<T, U, V>(EventHandler<T, U, V> eventHandler, T item1, U item2, V item3)
-		{
-			if (eventHandler != null) { eventHandler(item1, item2, item3); }
-		}
+			if (eventHandler != null)
+			{
+				result = Utilities.GetClassNameForObject(eventHandler);
+			}
+
+			return result;
+		}*/
 	}
 }

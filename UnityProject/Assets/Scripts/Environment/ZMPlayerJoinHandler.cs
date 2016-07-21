@@ -25,9 +25,9 @@ public class ZMPlayerJoinHandler : MonoBehaviour
 		Debug.AssertFormat(VerifySettings(), "{0}: Unable to use given editor settings.", name);
 	}
 
-	private void HandleDropOutEvent(ZMPlayerInfo info)
+	private void HandleDropOutEvent(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			SetActive(_activateOnDrop || !_deactivateOnDrop);
 
@@ -35,9 +35,9 @@ public class ZMPlayerJoinHandler : MonoBehaviour
 		}
 	}
 
-	private void HandleJoinedEvent(int controlIndex)
+	private void HandleJoinedEvent(IntEventArgs args)
 	{
-		if (_playerInfo.ID == controlIndex )
+		if (_playerInfo.ID == args.value)
 		{
 			SetActive(_activateOnJoin || !_deactivateOnJoin);
 

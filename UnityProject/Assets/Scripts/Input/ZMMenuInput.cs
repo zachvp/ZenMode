@@ -7,7 +7,7 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 	[SerializeField] private bool _isSharedMenu;	// If true, anyone can affect input.
 	[SerializeField] protected bool _startActive;
 
-	public static EventHandler<ZMMenuOption> OnSelectOption;
+	public static EventHandler<ZMMenuOptionEventArgs> OnSelectOption;
 
 	protected ZMMenuOption[] _menuOptions;
 
@@ -150,7 +150,9 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 
 	protected virtual void HandleMenuSelection()
 	{
-		Notifier.SendEventNotification(OnSelectOption, _menuOptions[_selectedIndex]);
+		var args = new ZMMenuOptionEventArgs(_menuOptions[_selectedIndex]);
+
+		Notifier.SendEventNotification(OnSelectOption, args);
 	}
 
 	protected virtual void AcceptActivationEvents()
@@ -213,8 +215,10 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 	}
 
 	// Private methods.
-	private void HandleOnSelect(ZMInput input)
+	private void HandleOnSelect(ZMInputEventArgs args)
 	{
+		var input = args.input;
+
 		if (input.Pressed && IsValidInputControl(input) && gameObject.activeSelf)
 		{
 			HandleMenuSelection();

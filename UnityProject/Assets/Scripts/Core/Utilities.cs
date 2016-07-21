@@ -213,10 +213,26 @@ namespace Core
 			return GameObject.FindObjectsOfType(typeof (GameObject)) as GameObject[];
 		}
 
+		// Usage example if variable is named "testVariable":
+		// 	Utilities.GetVariableName(() => objectInstance))
 		public static string GetVariableName<T>(Expression<Func<T>> variableExpression)
 		{
 			var expressionBody = (MemberExpression) variableExpression.Body;
 			return expressionBody.Member.Name;
+		}
+
+		public static string GetClassNameForObject(object objectInstance)
+		{
+			var temp = objectInstance;
+			string className;
+
+			Debug.AssertFormat(objectInstance != null,
+							   "GetClassNameForObject: object with variable name {0} is null",
+							   Utilities.GetVariableName(() => objectInstance));
+
+			className = temp.GetType().Name;
+
+			return className;
 		}
 
 		// All filepaths here are relative to Unity's "Assets/Resources" folder.

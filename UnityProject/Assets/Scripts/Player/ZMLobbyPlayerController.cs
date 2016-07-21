@@ -21,9 +21,9 @@ public class ZMLobbyPlayerController : ZMPlayerController
 		_animator.SetBool("didBecomeActive", true);
 	}
 
-	private void HandleLobbyMaxScoreReachedEvent(ZMPlayerInfo info)
+	private void HandleLobbyMaxScoreReachedEvent(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			DisablePlayer();
 			GetComponent<Renderer>().enabled = false;
@@ -31,9 +31,9 @@ public class ZMLobbyPlayerController : ZMPlayerController
 		}
 	}
 
-	private void HandleOnPlayerDropOut(ZMPlayerInfo info)
+	private void HandleOnPlayerDropOut(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			DisablePlayer();
 			ClearInputEvents();

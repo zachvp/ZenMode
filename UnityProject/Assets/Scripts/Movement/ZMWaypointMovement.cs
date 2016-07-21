@@ -7,8 +7,8 @@ public class ZMWaypointMovement : MonoBehaviour
 	public bool moveAtStart = false;
 	public float startMoveDelay = 3.0f;
 
-	public static EventHandler<ZMWaypointMovement, int> AtPathNodeEvent;
-	public static EventHandler<ZMWaypointMovement> AtPathEndEvent;
+	public static EventHandler<ZMWaypointMovementIntEventArgs> AtPathNodeEvent;
+	public static EventHandler<ZMWaypointMovementEventArgs> AtPathEndEvent;
 
 	protected Transform[] _waypoints;
 	protected int _waypointSize; // in case not all waypoints will be reached right away
@@ -95,16 +95,20 @@ public class ZMWaypointMovement : MonoBehaviour
 		{
 			if (_waypointIndex < _waypointSize)
 			{
+				var args = new ZMWaypointMovementIntEventArgs(this, _waypointIndex);
+
 				_moveState = MoveState.MOVE;
 				
-				Notifier.SendEventNotification(AtPathNodeEvent, this, _waypointIndex);
+				Notifier.SendEventNotification(AtPathNodeEvent, args);
 			}
 			else if (_waypointIndex == _waypointSize)
 			{
+				var args = new ZMWaypointMovementEventArgs(this);
+
 				_moveState = MoveState.COMPLETED;
 				_waypointIndex += 1;
 
-				Notifier.SendEventNotification(AtPathEndEvent, this);
+				Notifier.SendEventNotification(AtPathEndEvent, args);
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 using UnityEngine;
 using ZMConfiguration;
 using ZMPlayer;
+using Core;
 
 public class ZMLobbyPlayerManager : ZMPlayerManager
 {
@@ -25,19 +26,19 @@ public class ZMLobbyPlayerManager : ZMPlayerManager
 	}
 
 	// Creates the proper player-character.
-	private void HandlePlayerDropIn(int id)
+	private void HandlePlayerDropIn(IntEventArgs args)
 	{
-		_players[_playerJoinCount] = CreatePlayer(id); // _playerJoinCount
+		_players[_playerJoinCount] = CreatePlayer(args.value); // _playerJoinCount
 
 		_playerJoinCount += 1;
 	}
 
-	private void HandleDropOutEvent(ZMPlayerInfo info)
+	private void HandleDropOutEvent(ZMPlayerInfoEventArgs args)
 	{
 		_playerJoinCount -= 1;
 	}
 
-	private void HandlePlayerReadyEvent(ZMPlayerInfo playerTag)
+	private void HandlePlayerReadyEvent(ZMPlayerInfoEventArgs playerTag)
 	{
 		_playerReadyCount += 1;
 	}

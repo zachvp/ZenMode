@@ -10,10 +10,10 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 
 	public static int CurrentJoinCount { get { return LobbyPlayer.JoinCount; } }
 
-	public static EventHandler<int> OnPlayerJoinedEvent;
+	public static EventHandler<IntEventArgs> OnPlayerJoinedEvent;
 
-	public static EventHandler<ZMPlayerInfo> PlayerReadyEvent;
-	public static EventHandler<ZMPlayerInfo> OnPlayerDropOut;
+	public static EventHandler<ZMPlayerInfoEventArgs> PlayerReadyEvent;
+	public static EventHandler<ZMPlayerInfoEventArgs> OnPlayerDropOut;
 
 	private int _requiredPlayerCount;
 
@@ -100,15 +100,17 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 		return _players[id].IsJoined;
 	}
 
-	private void HandleAnyInputEvent(int controlIndex)
+	private void HandleAnyInputEvent(IntEventArgs args)
 	{
+		var controlIndex = args.value;
+
 		if (!Utilities.IsValidArrayIndex(_players, controlIndex) || MatchStateManager.IsPause()) { return; }
 
 		if (_players[controlIndex].IsNone)
 		{
 			_players[controlIndex].SetJoined();
 
-			Notifier.SendEventNotification(OnPlayerJoinedEvent, controlIndex);
+			Notifier.SendEventNotification(OnPlayerJoinedEvent, args);
 
 			_requiredPlayerCount += 1;
 
@@ -119,13 +121,14 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 	public void PlayerDidDropOut(ZMPlayerInfo info)
 	{
 		var index = info.ID;
+		var args = new ZMPlayerInfoEventArgs(info);
 
 		// Drop player for half a second, then set to waiting.
 		_players[index].SetDropped();
 
 		Utilities.ExecuteAfterDelay(SetReady, 0.25f, info.ID);
 
-		Notifier.SendEventNotification(OnPlayerDropOut, info);
+		Notifier.SendEventNotification(OnPlayerDropOut, args);
 	}
 
 	private void SetReady(int index)
@@ -133,11 +136,11 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 		_players[index].SetWaiting();
 	}
 
-	private void HandleMaxScoreReachedEvent(ZMPlayerInfo info)
+	private void HandleMaxScoreReachedEvent(ZMPlayerInfoEventArgs args)
 	{
-		_players[info.ID].SetReady();
+		_players[args.info.ID].SetReady();
 
-		Notifier.SendEventNotification(PlayerReadyEvent, info);
+		Notifier.SendEventNotification(PlayerReadyEvent, args);
 
 		if (LobbyPlayer.ReadyCount > 1 && LobbyPlayer.ReadyCount == _requiredPlayerCount)
 		{

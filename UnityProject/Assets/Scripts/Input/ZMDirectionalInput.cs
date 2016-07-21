@@ -77,16 +77,18 @@ public class ZMDirectionalInput : ZMPlayerItem
 		ClearKeyboardEvents();
 	}
 
-	private void HandleOnMove(ZMInput input, Vector2 amount)
+	private void HandleOnMove(ZMInputVector2EventArgs args)
 	{
-		if (IsValidInputControl(input))
+		if (IsValidInputControl(args.input))
 		{
-			_movement = amount;
+			_movement = args.value;
 		}
 	}
 	
-	private void HandleOnMoveLeft(ZMInput input)
+	private void HandleOnMoveLeft(ZMInputEventArgs args)
 	{
+		var input = args.input;
+
 		if (IsValidInputControl(input))
 		{
 			if (input.Pressed || input.Held)
@@ -100,8 +102,10 @@ public class ZMDirectionalInput : ZMPlayerItem
 		}
 	}
 	
-	private void HandleOnMoveRight(ZMInput input)
+	private void HandleOnMoveRight(ZMInputEventArgs args)
 	{
+		var input = args.input;
+
 		if (IsValidInputControl(input))
 		{
 			if (input.Pressed || input.Held)
@@ -115,8 +119,10 @@ public class ZMDirectionalInput : ZMPlayerItem
 		}
 	}
 	
-	protected virtual void HandleOnMoveUp(ZMInput input)
+	protected virtual void HandleOnMoveUp(ZMInputEventArgs args)
 	{
+		var input = args.input;
+
 		if (IsValidInputControl(input))
 		{
 			if (input.Pressed || input.Held)
@@ -130,8 +136,10 @@ public class ZMDirectionalInput : ZMPlayerItem
 		}
 	}
 	
-	protected virtual void HandleOnMoveDown(ZMInput input)
+	protected virtual void HandleOnMoveDown(ZMInputEventArgs args)
 	{
+		var input = args.input;
+
 		if (IsValidInputControl(input))
 		{
 			if (input.Pressed || input.Held)

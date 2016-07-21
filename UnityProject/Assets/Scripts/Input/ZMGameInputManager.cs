@@ -5,8 +5,8 @@ using ZMPlayer;
 public class ZMGameInputManager : MonoBehaviour
 {
 	// Sends integers instead of PlayerInfo because control ID could be -1.
-	public static EventHandler<int> StartInputEvent;
-	public static EventHandler<int> AnyInputEvent;
+	public static EventHandler<IntEventArgs> StartInputEvent;
+	public static EventHandler<IntEventArgs> AnyInputEvent;
 
 	void Awake()
 	{
@@ -29,19 +29,27 @@ public class ZMGameInputManager : MonoBehaviour
 		ZMInputNotifier.Instance.OnAnyKeyPressed += HandleOnAnyButton;
 	}
 
-	private void HandleOnStartButton(ZMInput input)
+	private void HandleOnStartButton(ZMInputEventArgs args)
 	{
+		var input = args.input;
+
 		if (input.Pressed)
 		{
-			Notifier.SendEventNotification(StartInputEvent, input.ID);
+			var outArgs = new IntEventArgs(input.ID);
+
+			Notifier.SendEventNotification(StartInputEvent, outArgs);
 		}
 	}
 
-	private void HandleOnAnyButton(ZMInput input)
+	private void HandleOnAnyButton(ZMInputEventArgs args)
 	{
+		var input = args.input;
+
 		if (input.Pressed)
 		{
-			Notifier.SendEventNotification(AnyInputEvent, input.ID);
+			var outArgs = new IntEventArgs(input.ID);
+
+			Notifier.SendEventNotification(AnyInputEvent, outArgs);
 		}
 	}
 }

@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using ZMPlayer;
@@ -32,8 +31,8 @@ public class ZMPedestalController : ZMPlayerItem
 	private const string kDisableMethodName   = "Disable";
 
 	// delegates
-	public static EventHandler<ZMPedestalController> OnActivateEvent;
-	public static EventHandler<ZMPedestalController> OnDeactivateEvent;
+	public static EventHandler<MonoBehaviourEventArgs> OnActivateEvent;
+	public static EventHandler<MonoBehaviourEventArgs> OnDeactivateEvent;
 
 	protected override void Awake()
 	{
@@ -95,6 +94,8 @@ public class ZMPedestalController : ZMPlayerItem
 	// public methods
 	public void Enable()
 	{
+		var args = new MonoBehaviourEventArgs(this);
+
 		_scoreState = ScoreState.SCORING_ENABLED;
 		_timedCounter.Reset();
 		_timedCounter.gameObject.SetActive(true);
@@ -105,11 +106,13 @@ public class ZMPedestalController : ZMPlayerItem
 
 		_light.enabled = true;
 
-		Notifier.SendEventNotification(OnActivateEvent, this);
+		Notifier.SendEventNotification(OnActivateEvent, args);
 	}
 
 	private void Disable()
 	{
+		var args = new MonoBehaviourEventArgs(this);
+
 		_scoreState = ScoreState.SCORING_DISABLED;
 		_renderer.enabled = false;
 		_timedCounter.gameObject.SetActive(false);
@@ -117,7 +120,7 @@ public class ZMPedestalController : ZMPlayerItem
 
 		_light.enabled = false;
 
-		Notifier.SendEventNotification(OnDeactivateEvent, this);
+		Notifier.SendEventNotification(OnDeactivateEvent, args);
 	}
 
 	private void MoveToLocation(Vector3 location)
@@ -131,8 +134,10 @@ public class ZMPedestalController : ZMPlayerItem
 	public bool IsDiabled() { return _scoreState == ScoreState.SCORING_DISABLED; }
 
 	// event handlers
-	private void HandlePlayerDeathEvent(ZMPlayerInfo info)
+	private void HandlePlayerDeathEvent(ZMPlayerInfoEventArgs args)
 	{
+		var info = args.info;
+
 		if (_playerInfo == info)
 		{
 			var scoreController = ZMPlayerManager.Instance.Scores[info.ID];
@@ -149,17 +154,17 @@ public class ZMPedestalController : ZMPlayerItem
 	}
 
 	
-	private void HandleSpawnObjectEvent(ZMPlayerController playerController)
+	private void HandleSpawnObjectEvent(ZMPlayerControllerEventArgs args)
 	{
-		if (_playerInfo == playerController.PlayerInfo)
+		if (_playerInfo == args.controller.PlayerInfo)
 		{
 			Invoke(kDisableMethodName, 0.01f);
 		}
 	}
 
-	void HandleMinScoreReached(ZMPlayerInfo info)
+	void HandleMinScoreReached(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			zenPop.GetComponent<Renderer>().material.color = _renderer.material.color;
 
@@ -186,13 +191,13 @@ public class ZMPedestalController : ZMPlayerItem
 		_zenPopSystems.Clear();
 	}
 
-	void HandleCanScoreEvent(ZMPlayerInfo info)
+	void HandleCanScoreEvent(ZMPlayerInfoEventArgs args)
 	{
-		_scoringAgents.Add(info);
+		_scoringAgents.Add(args.info);
 	}
 
-	void HandleStopScoreEvent(ZMPlayerInfo info)
+	void HandleStopScoreEvent(ZMPlayerInfoEventArgs args)
 	{
-		_scoringAgents.Remove(info);
+		_scoringAgents.Remove(args.info);
 	}
 }

@@ -1,27 +1,24 @@
 ﻿using UnityEngine;
-using System.Collections;
+using Core;
 
-public class ZMToggleWithPedestal : MonoBehaviour {
-
-	// Use this for initialization
-	void Awake () {
+public class ZMToggleWithPedestal : MonoBehaviour
+{
+	void Awake ()
+	{
 		ZMPedestalController.OnActivateEvent += HandleActivateEvent;
 		ZMPedestalController.OnDeactivateEvent += HandleDeactivateEvent;
 
 		GetComponent<Light>().enabled = false;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
-	void HandleActivateEvent(ZMPedestalController pedestalController) {
+	void HandleActivateEvent(MonoBehaviourEventArgs args)
+	{
 		Debug.Log("toggle activate");
 		enabled = true;
 	}
 
-	void HandleDeactivateEvent(ZMPedestalController pedestalController) {
+	void HandleDeactivateEvent(MonoBehaviourEventArgs args)
+	{
 		GetComponent<Light>().enabled = false;
 	}
 }

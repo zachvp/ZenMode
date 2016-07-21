@@ -20,16 +20,21 @@ public class ZMMatchOutputDisplay : MonoBehaviour
 
 		ZMPauseMenu.OnPlayerPauseGame += ShowPauseOutput;
 		ZMTimedCounterStage.GameTimerEndedEvent += ShowGameEndMessage;
-		ZMScoreController.OnReachMaxScore += ShowGameEndMessage;
+		ZMScoreController.OnReachMaxScore += HandleReachMaxScore;
 
 		MatchStateManager.OnMatchResume += ClearText;
 		MatchStateManager.OnMatchStart += ShowStartMessage;
 	}
 
-	private void ShowPauseOutput(ZMPlayerInfo info)
+	private void HandleReachMaxScore(ZMPlayerInfoEventArgs args)
+	{
+		ShowGameEndMessage();
+	}
+
+	private void ShowPauseOutput(ZMPlayerInfoEventArgs args)
 	{
 		output.rectTransform.position = outputTextPositionUpOffset;
-		output.text = string.Format("P{0} PAUSED", info.ID + 1);
+		output.text = string.Format("P{0} PAUSED", args.info.ID + 1);
 	}
 
 	private void ClearText()

@@ -34,7 +34,10 @@ public class ZMLobbyScoreController : ZMScoreController
 	void OnTriggerStay2D(Collider2D collider)
 	{
 		// Bail if the collider isn't an orb.
-		if (!collider.CompareTag(Tags.kPedestal)) { return; }
+		if (!collider.CompareTag(Tags.kPedestal))
+		{
+			return;
+		}
 
 		var info = collider.GetComponent<ZMPlayerInfo>();
 
@@ -42,11 +45,16 @@ public class ZMLobbyScoreController : ZMScoreController
 		{
 			if (_totalScore < maxScore)
 			{
-				if (_pedestalActive && _targetAlive) { AddToScore(scoreAmount); }
+				if (_pedestalActive && _targetAlive)
+				{
+					AddToScore(scoreAmount);
+				}
 			}
 			else if (!_readyFired)
 			{
-				Notifier.SendEventNotification(OnReachMaxScore, _playerInfo);
+				var infoArgs = new ZMPlayerInfoEventArgs(_playerInfo);
+
+				Notifier.SendEventNotification(OnReachMaxScore, infoArgs);
 
 				_readyFired = true;
 			}
@@ -64,33 +72,36 @@ public class ZMLobbyScoreController : ZMScoreController
 		ZMPlayerController.OnPlayerRespawn += HandlePlayerRespawnEvent;
 	}
 	
-	private void HandlePlayerRespawnEvent(ZMPlayerController playerController)
+	private void HandlePlayerRespawnEvent(ZMPlayerControllerEventArgs args)
 	{
-		if (_playerInfo == playerController.PlayerInfo)
+		if (_playerInfo == args.controller.PlayerInfo)
 		{
 			_targetAlive = true;
 		}
 	}
 	
-	private void HandlePlayerDeathEvent(ZMPlayerInfo info)
+	private void HandlePlayerDeathEvent(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			_targetAlive = false;
 		}
 	}
 	
-	private void HandleDropOutEvent(ZMPlayerInfo info)
+	private void HandleDropOutEvent(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			transform.position = _basePosition;
 			gameObject.SetActive(false);
 		}
 	}
 	
-	private void HandleActivateEvent(ZMPlayerInfo info)
+	private void HandleActivateEvent(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info) { _pedestalActive = true; }
+		if (_playerInfo == args.info)
+		{
+			_pedestalActive = true;
+		}
 	}	
 }

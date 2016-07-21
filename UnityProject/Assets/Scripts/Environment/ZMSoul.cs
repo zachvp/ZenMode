@@ -11,7 +11,7 @@ public class ZMSoul : MonoBehaviour
 
 	private ZMPlayerInfo _playerInfo;
 
-	public static EventHandler<ZMSoul> SoulDestroyedEvent;
+	public static EventHandler<MonoBehaviourEventArgs> SoulDestroyedEvent;
 
 	private bool _fadingIn;
 	private bool _playingSound;
@@ -85,23 +85,25 @@ public class ZMSoul : MonoBehaviour
 		}
 	}
 	
-	private void HandleStopScoreEvent(ZMPlayerInfo info)
+	private void HandleStopScoreEvent(ZMPlayerInfoEventArgs args)
 	{
 		StopLoop();
 	}
 	
-	private void HandleCanScoreEvent(ZMPlayerInfo info)
+	private void HandleCanScoreEvent(ZMPlayerInfoEventArgs args)
 	{
 		PlayLoop();
 	}
 	
-	private void HandleMinScoreReached(ZMPlayerInfo info)
+	private void HandleMinScoreReached(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
+			var outArgs = new MonoBehaviourEventArgs(this);
+
 			_audio.Stop();
 
-			Notifier.SendEventNotification(SoulDestroyedEvent, this);
+			Notifier.SendEventNotification(SoulDestroyedEvent, outArgs);
 		}
 	}
 

@@ -86,8 +86,8 @@ public class ZMToggleLayerWindow : EditorWindow
 	}
 
 	[ExecuteInEditMode]
-	private static void HandleLayerChangeActive(Layer layer)
+	private static void HandleLayerChangeActive(LayerEventArgs args)
 	{
-		LayerManager.SetLayerObjectsActive(layer, layer.isActive);
+		LayerManager.SetLayerObjectsActive(args.layer, args.layer.isActive);
 	}
 }

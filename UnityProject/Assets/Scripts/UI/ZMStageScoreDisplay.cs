@@ -10,7 +10,7 @@ public class ZMStageScoreDisplay : ZMScoreDisplay
 	{
 		base.Awake ();
 
-		ZMScoreController.OnReachMinScore += EliminateScore;
+		ZMScoreController.OnReachMinScore += EliminateScoreForPlayer;
 
 		ConfigureScoreStatus();
 	}
@@ -32,8 +32,11 @@ public class ZMStageScoreDisplay : ZMScoreDisplay
 		_scoreSlider.maxValue = ZMScoreController.MAX_SCORE;
 	}
 
-	private void EliminateScore(ZMPlayerInfo info)
+	private void EliminateScoreForPlayer(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info) { _scoreStatus.text = "ELIMINATED!"; }
+		if (_playerInfo == args.info)
+		{
+			_scoreStatus.text = "ELIMINATED!";
+		}
 	}
 }

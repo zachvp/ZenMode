@@ -24,9 +24,9 @@ public class ZMGameStateController : MonoSingleton<ZMGameStateController>
 		MatchStateManager.OnMatchExit += HandleSelectQuitEvent;
 	}
 
-	private void HandleAtPathEndEvent(ZMWaypointMovement waypointMovement)
+	private void HandleAtPathEndEvent(ZMWaypointMovementEventArgs args)
 	{
-		if (waypointMovement.CompareTag(Tags.kMainCamera)) { BeginGame(); }
+		if (args.movement.CompareTag(Tags.kMainCamera)) { BeginGame(); }
 	}
 	
 	private void HandleGameTimerEndedEvent()
@@ -46,10 +46,9 @@ public class ZMGameStateController : MonoSingleton<ZMGameStateController>
 		ResetGame();
 	}
 
-	private void HandleMaxScoreReached(ZMPlayerInfo info)
+	private void HandleMaxScoreReached(ZMPlayerInfoEventArgs info)
 	{
 		Utilities.ExecuteAfterDelay(EndGame, END_GAME_DELAY);
-//		StartCoroutine(Utilities.ExecuteAfterDelay(EndGame, END_GAME_DELAY));
 
 		GetComponent<AudioSource>().PlayOneShot(audioComplete, 2.0f);
 	}

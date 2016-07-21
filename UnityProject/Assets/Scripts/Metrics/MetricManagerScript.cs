@@ -36,8 +36,10 @@ public class MetricManagerScript : MonoBehaviour
 		createText += "Player " + player.ToString() + " Position: " + position.ToString() + "\n";
 	}
 
-	private void HandlePlayerDeathEvent(ZMPlayerInfo info)
+	private void HandlePlayerDeathEvent(ZMPlayerInfoEventArgs args)
 	{
+		var info = args.info;
+
 		createText += "Player " + info.ID.ToString() + " Death: " + info.transform.position.ToString() + "\n";
 	}
 }

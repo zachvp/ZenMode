@@ -1,4 +1,6 @@
-﻿namespace Core
+﻿using System;
+
+namespace Core
 {
 	// Tracks the state of a match.
 	public class MatchStateManager

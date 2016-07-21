@@ -11,9 +11,9 @@ public class ZMLobbyScoreDisplay : ZMScoreDisplay
 
 		DeactivateScoreBar(_playerInfo);
 
-		ZMLobbyScoreController.OnUpdateScore += UpdateScore;
-		ZMLobbyScoreController.OnReachMaxScore += DeactivateScoreBar;
-		ZMLobbyController.OnPlayerDropOut += DeactivateScoreBar;
+		ZMLobbyScoreController.OnUpdateScore += HandleUpdateScore;
+		ZMLobbyScoreController.OnReachMaxScore += HandleDeactivateScoreBar;
+		ZMLobbyController.OnPlayerDropOut += HandleDeactivateScoreBar;
 
 		ZMPlayerController.OnPlayerCreate += HandlePlayerCreate;
 	}
@@ -23,12 +23,12 @@ public class ZMLobbyScoreDisplay : ZMScoreDisplay
 		_scoreSlider.maxValue = 100.0f;
 	}
 
-	private void HandlePlayerCreate(ZMPlayerInfo info)
+	private void HandlePlayerCreate(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			ActivateScoreBar(_playerInfo);
-			UpdateScore(info, 0.0f);
+			UpdateScore(args.info, 0.0f);
 		}
 	}
 }

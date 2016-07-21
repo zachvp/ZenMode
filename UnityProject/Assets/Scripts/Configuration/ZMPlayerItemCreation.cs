@@ -16,9 +16,9 @@ public class ZMPlayerItemCreation : MonoBehaviour
 		ZMPlayerController.OnPlayerCreate += HandlePlayerCreate;
 	}
 
-	private void HandlePlayerCreate(ZMPlayerInfo info)
+	private void HandlePlayerCreate(ZMPlayerInfoEventArgs args)
 	{
-		SpawnItem(info.ID);
+		SpawnItem(args.info.ID);
 	}
 
 	private void SpawnItems()

@@ -25,11 +25,10 @@ public class ZMPlayerLabelController : ZMFudgeParentToObject
 		_text.color = Color.white;
 	}
 
-	private void Deactivate(ZMPlayerInfo info)
+	private void Deactivate(ZMPlayerInfoEventArgs args)
 	{
 		ClearEvents();
 		Destroy(gameObject);
-		//if (_playerInfo == info) { _text.enabled = false; }
 	}
 
 	private void AcceptEvents()
@@ -50,8 +49,11 @@ public class ZMPlayerLabelController : ZMFudgeParentToObject
 		ZMPlayerController.OnPlayerRespawn -= HandleOnPlayerRespawn;
 	}
 
-	private void HandleOnPlayerRespawn(ZMPlayerController controller)
+	private void HandleOnPlayerRespawn(ZMPlayerControllerEventArgs args)
 	{
-		if (_playerInfo == controller.PlayerInfo) { _text.enabled = true; }
+		if (_playerInfo == args.controller.PlayerInfo)
+		{
+			_text.enabled = true;
+		}
 	}
 }

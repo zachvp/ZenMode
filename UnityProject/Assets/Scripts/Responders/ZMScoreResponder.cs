@@ -22,17 +22,17 @@ public class ZMScoreResponder : ZMResponder
 		SetActive(!activeOnScore);
 	}
 
-	void HandleCanScoreEvent(ZMPlayerInfo info)
+	void HandleCanScoreEvent(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			SetActive(activeOnScore);
 		}
 	}
 
-	void HandleStopScoreEvent(ZMPlayerInfo info)
+	void HandleStopScoreEvent(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			SetActive(!activeOnScore);
 		}

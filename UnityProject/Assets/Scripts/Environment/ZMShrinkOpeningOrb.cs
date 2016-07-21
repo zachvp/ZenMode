@@ -17,9 +17,9 @@ public class ZMShrinkOpeningOrb : ZMScalePulse
 		ZMWaypointMovement.AtPathNodeEvent += HandleAtPathNodeEvent;
 	}
 
-	private void HandleAtPathNodeEvent(ZMWaypointMovement waypointMovement, int index)
+	private void HandleAtPathNodeEvent(ZMWaypointMovementIntEventArgs args)
 	{
-		if (index - 1 == _playerInfo.ID)
+		if (args.value - 1 == _playerInfo.ID)
 		{
 			StopPulsing();
 			ScaleToTargetOverTime(Vector3.zero, shrinkRate);

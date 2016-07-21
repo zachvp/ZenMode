@@ -5,7 +5,7 @@ using ZMConfiguration;
 [RequireComponent(typeof(Camera))]
 public class ZMCameraController : ZMCameraBase
 {
-	public static EventHandler<Camera> OnCameraStart;
+	public static EventHandler<UnityObjectEventArgs> OnCameraStart;
 
 	private Camera _camera;
 	private float _totalDistance;
@@ -29,7 +29,9 @@ public class ZMCameraController : ZMCameraBase
 	{
 		base.Start();
 
-		Notifier.SendEventNotification(OnCameraStart, _camera);
+		var args = new UnityObjectEventArgs(_camera);
+
+		Notifier.SendEventNotification(OnCameraStart, args);
 	}
 
 	protected void OnDestroy()
@@ -43,9 +45,9 @@ public class ZMCameraController : ZMCameraBase
 		_speed = 1.0f;
 	}
 	
-	private void HandleAtPathEndEvent(ZMWaypointMovement waypointMovement)
+	private void HandleAtPathEndEvent(ZMWaypointMovementEventArgs args)
 	{
-		if (waypointMovement.CompareTag(Tags.kMainCamera))
+		if (args.movement.CompareTag(Tags.kMainCamera))
 		{
 			Zoom(endZoom);
 			_speed = 1.0f;

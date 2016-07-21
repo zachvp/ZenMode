@@ -5,7 +5,7 @@ using ZMConfiguration;
 
 public class ZMLobbyPedestalController : ZMPlayerItem
 {
-	public static EventHandler<ZMPlayerInfo> ActivateEvent;
+	public static EventHandler<ZMPlayerInfoEventArgs> ActivateEvent;
 
 	protected override void Awake()
 	{
@@ -21,24 +21,26 @@ public class ZMLobbyPedestalController : ZMPlayerItem
 		ActivateEvent = null;
 	}
 
-	void HandleAtPathEndEvent(ZMWaypointMovement waypointMovement)
+	void HandleAtPathEndEvent(ZMWaypointMovementEventArgs args)
 	{
-		if (gameObject == waypointMovement.gameObject)
+		if (gameObject == args.movement.gameObject)
 		{
-			Notifier.SendEventNotification(ActivateEvent, _playerInfo);
+			var infoArgs = new ZMPlayerInfoEventArgs(_playerInfo);
+
+			Notifier.SendEventNotification(ActivateEvent, infoArgs);
 		}
 	}
 
-	void HandlePlayerJoinedEvent(int controlIndex)
+	void HandlePlayerJoinedEvent(IntEventArgs args)
 	{
-		if (_playerInfo.ID == controlIndex)
+		if (_playerInfo.ID == args.value)
 		{
 			gameObject.SetActive(true);
 		}
 	}
 
-	void HandleMaxScoreReachedEvent(ZMPlayerInfo info)
+	void HandleMaxScoreReachedEvent(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info) { gameObject.SetActive(false); }
+		if (_playerInfo == args.info) { gameObject.SetActive(false); }
 	}
 }

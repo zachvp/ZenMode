@@ -37,17 +37,17 @@ public class ZMAreaActivationResponder : MonoBehaviour
 		}
 	}
 
-	private void HandlePlayerCreate(ZMPlayerInfo info)
+	private void HandlePlayerCreate(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			SetActive(_onPlayerCreateActivationObjects, true);
 		}
 	}
 
-	private void HandlePlayerDropOut(ZMPlayerInfo info)
+	private void HandlePlayerDropOut(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			SetActive(_onPlayerCreateActivationObjects, false);
 			SetActive(_onPlayerEnterActivationObjects, false);

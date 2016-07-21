@@ -16,9 +16,12 @@ public class ZMPlayerItem : MonoBehaviour
 		AcceptPlayerEvents();
 	}
 
-	protected virtual void HandlePlayerCreate(ZMPlayerInfo info)
+	protected virtual void HandlePlayerCreate(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info) { _playerController = info.GetComponent<ZMPlayerController>(); }
+		if (_playerInfo == args.info)
+		{
+			_playerController = args.info.GetComponent<ZMPlayerController>();
+		}
 	}
 
 	public virtual void ConfigureItemWithID(Transform parent, int id)

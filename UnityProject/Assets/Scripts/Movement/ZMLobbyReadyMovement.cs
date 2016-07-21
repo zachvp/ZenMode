@@ -26,9 +26,9 @@ public class ZMLobbyReadyMovement : ZMAnalogMovement
 		ConfigureItemWithID(_playerInfo.ID);
 	}
 
-	private void Activate(ZMPlayerInfo info)
+	private void Activate(ZMPlayerInfoEventArgs args)
 	{
-		if (_playerInfo == info)
+		if (_playerInfo == args.info)
 		{
 			_text.text = message;
 			gameObject.SetActive(true);

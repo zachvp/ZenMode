@@ -5,52 +5,52 @@ using Core;
 public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 {
 	// Gamepad digital events.
-	public EventHandler<ZMInput> OnAction1;
-	public EventHandler<ZMInput> OnAction2;
-	public EventHandler<ZMInput> OnAction3;
-	public EventHandler<ZMInput> OnAction4;
+	public EventHandler<ZMInputEventArgs> OnAction1;
+	public EventHandler<ZMInputEventArgs> OnAction2;
+	public EventHandler<ZMInputEventArgs> OnAction3;
+	public EventHandler<ZMInputEventArgs> OnAction4;
 
-	public EventHandler<ZMInput> OnLeftBumper;
-	public EventHandler<ZMInput> OnLeftTrigger;
-	public EventHandler<ZMInput> OnRightBumper;
-	public EventHandler<ZMInput> OnRightTrigger;
+	public EventHandler<ZMInputEventArgs> OnLeftBumper;
+	public EventHandler<ZMInputEventArgs> OnLeftTrigger;
+	public EventHandler<ZMInputEventArgs> OnRightBumper;
+	public EventHandler<ZMInputEventArgs> OnRightTrigger;
 
-	public EventHandler<ZMInput> OnLeftAnalogStickButton;
-	public EventHandler<ZMInput> OnRightAnalogStickButton;
-	public EventHandler<ZMInput> OnStartButton;
-	public EventHandler<ZMInput> OnAnyButton;
+	public EventHandler<ZMInputEventArgs> OnLeftAnalogStickButton;
+	public EventHandler<ZMInputEventArgs> OnRightAnalogStickButton;
+	public EventHandler<ZMInputEventArgs> OnStartButton;
+	public EventHandler<ZMInputEventArgs> OnAnyButton;
 
 	// Gamepad analog events.
-	public EventHandler<ZMInput, Vector2> OnLeftAnalogStickMove;
-	public EventHandler<ZMInput, Vector2> OnRightAnalogStickMove;
-	public EventHandler<ZMInput, Vector2> OnDirectionalPadMove;
+	public EventHandler<ZMInputVector2EventArgs> OnLeftAnalogStickMove;
+	public EventHandler<ZMInputVector2EventArgs> OnRightAnalogStickMove;
+	public EventHandler<ZMInputVector2EventArgs> OnDirectionalPadMove;
 
-	public EventHandler<ZMInput, float> OnLeftTriggerAnalog;
-	public EventHandler<ZMInput, float> OnRightTriggerAnalog;
+	public EventHandler<ZMInputFloatEventArgs> OnLeftTriggerAnalog;
+	public EventHandler<ZMInputFloatEventArgs> OnRightTriggerAnalog;
 
 	// Keyboard events.
-	public EventHandler<ZMInput> OnWKey;
-	public EventHandler<ZMInput> OnAKey;
-	public EventHandler<ZMInput> OnSKey;
-	public EventHandler<ZMInput> OnDKey;
+	public EventHandler<ZMInputEventArgs> OnWKey;
+	public EventHandler<ZMInputEventArgs> OnAKey;
+	public EventHandler<ZMInputEventArgs> OnSKey;
+	public EventHandler<ZMInputEventArgs> OnDKey;
 
-	public EventHandler<ZMInput> OnEKey;
-	public EventHandler<ZMInput> OnQKey;
-	public EventHandler<ZMInput> OnRKey;
+	public EventHandler<ZMInputEventArgs> OnEKey;
+	public EventHandler<ZMInputEventArgs> OnQKey;
+	public EventHandler<ZMInputEventArgs> OnRKey;
 
-	public EventHandler<ZMInput> OnLeftArrowKey;
-	public EventHandler<ZMInput> OnRightArrowKey;
-	public EventHandler<ZMInput> OnUpArrowKey;
-	public EventHandler<ZMInput> OnDownArrowKey;
+	public EventHandler<ZMInputEventArgs> OnLeftArrowKey;
+	public EventHandler<ZMInputEventArgs> OnRightArrowKey;
+	public EventHandler<ZMInputEventArgs> OnUpArrowKey;
+	public EventHandler<ZMInputEventArgs> OnDownArrowKey;
 
-	public EventHandler<ZMInput> OnSpacebarKey;
-	public EventHandler<ZMInput> OnRightShiftKey;
-	public EventHandler<ZMInput> OnReturnKey;
-	public EventHandler<ZMInput> OnEscapeKey;
+	public EventHandler<ZMInputEventArgs> OnSpacebarKey;
+	public EventHandler<ZMInputEventArgs> OnRightShiftKey;
+	public EventHandler<ZMInputEventArgs> OnReturnKey;
+	public EventHandler<ZMInputEventArgs> OnEscapeKey;
 
-	public EventHandler<ZMInput> OnSlashKey;
+	public EventHandler<ZMInputEventArgs> OnSlashKey;
 
-	public EventHandler<ZMInput> OnAnyKeyPressed;
+	public EventHandler<ZMInputEventArgs> OnAnyKeyPressed;
 
 	// Defines the method type for all keyboard handling.
 	private delegate bool KeyAction(KeyCode code);
@@ -85,6 +85,7 @@ public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 	private void BroadcastDigitalGamepadEvents(InputDevice device, int userIndex)
 	{
 		var startInput = new ZMInput(device.MenuWasPressed, userIndex);
+		var startArgs = new ZMInputEventArgs(startInput);
 
 		Notifier.SendEventNotification(OnAction1, GetInputForControl(device.Action1, userIndex));
 		Notifier.SendEventNotification(OnAction2, GetInputForControl(device.Action2, userIndex));
@@ -104,21 +105,31 @@ public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.LeftTrigger, userIndex));
 		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.RightBumper, userIndex));
 		Notifier.SendEventNotification(OnAnyButton, GetInputForControl(device.RightTrigger, userIndex));
-		Notifier.SendEventNotification(OnAnyButton, startInput);
+		Notifier.SendEventNotification(OnAnyButton, startArgs);
 
-		Notifier.SendEventNotification(OnStartButton, startInput);
+		Notifier.SendEventNotification(OnStartButton, startArgs);
 	}
 
 	private void BroadcastAnalogGamepadEvents(InputDevice device, int userIndex)
 	{
 		var input = new ZMInput(ZMInput.State.HELD, userIndex);
+		var args = new ZMInputVector2EventArgs(input, Vector2.zero);
+		var floatArgs = new ZMInputFloatEventArgs(input, 0);
 
-		Notifier.SendEventNotification(OnLeftAnalogStickMove, input, device.LeftStick.Vector);
-		Notifier.SendEventNotification(OnRightAnalogStickMove, input, device.RightStick.Vector);
-		Notifier.SendEventNotification(OnDirectionalPadMove, input, device.DPad.Vector);
+		args.value = device.LeftStick.Vector;
+		Notifier.SendEventNotification(OnLeftAnalogStickMove, args);
 
-		Notifier.SendEventNotification(OnRightTriggerAnalog, input, device.RightTrigger.Value);
-		Notifier.SendEventNotification(OnLeftTriggerAnalog, input, device.LeftTrigger.Value);
+		args.value = device.RightStick.Vector;
+		Notifier.SendEventNotification(OnRightAnalogStickMove, args);
+
+		args.value = device.DPad.Vector;
+		Notifier.SendEventNotification(OnDirectionalPadMove, args);
+
+		floatArgs.value = device.RightTrigger.Value;
+		Notifier.SendEventNotification(OnRightTriggerAnalog, floatArgs);
+
+		floatArgs.value = device.LeftTrigger.Value;
+		Notifier.SendEventNotification(OnLeftTriggerAnalog, floatArgs);
 	}
 
 	private void BroadcastKeyboardEvents(KeyAction action, ZMInput.State state)
@@ -144,14 +155,15 @@ public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 		CheckKey(KeyCode.Slash, action, state, OnSlashKey);
 	}
 
-	private void CheckKey(KeyCode code, KeyAction action, ZMInput.State state, EventHandler<ZMInput> eventHandler)
+	private void CheckKey(KeyCode code, KeyAction action, ZMInput.State state, EventHandler<ZMInputEventArgs> eventHandler)
 	{
 		if (action(code))
 		{
 			var input = GetInputForKeyCode(code, state);
+			var args = new ZMInputEventArgs(input);
 
-			Notifier.SendEventNotification(eventHandler, input);
-			Notifier.SendEventNotification(OnAnyKeyPressed, input);
+			Notifier.SendEventNotification(eventHandler, args);
+			Notifier.SendEventNotification(OnAnyKeyPressed, args);
 		}
 	}
 
@@ -169,11 +181,13 @@ public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 		return -1;
 	}
 
-	private ZMInput GetInputForControl(InputControl control, int userIndex)
+	private ZMInputEventArgs GetInputForControl(InputControl control, int userIndex)
 	{
 		var state = GetStateForControl(control);
+		var input = new ZMInput(state, userIndex);
+		var args = new ZMInputEventArgs(input);
 
-		return new ZMInput(state, userIndex);
+		return args;
 	}
 
 	private ZMInput.State GetStateForControl(InputControl control)

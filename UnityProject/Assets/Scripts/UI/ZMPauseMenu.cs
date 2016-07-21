@@ -4,7 +4,7 @@ using ZMPlayer;
 
 public class ZMPauseMenu : ZMTextMenu
 {
-	public static EventHandler<ZMPlayerInfo> OnPlayerPauseGame;
+	public static EventHandler<ZMPlayerInfoEventArgs> OnPlayerPauseGame;
 
 	protected bool _active;
 
@@ -22,15 +22,15 @@ public class ZMPauseMenu : ZMTextMenu
 		OnPlayerPauseGame = null;
 	}
 
-	private void HandleTogglePause(int controlIndex)
+	private void HandleTogglePause(IntEventArgs args)
 	{
-		if (_active && IsValidInputControl(controlIndex))
+		if (_active && IsValidInputControl(args.value))
 		{
 			ResumeGame();
 		}
 		else if (!_active)
 		{
-			_playerInfo.ID = controlIndex;
+			_playerInfo.ID = args.value;
 			PauseGame();
 		}
 	}
@@ -58,10 +58,12 @@ public class ZMPauseMenu : ZMTextMenu
 	{
 		if (IsAbleToPause())
 		{
+			var infoArgs = new ZMPlayerInfoEventArgs(_playerInfo);
+
 			AcceptInputEvents();
 			ShowMenu();
 
-			Notifier.SendEventNotification(OnPlayerPauseGame, _playerInfo);
+			Notifier.SendEventNotification(OnPlayerPauseGame, infoArgs);
 			MatchStateManager.PauseMatch();
 		}
 	}

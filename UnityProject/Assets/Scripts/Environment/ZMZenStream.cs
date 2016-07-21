@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Core;
 using System.Collections;
 
 public class ZMZenStream : MonoBehaviour {
@@ -18,8 +19,10 @@ public class ZMZenStream : MonoBehaviour {
 		_particleSystem.GetComponent<Renderer>().sortingLayerName = "Foreground";
 	}
 
-	private void HandleActivateEvent(ZMPedestalController pedestalController)
+	private void HandleActivateEvent(MonoBehaviourEventArgs args)
 	{
+		var pedestalController = args.behavior as ZMPedestalController;
+
 		if (_playerInfo == pedestalController.PlayerInfo)
 		{
 			var emission = _particleSystem.emission;
@@ -28,8 +31,10 @@ public class ZMZenStream : MonoBehaviour {
 		}
 	}
 
-	private void HandleDeactivateEvent(ZMPedestalController pedestalController)
+	private void HandleDeactivateEvent(MonoBehaviourEventArgs args)
 	{
+		var pedestalController = args.behavior as ZMPedestalController;
+
 		if (_playerInfo == pedestalController.PlayerInfo)
 		{
 //			_particleSystem.emission = true;

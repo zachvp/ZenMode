@@ -116,16 +116,16 @@ public class ZMCrownManager : MonoBehaviour
 		}
 	}
 	
-	private void HandlePlayerRespawnEvent(ZMPlayerController playerController)
+	private void HandlePlayerRespawnEvent(ZMPlayerControllerEventArgs args)
 	{
 		if (!MatchStateManager.IsEnd())
 		{
-			_crowns[playerController.PlayerInfo.ID].SetActive(true);
+			_crowns[args.controller.PlayerInfo.ID].SetActive(true);
 		}
 	}
 	
-	private void HandlePlayerDeathEvent(ZMPlayerInfo info)
+	private void HandlePlayerDeathEvent(ZMPlayerInfoEventArgs args)
 	{
-		_crowns[info.ID].SetActive(false);
+		_crowns[args.info.ID].SetActive(false);
 	}
 }

@@ -17,7 +17,7 @@ public class ZMGoBackController : MonoBehaviour
 		GetComponent<AudioSource>().PlayOneShot(_audioStart[Random.Range(0, _audioStart.Length)]);
 	}
 
-	private void HandleGoBack(int ID)
+	private void HandleGoBack(IntEventArgs args)
 	{
 		GetComponent<AudioSource>().PlayOneShot(_audioBack);
 		SceneManager.LoadScene(ZMSceneIndexList.INDEX_MAIN_MENU);
