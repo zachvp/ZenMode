@@ -23,6 +23,7 @@ GameObject:
   - 122: {fileID: 12251136}
   - 114: {fileID: 11451136}
   - 114: {fileID: 11452436}
+  - 114: {fileID: 11493316}
   m_Layer: 10
   m_Name: StagePlayer
   m_TagString: Player
@@ -250,9 +251,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 111554}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 785c916f68f3b4acfb0eac5a47607b2c, type: 3}
+  m_Script: {fileID: 11500000, guid: 2e950e28a513cd540881118fcdedf4f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 0
 --- !u!114 &11480978
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -395,6 +397,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76e8993e19fe98140ac70abc3f0ec58b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11493316
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 111554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef86700825e9144e589d1168f03eedc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11493884

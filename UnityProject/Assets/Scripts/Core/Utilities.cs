@@ -235,6 +235,24 @@ namespace Core
 			return className;
 		}
 
+		// WARNING: Does not work with EventHandlers of any type.
+		public static class Serializer
+		{
+			public static string Create(object o, bool format = false)
+			{
+				string result = null;
+
+				if (o != null)
+				{
+					result = JsonUtility.ToJson(o, format);
+
+					Debug.AssertFormat(result != "{}", "Unable to serialize parameter of type: {0}.", o.GetType());
+				}
+
+				return result;
+			}
+		}
+
 		// All filepaths here are relative to Unity's "Assets/Resources" folder.
 		public static class FileIO
 		{

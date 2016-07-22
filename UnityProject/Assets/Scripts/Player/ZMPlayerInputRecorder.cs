@@ -15,7 +15,7 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 	private ZMPlayerInputController _inputController;
 
 	// Stores all inputs for a frame.
-	private Queue<InputRecord> _frameInputs;
+	private Queue<EventRecord> _frameInputs;
 
 	// Archives all frame inputs.
 	private Queue<FrameInputRecord> _canonicalRecord;
@@ -26,7 +26,7 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 		_inputController = GetComponent<ZMPlayerInputController>();
 
 		_inputEventNotifier = new ZMPlayerInputEventNotifier();
-		_frameInputs = new Queue<InputRecord>();
+		_frameInputs = new Queue<EventRecord>();
 		_canonicalRecord = new Queue<FrameInputRecord>();
 
 		_inputController._inputEventNotifier.OnMoveRightEvent += HandleOnMoveRightEvent;
@@ -46,7 +46,7 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 	void LateUpdate()
 	{
 		// All the input events for the frame have been captured. Time to log them.
-		var frameInputs = new Queue<InputRecord>(_frameInputs);
+		var frameInputs = new Queue<EventRecord>(_frameInputs);
 		var frameRecord = new FrameInputRecord(frameInputs);
 
 		_canonicalRecord.Enqueue(frameRecord);
@@ -80,9 +80,17 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 			while (frameRecord.record.Count > 0)
 			{
 				var inputRecord = frameRecord.record.Dequeue();
+				var args = inputRecord.args;
+				var eventHandlerInt = inputRecord.GetHandlerWithType<EventHandler<IntEventArgs>>();
 
-				_inputEventNotifier.TriggerEvent(inputRecord.handler);
-				_inputEventNotifier.TriggerEvent(inputRecord.handlerInt, inputRecord.args as IntEventArgs);
+				if (args == null)
+				{
+					_inputEventNotifier.TriggerEvent(inputRecord.eventHandler);
+				}
+				else
+				{
+					_inputEventNotifier.TriggerEvent(eventHandlerInt, args as IntEventArgs);
+				}
 			}
 
 			yield return null;
@@ -94,42 +102,43 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 
 	private void HandleOnMoveRightEvent()
 	{
-		var record = new InputRecord(_inputController._inputEventNotifier.OnMoveRightEvent);
+		var record = new EventRecord(_inputController._inputEventNotifier.OnMoveRightEvent);
 
 		_frameInputs.Enqueue(record);
 	}
 
 	private void HandleOnMoveLeftEvent()
 	{
-		var record = new InputRecord(_inputController._inputEventNotifier.OnMoveLeftEvent);
+		var record = new EventRecord(_inputController._inputEventNotifier.OnMoveLeftEvent);
 
 		_frameInputs.Enqueue(record);
 	}
 
 	private void HandleNoMoveEvent()
 	{
-		var record = new InputRecord(_inputController._inputEventNotifier.OnNoMoveEvent);
+		var record = new EventRecord(_inputController._inputEventNotifier.OnNoMoveEvent);
 
 		_frameInputs.Enqueue(record);
 	}
 
 	private void HandleJumpEvent()
 	{
-		var record = new InputRecord(_inputController._inputEventNotifier.OnJumpEvent);
+		var record = new EventRecord(_inputController._inputEventNotifier.OnJumpEvent);
 
 		_frameInputs.Enqueue(record);
 	}
 
 	private void HandlePlungeEvent()
 	{
-		var record = new InputRecord(_inputController._inputEventNotifier.OnPlungeEvent);
+		var record = new EventRecord(_inputController._inputEventNotifier.OnPlungeEvent);
 
 		_frameInputs.Enqueue(record);
 	}
 
 	private void HandleAttackEvent(IntEventArgs args)
 	{
-		var record = new InputRecord(_inputController._inputEventNotifier.OnAttackEvent, args);
+		var inputEvent = _inputController._inputEventNotifier.OnAttackEvent;
+		var record = new EventRecord(inputEvent, args);
 
 		_frameInputs.Enqueue(record);
 	}
@@ -137,81 +146,10 @@ public class ZMPlayerInputRecorder : MonoBehaviour
 
 public class FrameInputRecord
 {
-	public Queue<InputRecord> record;
+	public Queue<EventRecord> record;
 
-	public FrameInputRecord(Queue<InputRecord> inputRecord)
+	public FrameInputRecord(Queue<EventRecord> inputRecord)
 	{
 		record = inputRecord;
 	}
-}
-
-public class InputRecord
-{
-	// Make this a list/array of objects? Index 0 = no args, index 1 = 1 arg...
-	public EventHandler handler { get { return _recordedEvent as EventHandler; } }
-	public EventHandler<IntEventArgs> handlerInt { get { return _recordedEvent as EventHandler<IntEventArgs>; } }
-
-	public EventArgs args { get; private set; }
-
-	private object _recordedEvent;
-
-	public InputRecord(object eventHandler)
-	{
-		Debug.AssertFormat(eventHandler is EventHandler,
-						   "Improper constructor. Attempting to create InputRecord containing arguments." +
-						   "Use this class for no arguments");
-		_recordedEvent = eventHandler;
-	}
-
-	public InputRecord(object eventHandler, EventArgs eventArgs)
-	{
-		Debug.AssertFormat(!(eventHandler is EventHandler),
-						   "Improper constructor. Attempting to create InputRecord without arguments." +
-						   "Use this class for EventHandlers with arguments (templated).");
-
-		_recordedEvent = eventHandler;
-		args = eventArgs;
-		// TODO: Enforce supported types with checks.
-	}
-
-	/*public override bool Equals(System.Object other)
-	{
-		var otherRecord = other as InputRecord;
-
-		if (otherRecord == null) { return false; }
-
-		return command == otherRecord.command;
-	}
-
-	public override int GetHashCode()
-	{
-		return command.GetHashCode();
-	}
-
-	public static bool operator ==(InputRecord lhs, InputRecord rhs)
-	{
-		// Automatically equal if same reference (or both null).
-		if (System.Object.ReferenceEquals(lhs, rhs)) { return true; }
-
-		// If one is null, but not both, return false.
-		if ((object) lhs == null || (object) rhs == null) { return false; }
-
-		return lhs.command == rhs.command;
-	}
-
-	public static bool operator !=(InputRecord lhs, InputRecord rhs)
-	{
-		return !(lhs == rhs);
-	}
-
-	int System.IComparable.CompareTo(object other)
-	{
-		var otherRecord = (InputRecord) other;
-		int result = 0;
-
-		if (otherRecord == null && this != null) { result = 1; }
-		else if (otherRecord != null && this == null) { result = -1; }
-
-		return result;
-	}*/
 }

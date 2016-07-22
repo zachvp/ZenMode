@@ -18,16 +18,9 @@ public class ZMPlayerInputEventNotifier
 		get { return Utilities.GetVariableName(() => OnMoveRightEvent); }
 	}
 
-	private Dictionary<string, EventHandler> _noArgMapping;
-	private Dictionary<string, EventHandler<EventArgs>> _argMapping;
-
 	public ZMPlayerInputEventNotifier()
 	{
 		// Empty
-		_noArgMapping = new Dictionary<string, EventHandler>();
-		_argMapping = new Dictionary<string, EventHandler<EventArgs>>();
-
-		_noArgMapping.Add(OnMoveRightString, OnMoveRightEvent);
 	}
 
 	public void TriggerEvent(EventHandler handler)
@@ -38,21 +31,6 @@ public class ZMPlayerInputEventNotifier
 	public void TriggerEvent<T>(EventHandler<T> handler, T args)
 	{
 		Notifier.SendEventNotification(handler, args);
-	}
-
-	public void TriggerEventWithString(string eventString)
-	{
-		EventHandler eventHandler;
-		EventHandler<EventArgs> eventHandlerOneArg;
-
-		if (_noArgMapping.TryGetValue(eventString, out eventHandler))
-		{
-			TriggerEvent(eventHandler);
-		}
-		else if (_argMapping.TryGetValue(eventString, out eventHandlerOneArg))
-		{
-//			TriggerEvent(eventHandlerOneArg, );
-		}
 	}
 }
 

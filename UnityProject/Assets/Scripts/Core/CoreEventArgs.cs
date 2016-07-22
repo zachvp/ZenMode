@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Core
 {
 	public abstract class EventArgs
 	{
-		// Empty.
+		// Empty
 	}
 
 	public class IntEventArgs : EventArgs
