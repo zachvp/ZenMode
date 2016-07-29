@@ -113,7 +113,7 @@ public class ZMInputNotifier : MonoSingleton<ZMInputNotifier>
 	private void BroadcastAnalogGamepadEvents(InputDevice device, int userIndex)
 	{
 		var input = new ZMInput(ZMInput.State.HELD, userIndex);
-		var args = new ZMInputVector2EventArgs(input, Vector2.zero);
+		var args = new ZMInputVector2EventArgs(Vector2.zero, input);
 		var floatArgs = new ZMInputFloatEventArgs(input, 0);
 
 		args.value = device.LeftStick.Vector;

@@ -2,18 +2,22 @@
 using ZMPlayer;
 using Core;
 
+[RequireComponent(typeof(ZMDirectionalInput))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class ZMAnalogMovement : ZMDirectionalInput
+public class ZMAnalogMovement : ZMPlayerItem
 {
 	public float _movementSpeed = 100;
 
 	private Rigidbody2D _rigidbody;
+
 	private Renderer _renderer;
 	private Vector2 _previousVelocity;
+	private Vector2 _movement;
+	private Color _baseColor;
+	private ZMDirectionalInputEventNotifier _inputEventNotifier;
+
 	private bool _shouldBounce;
 	private float _slowFactor;
-	
-	private Color _baseColor;
 
 	protected override void Awake()
 	{
@@ -22,6 +26,7 @@ public class ZMAnalogMovement : ZMDirectionalInput
 		_playerInfo = GetComponent<ZMPlayerInfo>();
 		_rigidbody = GetComponent<Rigidbody2D>();
 		_renderer = GetComponent<Renderer>();
+
 		_slowFactor = 1;
 
 		MatchStateManager.OnMatchPause += Disable;
@@ -30,6 +35,9 @@ public class ZMAnalogMovement : ZMDirectionalInput
 
 	protected virtual void Start()
 	{
+		_inputEventNotifier = GetComponent<ZMDirectionalInput>()._inputEventNotifier;
+		_inputEventNotifier.OnMoveEvent += HandleMove;
+
 		if (_renderer != null)
 		{
 			_baseColor = Utilities.GetRGB(_renderer.material.color, _playerInfo.standardColor);
@@ -79,10 +87,9 @@ public class ZMAnalogMovement : ZMDirectionalInput
 		}
 	}
 
-
-	protected override bool IsValidInputControl(ZMInput input)
+	private void HandleMove(Vector2EventArgs args)
 	{
-		return _playerInfo.ID == input.ID;
+		_movement = args.value;
 	}
 
 	private void Disable()

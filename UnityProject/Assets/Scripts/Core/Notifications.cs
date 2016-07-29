@@ -8,7 +8,7 @@ namespace Core
 	public delegate void EventHandler();
 	public delegate void EventHandler<EventArgs>(EventArgs args);
 
-	public class Notifier
+	public static class Notifier
 	{
 		public static void SendEventNotification(EventHandler eventHandler)
 		{
@@ -22,6 +22,19 @@ namespace Core
 			// Temp variable for thread safety.
 			var threadsafeHandler = eventHandler;
 			if (threadsafeHandler != null) { threadsafeHandler(args); }
+		}
+	}
+
+	public class EventNotifier
+	{
+		public void TriggerEvent(EventHandler handler)
+		{
+			Notifier.SendEventNotification(handler);
+		}
+
+		public void TriggerEvent<T>(EventHandler<T> handler, T args)
+		{
+			Notifier.SendEventNotification(handler, args);
 		}
 	}
 

@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using Core;
 
+[RequireComponent(typeof(ZMDirectionalInput))]
 public abstract class ZMMenuInput : ZMDirectionalInput
 {
 	[SerializeField] private bool _isSharedMenu;	// If true, anyone can affect input.
@@ -85,13 +86,14 @@ public abstract class ZMMenuInput : ZMDirectionalInput
 
 	protected bool IsValidInputControl(int id)
 	{
-		if (_playerInfo == null)
+		bool result = false;
+
+		if (_playerInfo != null)
 		{
-			Debug.LogWarningFormat("MenuInput: {0}: player info is null.", name);
-			return false;
+			result = (id == _playerInfo.ID);
 		}
 
-		return _isSharedMenu || id == _playerInfo.ID;
+		return _isSharedMenu || result;
 	}
 
 	protected override void AcceptGamepadEvents()

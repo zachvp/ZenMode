@@ -60,11 +60,11 @@ public class ZMInputEventArgs : EventArgs
 	}
 }
 
-public class ZMInputVector2EventArgs : ZMInputEventArgs
+public class ZMInputVector2EventArgs : Vector2EventArgs
 {
-	public Vector2 value;
+	public ZMInput input;
 
-	public ZMInputVector2EventArgs(ZMInput inputParam, Vector2 valueParam)
+	public ZMInputVector2EventArgs(Vector2 valueParam, ZMInput inputParam)
 	{
 		input = inputParam;
 		value = valueParam;

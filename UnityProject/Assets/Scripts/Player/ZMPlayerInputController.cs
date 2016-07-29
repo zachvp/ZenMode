@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Core;
 
-public class ZMPlayerInputEventNotifier
+public class ZMPlayerInputEventNotifier : EventNotifier
 {
 	public EventHandler OnMoveRightEvent;
 	public EventHandler OnMoveLeftEvent;
@@ -22,21 +22,11 @@ public class ZMPlayerInputEventNotifier
 	{
 		// Empty
 	}
-
-	public void TriggerEvent(EventHandler handler)
-	{
-		Notifier.SendEventNotification(handler);
-	}
-
-	public void TriggerEvent<T>(EventHandler<T> handler, T args)
-	{
-		Notifier.SendEventNotification(handler, args);
-	}
 }
 
 public class ZMPlayerInputController : ZMDirectionalInput
 {
-	public ZMPlayerInputEventNotifier _inputEventNotifier { get; private set; }
+	new public ZMPlayerInputEventNotifier _inputEventNotifier { get; private set; }
 
 	private const float DOT_THRESHOLD = 0.75f;
 

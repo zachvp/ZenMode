@@ -18,6 +18,18 @@ namespace Core
 		}
 	}
 
+	public class Vector2EventArgs : EventArgs
+	{
+		public Vector2 value;
+
+		public Vector2EventArgs() { }
+
+		public Vector2EventArgs(Vector2 valueParam)
+		{
+			value = valueParam;
+		}
+	}
+
 	public class UnityObjectEventArgs : EventArgs
 	{
 		public UnityEngine.Object arg;
