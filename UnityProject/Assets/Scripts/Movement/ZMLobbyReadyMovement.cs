@@ -15,8 +15,9 @@ public class ZMLobbyReadyMovement : ZMAnalogMovement
 
 		_text = GetComponent<Text>();
 		_text.text = "";
-		ZMLobbyScoreController.OnReachMaxScore += Activate;
 		gameObject.SetActive(false);
+
+		ZMLobbyScoreController.OnReachMaxScore += Activate;
 	}
 
 	protected override void Start()

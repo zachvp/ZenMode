@@ -39,6 +39,11 @@ public class ZMPlayerItem : MonoBehaviour
 		ConfigureHierarchyColor();
 	}
 
+	public virtual void ConfigureItemWithID(int id)
+	{
+		ConfigureItemWithID(null, id);
+	}
+
 	private void ConfigureHierarchyColor()
 	{
 		var hierarchy = Utilities.GetAllInHierarchy(transform);
@@ -65,11 +70,6 @@ public class ZMPlayerItem : MonoBehaviour
 		if (graphic != null) { graphic.color = _playerInfo.standardColor; }
 	}
 
-	public virtual void ConfigureItemWithID(int id)
-	{
-		ConfigureItemWithID(null, id);
-	}
-	
 	// Override this to listen to player events.
 	protected virtual void AcceptPlayerEvents() { }
 }

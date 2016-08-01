@@ -73,7 +73,7 @@ public class ZMDirectionalInput : ZMPlayerItem
 		inputManager.OnUpArrowKey += HandleOnMoveUp;
 	}
 
-	protected void AcceptInputEvents()
+	public void AcceptInputEvents()
 	{
 		AcceptGamepadEvents();
 		AcceptKeyboardEvents();
@@ -101,7 +101,7 @@ public class ZMDirectionalInput : ZMPlayerItem
 		inputManager.OnUpArrowKey -= HandleOnMoveUp;
 	}
 
-	protected void ClearInputEvents()
+	public void ClearInputEvents()
 	{
 		ClearGamePadEvents();
 		ClearKeyboardEvents();
