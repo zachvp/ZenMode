@@ -21,21 +21,14 @@ namespace Core
 			var message = string.Format("PersistentStorage: Invalid key {0} given. please provide a valid key", key);
 			bool result = settings.TryGetValue(key, out value);
 
-			if (!result)
-			{
-				Debug.LogError(message);
-			}
-
-//			Debug.Assert(result, message);
+			Debug.Assert(result, message);
 
 			return (ValueType) value;
 		}
 
 		public static bool IsValid(string key)
 		{
-			object value;
-
-			return settings.TryGetValue(key, out value);
+			return settings.ContainsKey(key);
 		}
 
 		public static void Clear()
@@ -48,7 +41,10 @@ namespace Core
 	{
 		private string key;
 		
-		public Setting(string k) { key = k; }
+		public Setting(string k)
+		{
+			key = k;
+		}
 
 		public Setting(string k, int size)
 		{

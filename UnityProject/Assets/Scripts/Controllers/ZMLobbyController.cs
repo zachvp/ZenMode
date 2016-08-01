@@ -34,7 +34,7 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 		public void SetReady() 	 { UpdateStates(State.READY); }
 		public void SetDropped() { UpdateStates(State.DROPPED); }
 
-		public bool IsNone 	  { get { return _state == State.WAITING; } }
+		public bool IsWaiting 	  { get { return _state == State.WAITING; } }
 		public bool IsJoined  { get { return _state == State.JOINED; } }
 		public bool IsReady   { get { return _state == State.READY; } }
 		public bool IsDropped { get { return _state == State.DROPPED; } }
@@ -43,7 +43,10 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 		{
 			var array = new LobbyPlayer[size];
 
-			for (int i = 0; i < size; ++i) { array[i] = LobbyPlayer.Create(); }
+			for (int i = 0; i < size; ++i)
+			{
+				array[i] = LobbyPlayer.Create();
+			}
 
 			return array;
 		}
@@ -95,18 +98,18 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 
 	public bool IsPlayerJoined(int id)
 	{
-		if (!Utilities.IsValidArrayIndex(_players, id)) { return false; }
-
-		return _players[id].IsJoined;
+		return Utilities.IsValidArrayIndex(_players, id) && _players[id].IsJoined;
 	}
 
 	private void HandleAnyInputEvent(IntEventArgs args)
 	{
 		var controlIndex = args.value;
 
-		if (!Utilities.IsValidArrayIndex(_players, controlIndex) || MatchStateManager.IsPause()) { return; }
+		var isAbleToJoin = Utilities.IsValidArrayIndex(_players, controlIndex) &&
+						   !MatchStateManager.IsPause() &&
+						   _players[controlIndex].IsWaiting;
 
-		if (_players[controlIndex].IsNone)
+		if (isAbleToJoin)
 		{
 			_players[controlIndex].SetJoined();
 
@@ -114,7 +117,10 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 
 			_requiredPlayerCount += 1;
 
-			if (!MatchStateManager.IsPreMatch()) { MatchStateManager.StartPreMatch(); }
+			if (!MatchStateManager.IsPreMatch())
+			{
+				MatchStateManager.StartPreMatch();
+			}
 		}
 	}
 
@@ -144,8 +150,13 @@ public class ZMLobbyController : MonoSingleton<ZMLobbyController>
 
 		if (LobbyPlayer.ReadyCount > 1 && LobbyPlayer.ReadyCount == _requiredPlayerCount)
 		{
-			Utilities.ExecuteAfterDelay(LoadLevel, 0.5f);
-			Utilities.ExecuteAfterDelay(ShowLoadScreen, 0.5f);
+			float loadDelay = 0.5f;
+
+			// Set the number of players in the match to the amount of players who have readied up.
+			Settings.MatchPlayerCount.value = LobbyPlayer.ReadyCount;
+
+			Utilities.ExecuteAfterDelay(LoadLevel, loadDelay);
+			Utilities.ExecuteAfterDelay(ShowLoadScreen, loadDelay);
 		}
 	}
 

@@ -6,7 +6,7 @@ using Core;
 [RequireComponent(typeof(Rigidbody2D))]
 public class ZMAnalogMovement : ZMPlayerItem
 {
-	[SerializeField] private bool startActive;
+	[SerializeField] private bool isActiveOnStart;
 	[SerializeField] private float _movementSpeed = 100;
 
 	private Rigidbody2D _rigidbody;
@@ -44,7 +44,7 @@ public class ZMAnalogMovement : ZMPlayerItem
 		_inputEventNotifier = directionalInput._inputEventNotifier;
 		_inputEventNotifier.OnMoveEvent += HandleMove;
 
-		if (startActive)
+		if (isActiveOnStart)
 		{
 			directionalInput.ConfigureItemWithID(_playerInfo.ID);
 		}
